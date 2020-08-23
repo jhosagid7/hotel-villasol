@@ -255,7 +255,7 @@
                                 <tr id="trT">
                                 <td>Transferencia</td></th><input name="divisa[]" value="Transferencia" type="hidden">
                                 <td><input name="MontoDivisa[]" class="decimal" class="" type="texto" id="DMontoTrans"></td>
-                                <td><input name="TasaTike[]" type="texto"  class="enteros id="NumtTrans" value="" placeholder="N° de Transferencia..."><input type="hidden" id="TasaTrans" value="{{ $tasaTransferenciaPunto->tasa }}"></td>
+                                <td><input name="TasaTike[]" type="texto"  class="enteros" id="NumtTrans" value="" placeholder="N° de Transferencia..."><input type="hidden" id="TasaTrans" value="{{ $tasaTransferenciaPunto->tasa }}"></td>
                                 <td><input name="MontoDolar[]" type="texto" readonly id="TransToDolar" class="monto" onchange="sumar();"></td>
                                 <td><input name="Veltos[]" type="text" readonly id="RestaTrans"></td>
                                 <td id="TrSubTotal"></td>
