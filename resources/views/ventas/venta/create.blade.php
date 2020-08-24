@@ -92,11 +92,12 @@
                             <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                 <div class="form group">
                                     <label for="precio_venta_dolar">Precio Dolar</label>
-                                    <input type="" name="jprecio_venta_d_dolar" id="jprecio_venta_d_dolar"  class="form-control">
+                                    <h4 class="font-weight-bold" id="vprecio_venta_dolar">$. 0.00</h4>
+                                    <input type="hidden" name="jprecio_venta_d_dolar" id="jprecio_venta_d_dolar"  class="form-control">
                                     <input type="hidden" name="jprecio_compra" id="jprecio_compra"  class="form-control" placeholder="Precio venta dolar...">
 
-                                    <input type="text" name="jprecio_venta" id="jprecio_venta"  class="form-control" placeholder="Precio dolar...">
-                                    <input type="" name="jprecio_venta_dolar" id="jprecio_venta_dolar"  class="form-control" placeholder="Precio dolar...">
+                                    <input type="hidden" name="jprecio_venta" id="jprecio_venta"  class="form-control" placeholder="Precio dolar...">
+                                    <input type="hidden" name="jprecio_venta_dolar" id="jprecio_venta_dolar"  class="form-control" placeholder="Precio dolar...">
                                     <input type="hidden" name="jmarjen_ganancia_dolar" id="jmarjen_ganancia_dolar" value="{{$tasaDolar->porcentaje_ganancia}}">
 
                                 </div>
@@ -104,16 +105,18 @@
                             <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                 <div class="form group">
                                     <label for="jprecio_venta_peso">Precio Pesos</label>
-                                    <input type="" name="jprecio_venta_p_dolar" id="jprecio_venta_p_dolar"  class="form-control">
-                                    <input type="" name="jprecio_venta_peso" id="jprecio_venta_peso"  class="form-control" placeholder="Precio pesos...">
+                                    <h4 class="font-weight-bold" id="vprecio_venta_peso">$. 0.00</h4>
+                                    <input type="hidden" name="jprecio_venta_p_dolar" id="jprecio_venta_p_dolar"  class="form-control">
+                                    <input type="hidden" name="jprecio_venta_peso" id="jprecio_venta_peso"  class="form-control" placeholder="Precio pesos...">
                                     <input type="hidden" name="jmarjen_ganancia_peso" id="jmarjen_ganancia_peso" value="{{$tasaPeso->porcentaje_ganancia}}">
                                 </div>
                             </div>
                             <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                 <div class="form group">
                                     <label for="jprecio_venta_trans_punto">Precio Trans/Punto</label>
-                                    <input type="" name="jprecio_venta_tp_dolar" id="jprecio_venta_tp_dolar"  class="form-control">
-                                    <input type="" name="jprecio_venta_trans_punto" id="jprecio_venta_trans_punto"  class="form-control" placeholder="Precio trans/punto...">
+                                    <h4 class="font-weight-bold" id="vprecio_venta_trans_punto">Bs. 0.00</h4>
+                                    <input type="hidden" name="jprecio_venta_tp_dolar" id="jprecio_venta_tp_dolar"  class="form-control">
+                                    <input type="hidden" name="jprecio_venta_trans_punto" id="jprecio_venta_trans_punto"  class="form-control" placeholder="Precio trans/punto...">
                                     <input type="hidden" name="jmarjen_ganancia_trans_punto" id="jmarjen_ganancia_trans_punto" value="{{$tasaTransferenciaPunto->porcentaje_ganancia}}">
                                     <input type="hidden" name="tasaTransPunto" id="tasaTransPunto" value="{{$tasaTransferenciaPunto->tasa}}">
                                 </div>
@@ -121,8 +124,9 @@
                             <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                 <div class="form group">
                                     <label for="jprecio_venta_mixto">Precio Mixto</label>
-                                    <input type="" name="jprecio_venta_m_dolar" id="jprecio_venta_m_dolar"  class="form-control">
-                                    <input type="" name="jprecio_venta_mixto" id="jprecio_venta_mixto"  class="form-control" placeholder="Precio Mixto...">
+                                    <h4 class="font-weight-bold" id="vprecio_venta_mixto">Bs. 0.00</h4>
+                                    <input type="hidden" name="jprecio_venta_m_dolar" id="jprecio_venta_m_dolar"  class="form-control">
+                                    <input type="hidden" name="jprecio_venta_mixto" id="jprecio_venta_mixto"  class="form-control" placeholder="Precio Mixto...">
                                     <input type="hidden" name="jmarjen_ganancia_mixto" id="jmarjen_ganancia_mixto" value="{{$tasaMixto->porcentaje_ganancia}}">
                                     <input type="hidden" name="tasaMixto" id="tasaMixto" value="{{$tasaMixto->tasa}}">
                                 </div>
@@ -130,8 +134,9 @@
                             <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                 <div class="form group">
                                     <label for="precio_venta_Efectivo">Precio Efectivo</label>
-                                    <input type="" name="jprecio_venta_e_dolar" id="jprecio_venta_e_dolar"  class="form-control">
-                                    <input type="" name="precio_venta_Efectivo" id="precio_venta_Efectivo"  class="form-control" placeholder="Precio venta efecti...">
+                                    <h4 class="font-weight-bold" id="vprecio_venta_Efectivo">Bs. 0.00</h4>
+                                    <input type="hidden" name="jprecio_venta_e_dolar" id="jprecio_venta_e_dolar"  class="form-control">
+                                    <input type="hidden" name="jprecio_venta_Efectivo" id="jprecio_venta_Efectivo"  class="form-control" placeholder="Precio venta efecti...">
                                     <input type="hidden" name="jmarjen_ganancia_Efectivo" id="jmarjen_ganancia_Efectivo" value="{{$tasaEfectivo->porcentaje_ganancia}}">
                                     <input type="hidden" name="tasaEfectivo" id="tasaEfectivo" value="{{$tasaEfectivo->tasa}}">
                                 </div>
@@ -656,6 +661,8 @@ var cont=0;
         $("#jprecio_compra").val(datosArticulo[2]);
         $("#jstock").val(datosArticulo[1]);
         // $("#jmarjen_venta_dolar").val(12);
+
+
     }
 
     function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
@@ -705,26 +712,34 @@ var cont=0;
         $("#jprecio_venta_dolar").val(precio_compraD);
         $("#jprecio_venta_d_dolar").val(precio_compraD);
         $("#jprecio_venta").val(precio_compraD*tasaD);
+        $("#vprecio_venta_dolar").html("<h4>$. " + formatMoney(precio_compraD*tasaD,2,',','.') + "</h4>");
 
         precio_compraP = precio_compra+margenP;
         $("#jprecio_venta_p_dolar").val(precio_compraP);
         precio_compraP = precio_compraP.toFixed(2);
         $("#jprecio_venta_peso").val(precio_compraP*tasaP);
+        $("#vprecio_venta_peso").html("<h4>$. " + formatMoney(precio_compraP*tasaP,2,',','.') + "</h4>");
 
         precio_compraTP = precio_compra+margenTP;
         $("#jprecio_venta_tp_dolar").val(precio_compraTP);
         precio_compraTP = precio_compraTP.toFixed(2);
         $("#jprecio_venta_trans_punto").val(precio_compraTP*tasaTP);
+        $("#vprecio_venta_trans_punto").html("<h4>Bs. " + formatMoney(precio_compraTP*tasaTP,2,',','.') + "</h4>");
 
         precio_compraM = precio_compra+margenM;
         $("#jprecio_venta_m_dolar").val(precio_compraM);
         precio_compraM = precio_compraM.toFixed(2);
         $("#jprecio_venta_mixto").val(precio_compraM*tasaM);
+        $("#vprecio_venta_mixto").html("<h4>Bs. " + formatMoney(precio_compraM*tasaM,2,',','.') + "</h4>");
 
         precio_compraE = precio_compra+margenE;
         $("#jprecio_venta_e_dolar").val(precio_compraE);
         precio_compraE = precio_compraE.toFixed(2);
-        $("#precio_venta_Efectivo").val(precio_compraE*tasaE);
+        $("#jprecio_venta_Efectivo").val(precio_compraE*tasaE);
+        $("#vprecio_venta_Efectivo").html("<h4>Bs. " + formatMoney(precio_compraE*tasaE,2,',','.') + "</h4>");
+
+
+
     }
 
     function add_article(){
@@ -750,7 +765,9 @@ var cont=0;
         verPreciop = $("#jprecio_venta_peso").val();
         verPreciotp = $("#jprecio_venta_trans_punto").val();
         verPreciom = $("#jprecio_venta_mixto").val();
-        verPrecioe = $("#precio_venta_Efectivo").val();
+        verPrecioe = $("#jprecio_venta_Efectivo").val();
+
+
 
 
 
@@ -848,7 +865,19 @@ var cont=0;
         $("#jprecio_venta_peso").val("");
         $("#jprecio_venta_trans_punto").val("");
         $("#jprecio_venta_mixto").val("");
-        $("#precio_venta_Efectivo").val("");
+        $("#jprecio_venta_Efectivo").val("");
+
+        $("#vprecio_venta_dolar").html("<h4>$. 0.00</h4>");
+        $("#vprecio_venta_peso").html("<h4>$. 0.00</h4>");
+        $("#vprecio_venta_trans_punto").html("<h4>Bs. 0.00</h4>");
+        $("#vprecio_venta_mixto").html("<h4>Bs. 0.00</h4>");
+        $("#vprecio_venta_Efectivo").html("<h4>Bs. 0.00</h4>");
+
+        $("#totald").html("<h4>$. 0.00</h4>");
+        $("#totalp").html("<h4>$. 0.00</h4>");
+        $("#totaltp").html("<h4>Bs. 0.00</h4>");
+        $("#totalm").html("<h4>Bs. 0.00</h4>");
+        $("#totale").html("<h4>Bs. 0.00</h4>");
     }
 
     function verify(){
