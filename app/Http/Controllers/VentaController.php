@@ -54,7 +54,7 @@ class VentaController extends Controller
         $tasaMixto = DB::table('tasa')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
         $tasaEfectivo = DB::table('tasa')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
         $articulos = DB::table('articulo as art')
-            ->select(DB::raw('CONCAT(art.codigo, " - ", art.nombre) AS articulo'), 'art.idarticulo', 'precio_compra', 'stock')
+            ->select(DB::raw('CONCAT(art.codigo, " - ", art.nombre) AS articulo'), 'art.idarticulo', 'precio_compra', 'stock', 'art.nombre')
             ->where('art.estado', '=', 'Activo')
             ->where('art.stock', '>', '0')
             ->get();

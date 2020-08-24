@@ -64,7 +64,7 @@
                                 <select name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
                                     <option value="seleccione...">Seleccione Articulo</option>
                                     @foreach ($articulos as $articulo)
-                                <option value="{{$articulo->idarticulo}}_{{$articulo->stock}}_{{$articulo->precio_compra}}">{{$articulo->articulo}}</option>
+                                <option value="{{$articulo->idarticulo}}_{{$articulo->stock}}_{{$articulo->precio_compra}}_{{$articulo->nombre}}">{{$articulo->articulo}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -730,8 +730,11 @@ var cont=0;
     function add_article(){
         datosArticulo=document.getElementById('jidarticulo').value.split('_');
 
+
         idarticulo=datosArticulo[0];
-        articulo=$("#jidarticulo option:selected").text();
+        articulo=datosArticulo[3];
+
+        // alert(articulo);
         cantidad=$("#jcantidad").val();
         descuento=$("#jdescuento").val();
         precio_compra=$("#jprecio_compra").val();
@@ -833,17 +836,19 @@ var cont=0;
         $("#jcantidad").val("");
         $("#jstock").val("");
         $("#jdescuento").val("");
-        // $("#jprecio_venta").val("");
+        $("#jprecio_venta").val("");
 
-        // $("#jprecio_venta_p_dolar").val("");
-        // $("#jprecio_venta_tp_dolar").val("");
-        // $("#jprecio_venta_m_dolar").val("");
-        // $("#jprecio_venta_e_dolar").val("");
+        $("#jprecio_venta_d_dolar").val("");
+        $("#jprecio_venta_p_dolar").val("");
+        $("#jprecio_venta_tp_dolar").val("");
+        $("#jprecio_venta_m_dolar").val("");
+        $("#jprecio_venta_e_dolar").val("");
 
-        // $("#jprecio_venta_peso").val("");
-        // $("#jprecio_venta_trans_punto").val("");
-        // $("#jprecio_venta_mixto").val("");
-        // $("#precio_venta_Efectivo").val("");
+        $("#jprecio_venta_dolar").val("");
+        $("#jprecio_venta_peso").val("");
+        $("#jprecio_venta_trans_punto").val("");
+        $("#jprecio_venta_mixto").val("");
+        $("#precio_venta_Efectivo").val("");
     }
 
     function verify(){
