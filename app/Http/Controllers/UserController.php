@@ -17,9 +17,10 @@ class UserController extends Controller
     public function index()
     {
         $this->authorize('haveaccess', 'user.index');
+        $title='Usuarios';
         $users = User::with('roles')->orderBy('id','Desc')->paginate(2);
         // return $users;
-        return view('user.index', compact('users'));
+        return view('user.index', compact('title','users'));
     }
 
     /**
@@ -53,9 +54,10 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', [$user, ['user.show', 'userown.show']]);
+        $title='Ver Usuarios';
         $roles = Role::orderBy('name')->get();
         // return $roles;
-        return view('user.view', compact('roles', 'user'));
+        return view('user.view', compact('title', 'roles', 'user'));
     }
 
     /**
@@ -67,9 +69,10 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $this->authorize('update', [$user, ['user.edit', 'userown.edit']]);
+        $title='Editar Usuarios';
         $roles = Role::orderBy('name')->get();
         // return $roles;
-        return view('user.edit', compact('roles', 'user'));
+        return view('user.edit', compact('title', 'roles', 'user'));
     }
 
     /**

@@ -30,6 +30,7 @@ class VentaController extends Controller
     public function index(Request $request)
     {
         if ($request) {
+            $title='Ventas';
             $query = trim($request->get('buscarTexto'));
             $ventas = DB::table('venta as v')
                 ->join('persona as p', 'v.idcliente', '=', 'p.idpersona')
@@ -40,13 +41,13 @@ class VentaController extends Controller
                 ->groupBy('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
                 ->paginate(7);
 
-            return view('ventas.venta.index', ["ventas" => $ventas, "buscarTexto" => $query]);
+            return view('ventas.venta.index', ["title" => $title,"ventas" => $ventas, "buscarTexto" => $query]);
         }
     }
 
     public function create()
     {
-
+        $title='Nueva venta';
         $personas = DB::table('persona')->where('tipo_persona', '=', 'Cliente')->get();
         $tasaDolar = DB::table('tasa')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
         $tasaPeso = DB::table('tasa')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
@@ -61,7 +62,7 @@ class VentaController extends Controller
             // dd($tasaTransferenciaPunto);
             // return $personas;
 
-        return view('ventas.venta.create', compact('personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
+        return view('ventas.venta.create', compact('title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
     }
 
     public function store(VentaFormRequest $request)

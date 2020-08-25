@@ -17,8 +17,9 @@ class RoleController extends Controller
     public function index()
     {
         Gate::authorize('haveaccess', 'role.index');
+        $title='Roles';
         $roles = Role::orderBy('id','Desc')->paginate(2);
-        return view('role.index', compact('roles'));
+        return view('role.index', compact('title','roles'));
     }
 
     /**
@@ -29,9 +30,10 @@ class RoleController extends Controller
     public function create()
     {
         Gate::authorize('haveaccess', 'role.create');
+        $title='Nuevo Rol';
         $permissions = Permission::get();
 
-        return view('role.create', compact('permissions'));
+        return view('role.create', compact('title','permissions'));
     }
 
     /**
@@ -72,6 +74,7 @@ class RoleController extends Controller
     {
         // Gate::authorize('haveaccess', 'role.show');
         $this->authorize('haveaccess', 'role.show');
+        $title='store Rol';
         //creamos un array para optener los ides y poder validar en la vista edit
         $permission_role=[];
 
@@ -83,7 +86,7 @@ class RoleController extends Controller
         //el uso (Model building) de Role $role es como si usaramos $role = Role::findOrFile($id);
         $permissions = Permission::get();
 
-        return view('role.view', compact('permissions','role', 'permission_role'));
+        return view('role.view', compact('title','permissions','role', 'permission_role'));
     }
 
     /**
@@ -95,6 +98,7 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         Gate::authorize('haveaccess', 'role.edit');
+        $title='Editar Rol';
         //creamos un array para optener los ides y poder validar en la vista edit
         $permission_role=[];
 
@@ -103,10 +107,10 @@ class RoleController extends Controller
         }
         //return $permission_role;
 
-        //el uso (Model building) de Role $role es como si usaramos $role = Role::findOrFile($id);
+        //el uso (Model building) de Role $role es  si usaramos $role = Role::findOrFile($id);
         $permissions = Permission::get();
 
-        return view('role.edit', compact('permissions','role', 'permission_role'));
+        return view('role.edit', compact('title','permissions','role', 'permission_role'));
     }
 
     /**

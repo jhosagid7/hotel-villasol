@@ -29,6 +29,7 @@ class IngresoController extends Controller
     public function index(Request $request)
     {
         if ($request) {
+            $title='Ingresos';
             $query = trim($request->get('buscarTexto'));
             $ingresos = DB::table('ingreso as i')
                 ->join('persona as p', 'i.idproveedor', '=', 'p.idpersona')
@@ -39,7 +40,7 @@ class IngresoController extends Controller
                 ->groupBy('i.idingreso', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.impuesto', 'i.estado')
                 ->get();
 
-            return view('compras.ingreso.index', ["ingresos" => $ingresos, "buscarTexto" => $query]);
+            return view('compras.ingreso.index', ["title"=>$title,"ingresos" => $ingresos, "buscarTexto" => $query]);
         }
     }
 
