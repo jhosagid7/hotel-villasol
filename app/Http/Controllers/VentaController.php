@@ -49,11 +49,11 @@ class VentaController extends Controller
     {
         $title='Nueva venta';
         $personas = DB::table('persona')->where('tipo_persona', '=', 'Cliente')->get();
-        $tasaDolar = DB::table('tasa')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
-        $tasaPeso = DB::table('tasa')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
+        $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
+        $tasaPeso = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
         $tasaTransferenciaPunto = DB::table('tasa')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
-        $tasaMixto = DB::table('tasa')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
-        $tasaEfectivo = DB::table('tasa')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
+        $tasaMixto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
+        $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
         $articulos = DB::table('articulo as art')
             ->select(DB::raw('CONCAT(art.codigo, " - ", art.nombre) AS articulo'), 'art.idarticulo', 'precio_compra', 'stock', 'art.nombre')
             ->where('art.estado', '=', 'Activo')

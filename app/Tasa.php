@@ -6,21 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tasa extends Model
 {
-    protected $table = 'tasa';
-
-    protected $primaryKey = 'id';
-
     public $timestamps = true;
-
-    
     protected $fillabel = [
-        'id',
         'nombre',
         'tasa',
+        'porcentaje_ganancia',
         'estado',
-        'fecha_hora'
+        'caja'
     ];
 
-    
     protected $guarded = [];
 }
+// 'api_token' => str_random(50)

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Rate;
+use App\Tasa;
 use Illuminate\Http\Request;
 
-class RateController extends Controller
+class TasaController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -14,9 +14,10 @@ class RateController extends Controller
      */
     public function index()
     {
-        $title='Tasas y Marjen de Ganancias';
-        $rates = Rate::orderBy('id','Desc')->get();
-        return view('role.index', compact('title','rates'));
+        $title='Crear Tasa o Margen de ganancia';
+        $tasas = Tasa::get();
+
+        return view('ventas.tasa.index', compact('title','tasas'));
     }
 
     /**
@@ -26,10 +27,7 @@ class RateController extends Controller
      */
     public function create()
     {
-        $title='Crear Tasa o Margen de ganancia';
-        $rates = Rate::get();
-
-        return view('role.create', compact('title','rates'));
+        //
     }
 
     /**
@@ -48,7 +46,7 @@ class RateController extends Controller
         ]);
 
         //llenamos la variable $role para luego guardarla
-        $role = Rate::create($request->all());
+        $role = Tasa::create($request->all());
 
 
         return redirect()
@@ -64,7 +62,7 @@ class RateController extends Controller
      */
     public function show($id)
     {
-        //
+        return 'este des show';
     }
 
     /**
@@ -75,7 +73,11 @@ class RateController extends Controller
      */
     public function edit($id)
     {
-        //
+        // $this->authorize('update', [$user, ['user.edit', 'userown.edit']]);
+        $title='Editar Tasa';
+        $tasa = Tasa::find($id);
+        // return $roles;
+        return view('ventas.tasa.edit', compact('title', 'tasa'));
     }
 
     /**
@@ -87,7 +89,17 @@ class RateController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // return $request;
+        $title='Crear Tasa o Margen de ganancia';
+        $tasa = Tasa::find($id);
+        $tasa->tasa = $request->tasa;
+        $tasa->porcentaje_ganancia = $request->porcentaje_ganancia;
+        $tasa->estado = $request->estado;
+        $tasa->caja = 'Abierta';
+        $tasa->save();
+        return redirect()
+        ->route('tasa.index')
+        ->with('status_success', 'Role saved successfully');
     }
 
     /**
@@ -100,4 +112,14 @@ class RateController extends Controller
     {
         //
     }
+    //Actualizar un solo registro
+    // $app = ModelName::find($id);
+    // $app->name = $request->name;
+    // $app->email = $request->email;
+    // $save();
+
+    //Actualizar con base en una condición
+    // $app = App\ModelName::find(1);
+    // $app->where("status", 1)
+    // ->update(["keyOne" => $valueOne, "keyTwo" => $valueTwo]);
 }

@@ -144,7 +144,13 @@
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="{{asset('dist/img/user2-160x160.jpg')}}" class="user-image" alt="User Image">
-              <span class="hidden-xs">{{ Auth::user()->name }}</span>
+              <span class="hidden-xs">
+                  @isset(Auth::user()->name)
+                  {{ Auth::user()->name }}
+                  @else
+                  {!! 'Invitado' !!}
+                  @endisset
+                </span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
@@ -152,7 +158,12 @@
                 <img src="{{asset('dist/img/user2-160x160.jpg')}}" class="img-circle" alt="User Image">
 
                 <p>
+                    @isset(Auth::user()->name)
                     {{ Auth::user()->name }} - {{ Auth::user()->role }}
+                    @else
+                        {!! 'Invitado' !!}
+                    @endisset
+
                   <small>Miembro since Nov. 2012</small>
                 </p>
               </li>
@@ -211,7 +222,13 @@
           <img src="{{asset('dist/img/user2-160x160.jpg')}}" class="img-circle" alt="User Image">
         </div>
         <div class="pull-left info">
-          <p>{{ Auth::user()->name }}</p>
+          <p>
+            @isset(Auth::user()->name)
+            {{ Auth::user()->name }}
+            @else
+            {!! 'Invitado' !!}
+            @endisset
+        </p>
           <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
         </div>
       </div>
@@ -277,6 +294,7 @@
             <ul class="treeview-menu">
                 <li><a href="{{asset('ventas/cliente')}}"><i class="fa fa-user-plus"></i> Clietnes</a></li>
                 <li><a href="{{asset('ventas/venta')}}"><i class="fa fa-desktop"></i> Venta</a></li>
+                <li><a href="{{asset('ventas/tasa')}}"><i class="fa fa-desktop"></i> Tasa</a></li>
             </ul>
         </li>
         <li class="treeview">
@@ -324,7 +342,11 @@
       <!-- Default box -->
       <div class="box">
         <div class="box-header with-border">
-        <h3 class="box-title">{{$title}}</h3>
+        <h3 class="box-title">@isset($title)
+            {{$title}}
+            @else
+            {!!"Sistema"!!}
+        @endisset</h3>
 
           <div class="box-tools pull-right">
             <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
