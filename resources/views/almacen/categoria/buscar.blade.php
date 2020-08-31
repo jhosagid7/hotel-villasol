@@ -1,13 +1,13 @@
 {{-- <form action="{{ route('categoria.index')}}" method="GET" autocomplete="off" role="buscar"> --}}
     {{-- @csrf --}}
-<div class="form-groupcol-lg-12 col-md-12 col-sm-12 col-xs-12 margin-bottom form-group-sm">
-    <div class="input-group input-group-sm">
-        <input  id="buscarTexto" type="text" class="form-control">
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" class='form-control' id="buscarTexto" name="buscarTexto" placeholder="Buscar..." value="">
             <span class="input-group-btn">
-              <button disabled type="button" class="btn btn-primary btn-flat">Buscar</button>
+                <button class="btn btn-primary" type="submit"><i class='glyphicon glyphicon-search'></i> Buscar</button>
             </span>
-      </div>
-</div>
+        </div>
+    </div>
 {{-- </form> --}}
 
 

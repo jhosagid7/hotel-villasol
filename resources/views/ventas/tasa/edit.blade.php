@@ -1,6 +1,43 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
+<!-- Default box -->
+<!-- Content Header (Page header) -->
+    {{-- <section class="content-header">
+      <h1>
+        <!--Blank page-->
+        <small>it all starts here</small>
+      </h1>
+      <ol class="breadcrumb">
+        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
+        <li><a href="#">Examples</a></li>
+        <li class="active">Blank page</li>
+      </ol>
+    </section> --}}
+
+    <!-- Main content -->
+    <section class="content">
+
+        <!-- Default box -->
+        <div class="box">
+          <div class="box-header with-border">
+          <h3 class="box-title">@isset($title)
+              {{$title}}
+              @else
+              {!!"Sistema"!!}
+          @endisset</h3>
+
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                      title="Collapse">
+                <i class="fa fa-minus"></i></button>
+              <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                <i class="fa fa-times"></i></button>
+            </div>
+          </div>
+          <div class="box-body">
+        {{-- cabecera de box --}}
+
     <div class="row">
         <div class="col-lg-6">
             <h3>Configurar tasa: {{$tasa->nombre}}</h3>
@@ -14,7 +51,7 @@
     @csrf
     @method('PUT')
     <div class="row">
-        
+
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="nombre">Nombre</label>
@@ -37,7 +74,7 @@
             <div class="form-group">
                 <label for="">Estado</label>
                 <select name="estado" id="estado" class="form-control">
-                    
+
                     @if($tasa->estado)
                     <option value="{{$tasa->estado}}" selected>{{$tasa->estado}}</option>
                     <option value="Activo">Activo</option>
@@ -48,7 +85,7 @@
                     <option value="Cancealdo">Cancealdo</option>
                     <option value="Suspendido">Suspendido</option>
                     @endif
-                    
+
                 </select>
             </div>
         </div>
@@ -76,4 +113,14 @@
         </div>
     </div>
 
+
+    {{-- fin de la cabecera de box --}}
+</div>
+<!-- /.box-body -->
+<div class="box-footer">
+  {{-- Footer --}}
+</div>
+<!-- /.box-footer-->
+</div>
+<!-- /.box -->
 @endsection

@@ -22,6 +22,9 @@
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="{{asset('dist/css/skins/_all-skins.min.css')}}">
+  <!-- jvectormap -->
+  <link rel="stylesheet" href="{{asset('bower_components/jvectormap/jquery-jvectormap.css')}}">
+
 
 
 
@@ -323,49 +326,9 @@
 
   <!-- Content Wrapper. Contains page content -->
   <div class="content-wrapper">
-    <!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
 
-    <!-- Main content -->
-    <section class="content">
-
-      <!-- Default box -->
-      <div class="box">
-        <div class="box-header with-border">
-        <h3 class="box-title">@isset($title)
-            {{$title}}
-            @else
-            {!!"Sistema"!!}
-        @endisset</h3>
-
-          <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                    title="Collapse">
-              <i class="fa fa-minus"></i></button>
-            <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-              <i class="fa fa-times"></i></button>
-          </div>
-        </div>
-        <div class="box-body">
           @yield('contenido')
-        </div>
-        <!-- /.box-body -->
-        <div class="box-footer">
-          {{-- Footer --}}
-        </div>
-        <!-- /.box-footer-->
-      </div>
-      <!-- /.box -->
+
 
     </section>
     <!-- /.content -->
@@ -596,8 +559,16 @@
 <!-- Bootstrap 3.3.7 -->
 <script src="{{asset('Datatables/datatables.min.js')}}"></script>
 {{-- <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script> --}}
+<script src="{{asset('bower_components/jquery-sparkline/dist/jquery.sparkline.min.js')}}"></script>
+<script src="{{asset('plugins/jvectormap/jquery-jvectormap-1.2.2.min.js')}}"></script>
+<script src="{{asset('plugins/jvectormap/jquery-jvectormap-world-mill-en.js')}}"></script>
+<script src="{{asset('bower_components/chart.js/Chart.js')}}"></script>
+<script src="{{asset('dist/js/pages/dashboard2.js')}}"></script>
+
 {{-- Funtion Main --}}
 @stack('sciptsMain')
+
+
 <script>
   $(document).ready(function () {
     $('.sidebar-menu').tree()

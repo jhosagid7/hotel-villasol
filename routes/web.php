@@ -72,4 +72,6 @@ Route::resource('ventas/venta', 'VentaController');
 
 Route::resource('ventas/tasa', 'TasaController');
 
+Route::resource('ventas/caja', 'CajaController');
+
 

@@ -1,7 +1,7 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-    
+
 
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -31,9 +31,9 @@
                 <p>{{ $venta->num_comprobante}}</p>
             </div>
         </div>
-        
+
     </div>
-    
+
     <div class="row">
         <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
             <div class="panel panel-primary">
@@ -62,21 +62,22 @@
                                     <td>{{$detalle->precio_venta}}</td>
                                     <td>{{$detalle->descuento}}</td>
                                     <td>{{$detalle->cantidad*$detalle->precio_venta-$detalle->descuento}}</td>
-                                    
+
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
+                    <a class="btn btn-warning" href="{{route('venta.index')}}">{{__('Back')}}</a>
                 </div>
-                
-            </div>
-        
 
-        
+            </div>
+
+
+
         </div>
     </div>
-            
+
 
 
 

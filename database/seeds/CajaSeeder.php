@@ -32,17 +32,12 @@ class CajaSeeder extends Seeder
 
         $sucursal = Caja::create([
             'nombre' => 'Caja 2',
-            'descripcion' => 'Caja segunda',
+            'descripcion' => 'Caja Sucursal',
             'estado' => 'Cerrada',
             'sucursal_id' => 1
         ]);
 
-        $sucursal = Caja::create([
-            'nombre' => 'Caja 3',
-            'descripcion' => 'Caja tercera',
-            'estado' => 'Cerrada',
-            'sucursal_id' => 1
-        ]);
+        
 
     }
 }

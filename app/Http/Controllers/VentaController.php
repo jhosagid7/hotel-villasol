@@ -51,7 +51,7 @@ class VentaController extends Controller
         $personas = DB::table('persona')->where('tipo_persona', '=', 'Cliente')->get();
         $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
         $tasaPeso = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
-        $tasaTransferenciaPunto = DB::table('tasa')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
+        $tasaTransferenciaPunto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
         $tasaMixto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
         $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
         $articulos = DB::table('articulo as art')
@@ -59,10 +59,17 @@ class VentaController extends Controller
             ->where('art.estado', '=', 'Activo')
             ->where('art.stock', '>', '0')
             ->get();
+        $ventas = DB::table('venta as v')
+        ->join('persona as p', 'v.idcliente', '=', 'p.idpersona')
+        ->join('detalle_venta as dv', 'v.idventa', '=', 'dv.idventa')
+        ->select('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+        ->orderBy('v.idventa', 'desc')
+        ->groupBy('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+        ->paginate(7);
             // dd($tasaTransferenciaPunto);
             // return $personas;
 
-        return view('ventas.venta.create', compact('title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
+        return view('ventas.venta.create', compact('ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
     }
 
     public function store(VentaFormRequest $request)

@@ -1,6 +1,3 @@
-@extends ('layouts.admin3')
-@section('contenido')
-
 <!-- Default box -->
 <!-- Content Header (Page header) -->
     {{-- <section class="content-header">
@@ -37,43 +34,3 @@
           </div>
           <div class="box-body">
         {{-- cabecera de box --}}
-
-    <div class="row">
-        <div class="col-lg-6">
-            <h3>Nueva Categoria</h3>
-            @include('custom.message')
-
-
-            <form action="{{ route('categoria.store')}}" method="POST" autocomplete="off">
-
-            @csrf
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" class="form-control form-control-sm" placeholder="Nombre...">
-            </div>
-
-            <div class="form-group">
-                <label for="descripcion">Descripcion</label>
-                <input type="text" name="descripcion" class="form-control form-control-sm" placeholder="Descripcion...">
-            </div>
-
-            <div class="form-group">
-                <button class="btn btn-primary" type="submit">Guardar</button>
-                <a class="btn btn-danger" href="{{route('categoria.index')}}">{{__('Back')}}</a>
-            </div>
-
-            </form>
-        </div>
-    </div>
-
-    {{-- fin de la cabecera de box --}}
-</div>
-<!-- /.box-body -->
-<div class="box-footer">
-  {{-- Footer --}}
-</div>
-<!-- /.box-footer-->
-</div>
-<!-- /.box -->
-
-@endsection
