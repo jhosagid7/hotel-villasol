@@ -1,0 +1,48 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateCajasTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    //2020_08_31_171133_create_cajas_table
+    //2020_08_25_150123_create_cajas_table
+    //2020_08_31_171133_create_sessioncajas_table
+    //2020_08_25_150123_create_sessioncajas_table
+    public function up()
+    {
+        Schema::create('cajas', function (Blueprint $table) {
+            $table->id();
+            $table->string('codigo', 20);
+            $table->string('fecha', 20);
+            $table->string('hora_cierre', 20);
+            $table->string('hora', 20);
+            $table->string('mes', 20);
+            $table->year('year');
+            $table->decimal('monto', 11, 2)->default(0.00);
+            $table->decimal('monto_cierre', 11, 2)->default(0.00);
+            $table->enum('estado', ['Abierta', 'Cerrada', 'Auditoria']);
+            $table->string('caja', 20);
+            $table->foreignId('user_id')->references('id')->on('users');
+            $table->foreignId('sucursal_id')->references('id')->on('sucursals');
+            $table->foreignId('sessioncaja_id')->references('id')->on('sessioncajas');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::dropIfExists('cajas');
+    }
+}

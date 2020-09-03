@@ -1,5 +1,7 @@
 <div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{$per->idpersona}}">
-    {{ Form::open(array('action'=>array('ClienteController@destroy',$per->idpersona),'method'=>'delete'))}}
+    <form action="{{ route('proveedor.destroy', $per->idpersona)}}" method="POST">
+        @csrf
+        @method('DELETE')
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -9,7 +11,7 @@
                     <h4 class="modal-title">Eliminar Cliente</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Confirme si decea eliminar a el cliente <b>{{$per->nombre}}</b></p>
+                    <p>Confirme si decea Eliminar al cliente <b>{{$per->nombre}}</b></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn default" data-dismiss="modal">Cerrar</button>
@@ -17,5 +19,5 @@
                 </div>
             </div>
         </div>
-    {{ Form::Close()}}
+    </form>
 </div>

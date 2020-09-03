@@ -13,9 +13,9 @@ class CreateSessionCajasTable extends Migration
      */
     public function up()
     {
-        Schema::create('session_cajas', function (Blueprint $table) {
+        Schema::create('sessioncajas', function (Blueprint $table) {
             $table->id();
-            $table->string('status');
+            $table->enum('estado', ['Abierta', 'Cerrada', 'Auditoria']);
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ class CreateSessionCajasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sesscion_cajas');
+        Schema::dropIfExists('sessioncajas');
     }
 }

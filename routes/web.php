@@ -23,7 +23,7 @@ Route::get('/', function () {
 });
 
 Auth::routes([
-    'register' => false
+    'register' => true
 ]);
 
 Route::get('/home', 'HomeController@index')->name('home');
@@ -73,5 +73,9 @@ Route::resource('ventas/venta', 'VentaController');
 Route::resource('ventas/tasa', 'TasaController');
 
 Route::resource('ventas/caja', 'CajaController');
+
+Route::get('listarcaja', 'cajaController@listarcaja')->name('listarcaja');
+
+// Route::get('ventas/tasa', 'TasaController@crearTasas')->name('creartasas');
 
 

@@ -47,6 +47,7 @@
 </div>
 
 <div class="row">
+    @include('custom.message')
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="table-responsive">
             @if ($message = Session::get('success'))
@@ -60,9 +61,10 @@
                     <th>Nombre</th>
                     <th>Tasa</th>
                     <th>Margen ganancia</th>
-                    <th>Estado</th>
-                    <th>Opciones</th>
-                    <th>Estado de la Caja</th>
+                    <th>Creado el</th>
+                    <th>Actualizado el</th>
+
+
                 </thead>
                 <tbody>
                     @foreach ($tasas as $tasa)
@@ -71,13 +73,11 @@
                         <td>{{ $tasa->nombre }}</td>
                         <td>{{ $tasa->tasa }}</td>
                         <td>{{ $tasa->porcentaje_ganancia }}</td>
-                        <td>{{ $tasa->estado }}</td>
-                        <td>{{ $tasa->caja }}</td>
-                        <td>
-                        <a href="{{URL::action('TasaController@edit', $tasa->id)}}"><button class='btn btn-info btn-xs'><span class='glyphicon glyphicon-edit'></span></button></a>
-                        </td>
+                        <td>{{ $tasa->created_at }}</td>
+                        <td>{{ $tasa->updated_at }}</td>
+
                     </tr>
-                    @include('ventas.tasa.modal')
+                    {{-- @include('ventas.tasa.modal') --}}
                     @endforeach
                 </tbody>
             </table>
@@ -91,7 +91,8 @@
 </div>
 <!-- /.box-body -->
 <div class="box-footer">
-  {{-- Footer --}}
+    <a href="{{URL::action('TasaController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Actualizar</button></a></h3>
+    <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
 </div>
 <!-- /.box-footer-->
 </div>

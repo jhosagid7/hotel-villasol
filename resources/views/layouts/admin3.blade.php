@@ -162,7 +162,7 @@
 
                 <p>
                     @isset(Auth::user()->name)
-                    {{ Auth::user()->name }} - {{ Auth::user()->role }}
+                    {{ Auth::user()->name }} - {{ Auth::user()->role }} - {{ Auth::user()->id }}
                     @else
                         {!! 'Invitado' !!}
                     @endisset

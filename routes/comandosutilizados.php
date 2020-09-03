@@ -102,4 +102,47 @@ Route::get('/test', function () {
     return $role->permissions;
 
 
+    //////////////////////////////////////////////////////////////////////////
+
+    $date   = Carbon::now();
+        $fecha  = $date->format('d-m-Y');
+        $year   = $date->format('Y');
+        $mes    = $date->format('m');
+        $hora   = $date->format('h:i:s A');
+
+        $sessionCaja = new SessionCaja;
+        $sessionCaja->codigo        = '';
+        $sessionCaja->fecha         = $fecha;
+        $sessionCaja->hora_cierre   = 'Sin cerrrar';
+        $sessionCaja->hora          = $hora;
+        $sessionCaja->mes           = $mes;
+        $sessionCaja->year          = $year;
+        $sessionCaja->monto         = 0.00;
+        $sessionCaja->monto_cierre  = 0.00;
+        $sessionCaja->estado        = 'Abierta';
+        $sessionCaja->caja          = '';
+        $sessionCaja->user_id       =  2;
+        $sessionCaja->sucursal_id   = 1;
+        $sessionCaja->save();
+       
+        $sessionCaja = SessionCaja::find($sessionCaja->id);
+        $sessionCaja->codigo = SessionCaja::numCodigo('1', 2, $sessionCaja->id);
+
+
 });
+// <script>
+
+// $(document).ready(function() {
+//     listCrearVenta();
+// });
+
+//         var listCrearVenta = function(){
+//             $.ajax({
+//                 type: 'get',
+//                 url: '{{ url ('listarcrearventas') }}',
+//                 success: function (data) {
+//                     $('#crearVentas').empty().html(data);
+//                 }
+//             });
+//         };
+//     </script>

@@ -27,7 +27,10 @@ class TasaController extends Controller
      */
     public function create()
     {
-        //
+        $tasas = Tasa::get();
+        $title='Aptualizar tasa';
+
+        return view('ventas.tasa.create', compact('title','tasas'));
     }
 
     /**
@@ -38,20 +41,65 @@ class TasaController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre'                 => 'required|max:20',
-            'tasa'                   => 'required',
-            'porcentaje_ganancia'    => 'required',
-            'estado'                 => 'required'
-        ]);
+        // return 'store';
+    //    return $request->id;
+    //     $request->validate([
+    //         'nombre'                 => 'required|max:20',
+    //         'tasa'                   => 'required',
+    //         'porcentaje_ganancia'    => 'required',
+    //         'estado'                 => 'required'
+    //     ]);
 
-        //llenamos la variable $role para luego guardarla
-        $role = Tasa::create($request->all());
+            $id = $request->get('id');
+            $url = $request->get('url');
+            $tasa = $request->get('tasa');
+            $porcentaje_ganancia = $request->get('porcentaje');
 
+            //hacemos truncate a las tablas que tienen modelos pero con eloquent
+            // Tasa::truncate();
 
-        return redirect()
-        ->route('tasa.index')
+            //creamos un contador
+            $cont = 0;
+         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+         while ($cont < count($id)) {
+            $idtasa = $id[$cont];
+            $Ntasa = Tasa::findOrFail($idtasa);
+            $Ntasa->id = $id[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
+            $Ntasa->tasa = $tasa[$cont];
+            $Ntasa->porcentaje_ganancia = $porcentaje_ganancia[$cont];
+
+            $Ntasa->update();
+
+            $cont = $cont+1;
+        }
+
+        return redirect($url)
         ->with('status_success', 'Tasa creada exitosamente');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function crearTasas(Request $request)
+    {
+        return 'estoy en creartasas';
+        // $request->validate([
+        //     'nombre'                 => 'required|max:20',
+        //     'tasa'                   => 'required',
+        //     'porcentaje_ganancia'    => 'required',
+        //     'estado'                 => 'required'
+        // ]);
+
+        // //llenamos la variable $role para luego guardarla
+        // $role = Tasa::create($request->all());
+
+
+        // return redirect()
+        // ->route('tasa.index')
+        // ->with('status_success', 'Tasa creada exitosamente');
     }
 
     /**
@@ -73,11 +121,13 @@ class TasaController extends Controller
      */
     public function edit($id)
     {
+
         // $this->authorize('update', [$user, ['user.edit', 'userown.edit']]);
         $title='Editar Tasa';
+
         $tasa = Tasa::find($id);
         // return $roles;
-        return view('ventas.tasa.edit', compact('title', 'tasa'));
+        return view('ventas.tasa.edit', compact('title', 'tasa', 'tasas'));
     }
 
     /**
@@ -87,9 +137,9 @@ class TasaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        // return $request;
+        return $request;
         $title='Crear Tasa o Margen de ganancia';
         $tasa = Tasa::find($id);
         $tasa->tasa = $request->tasa;

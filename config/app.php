@@ -177,7 +177,7 @@ return [
 
         //Propios
         Milon\Barcode\BarcodeServiceProvider::class,
-        App\Providers\SessionCajaProvider::class,
+        // App\Providers\SessionCajaProvider::class,
 
     ],
 

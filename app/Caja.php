@@ -2,15 +2,25 @@
 
 namespace App;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
 class Caja extends Model
 {
     protected $fillabel     = [
-        'nombre',
-        'descripcion',
+        'codigo',
+        'fecha',
+        'hora_cierre',
+        'hora',
+        'mes',
+        'year',
+        'monto',
+        'monto_cierre',
         'estado',
-        'sucursal_id'
+        'caja',
+        'user_id',
+        'sucursal_id',
+        'session_caja_id'
     ];
 
     //Ahora especificamos los campos guarded
@@ -19,5 +29,18 @@ class Caja extends Model
     public function sucursal()
     {
         return $this->belongsTo('App\Sucursal');
+    }
+
+    //este metodo nos ba a verificar si existe una caja abierta en el modelo Caja
+    public static function buscarCaja() {
+        // $user = Auth::user();
+        // Get the currently authenticated user's ID...
+        $id = Auth::id();
+        
+        return Caja::where('estado', 'Abierta')
+                ->where('user_id','=' ,$id)
+               ->orderBy('id', 'desc')
+               ->first();
+        // return Sessioncaja::find($session_caja_id);
     }
 }

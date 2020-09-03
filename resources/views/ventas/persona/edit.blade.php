@@ -41,21 +41,14 @@
     <div class="row">
         <div class="col-lg-6">
             <h3>Editar Cliente: {{$persona->nombre}}</h3>
-            @if (count($errors) > 0)
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach($errors->all() as $error)
-                    <li>{{$error}}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
+            @include('custom.message')
         </div>
     </div>
 
-            {!! Form::model($persona,['route'=>['cliente.update', $persona->idpersona], 'method'=>'PATCH']) !!}
-            {{ Form::token() }}
 
+            <form action="{{ route('cliente.update', $persona->idpersona)}}" method="POST" autocomplete="off" role="buscar">
+                @csrf
+                @method('PUT')
     <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
@@ -124,7 +117,7 @@
         </div>
     </div>
 
-            {!! Form::close() !!}
+            </form>
 
 {{-- fin de la cabecera de box --}}
 </div>

@@ -13,7 +13,9 @@ class DatabaseSeeder extends Seeder
     {
         // $this->call(UserSeeder::class);
         $this->call(JhosagidPermissionInfoSeeder::class);
-        $this->call(RateSeeder::class);
         $this->call(EmpresaSeeder::class);
+        $this->call(SucursalSeeder::class);
+        $this->call(TasaSeeder::class);
+        $this->call(DenominacionSeeder::class);
     }
 }
