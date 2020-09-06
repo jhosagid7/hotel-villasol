@@ -43,27 +43,29 @@ class VentaController extends Controller
                 ->orderBy('v.idventa', 'desc')
                 ->groupBy('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
                 ->paginate(7);
-
+            // dd($ventas);
             return view('ventas.venta.index', ["title" => $title,"ventas" => $ventas, "buscarTexto" => $query]);
         }
     }
 
     public function create()
     {
-        $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
-        // dd($cajaSessionid);
-        $Caja = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
-        // dd($Caja);
 
+
+        Sessioncaja::crearsession();
         $tasa = Tasa::find(1);
         $tasa->updated_at;
         $fechaActual = Carbon::now();
-
-        if ($tasa->updated_at->diffInHours($fechaActual) >= 6 ) {
+        // dd($tasa->updated_at->diffInHours($fechaActual));
+        if ($tasa->tasa <= 0 || $tasa->updated_at->diffInHours($fechaActual) >= 6 ) {
             return redirect()
             ->route('tasa.index')
             ->with('status_danger', '¡Debes Actualizar el margen de gananacia para poder acceder!');
         }else{
+
+            $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+            // dd($cajaSessionid);
+            $Caja = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
 
             if ($Caja) {
                 $title='Nueva venta';

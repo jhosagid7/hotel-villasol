@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateContabilidadsTable extends Migration
+class CreateArticuloVentasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,13 @@ class CreateContabilidadsTable extends Migration
      */
     public function up()
     {
-        Schema::create('contabilidads', function (Blueprint $table) {
+        Schema::create('articulo_ventas', function (Blueprint $table) {
             $table->id();
-            $table->string('denominacion', 100);
-            $table->decimal('valor', 11, 2);
             $table->unsignedInteger('cantidad')->nullable();
-            $table->decimal('subtotal', 11, 2)->nullable();
-            $table->string('tipo', 20);
-            $table->enum('modo', ['Apertura', 'Cierre']);
-            $table->foreignId('caja_id')->references('id')->on('cajas');
+            $table->decimal('precio_costo', 11, 2)->nullable();
+            $table->decimal('descuento', 11, 2)->nullable();
+            $table->foreignId('articulo_id')->references('id')->on('articulos');
+            $table->foreignId('venta_id')->references('id')->on('ventas');
             $table->timestamps();
         });
     }
@@ -33,6 +31,6 @@ class CreateContabilidadsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('contabilidads');
+        Schema::dropIfExists('articulo_ventas');
     }
 }

@@ -32,3 +32,4 @@ class Articulo extends Model
     //Haora especificamos los campos guarded
     protected $guarded = [];
 }
+

@@ -12,19 +12,27 @@ class Venta extends Model
 
     public $timestamps = false;
 
-    
+    protected $dates = [
+        'fecha_hora',
+    ];
+
     protected $fillabel = [
-        'idcliente',
         'tipo_comprobante',
         'serie_comprobante',
         'num_comprobante',
         'fecha_hora',
-        'impuesto',
+        'tipo_pago',
+        'precio_costo',
+        'margen_ganancia',
         'total_venta',
-        'estado'
+        'ganancia_neta',
+        'estado',
+        'user_id',
+        'persona_id',
+        'caja_id'
     ];
 
-    
+
     protected $guarded = [];
 
 }
