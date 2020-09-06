@@ -6,12 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Persona extends Model
 {
-    
-    protected $table = 'persona';
 
-    protected $primaryKey = 'idpersona';
+    // protected $table = 'persona';
 
-    public $timestamps = false;
+    // protected $primaryKey = 'idpersona';
+
+    // public $timestamps = false;
 
     protected $fillabel = [
         'tipo_persona',
@@ -20,7 +20,8 @@ class Persona extends Model
         'num_documento',
         'direccion',
         'telefono',
-        'email'
+        'email',
+        'imagen'
     ];
 
     protected $guarded = [];

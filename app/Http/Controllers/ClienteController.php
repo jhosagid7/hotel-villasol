@@ -18,15 +18,16 @@ class ClienteController extends Controller
     }
     public function index(Request $request)
     {
+        // return 'soy index';
         if ($request) {
             $query = trim($request->get('buscarTexto'));
-            $personas = DB::table('persona')
+            $personas = DB::table('personas')
             ->where('nombre', 'LIKE', '%' . $query . '%')
             ->where('tipo_persona', '=', 'Cliente')
             ->orwhere('num_documento', 'LIKE', '%' . $query . '%')
             ->where('tipo_persona', '=', 'Cliente')
-            ->orderBy('idpersona', 'desc')
-            ->paginate(7);
+            ->orderBy('id', 'desc')
+            ->get();
 
             return view('ventas.persona.index', ["personas" => $personas, "buscarTexto" => $query]);
         }
@@ -46,10 +47,17 @@ class ClienteController extends Controller
         $persona->direccion = $request->get('direccion');
         $persona->telefono = $request->get('telefono');
         $persona->email = $request->get('email');
-        
+
+
+        if ($request->hasFile('imagen')) {
+            $file = $request->file('imagen');
+            $file->move(public_path(). '/imagenes/personas/', $file->getClientOriginalName('imagen'));
+            $persona->imagen   = $file->getClientOriginalName('imagen');
+        }
+
         $persona->save();
 
-        return Redirect::to('ventas/cliente')->with('success', 'El Cliente fué registrado exitosamente');
+        return Redirect::to('ventas/cliente')->with('status_success', 'El Cliente fué registrado exitosamente');
     }
     public function show($id)
     {
@@ -68,9 +76,17 @@ class ClienteController extends Controller
         $persona->direccion = $request->get('direccion');
         $persona->telefono = $request->get('telefono');
         $persona->email = $request->get('email');
+
+
+        if ($request->hasFile('imagen')) {
+            $file = $request->file('imagen');
+            $file->move(public_path(). '/imagenes/personas/', $file->getClientOriginalName('imagen'));
+            $persona->imagen   = $file->getClientOriginalName('imagen');
+        }
+
         $persona->update();
 
-        return Redirect::to('ventas/cliente')->with('success', 'El Cliente fué Actualizado exitosamente');
+        return Redirect::to('ventas/cliente')->with('status_success', 'El Cliente fué Actualizado exitosamente');
     }
     public function destroy($id)
     {

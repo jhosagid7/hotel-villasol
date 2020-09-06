@@ -1,17 +1,5 @@
 @extends ('layouts.admin3') @section('contenido')
-<!-- Default box -->
-<!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
+
 
     <!-- Main content -->
     <section class="content">
@@ -56,9 +44,9 @@
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
         <div class="form-group">
             <label for="">Categoría</label>
-            <select name="idcategoria" id="idcategoria" class="form-control">
+            <select name="categoria_id" id="categoria_id" class="form-control">
                     @foreach($categorias as $cat)
-                        <option value="{{$cat->idcategoria}}">{{$cat->nombre}}</option>
+                        <option value="{{$cat->id}}">{{$cat->nombre}}</option>
                     @endforeach
                 </select>
         </div>
@@ -67,14 +55,14 @@
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
         <div class="form-group">
             <label for="codigo">Código</label>
-            <input type="text" name="codigo" required value="{{old('codigo')}}" class="form-control" placeholder="Codigo de articulo...">
+            <input type="number" name="codigo" required value="{{old('codigo')}}" class="form-control enteros" placeholder="Codigo de articulo...">
         </div>
     </div>
 
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
         <div class="form-group">
             <label for="stock">Stock</label>
-            <input type="text" name="stock" required value="{{old('stock')}}" class="form-control" placeholder="Stock de articulo...">
+            <input type="number" name="stock" required value="{{old('stock')}}" class="form-control enteros" placeholder="Stock de articulo...">
         </div>
     </div>
 
@@ -91,23 +79,72 @@
             <input type="file" name="imagen" class="form-control" accept="image/*">
         </div>
     </div>
+
     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
         <div class="form-group">
-            <button class="btn btn-primary" type="submit">Guardar</button>
-            <a class="btn btn-danger" href="{{route('articulo.index')}}">{{__('Back')}}</a>
+            <label for="precio_costo">Precio Compra</label>
+            <input type="text" name="precio_costo" required value="{{old('precio_costo')}}" class="form-control decimal" placeholder="Precio de compra en dolares...">
         </div>
     </div>
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+
+    </div>
 </div>
-
-</form>
-
-{{-- fin de la cabecera de box --}}
 </div>
 <!-- /.box-body -->
 <div class="box-footer">
-  {{-- Footer --}}
+    <div class="form-group margin">
+        <button class="btn btn-primary" type="submit">Guardar</button>
+        <a class="btn btn-danger" href="{{route('articulo.index')}}">{{__('Back')}}</a>
+    </div>
 </div>
 <!-- /.box-footer-->
+</form>
+
+{{-- fin de la cabecera de box --}}
+
 </div>
+    </section>
 <!-- /.box -->
- @endsection
+
+@push('sciptsMain')
+  <script>
+$(document).ready(function() {
+
+    $(function() {
+            $('.enteros').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+    $('.decimal').on('keypress', function(e) {
+        // Backspace = 8, Enter = 13, ’0′ = 48, ’9′ = 57, ‘.’ = 46
+        var field = $(this);
+        key = e.keyCode ? e.keyCode : e.which;
+
+        if (key == 8) return true;
+            if (key > 47 && key < 58) {
+                if (field.val() === "") return true;
+                    var existePto = (/[.]/).test(field.val());
+            if (existePto === false) {
+                regexp = /.[0-9]{10}$/;
+            } else {
+                regexp = /.[0-9]{2}$/;
+            }
+
+            return !(regexp.test(field.val()));
+        }
+        if (key == 46) {
+            if (field.val() === "") return false;
+                regexp = /^[0-9]+$/;
+                return regexp.test(field.val());
+        }
+            return false;
+    });
+
+});
+
+
+
+</script>
+@endpush
+@endsection

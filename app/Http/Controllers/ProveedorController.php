@@ -20,12 +20,12 @@ class ProveedorController extends Controller
     {
         if ($request) {
             $query = trim($request->get('buscarTexto'));
-            $personas = DB::table('persona')
+            $personas = DB::table('personas')
                 ->where('nombre', 'LIKE', '%' . $query . '%')
                 ->where('tipo_persona', '=', 'Proveedor')
                 ->orwhere('num_documento', 'LIKE', '%' . $query . '%')
                 ->where('tipo_persona', '=', 'Proveedor')
-                ->orderBy('idpersona', 'desc')
+                ->orderBy('id', 'desc')
                 ->paginate(7);
 
             return view('compras.proveedor.index', ["personas" => $personas, "buscarTexto" => $query]);
@@ -47,9 +47,15 @@ class ProveedorController extends Controller
         $persona->telefono          = $request->get('telefono');
         $persona->email             = $request->get('email');
 
+        if ($request->hasFile('imagen')) {
+            $file = $request->file('imagen');
+            $file->move(public_path(). '/imagenes/personas/', $file->getClientOriginalName('imagen'));
+            $persona->imagen   = $file->getClientOriginalName('imagen');
+        }
+
         $persona->save();
 
-        return Redirect::to('compras/proveedor')->with('success', 'El Proveedor fué registrado exitosamente');
+        return Redirect::to('compras/proveedor')->with('status_success', 'El Proveedor fué registrado exitosamente');
     }
     public function show($id)
     {
@@ -68,9 +74,16 @@ class ProveedorController extends Controller
         $persona->direccion         = $request->get('direccion');
         $persona->telefono          = $request->get('telefono');
         $persona->email             = $request->get('email');
+
+        if ($request->hasFile('imagen')) {
+            $file = $request->file('imagen');
+            $file->move(public_path(). '/imagenes/personas/', $file->getClientOriginalName('imagen'));
+            $persona->imagen   = $file->getClientOriginalName('imagen');
+        }
+
         $persona->update();
 
-        return Redirect::to('compras/proveedor')->with('success', 'El Proveedor fué Actualizado exitosamente');
+        return Redirect::to('compras/proveedor')->with('status_success', 'El Proveedor fué Actualizado exitosamente');
     }
     public function destroy($id)
     {

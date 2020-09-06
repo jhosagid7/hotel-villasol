@@ -10,7 +10,7 @@
 
             {{-- {!! Form::model($persona,['route'=>['proveedor.update', $persona->idpersona], 'method'=>'PATCH']) !!}
             {{ Form::token() }} --}}
-            <form action="{{ route('proveedor.update', $persona->idpersona)}}" enctype="multipart/form-data" method="POST" autocomplete="off" role="buscar">
+            <form action="{{ route('proveedor.update', $persona->id)}}" enctype="multipart/form-data" method="POST" autocomplete="off" role="buscar">
                 @csrf
                 @method('PUT')
     <div class="row">

@@ -25,8 +25,12 @@ class CreateCajasTable extends Migration
             $table->string('hora', 20);
             $table->string('mes', 20);
             $table->year('year');
-            $table->decimal('monto', 11, 2)->default(0.00);
-            $table->decimal('monto_cierre', 11, 2)->default(0.00);
+            $table->decimal('monto_dolar', 11, 2)->nullable();
+            $table->decimal('monto_peso', 11, 2)->nullable();
+            $table->decimal('monto_bolivar', 11, 2)->nullable();
+            $table->decimal('monto_dolar_cierre', 11, 2)->nullable();
+            $table->decimal('monto_peso_cierre', 11, 2)->nullable();
+            $table->decimal('monto_bolivar_cierre', 11, 2)->nullable();
             $table->enum('estado', ['Abierta', 'Cerrada', 'Auditoria']);
             $table->string('caja', 20);
             $table->foreignId('user_id')->references('id')->on('users');

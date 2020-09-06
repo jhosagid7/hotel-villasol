@@ -25,14 +25,14 @@ class ArticuloController extends Controller
     {
         if ($request) {
             $query = trim($request->get('buscarTexto'));
-            $articulos = DB::table('articulo as a')
-            ->join('categoria as c', 'a.idcategoria', '=', 'c.idcategoria')
+            $articulos = DB::table('articulos as a')
+            ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
             ->where('a.nombre', 'LIKE', '%' . $query . '%')
             ->orwhere('a.codigo', 'LIKE', '%' . $query . '%')
             ->orwhere('a.estado', 'LIKE', '%' . $query . '%')
             ->orwhere('c.nombre', 'LIKE', '%' . $query . '%')
-            ->select('a.idarticulo', 'a.codigo', 'a.nombre', 'a.stock', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
-            ->orderBy('idarticulo', 'desc')
+            ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
+            ->orderBy('id', 'desc')
             ->get();
 
             return view('almacen.articulo.index', ["articulos" => $articulos, "buscarTexto" => $query]);
@@ -40,7 +40,7 @@ class ArticuloController extends Controller
     }
     public function create()
     {
-        $categorias = DB::table('categoria')->where('condicion', '=', '1')->get();
+        $categorias = DB::table('categorias')->where('condicion', '=', 'Activa')->get();
         return view('almacen.articulo.create', ['categorias'=>$categorias]);
     }
     public function store(ArticuloFormRequest $request)
@@ -48,10 +48,11 @@ class ArticuloController extends Controller
         // return $request->all();
         //creamos un objeto del modelo categoria
         $articulo = new Articulo;
-        $articulo->idcategoria  = $request->get('idcategoria');
+        $articulo->categoria_id  = $request->get('categoria_id');
         $articulo->codigo       = $request->get('codigo');
         $articulo->nombre       = $request->get('nombre');
         $articulo->stock         = $request->get('stock');
+        $articulo->precio_costo         = $request->get('precio_costo');
         $articulo->descripcion  = $request->get('descripcion');
 
         if ($request->hasFile('imagen')) {
@@ -64,25 +65,30 @@ class ArticuloController extends Controller
 
         $articulo->save();
 
-        return Redirect::to('almacen/articulo')->with('success', 'Articulo registrado exitosamente');
+        return Redirect::to('almacen/articulo')->with('status_success', 'Articulo registrado exitosamente');
     }
+
+
     public function show($id)
     {
         return view("almacen.articulo.show", ["articulo" => Articulo::findOrFail($id)]);
     }
+
+
     public function edit($id)
     {
         $articulo = Articulo::findOrFail($id);
-        $categorias = DB::table('categoria')->where('condicion', '=', '1')->get();
+        $categorias = DB::table('categorias')->where('condicion', '=', 'Activa')->get();
         return view("almacen.articulo.edit", ["articulo" => $articulo, 'categorias'=> $categorias]);
     }
     public function update(ArticuloFormRequest $request, $id)
     {
         $articulo = Articulo::findOrFail($id);
-        $articulo->idcategoria  = $request->get('idcategoria');
+        $articulo->id  = $request->get('categoria_id');
         $articulo->codigo       = $request->get('codigo');
         $articulo->nombre       = $request->get('nombre');
         $articulo->stock         = $request->get('stock');
+        $articulo->precio_costo         = $request->get('precio_costo');
         $articulo->descripcion  = $request->get('descripcion');
 
         if ($request->hasFile('imagen')) {
@@ -93,7 +99,7 @@ class ArticuloController extends Controller
 
         $articulo->update();
 
-        return Redirect::to('almacen/articulo')->with('success', 'El Artículo fue actualizado exitosamente');
+        return Redirect::to('almacen/articulo')->with('status_success', 'El Artículo fue actualizado exitosamente');
     }
     public function destroy($id)
     {

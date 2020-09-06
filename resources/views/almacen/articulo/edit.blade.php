@@ -1,18 +1,6 @@
 @extends ('layouts.admin3')
 @section('contenido')
-<!-- Default box -->
-<!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
+
 
     <!-- Main content -->
     <section class="content">
@@ -45,7 +33,7 @@
 
             {{-- {!! Form::model($articulo,['route'=>['articulo.update', $articulo->idarticulo], 'method'=>'PATCH', 'files'=>'true']) !!}
             {{ Form::token() }} --}}
-    <form action="{{ route('articulo.update', $articulo->idarticulo)}}" enctype="multipart/form-data" method="POST" autocomplete="off" role="buscar">
+    <form action="{{ route('articulo.update', $articulo->id)}}" enctype="multipart/form-data" method="POST" autocomplete="off" role="buscar">
     @csrf
     @method('PUT')
     <div class="row">
@@ -58,12 +46,12 @@
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="">Categoría</label>
-                <select name="idcategoria" id="idcategoria" class="form-control">
+                <select name="categoria_id" id="categoria_id" class="form-control">
                     @foreach($categorias as $cat)
-                    @if($cat->idcategoria==$articulo->idcategoria)
-                    <option value="{{$cat->idcategoria}}" selected>{{$cat->nombre}}</option>
+                    @if($cat->id==$articulo->id)
+                    <option value="{{$cat->id}}" selected>{{$cat->nombre}}</option>
                     @else
-                    <option value="{{$cat->idcategoria}}">{{$cat->nombre}}</option>
+                    <option value="{{$cat->id}}">{{$cat->nombre}}</option>
                     @endif
                     @endforeach
                 </select>
@@ -98,6 +86,12 @@
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
+                <label for="precio_costo">Precio de costo</label>
+                <input type="number" name="precio_costo" required value="{{$articulo->precio_costo}}" class="form-control decimal">
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">
                 <button class="btn btn-primary" type="submit">Guardar</button>
                 <a class="btn btn-danger" href="{{route('articulo.index')}}">{{__('Back')}}</a>
             </div>
@@ -117,5 +111,44 @@
 <!-- /.box-footer-->
 </div>
 <!-- /.box -->
+@push('sciptsMain')
+  <script>
+$(document).ready(function() {
 
+    $(function() {
+            $('.enteros').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+    $('.decimal').on('keypress', function(e) {
+        // Backspace = 8, Enter = 13, ’0′ = 48, ’9′ = 57, ‘.’ = 46
+        var field = $(this);
+        key = e.keyCode ? e.keyCode : e.which;
+
+        if (key == 8) return true;
+            if (key > 47 && key < 58) {
+                if (field.val() === "") return true;
+                    var existePto = (/[.]/).test(field.val());
+            if (existePto === false) {
+                regexp = /.[0-9]{10}$/;
+            } else {
+                regexp = /.[0-9]{2}$/;
+            }
+
+            return !(regexp.test(field.val()));
+        }
+        if (key == 46) {
+            if (field.val() === "") return false;
+                regexp = /^[0-9]+$/;
+                return regexp.test(field.val());
+        }
+            return false;
+    });
+
+});
+
+
+
+</script>
+@endpush
 @endsection

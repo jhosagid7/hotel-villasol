@@ -10,7 +10,7 @@ class Sessioncaja extends Model
 {
     public $timestamps = true;
     protected $fillabel = [
-        
+
         'estado'
     ];
 
@@ -37,8 +37,8 @@ class Sessioncaja extends Model
 
     //Creamos un metodo integrador
     public static function buscarOrCrearIDSession($session_caja_id) {
-        
-        
+
+
         if ($session_caja_id) {
             //si existe Buscamos el id de la session_caja
             return Sessioncaja::buscarPorSession($session_caja_id);
@@ -51,7 +51,7 @@ class Sessioncaja extends Model
                //si no existe Bamos a crear un session_caja_id
             return Sessioncaja::crearSinSession();
             }
-            
+
         }
     }
 
@@ -71,7 +71,7 @@ class Sessioncaja extends Model
         // return Sessioncaja::find($session_caja_id);
     }
 
-    
+
 
     //este metodo nos permite dar formato al numero de la factura
     public static function numCodigo($sucursal, $op, $id_cod) {
@@ -82,12 +82,13 @@ class Sessioncaja extends Model
             $longitud       = strlen($id_cod);
             $resta          = '-' . $longitud;
             $resul_num      = substr_replace('00000000', $id_cod, $resta);
-            $num_Codigo     = strtoupper($sucursal . '-' . $op . $resul_num);
+            $num_Codigo     = strtoupper($sucursal . $op . $resul_num);
+            // $num_Codigo     = strtoupper($sucursal . '-' . $op . $resul_num);
             return $num_Codigo;
         }
     }
 
-    //fin de metodo numCodigo 
+    //fin de metodo numCodigo
     //######################################################################
     //este metodo nos permite dar formato al numero de la factura
     public static function numCodigoFactura($id_cod) {
@@ -103,7 +104,7 @@ class Sessioncaja extends Model
         }
     }
 
-    //fin de metodo numCodigoFactura 
+    //fin de metodo numCodigoFactura
 
     public static function formatoAmericano($valor) {
         $valor = str_replace('.', '', $valor);
@@ -125,8 +126,8 @@ class Sessioncaja extends Model
 
     //ahora creamos el metodo para crear la session caja SessionCaja::numCodigo('1', $op, $id_cod)
     public static function crearSinSession(){
-        
-        
+
+
 
         return SessionCaja::create([
             'estado' => 'Abierta'

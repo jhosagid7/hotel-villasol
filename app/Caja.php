@@ -14,8 +14,12 @@ class Caja extends Model
         'hora',
         'mes',
         'year',
-        'monto',
-        'monto_cierre',
+        'monto_dolar',
+        'monto_peso',
+        'monto_bolivar',
+        'monto_dolar_cierre',
+        'monto_peso_cierre',
+        'monto_bolivar_cierre',
         'estado',
         'caja',
         'user_id',
@@ -25,6 +29,10 @@ class Caja extends Model
 
     //Ahora especificamos los campos guarded
     protected $guarded=[];
+
+    protected $dates = [
+        'fecha',
+    ];
 
     public function sucursal()
     {
@@ -36,7 +44,7 @@ class Caja extends Model
         // $user = Auth::user();
         // Get the currently authenticated user's ID...
         $id = Auth::id();
-        
+
         return Caja::where('estado', 'Abierta')
                 ->where('user_id','=' ,$id)
                ->orderBy('id', 'desc')

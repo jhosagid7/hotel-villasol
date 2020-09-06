@@ -1,18 +1,6 @@
 @extends ('layouts.admin3')
 @section('contenido')
-<!-- Default box -->
-<!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
+
 
     <!-- Main content -->
     <section class="content">
@@ -54,6 +42,7 @@
                     <th>Nombre</th>
                     <th>Código</th>
                     <th>Stock</th>
+                    <th>Precio Costo</th>
                     <th>Descripción</th>
                     <th>imagen</th>
                     <th>Estado</th>
@@ -62,7 +51,7 @@
                 <tbody>
                     @foreach ($articulos as $art)
                     <tr>
-                        <td>{{ $art->idarticulo }}</td>
+                        <td>{{ $art->id }}</td>
                         <td>{{ $art->categoria }}</td>
                         <td>{{ $art->nombre }}</td>
                         <td><div>
@@ -74,14 +63,15 @@
                             {{ $art->codigo }}
                         </div></td>
                         <td>{{ $art->stock }}</td>
+                        <td>{{ $art->precio_costo }}</td>
                         <td>{{ $art->descripcion }}</td>
                         <td>
                             <img src="{{asset('imagenes/articulos/'.$art->imagen)}}" alt="{{ $art->nombre }}" height="50px" width="50px" class="img-circle">
                         </td>
                         <td>{{ $art->estado }}</td>
                         <td>
-                        <a href="{{URL::action('ArticuloController@edit', $art->idarticulo)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
-                        <a href="" data-target="#modal-delete-{{$art->idarticulo}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
+                        <a href="{{URL::action('ArticuloController@edit', $art->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
+                        <a href="" data-target="#modal-delete-{{$art->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
                         </td>
                     </tr>
                     @include('almacen.articulo.modal')

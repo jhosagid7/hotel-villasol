@@ -1,19 +1,7 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-<!-- Default box -->
-<!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
+
 
     <!-- Main content -->
     <section class="content">
@@ -44,10 +32,8 @@
             @include('custom.message')
 
 
-            {{-- {!! Form::model($categoria,['route'=>['categoria.update', $categoria->idcategoria], 'method'=>'PATCH']) !!}
 
-            {{ Form::token() }} --}}
-            <form action="{{ route('categoria.update', $categoria->idcategoria)}}" enctype="multipart/form-data" method="POST" autocomplete="off" role="buscar">
+            <form action="{{ route('categoria.update', $categoria->id)}}" enctype="multipart/form-data" method="POST" autocomplete="off" role="buscar">
                 @csrf
                 @method('PUT')
 

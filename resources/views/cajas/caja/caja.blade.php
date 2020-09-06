@@ -1,89 +1,142 @@
-@extends ('layouts.admin3')
-@section('contenido')
+<div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{$caja->id ?? '' }}">
 
+ <!-- Main content -->
+ <section class="content">
 
+    <!-- Default box -->
+    <div class="box">
+      <div class="box-header with-border">
+      <h3 class="box-title">@isset($title)
+          {{$title}}
+          @else
+          {!!"Sistema"!!}
+      @endisset</h3>
 
-    <!-- Main content -->
-    <section class="content">
+      {{-- <div class="box-tools pull-right">
+        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                title="Collapse">
+          <i class="fa fa-minus"></i></button>
+        <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+          <i class="fa fa-times"></i></button>
+      </div> --}}
+      </div>
+      <div class="box-body">
+    {{-- cabecera de box --}}
 
-        <!-- Default box -->
-        <div class="box">
-          <div class="box-header with-border">
-          <h3 class="box-title">@isset($title)
-              {{$title}}
-              @else
-              {!!"Sistema"!!}
-          @endisset</h3>
+<div class="row">
+    <div class="col-lg-6">
 
-            <div class="box-tools pull-right">
-              <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                      title="Collapse">
-                <i class="fa fa-minus"></i></button>
-              <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                <i class="fa fa-times"></i></button>
-            </div>
-          </div>
-          <div class="box-body">
-        {{-- cabecera de box --}}
-
-    <div class="row">
-        <div class="col-lg-6">
-
-            @if (count($errors) > 0)
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach($errors->all() as $error)
-                    <li>{{$error}}</li>
-                    @endforeach
-                </ul>
-            </div>
-            @endif
+        @if (count($errors) > 0)
+        <div class="alert alert-danger">
+            <ul>
+                @foreach($errors->all() as $error)
+                <li>{{$error}}</li>
+                @endforeach
+            </ul>
         </div>
+        @endif
     </div>
+</div>
 
 
-            <form action="{{ route('caja.store')}}" enctype="multipart/form-data" method="POST" autocomplete="off">
-                @csrf
-                <div class="row">
-                @isset($caja)
-                    <input name="estado" type="hidden" value="Apertura">
-                    <input id="session_id" name="session_id" type="hidden" value="{{$caja->id}}">
-                    <input id="caja_id" name="caja_id" type="hidden" value="{{ $id_caja_activa ?? '' }}">
-                    <input id="estatus_caja" name="estatus_caja" type="hidden" value="{{$estatus_caja}}">
-                    <input id="total_dolar" name="total_dolar" type="hidden" value="0">
-                    <input id="total_peso" name="total_peso" type="hidden" value="0">
-                    <input id="total_bolivar" name="total_bolivar" type="hidden" value="0">
-                    <input name="idusuario" type="hidden" value="{{Auth::user()->id}}">
-                    <input name="url" type="hidden" value="{{URL::previous()}}">
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                        <div class="form-group col-md-3">
-                            <h3><button class="btn btn-primary" type="submit"><span class='glyphicon glyphicon-save'></span> Abrir caja</button></h3>
-                        </div>
-                        <div class="form-group col-md-3">
-                            <h3><a class="btn btn-danger" href="{{ url()->previous() }}"><span class='glyphicon glyphicon-step-backward'></span> Regresar</a></h3>
-                        </div>
+        <form action="{{ route('caja.update', $caja->id ?? '' )}}" enctype="multipart/form-data" method="POST" autocomplete="off">
+            @csrf
+            @method('PUT')
+            <div class="row">
+            @isset($caja)
+                <input name="estado" type="hidden" value="cierre">
+                <input id="session_id" name="session_id" type="hidden" value="{{$caja->sessioncaja_id}}">
+                <input id="caja_id" name="caja_id" type="hidden" value="{{ $caja->id ?? '' }}">
+                {{-- <input id="estatus_caja" name="estatus_caja" type="hidden" value="{{$estatus_caja}}"> --}}
+                <input id="total_dolar" name="total_dolar" type="hidden" value="0">
+                <input id="total_peso" name="total_peso" type="hidden" value="0">
+                <input id="total_bolivar" name="total_bolivar" type="hidden" value="0">
+                <input name="idusuario" type="hidden" value="{{Auth::user()->id}}">
+                <input name="url" type="hidden" value="{{URL::previous()}}">
+                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                    <div class="form-group col-md-3">
+                        <h3><button class="btn btn-danger" type="submit"><span class='glyphicon glyphicon-save'></span> Cerrar</button></h3>
                     </div>
-                @endisset
-                </div>
-                <div class="row">
-                @isset($caja)
-
-
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                    <div class="form-group">
-                        <label for="caja">Selecciones caja</label>
-                        <select name="caja" class="form-control">
-                            <option value="Caja 1">Caja 1</option>
-
-                        </select>
+                    <div class="form-group col-md-3">
+                        <h3><a  id="cerrarModal" class="btn btn-success" href="#"><span class='glyphicon glyphicon-step-backward'></span> <span class="button" data-dismiss="modal" aria-label="Close">cancel</span></a></h3>
                     </div>
                 </div>
-                @endisset
+            @endisset
+            </div>
+            <div class="row">
+            @isset($caja)
+
+
+            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                <div class="form-group">
+                    <label for="caja">Selecciones caja</label>
+                    <select name="caja" class="form-control">
+                        <option value="Caja 1">Caja 1</option>
+
+                    </select>
                 </div>
-                <div class="col-md-4">
-                <div class="box box-info">
+            </div>
+            @endisset
+            </div>
+            <div class="col-md-4">
+            <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title"><strong>Dolar &nbsp;&nbsp;&nbsp;</strong>  <strong class="text-primary" id="totold"> 0.00</strong></h3>
+
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              <div class="table-responsive">
+                <table class="table no-margin">
+                  <thead>
+                  <tr>
+                    <th>Denominacion</th>
+                    <th>Cantidad</th>
+                    <th>Valor</th>
+
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @php
+                    $i = 0;
+                @endphp
+                    @foreach ($denominacion_dolar as $denod)
+                  <tr>
+                    <td>{{ $denod->denominacion }}</td>
+                    <td><input name="dcantidad[{{$i}}]" id="dcantidad_{{$i}}" type="number" class="form-control enteros" value="">
+                        <input name="DsubTotald[{{$i}}]" id="DsubTotald_{{$i}}" type="hidden" class="form-control"  value="">
+                    </td>
+                    <td>{{ $denod->valor }}</td>
+                    <input name="dvalor[{{$i}}]"  id="dvalor_{{$i}}" type="hidden" class="form-control" value="{{ $denod->valor }}">
+                    <input name="ddenominacion[{{$i}}]"  id="ddenominacion_{{$i}}" type="hidden" class="form-control" value="{{ $denod->denominacion }}">
+                    <input name="dtipo[{{$i}}]"  id="dtipo_{{$i}}" type="hidden" class="form-control" value="{{ $denod->tipo }}">
+                  </tr>
+                  @php
+                    $i++;
+                @endphp
+                  @endforeach
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.table-responsive -->
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer clearfix">
+              <h3><strong class="text-primary">Totol Dolares</strong> <strong id="dtotal">0.00</strong></h3>
+            </div>
+            <!-- /.box-footer -->
+          </div>
+            </div>
+            <div class="col-md-4">
+            <div class="box box-info">
                 <div class="box-header with-border">
-                  <h3 class="box-title"><strong>Dolar &nbsp;&nbsp;&nbsp;</strong>  <strong class="text-primary" id="totold"> 0.00</strong></h3>
+                  <h3 class="box-title"><strong>Peso &nbsp;&nbsp;&nbsp;</strong>  <strong class="text-primary" id="totolp"> 0.00</strong></h3>
+
 
                   <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -105,22 +158,23 @@
                       </thead>
                       <tbody>
                         @php
-                        $i = 0;
+                        $p = 0;
                     @endphp
-                        @foreach ($denominacion_dolar as $denod)
+                        @foreach ($denominacion_peso as $penod)
                       <tr>
-                        <td>{{ $denod->denominacion }}</td>
-                        <td><input name="dcantidad[{{$i}}]" id="dcantidad_{{$i}}" type="number" class="form-control enteros" value="">
-                            <input name="DsubTotald[{{$i}}]" id="DsubTotald_{{$i}}" type="text" class="form-control"  value="">
-                        </td>
-                        <td>{{ $denod->valor }}</td>
-                        <input name="dvalor[{{$i}}]"  id="dvalor_{{$i}}" type="hidden" class="form-control" value="{{ $denod->valor }}">
-                        <input name="ddenominacion[{{$i}}]"  id="ddenominacion_{{$i}}" type="hidden" class="form-control" value="{{ $denod->denominacion }}">
-                        <input name="dtipo[{{$i}}]"  id="dtipo_{{$i}}" type="hidden" class="form-control" value="{{ $denod->tipo }}">
+                        <td>{{ $penod->denominacion }}</td>
+                    <td><input name="pcantidad[{{$p}}]" id="pcantidad_{{$p}}" type="number" class="form-control enteros" value="">
+                        <input name="PsubTotald[{{$p}}]" id="PsubTotald_{{$p}}" type="hidden" class="form-control"  value="">
+                    </td>
+                    <td>{{ $penod->valor }}</td>
+                    <input name="pvalor[{{$p}}]"  id="pvalor_{{$p}}" type="hidden" class="form-control" value="{{ $penod->valor }}">
+                    <input name="pdenominacion[{{$p}}]"  id="pdenominacion_{{$p}}" type="hidden" class="form-control" value="{{ $penod->denominacion }}">
+                    <input name="ptipo[{{$p}}]"  id="ptipo_{{$p}}" type="hidden" class="form-control" value="{{ $penod->tipo }}">
+
                       </tr>
                       @php
-                        $i++;
-                    @endphp
+                    $p++;
+                @endphp
                       @endforeach
                       </tbody>
                     </table>
@@ -129,15 +183,15 @@
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer clearfix">
-                  <h3><strong class="text-primary">Totol Dolares</strong> <strong id="dtotal">0.00</strong></h3>
+                  <h3><strong class="text-primary">Totol Pesos</strong>  <strong id="ptotal">0.00</strong></h3>
                 </div>
                 <!-- /.box-footer -->
               </div>
-                </div>
-                <div class="col-md-4">
+            </div>
+            <div class="col-md-4">
                 <div class="box box-info">
                     <div class="box-header with-border">
-                      <h3 class="box-title"><strong>Peso &nbsp;&nbsp;&nbsp;</strong>  <strong class="text-primary" id="totolp"> 0.00</strong></h3>
+                      <h3 class="box-title"><strong>Bolivares &nbsp;&nbsp;&nbsp;</strong>  <strong class="text-primary" id="totolb"> 0.00</strong></h3>
 
 
                       <div class="box-tools pull-right">
@@ -155,28 +209,27 @@
                             <th>Denominacion</th>
                             <th>Cantidad</th>
                             <th>Valor</th>
-
                           </tr>
                           </thead>
                           <tbody>
                             @php
-                            $p = 0;
-                        @endphp
-                            @foreach ($denominacion_peso as $penod)
+                            $b = 0;
+                            @endphp
+                            @foreach ($denominacion_bolivar as $benod)
                           <tr>
-                            <td>{{ $penod->denominacion }}</td>
-                        <td><input name="pcantidad[{{$p}}]" id="pcantidad_{{$p}}" type="number" class="form-control enteros" value="">
-                            <input name="PsubTotald[{{$p}}]" id="PsubTotald_{{$p}}" type="text" class="form-control"  value="">
-                        </td>
-                        <td>{{ $penod->valor }}</td>
-                        <input name="pvalor[{{$p}}]"  id="pvalor_{{$p}}" type="hidden" class="form-control" value="{{ $penod->valor }}">
-                        <input name="pdenominacion[{{$p}}]"  id="pdenominacion_{{$p}}" type="hidden" class="form-control" value="{{ $penod->denominacion }}">
-                        <input name="ptipo[{{$p}}]"  id="ptipo_{{$p}}" type="hidden" class="form-control" value="{{ $penod->tipo }}">
+                            <td>{{ $benod->denominacion }}</td>
+                            <td><input name="bcantidad[{{$b}}]" id="bcantidad_{{$b}}" type="number" class="form-control enteros" value="">
+                                <input name="BsubTotald[{{$b}}]" id="BsubTotald_{{$b}}" type="hidden" class="form-control"  value="">
+                            </td>
+                            <td>{{ $benod->valor }}</td>
+                            <input name="bvalor[{{$b}}]"  id="bvalor_{{$b}}" type="hidden" class="form-control" value="{{ $benod->valor }}">
+                            <input name="bdenominacion[{{$b}}]"  id="bdenominacion_{{$b}}" type="hidden" class="form-control" value="{{ $benod->denominacion }}">
+                            <input name="btipo[{{$b}}]"  id="btipo_{{$b}}" type="hidden" class="form-control" value="{{ $benod->tipo }}">
 
                           </tr>
                           @php
-                        $p++;
-                    @endphp
+                            $b++;
+                            @endphp
                           @endforeach
                           </tbody>
                         </table>
@@ -185,83 +238,32 @@
                     </div>
                     <!-- /.box-body -->
                     <div class="box-footer clearfix">
-                      <h3><strong class="text-primary">Totol Pesos</strong>  <strong id="ptotal">0.00</strong></h3>
+                      <h3><strong class="text-primary">Totol Bolivares</strong>  <strong id="btotal">0.00</strong></h3>
                     </div>
                     <!-- /.box-footer -->
                   </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="box box-info">
-                        <div class="box-header with-border">
-                          <h3 class="box-title"><strong>Bolivares &nbsp;&nbsp;&nbsp;</strong>  <strong class="text-primary" id="totolb"> 0.00</strong></h3>
-
-
-                          <div class="box-tools pull-right">
-                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                            </button>
-                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                          </div>
-                        </div>
-                        <!-- /.box-header -->
-                        <div class="box-body">
-                          <div class="table-responsive">
-                            <table class="table no-margin">
-                              <thead>
-                              <tr>
-                                <th>Denominacion</th>
-                                <th>Cantidad</th>
-                                <th>Valor</th>
-                              </tr>
-                              </thead>
-                              <tbody>
-                                @php
-                                $b = 0;
-                                @endphp
-                                @foreach ($denominacion_bolivar as $benod)
-                              <tr>
-                                <td>{{ $benod->denominacion }}</td>
-                                <td><input name="bcantidad[{{$b}}]" id="bcantidad_{{$b}}" type="number" class="form-control enteros" value="">
-                                    <input name="BsubTotald[{{$b}}]" id="BsubTotald_{{$b}}" type="text" class="form-control"  value="">
-                                </td>
-                                <td>{{ $benod->valor }}</td>
-                                <input name="bvalor[{{$b}}]"  id="bvalor_{{$b}}" type="hidden" class="form-control" value="{{ $benod->valor }}">
-                                <input name="bdenominacion[{{$b}}]"  id="bdenominacion_{{$b}}" type="hidden" class="form-control" value="{{ $benod->denominacion }}">
-                                <input name="btipo[{{$b}}]"  id="btipo_{{$b}}" type="hidden" class="form-control" value="{{ $benod->tipo }}">
-
-                              </tr>
-                              @php
-                                $b++;
-                                @endphp
-                              @endforeach
-                              </tbody>
-                            </table>
-                          </div>
-                          <!-- /.table-responsive -->
-                        </div>
-                        <!-- /.box-body -->
-                        <div class="box-footer clearfix">
-                          <h3><strong class="text-primary">Totol Bolivares</strong>  <strong id="btotal">0.00</strong></h3>
-                        </div>
-                        <!-- /.box-footer -->
-                      </div>
-                    </div>
 
 
 
-            </form>
+        </form>
 
 {{-- fin de la cabecera de box --}}
 </div>
 <!-- /.box-body -->
 <div class="box-footer">
-  {{-- Footer --}}
+{{-- Footer --}}
 </div>
 <!-- /.box-footer-->
 </div>
 <!-- /.box -->
-
+</div>
 @push('sciptsMain')
   <script>
+
+$("#cerrarModal").click(function() {
+    $('#caja').modal('hide')
+      });
     var dato = 0;
 
 
@@ -604,4 +606,3 @@
 
   </script>
 @endpush
-@endsection

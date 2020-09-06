@@ -105,7 +105,12 @@
                 <input type="text" name="email" class="form-control" value="{{old('email')}}" placeholder="Email...">
             </div>
         </div>
-
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="imagen">Imagen</label>
+                <input type="file" name="imagen" class="form-control" accept="image/*">
+            </div>
+        </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <button class="btn btn-primary" type="submit">Guardar</button>

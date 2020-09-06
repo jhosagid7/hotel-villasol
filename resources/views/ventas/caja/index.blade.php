@@ -1,513 +1,650 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-<div class="col-md-12 margin">
-    <div class="col-2 margin-bottom">
-        <button id="abrircaja" class="btn  btn-primary">Abrir caja</button>
-        <a id="mganancia" href="{{URL::action('TasaController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Margen de Ganancia</button></a></h3>
+    <div class="col-md-12 ">
+        <div class="col-2 margin-bottom">
 
-        {{-- <a href="#ventas" data-toggle="tab">Ventas</a> --}}
-    </div>
-    <div class="nav-tabs-custom">
-        @include('custom.message')
-      <ul class="nav nav-tabs">
-        <li id="licaja" class="active"><a href="#caja" data-toggle="tab">Caja</a></li>
-        <li id="liventas"><a href="#ventas" data-toggle="tab">Ventas</a></li>
-        <li id="liconf"><a href="#conf" data-toggle="tab">Conf Tasa</a></li>
-      </ul>
-      <div class="tab-content">
-        <div class="active tab-pane" id="caja">
-          <!-- Post -->
-          <div class="box-body">
-            <div class="table-responsive">
-                <table id="ven"
-                    class="table table-striped table-bordered table-condensed table-hover">
-                    <thead>
-                        <tr>
-                            <th>Codigo</th>
-                            <th>Fecha</th>
-                            <th>Hora cierre</th>
-                            <th>Hora inicio</th>
-                            <th>Monto cierre</th>
-                            <th>Monto inicio</th>
-                            <th>Estado</th>
-                            <th>Caja</th>
-                        </tr>
-                    </thead>
-                    <tbody id="listarcaja">
+            <a id="abrircaja" href="{{URL::action('CajaController@create')}}"><button class='btn btn-primary'><span class='glyphicon glyphicon-open'></span> Crear caja</button></a></h3>
+            <a id="mganancia" href="{{URL::action('TasaController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-usd'></span> Margen de Ganancia</button></a></h3>
 
-
-
-
-
-                    </tbody>
-                </table>
-            </div>
-
-
-            <!-- /.table-responsive -->
+            {{-- <a href="#ventas" data-toggle="tab">Ventas</a> --}}
         </div>
+        <div class="nav-tabs-custom">
+            @include('custom.message')
+            <ul class="nav nav-tabs">
+                <li id="licaja" class="active"><a href="#caja" data-toggle="tab">Caja</a></li>
+                <li id="liventas"><a href="#ventas" data-toggle="tab">Ventas</a></li>
+                <li id="liconf"><a href="#conf" data-toggle="tab">Conf Tasa</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="active tab-pane" id="caja">
+                    <!-- Post -->
 
-          <!-- /.post -->
-        </div>
-        <!-- /.tab-pane -->
-        <div class="tab-pane" id="ventas">
-           <!-- Ventas -->
-           <div id="contventas" class="container-small text-sm">
-            <form action="{{ route('venta.store') }}" method="POST" autocomplete="off">
-                @csrf
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table id="ven"
+                                class="table table-striped table-bordered table-condensed table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Codigo</th>
+                                        <th>Fecha</th>
+                                        <th>Hora cierre</th>
+                                        <th>Hora inicio</th>
+                                        <th>Monto cierre</th>
+                                        <th>Monto inicio</th>
+                                        <th>Estado</th>
+                                        <th>Caja</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listarcaja">
 
-                <div class="row">
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <div class="form-group">
-                            <label for="cliente">Cliente</label>
-                            <select name="idcliente" id="idcliente" class="form-control selectpicker"
-                                data-live-search="true">
-                                @foreach ($personas as $persona)
-                                    <option value="{{ $persona->idpersona }}">{{ $persona->nombre }}</option>
-                                @endforeach
-                            </select>
+                                    <tr>
+                                        <td>{{$caja->codigo}}</td>
+
+                                    <td>{{$caja->fecha}}</td>
+
+                                    <td>{{$caja->hora_cierre}}</td>
+
+                                    <td>{{$caja->hora}}</td>
+
+                                    <td>{{$caja->monto_cierre}}</td>
+
+                                    <td>{{$caja->monto}}</td>
+
+                                    <td>{{$caja->estado}}</td>
+
+                                    <td>{{$caja->caja}}</td>
+                                </tr>
+
+
+
+                                </tbody>
+                            </table>
                         </div>
+
+
+                        <!-- /.table-responsive -->
                     </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                        <div class="form-group">
-                            <label for="tipo_comprobante">Tipo Comprobante</label>
-                            <select name="tipo_comprobante" class="form-control">
-                                <option value="Oreden">Oreden</option>
-                                <option value="Factura">Factura</option>
-                                <option value="Ticket">Ticket</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                        <div class="form-group">
-                            <label for="serie_comprobante">Control Comprobante</label>
-                            <input type="text" name="serie_comprobante" class="form-control"
-                                value="{{ old('serie_comprobante') }}" placeholder="Control Comprobante...">
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                        <div class="form-group">
-                            <label for="num_comprobante">Número Comprobante</label>
-                            <input type="text" name="num_comprobante" required class="form-control"
-                                value="{{ old('num_comprobante') }}" placeholder="Número Comprobante...">
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
-                        <div class="panel panel-primary">
-                            <div class="panel-body">
-                                <div class="row margin-bottom">
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                            <div class="form-group">
-                                                <label for="articulo">Artículo</label>
-                                                <select name="jidarticulo" id="jidarticulo"
-                                                    class="form-control selectpicker" data-live-search="true">
-                                                    <option value="seleccione...">Seleccione Articulo</option>
-                                                    @foreach ($articulos as $articulo)
-                                                        <option
-                                                            value="{{ $articulo->idarticulo }}_{{ $articulo->stock }}_{{ $articulo->precio_compra }}_{{ $articulo->nombre }}">
-                                                            {{ $articulo->articulo }}</option>
-                                                    @endforeach
-                                                </select>
+                    <div class="box-body">
+                        {{-- cabecera de box --}}
+                        <form action="{{ route('caja.update', $caja->id)}}" enctype="multipart/form-data" method="POST" autocomplete="off">
+                                @csrf
+                                @method('PUT')
+                                <div class="row">
+                                    @isset($caja)
+                                        <input name="estado" type="hidden" value="Apertura">
+                                        <input id="session_id" name="session_id" type="hidden" value="{{$caja->id}}">
+                                        <input id="caja_id" name="caja_id" type="hidden" value="{{ $id_caja_activa ?? '' }}">
+                                        <input id="estatus_caja" name="estatus_caja" type="hidden" value="{{$estatus_caja}}">
+                                        <input id="total_dolar" name="total_dolar" type="hidden" value="0">
+                                        <input id="total_peso" name="total_peso" type="hidden" value="0">
+                                        <input id="total_bolivar" name="total_bolivar" type="hidden" value="0">
+                                        <input name="idusuario" type="hidden" value="{{Auth::user()->id}}">
+                                        <input name="url" type="hidden" value="{{URL::previous()}}">
+                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                            <div class="form-group col-md-3">
+                                                <h3><button class="btn btn-primary" type="submit"><span class='glyphicon glyphicon-save'></span> Abrir caja</button></h3>
+                                            </div>
+                                            <div class="form-group col-md-3">
+                                                <h3><a class="btn btn-danger" href="{{ url()->previous() }}"><span class='glyphicon glyphicon-step-backward'></span> Regresar</a></h3>
                                             </div>
                                         </div>
-                                        <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
-                                            <div class="form group">
-                                                <label for="cantidad">Cantidad</label>
-                                                <input type="text" name="jcantidad" id="jcantidad"
-                                                    class="form-control enteros" placeholder="Cantidad...">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
-                                            <div class="form group">
-                                                <label for="stock">Stock</label>
-                                                <input type="text" readonly name="jstock" id="jstock"
-                                                    class="form-control" placeholder="Stock...">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                            <div class="form group">
-                                                <label for="descuento">Descuento</label>
-                                                <input type="text" name="jdescuento" id="jdescuento"
-                                                    class="form-control decimal" placeholder="Descuento...">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                            <div class="form group">
-                                                <label for="precio_venta_dolar">Precio Dolar</label>
-                                                <h4 class="font-weight-bold" id="vprecio_venta_dolar">$. 0.00
-                                                </h4>
-                                                <input type="hidden" name="jprecio_venta_d_dolar"
-                                                    id="jprecio_venta_d_dolar" class="form-control">
-                                                <input type="hidden" name="jprecio_compra" id="jprecio_compra"
-                                                    class="form-control" placeholder="Precio venta dolar...">
-                                                <input type="hidden" name="jprecio_venta" id="jprecio_venta"
-                                                    class="form-control" placeholder="Precio dolar...">
-                                                <input type="hidden" name="jprecio_venta_dolar"
-                                                    id="jprecio_venta_dolar" class="form-control"
-                                                    placeholder="Precio dolar...">
-                                                <input type="hidden" name="jmarjen_ganancia_dolar"
-                                                    id="jmarjen_ganancia_dolar"
-                                                    value="{{ $tasaDolar->porcentaje_ganancia }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                            <div class="form group">
-                                                <label for="jprecio_venta_peso">Precio Pesos</label>
-                                                <h4 class="font-weight-bold" id="vprecio_venta_peso">$. 0.00
-                                                </h4>
-                                                <input type="hidden" name="jprecio_venta_p_dolar"
-                                                    id="jprecio_venta_p_dolar" class="form-control">
-                                                <input type="hidden" name="jprecio_venta_peso"
-                                                    id="jprecio_venta_peso" class="form-control"
-                                                    placeholder="Precio pesos...">
-                                                <input type="hidden" name="jmarjen_ganancia_peso"
-                                                    id="jmarjen_ganancia_peso"
-                                                    value="{{ $tasaPeso->porcentaje_ganancia }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                            <div class="form group">
-                                                <label for="jprecio_venta_trans_punto">Precio
-                                                    Trans/Punto</label>
-                                                <h4 class="font-weight-bold" id="vprecio_venta_trans_punto">Bs.
-                                                    0.00
-                                                </h4>
-                                                <input type="hidden" name="jprecio_venta_tp_dolar"
-                                                    id="jprecio_venta_tp_dolar" class="form-control">
-                                                <input type="hidden" name="jprecio_venta_trans_punto"
-                                                    id="jprecio_venta_trans_punto" class="form-control"
-                                                    placeholder="Precio trans/punto...">
-                                                <input type="hidden" name="jmarjen_ganancia_trans_punto"
-                                                    id="jmarjen_ganancia_trans_punto"
-                                                    value="{{ $tasaTransferenciaPunto->porcentaje_ganancia }}">
-                                                <input type="hidden" name="tasaTransPunto" id="tasaTransPunto"
-                                                    value="{{ $tasaTransferenciaPunto->tasa }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                            <div class="form group">
-                                                <label for="jprecio_venta_mixto">Precio Mixto</label>
-                                                <h4 class="font-weight-bold" id="vprecio_venta_mixto">Bs. 0.00
-                                                </h4>
-                                                <input type="hidden" name="jprecio_venta_m_dolar"
-                                                    id="jprecio_venta_m_dolar" class="form-control">
-                                                <input type="hidden" name="jprecio_venta_mixto"
-                                                    id="jprecio_venta_mixto" class="form-control"
-                                                    placeholder="Precio Mixto...">
-                                                <input type="hidden" name="jmarjen_ganancia_mixto"
-                                                    id="jmarjen_ganancia_mixto"
-                                                    value="{{ $tasaMixto->porcentaje_ganancia }}">
-                                                <input type="hidden" name="tasaMixto" id="tasaMixto"
-                                                    value="{{ $tasaMixto->tasa }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                            <div class="form group">
-                                                <label for="precio_venta_Efectivo">Precio Efectivo</label>
-                                                <h4 class="font-weight-bold" id="vprecio_venta_Efectivo">Bs.
-                                                    0.00
-                                                </h4>
-                                                <input type="hidden" name="jprecio_venta_e_dolar"
-                                                    id="jprecio_venta_e_dolar" class="form-control">
-                                                <input type="hidden" name="jprecio_venta_Efectivo"
-                                                    id="jprecio_venta_Efectivo" class="form-control"
-                                                    placeholder="Precio venta efecti...">
-                                                <input type="hidden" name="jmarjen_ganancia_Efectivo"
-                                                    id="jmarjen_ganancia_Efectivo"
-                                                    value="{{ $tasaEfectivo->porcentaje_ganancia }}">
-                                                <input type="hidden" name="tasaEfectivo" id="tasaEfectivo"
-                                                    value="{{ $tasaEfectivo->tasa }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                            <div class="form group">
-                                                <button id="bt_add" type="button"
-                                                    class="btn btn-primary btn-md btn-block">Agregar</button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    @endisset
                                 </div>
                                 <div class="row">
-                                    <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
-                                        <div class="panel panel-primary">
-                                            <div class="panel-heading">
-                                                <h3 class="panel-title">Cargar Artículos</h3>
-                                            </div>
-                                            <div class="panel-body">
-                                                <div class="table-responsive">
-                                                    <table id="detalles"
-                                                        class="table table-striped table-borderd table-condensed table-hover">
-                                                        <thead>
-                                                            <th class="info">Op</th>
-                                                            <th class="info">Artículo</th>
-                                                            <th class="info">Cant</th>
-                                                            <th class="success">P/Dolar</th>
-                                                            <th class="success">S/Total</th>
-                                                            <th class="warning">P/Peso</th>
-                                                            <th class="warning">S/Total</th>
-                                                            <th class="success">P/T/P</th>
-                                                            <th class="success">S/Total</th>
-                                                            <th class="warning">P/Mixto</th>
-                                                            <th class="warning">S/Total</th>
-                                                            <th class="success">P/Efect</th>
-                                                            <th class="success">S/Total</th>
-                                                            <th class="info">Desto</th>
-                                                            {{-- <th class="info">
-                                                                Subtotal</th> --}}
-                                                        </thead>
-                                                        <tfoot>
-                                                            <th colspan="3">TOTAL</th>
-                                                            <th colspan="2">
-                                                                <h4 class="font-weight-bold" id="totald">$. 0.00
-                                                                </h4>
-                                                            </th>
-                                                            <th colspan="2">
-                                                                <h4 class="font-weight-bold" id="totalp">$. 0.00
-                                                                </h4>
-                                                            </th>
-                                                            <th colspan="2">
-                                                                <h4 class="font-weight-bold" id="totaltp">Bs.
-                                                                    0.00
-                                                                </h4>
-                                                            </th>
-                                                            <th colspan="2">
-                                                                <h4 class="font-weight-bold" id="totalm">Bs.
-                                                                    0.00
-                                                                </h4>
-                                                            </th>
-                                                            <th colspan="2">
-                                                                <h4 class="font-weight-bold" id="totale">Bs.
-                                                                    0.00
-                                                                </h4>
-                                                            </th><input type="hidden" name="total_venta"
-                                                                id="total_venta"><input type="hidden"
-                                                                name="total_ventad" id="total_ventad"><input
-                                                                type="hidden" name="total_ventap"
-                                                                id="total_ventap"><input type="hidden"
-                                                                name="total_ventatp" id="total_ventatp"><input
-                                                                type="hidden" name="total_ventam"
-                                                                id="total_ventam"><input type="hidden"
-                                                                name="total_ventae" id="total_ventae">
-                                                            <th></th>
-                                                        </tfoot>
-                                                        <tbody>
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                            <div class="container-fluit">
-                                                <div class="row">
-                                                    <div
-                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <button id='bt_addD' type='button'
-                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Dolar</button>
-                                                    </div>
-                                                    <div
-                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <button id='bt_addP' type='button'
-                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Peso</button>
-                                                    </div>
-                                                    <div
-                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <button id='bt_addTP' type='button'
-                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Punto/Trans</button>
-                                                    </div>
-                                                    <div
-                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <button id='bt_addM' type='button'
-                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Mixto</button>
-                                                    </div>
-                                                    <div
-                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <button id='bt_addE' type='button'
-                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Efectivo</button>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    @isset($caja)
+
+
+                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                        <div class="form-group">
+                                            <label for="caja">Selecciones caja</label>
+                                            <select name="caja" class="form-control">
+                                                <option value="Caja 1">Caja 1</option>
+
+                                            </select>
                                         </div>
                                     </div>
+                                    @endisset
                                 </div>
-                                <div id="gestionpago">
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading">
-                                            <h2 id="gestionPago" class="panel-title">Gestion de pagos efectivo
-                                            </h2>
+                                <div class="col-md-4">
+                                    <div class="box box-info">
+                                        <div class="box-header with-border">
+                                        <h3 class="box-title"><strong>Dolar &nbsp;&nbsp;&nbsp;</strong>  <strong class="text-primary" id="totold"> 0.00</strong></h3>
+
+                                        <div class="box-tools pull-right">
+                                            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                                         </div>
-                                        <div class="panel-body">
+                                        </div>
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
                                             <div class="table-responsive">
-                                                <table id="pagos"
-                                                    class="table table-striped table-borderd table-condensed table-hover">
+                                                <table class="table no-margin">
                                                     <thead>
-                                                        <th>Divisa</th>
-                                                        <th>Monto</th>
-                                                        <th>Tasa</th>
-                                                        <th>Divisa a dolar</th>
-                                                        <th>Resta</th>
-                                                        <th>Subtotal</th>
+                                                        <tr>
+                                                            <th>Denominacion</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Valor</th>
+
+                                                        </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr id="trD">
-                                                            <td>
-                                                                <h4 class="text-bold text-primary">Dolar</h4>
-                                                            </td><input name="divisa[]" value="Dolar"
-                                                                type="hidden">
-                                                            <td><input name="MontoDivisa[]" class="decimal"
-                                                                    type="texto" id="DMontoDolar"></td>
-                                                            <td><input name="TasaTike[]" type="texto" readonly
-                                                                    id="TasaDolar"
-                                                                    value="{{ $tasaDolar->tasa }}">
-                                                            </td>
-                                                            <td><input name="MontoDolar[]" type="text" readonly
-                                                                    id="DolarToDolar" class="monto"
-                                                                    onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]" type="text" readonly
-                                                                    id="RestaDolar"></td>
-                                                            <td id="DsubTotal"></td>
-                                                        </tr>
-                                                        <tr id="trP">
-                                                            <td>
-                                                                <h4 class="text-bold text-primary">Peso</h4>
-                                                            </td>
-                                                            </th><input name="divisa[]" value="Peso"
-                                                                type="hidden">
-                                                            <td><input name="MontoDivisa[]" class="decimal"
-                                                                    type="texto" id="DMontoPeso"></td>
-                                                            <td><input name="TasaTike[]" type="texto" readonly
-                                                                    id="TasaPeso" value="{{ $tasaPeso->tasa }}">
-                                                            </td>
-                                                            <td><input name="MontoDolar[]" type="text" readonly
-                                                                    id="PesoToDolar" class="monto"
-                                                                    onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]" type="text" readonly
-                                                                    id="RestaPeso"></td>
-                                                            <td id="PeSubTotal"></td>
-                                                        </tr>
-                                                        <tr id="trE">
-                                                            <td>
-                                                                <h4 class="text-bold text-primary">Efectivo</h4>
-                                                            </td>
-                                                            </th><input name="divisa[]" value="Bolivar"
-                                                                type="hidden">
-                                                            <td><input name="MontoDivisa[]" class="decimal"
-                                                                    type="texto" id="DMontoBolivar"></td>
-                                                            <td><input name="TasaTike[]" type="texto" readonly
-                                                                    id="TasaBolivar"
-                                                                    value="{{ $tasaTransferenciaPunto->tasa }}">
-                                                            </td>
-                                                            <td><input name="MontoDolar[]" type="texto" readonly
-                                                                    id="BolivarToDolar" class="monto"
-                                                                    onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]" type="text" readonly
-                                                                    id="RestaBolivar"></td>
-                                                            <td id="BoSubTotal"></td>
-                                                        </tr>
-                                                        <tr id="trTP">
-                                                            <td>
-                                                                <h4 class="text-bold text-primary">Punto</h4>
-                                                            </td>
-                                                            </th><input name="divisa[]" value="Punto"
-                                                                type="hidden">
-                                                            <td><input name="MontoDivisa[]" class="decimal"
-                                                                    type="texto" id="DMontoPunto"></td>
-                                                            <td><input name="TasaTike[]" type="texto"
-                                                                    class="enteros" id="NumTiker" value=""
-                                                                    placeholder="N° de tiket..."><input
-                                                                    type="hidden" id="TasaPunto"
-                                                                    value="{{ $tasaTransferenciaPunto->tasa }}">
-                                                            </td>
-                                                            <td><input name="MontoDolar[]" readonly type="texto"
-                                                                    id="PuntoToDolar" class="monto"
-                                                                    onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]" readonly type="text"
-                                                                    id="RestaPunto"></td>
-                                                            <td id="PuSubTotal"></td>
-                                                        </tr>
-                                                        <tr id="trT">
-                                                            <td>
-                                                                <h4 class="text-bold text-primary">Transf
-                                                                </h4>
-                                                            </td>
-                                                            </th><input name="divisa[]" value="Transferencia"
-                                                                type="hidden">
-                                                            <td><input name="MontoDivisa[]" class="decimal"
-                                                                    class="" type="texto" id="DMontoTrans"></td>
-                                                            <td><input name="TasaTike[]" type="texto"
-                                                                    class="enteros" id="NumtTrans" value=""
-                                                                    placeholder="N° de Transferencia..."><input
-                                                                    type="hidden" id="TasaTrans"
-                                                                    value="{{ $tasaTransferenciaPunto->tasa }}">
-                                                            </td>
-                                                            <td><input name="MontoDolar[]" type="texto" readonly
-                                                                    id="TransToDolar" class="monto"
-                                                                    onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]" type="text" readonly
-                                                                    id="RestaTrans"></td>
-                                                            <td id="TrSubTotal"></td>
-                                                        </tr>
+                                                            @php
+                                                                $i = 0;
+                                                            @endphp
+                                                            @foreach ($denominacion_dolar as $denod)
+                                                                <tr>
+                                                                <td>{{ $denod->denominacion }}</td>
+                                                                <td><input name="dcantidad[{{$i}}]" id="dcantidad_{{$i}}" type="number" class="form-control enteros" value="">
+                                                                    <input name="DsubTotald[{{$i}}]" id="DsubTotald_{{$i}}" type="text" class="form-control"  value="">
+                                                                </td>
+                                                                <td>{{ $denod->valor }}</td>
+                                                                <input name="dvalor[{{$i}}]"  id="dvalor_{{$i}}" type="hidden" class="form-control" value="{{ $denod->valor }}">
+                                                                <input name="ddenominacion[{{$i}}]"  id="ddenominacion_{{$i}}" type="hidden" class="form-control" value="{{ $denod->denominacion }}">
+                                                                <input name="dtipo[{{$i}}]"  id="dtipo_{{$i}}" type="hidden" class="form-control" value="{{ $denod->tipo }}">
+                                                                </tr>
+                                                            @php
+                                                                $i++;
+                                                            @endphp
+                                                            @endforeach
                                                     </tbody>
-                                                    <tfoot>
-                                                        <th></th>
-                                                        <th></th>
-                                                        <th></th>
-                                                        <th></th>
-                                                        <th>
-                                                            <h4 id="tp" class="text-bold">TOTAL PAGADO</h4>
-                                                            <h4 id="r" class="text-bold">RESTA</h4>
-                                                            <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
-                                                        <th>
-                                                            <h4 class="text-bold" id="spTotal">0.00</h4>
-                                                            <h4 class="text-bold" id="RestaTtotal">0.00</h4>
-                                                            <h4 class="text-bold" id="PagoTtotal">0.00</h4>
-                                                        </th>
-                                                    </tfoot>
                                                 </table>
                                             </div>
+                                            <!-- /.table-responsive -->
                                         </div>
-                                        <div class="panel-footer" id="guardar">
-                                            <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
-                                                id="guardar">
-                                                <input name="_token" value="{{ csrf_token() }}" type="hidden">
-                                                <button class="btn btn-primary btn-block"
-                                                    type="submit">Guardar</button>
-                                            </div>
-                                            <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
-                                                id="guardar">
-                                                <button class="btn btn-danger btn-block"
-                                                    type="reset">Cancelar</button>
+                                        <!-- /.box-body -->
+                                        <div class="box-footer clearfix">
+                                            <h3><strong class="text-primary">Totol Dolares</strong> <strong id="dtotal">0.00</strong></h3>
+                                        </div>
+                                        <!-- /.box-footer -->
+                                    </div>
+                                    <!-- col-4-->
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="box box-info">
+                                        <div class="box-header with-border">
+                                            <h3 class="box-title"><strong>Peso &nbsp;&nbsp;&nbsp;</strong>  <strong class="text-primary" id="totolp"> 0.00</strong></h3>
+
+
+                                            <div class="box-tools pull-right">
+                                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
                                             </div>
                                         </div>
+                                        <!-- /.box-header -->
+                                        <div class="box-body">
+                                            <div class="table-responsive">
+                                                <table class="table no-margin">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Denominacion</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Valor</th>
+
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @php
+                                                            $p = 0;
+                                                        @endphp
+                                                        @foreach ($denominacion_peso as $penod)
+                                                        <tr>
+                                                            <td>{{ $penod->denominacion }}</td>
+                                                        <td><input name="pcantidad[{{$p}}]" id="pcantidad_{{$p}}" type="number" class="form-control enteros" value="">
+                                                            <input name="PsubTotald[{{$p}}]" id="PsubTotald_{{$p}}" type="text" class="form-control"  value="">
+                                                        </td>
+                                                        <td>{{ $penod->valor }}</td>
+                                                            <input name="pvalor[{{$p}}]"  id="pvalor_{{$p}}" type="hidden" class="form-control" value="{{ $penod->valor }}">
+                                                            <input name="pdenominacion[{{$p}}]"  id="pdenominacion_{{$p}}" type="hidden" class="form-control" value="{{ $penod->denominacion }}">
+                                                            <input name="ptipo[{{$p}}]"  id="ptipo_{{$p}}" type="hidden" class="form-control" value="{{ $penod->tipo }}">
+
+                                                        </tr>
+                                                        @php
+                                                            $p++;
+                                                        @endphp
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                                <!-- /.table-responsive -->
+                                        </div>
+                                        <!-- /.box-body -->
+                                        <div class="box-footer clearfix">
+                                            <h3><strong class="text-primary">Totol Pesos</strong>  <strong id="ptotal">0.00</strong></h3>
+                                        </div>
+                                        <!-- /.box-footer -->
                                     </div>
                                 </div>
-                            </div>
-                        </div>
+                                <div class="col-md-4">
+                                    <div class="box box-info">
+                                        <div class="box-header with-border">
+                                            <h3 class="box-title"><strong>Bolivares &nbsp;&nbsp;&nbsp;</strong>  <strong class="text-primary" id="totolb"> 0.00</strong></h3>
+
+
+                                            <div class="box-tools pull-right">
+                                                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                                            </div>
+                                        </div>
+                                            <!-- /.box-header -->
+                                        <div class="box-body">
+                                            <div class="table-responsive">
+                                                <table class="table no-margin">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Denominacion</th>
+                                                            <th>Cantidad</th>
+                                                            <th>Valor</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @php
+                                                            $b = 0;
+                                                        @endphp
+                                                        @foreach ($denominacion_bolivar as $benod)
+                                                        <tr>
+                                                        <td>{{ $benod->denominacion }}</td>
+                                                        <td><input name="bcantidad[{{$b}}]" id="bcantidad_{{$b}}" type="number" class="form-control enteros" value="">
+                                                            <input name="BsubTotald[{{$b}}]" id="BsubTotald_{{$b}}" type="text" class="form-control"  value="">
+                                                        </td>
+                                                        <td>{{ $benod->valor }}</td>
+                                                        <input name="bvalor[{{$b}}]"  id="bvalor_{{$b}}" type="hidden" class="form-control" value="{{ $benod->valor }}">
+                                                        <input name="bdenominacion[{{$b}}]"  id="bdenominacion_{{$b}}" type="hidden" class="form-control" value="{{ $benod->denominacion }}">
+                                                        <input name="btipo[{{$b}}]"  id="btipo_{{$b}}" type="hidden" class="form-control" value="{{ $benod->tipo }}">
+
+                                                        </tr>
+                                                        @php
+                                                            $b++;
+                                                        @endphp
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <!-- /.table-responsive -->
+                                        </div>
+                                            <!-- /.box-body -->
+                                        <div class="box-footer clearfix">
+                                            <h3><strong class="text-primary">Totol Bolivares</strong>  <strong id="btotal">0.00</strong></h3>
+                                        </div>
+                                           <!-- /.box-footer -->
+                                    </div>
+                                </div>
+
+                                        <button type="submit">cerrar</button>
+
+                        </form>
+
+                        {{-- fin de la cabecera de box --}}
                     </div>
+                    <!-- /.box-body -->
+                    <!-- /.post -->
                 </div>
-            </form>
-        </div>
+                <!-- /.tab-pane -->
+                <div class="tab-pane" id="ventas">
+                    <!-- Ventas -->
 
-        </div>
-        <!-- /.tab-pane -->
 
-        <div class="tab-pane" id="conf">
 
+                </div>
+                <!-- /.tab-pane -->
+
+                <div class="tab-pane" id="conf">
+
+                </div>
+                <!-- /.tab-pane -->
+            </div>
+            <!-- /.tab-content -->
         </div>
-        <!-- /.tab-pane -->
-      </div>
-      <!-- /.tab-content -->
+        <!-- /.nav-tabs-custom -->
     </div>
-    <!-- /.nav-tabs-custom -->
-  </div>
-
 
   @push('sciptsMain')
 
+  <script>
+    var dato = 0;
 
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Comienso de funciones para multiplicar valor por candiad y crea un subtotal para dolares
+    $(document).ready(function() {
+      $("#dcantidad_0").change(function() {
+          Dcantidad = $("#dcantidad_0").val();
+          Dvalor = $("#dvalor_0").val();
+          DsubTotald = Dcantidad*Dvalor;
+          $("#DsubTotald_0").val(DsubTotald);
+          SupTotalToTotal()
+      });
+
+      $("#dcantidad_1").change(function() {
+          Dcantidad1 = $("#dcantidad_1").val();
+          Dvalor1 = $("#dvalor_1").val();
+          DsubTotald1 = Dcantidad1*Dvalor1;
+          $("#DsubTotald_1").val(DsubTotald1);
+          SupTotalToTotal()
+      });
+
+      $("#dcantidad_2").change(function() {
+          Dcantidad2 = $("#dcantidad_2").val();
+          Dvalor2 = $("#dvalor_2").val();
+          DsubTotald2 = Dcantidad2*Dvalor2;
+          $("#DsubTotald_2").val(DsubTotald2);
+          SupTotalToTotal()
+      });
+
+      $("#dcantidad_3").change(function() {
+          Dcantidad3 = $("#dcantidad_3").val();
+          Dvalor3 = $("#dvalor_3").val();
+          DsubTotald3 = Dcantidad3*Dvalor3;
+          $("#DsubTotald_3").val(DsubTotald3);
+          SupTotalToTotal()
+      });
+
+      $("#dcantidad_4").change(function() {
+          Dcantidad4 = $("#dcantidad_4").val();
+          Dvalor4 = $("#dvalor_4").val();
+          DsubTotald4 = Dcantidad4*Dvalor4;
+          $("#DsubTotald_4").val(DsubTotald4);
+          SupTotalToTotal()
+      });
+
+      $("#dcantidad_5").change(function() {
+          Dcantidad5 = $("#dcantidad_5").val();
+          Dvalor5 = $("#dvalor_5").val();
+          DsubTotald5 = Dcantidad5*Dvalor5;
+          $("#DsubTotald_5").val(DsubTotald5);
+          SupTotalToTotal()
+      });
+
+      $("#dcantidad_6").change(function() {
+          Dcantidad6 = $("#dcantidad_6").val();
+          Dvalor6 = $("#dvalor_6").val();
+          DsubTotald6 = Dcantidad6*Dvalor6;
+          $("#DsubTotald_6").val(DsubTotald6);
+          SupTotalToTotal()
+      });
+    //Fin de funciones para multiplicar valor por candiad y crea un subtotal para dolares
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Comienso de funcion para sumar los subtotales de dolares
+      function SupTotalToTotal(){
+        DsubTotald = $("#DsubTotald_0").val();
+        DsubTotald_1 = $("#DsubTotald_1").val();
+        DsubTotald_2 = $("#DsubTotald_2").val();
+        DsubTotald_3 = $("#DsubTotald_3").val();
+        DsubTotald_4 = $("#DsubTotald_4").val();
+        DsubTotald_5 = $("#DsubTotald_5").val();
+        DsubTotald_6 = $("#DsubTotald_6").val();
+
+        totalsuma = circumference(DsubTotald)+circumference(DsubTotald_1)+circumference(DsubTotald_2)+circumference(DsubTotald_3)+circumference(DsubTotald_4)+circumference(DsubTotald_5)+circumference(DsubTotald_6);
+
+        $("#total_dolar").val(totalsuma.toFixed(2));
+        $("#totold").html(formatMoney(totalsuma, 2, ',', '.'));
+        $("#dtotal").html(formatMoney(totalsuma, 2, ',', '.'));
+
+      };
+    //Fin de funcion para sumar los subtotales de dolares
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Comienso de funciones para multiplicar valor por candiad y crea un subtotal para pesos
+      $("#pcantidad_0").change(function() {
+          Pcantidad = $("#pcantidad_0").val();
+          Pvalor = $("#pvalor_0").val();
+          PsubTotald = Pcantidad*Pvalor;
+          $("#PsubTotald_0").val(PsubTotald);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_1").change(function() {
+          Pcantidad1 = $("#pcantidad_1").val();
+          Pvalor1 = $("#pvalor_1").val();
+          PsubTotald1 = Pcantidad1*Pvalor1;
+          $("#PsubTotald_1").val(PsubTotald1);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_2").change(function() {
+          Pcantidad2 = $("#pcantidad_2").val();
+          Pvalor2 = $("#pvalor_2").val();
+          PsubTotald2 = Pcantidad2*Pvalor2;
+          $("#PsubTotald_2").val(PsubTotald2);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_3").change(function() {
+          Pcantidad3 = $("#pcantidad_3").val();
+          Pvalor3 = $("#pvalor_3").val();
+          PsubTotald3 = Pcantidad3*Pvalor3;
+          $("#PsubTotald_3").val(PsubTotald3);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_4").change(function() {
+          Pcantidad4 = $("#pcantidad_4").val();
+          Pvalor4 = $("#pvalor_4").val();
+          PsubTotald4 = Pcantidad4*Pvalor4;
+          $("#PsubTotald_4").val(PsubTotald4);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_5").change(function() {
+          Pcantidad5 = $("#pcantidad_5").val();
+          Pvalor5 = $("#pvalor_5").val();
+          PsubTotald5 = Pcantidad5*Pvalor5;
+          $("#PsubTotald_5").val(PsubTotald5);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_6").change(function() {
+          Pcantidad6 = $("#pcantidad_6").val();
+          Pvalor6 = $("#pvalor_6").val();
+          PsubTotald6 = Pcantidad6*Pvalor6;
+          $("#PsubTotald_6").val(PsubTotald6);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_7").change(function() {
+          Pcantidad7 = $("#pcantidad_7").val();
+          Pvalor7 = $("#pvalor_7").val();
+          PsubTotald7 = Pcantidad7*Pvalor7;
+          $("#PsubTotald_7").val(PsubTotald7);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_8").change(function() {
+          Pcantidad8 = $("#pcantidad_8").val();
+          Pvalor8 = $("#pvalor_8").val();
+          PsubTotald8 = Pcantidad8*Pvalor8;
+          $("#PsubTotald_8").val(PsubTotald8);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_9").change(function() {
+          Pcantidad9 = $("#pcantidad_9").val();
+          Pvalor9 = $("#pvalor_9").val();
+          PsubTotald9 = Pcantidad9*Pvalor9;
+          $("#PsubTotald_9").val(PsubTotald9);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_10").change(function() {
+          Pcantidad10 = $("#pcantidad_10").val();
+          Pvalor10 = $("#pvalor_10").val();
+          PsubTotald10 = Pcantidad10*Pvalor10;
+          $("#PsubTotald_10").val(PsubTotald10);
+          SupTotalToTotalp()
+      });
+
+      $("#pcantidad_11").change(function() {
+          Pcantidad11 = $("#pcantidad_11").val();
+          Pvalor11 = $("#pvalor_11").val();
+          PsubTotald11 = Pcantidad11*Pvalor11;
+          $("#PsubTotald_11").val(PsubTotald11);
+          SupTotalToTotalp()
+      });
+
+    //Fin de funciones para multiplicar valor por candiad y crea un subtotal para pesos
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Comienso de funcion para sumar los subtotales de pesos
+      function SupTotalToTotalp(){
+        PsubTotald = $("#PsubTotald_0").val();
+        PsubTotald_1 = $("#PsubTotald_1").val();
+        PsubTotald_2 = $("#PsubTotald_2").val();
+        PsubTotald_3 = $("#PsubTotald_3").val();
+        PsubTotald_4 = $("#PsubTotald_4").val();
+        PsubTotald_5 = $("#PsubTotald_5").val();
+        PsubTotald_6 = $("#PsubTotald_6").val();
+        PsubTotald_7 = $("#PsubTotald_7").val();
+        PsubTotald_8 = $("#PsubTotald_8").val();
+        PsubTotald_9 = $("#PsubTotald_9").val();
+        PsubTotald_10 = $("#PsubTotald_10").val();
+        PsubTotald_11 = $("#PsubTotald_11").val();
+
+        totalsumap = circumference(PsubTotald)+circumference(PsubTotald_1)+circumference(PsubTotald_2)+circumference(PsubTotald_3)+circumference(PsubTotald_4)+circumference(PsubTotald_5)+circumference(PsubTotald_6)+circumference(PsubTotald_7)+circumference(PsubTotald_8)+circumference(PsubTotald_9)+circumference(PsubTotald_10)+circumference(PsubTotald_11);
+
+        $("#total_peso").val(totalsumap.toFixed(2));
+        $("#totolp").html(formatMoney(totalsumap, 2, ',', '.'));
+        $("#ptotal").html(formatMoney(totalsumap, 2, ',', '.'));
+
+      };
+
+    //Fin de funcion para sumar los subtotales de pesos
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Comienso de funciones para multiplicar valor por candiad y crea un subtotal para bolivares
+      $("#bcantidad_0").change(function() {
+          Bcantidad = $("#bcantidad_0").val();
+          Bvalor = $("#bvalor_0").val();
+          BsubTotald = Bcantidad*Bvalor;
+          $("#BsubTotald_0").val(BsubTotald);
+          SupTotalToTotalb()
+      });
+
+      $("#bcantidad_1").change(function() {
+          Bcantidad1 = $("#bcantidad_1").val();
+          Bvalor1 = $("#bvalor_1").val();
+          BsubTotald1 = Bcantidad1*Bvalor1;
+          $("#BsubTotald_1").val(BsubTotald1);
+          SupTotalToTotalb()
+      });
+
+      $("#bcantidad_2").change(function() {
+          Bcantidad2 = $("#bcantidad_2").val();
+          Bvalor2 = $("#bvalor_2").val();
+          BsubTotald2 = Bcantidad2*Bvalor2;
+          $("#BsubTotald_2").val(BsubTotald2);
+          SupTotalToTotalb()
+      });
+
+      $("#bcantidad_3").change(function() {
+          Bcantidad3 = $("#bcantidad_3").val();
+          Bvalor3 = $("#bvalor_3").val();
+          BsubTotald3 = Bcantidad3*Bvalor3;
+          $("#BsubTotald_3").val(BsubTotald3);
+          SupTotalToTotalb()
+      });
+
+      $("#bcantidad_4").change(function() {
+          Bcantidad4 = $("#bcantidad_4").val();
+          Bvalor4 = $("#bvalor_4").val();
+          BsubTotald4 = Bcantidad4*Bvalor4;
+          $("#BsubTotald_4").val(BsubTotald4);
+          SupTotalToTotalb()
+      });
+
+
+
+    //Fin de funciones para multiplicar valor por candiad y crea un subtotal para bolivares
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Comienso de funcion para sumar los subtotales de bollivares
+      function SupTotalToTotalb(){
+        BsubTotald = $("#BsubTotald_0").val();
+        BsubTotald_1 = $("#BsubTotald_1").val();
+        BsubTotald_2 = $("#BsubTotald_2").val();
+        BsubTotald_3 = $("#BsubTotald_3").val();
+        BsubTotald_4 = $("#BsubTotald_4").val();
+
+        totalsumab = circumference(BsubTotald)+circumference(BsubTotald_1)+circumference(BsubTotald_2)+circumference(BsubTotald_3)+circumference(BsubTotald_4);
+
+        $("#total_bolivar").val(totalsumab.toFixed(2));
+        $("#totolb").html(formatMoney(totalsumab, 2, ',', '.'));
+        $("#btotal").html(formatMoney(totalsumab, 2, ',', '.'));
+
+      };
+
+    //Fin de funcion para sumar los subtotales de bolivares
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Comienso de funcion formatiar o parcear los datos a flotantes (Decimal)
+        function circumference(r) {
+            if (Number.isNaN(Number.parseFloat(r))) {
+            return 0;
+            }
+            return parseFloat(r);
+        }
+    //Fin de funcion formatiar o parcear los datos a flotantes (Decimal)
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Comienso de funcion para formatear o parcear los datos a flotantes (Decimal) y formanto numero americano
+        function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
+                try {
+                    decimalCount = Math.abs(decimalCount);
+                    decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
+
+                    const negativeSign = amount < 0 ? "-" : "";
+
+                    let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+                    let j = (i.length > 3) ? i.length % 3 : 0;
+
+                    return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g,
+                        "$1" +
+                        thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+                } catch (e) {
+                    console.log(e)
+                }
+            };
+            //formatMoney(precio_compraD * tasaD, 2, ',', '.') o formatMoney(precio_compraD, 2, ',', '.')
+    //Fin de funcion para formatear o parcear los datos a flotantes (Decimal) y formanto numero americano
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $(function() {
+            $('.enteros').on('input', function() {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        });
+
+        $('.decimal').on('keypress', function(e) {
+            // Backspace = 8, Enter = 13, ’0′ = 48, ’9′ = 57, ‘.’ = 46
+            var field = $(this);
+            key = e.keyCode ? e.keyCode : e.which;
+
+            if (key == 8) return true;
+                if (key > 47 && key < 58) {
+                    if (field.val() === "") return true;
+                        var existePto = (/[.]/).test(field.val());
+                if (existePto === false) {
+                    regexp = /.[0-9]{10}$/;
+                } else {
+                    regexp = /.[0-9]{2}$/;
+                }
+
+                return !(regexp.test(field.val()));
+            }
+            if (key == 46) {
+                if (field.val() === "") return false;
+                    regexp = /^[0-9]+$/;
+                    return regexp.test(field.val());
+            }
+                return false;
+        });
+
+    });
+
+
+  </script>
         <script>
 
             // $("#abrircaja").click(function() {
@@ -517,19 +654,19 @@
 
             $(document).ready(function() {
                 // $('#contventas').hide();
-                listarcaja();
-});
-
-        var listarcaja = function(){
-            $.ajax({
-                type: 'get',
-                url: '{{ url ('listarcaja') }}',
-                success: function (data) {
-                    console.log(data);
-                    $('#listarcaja').empty().html(data);
-                }
+                // listarcaja();
             });
-        };
+
+        // var listarcaja = function(){
+        //     $.ajax({
+        //         type: 'get',
+        //         url: '{{ url ('listarcaja') }}',
+        //         success: function (data) {
+        //             console.log(data);
+        //             $('#listarcaja').empty().html(data);
+        //         }
+        //     });
+        // };
 
 
             $(document).ready(function() {

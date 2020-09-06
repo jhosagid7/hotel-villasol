@@ -13,27 +13,20 @@ class CategoriaController extends Controller
 {
     public function __construct()
     {
-
+        $this->middleware('auth');
     }
     public function index(Request $request)
     {
+            // return 'index categoria';
 
         if($request){
             // $query=trim($request->get("buscarTexto"));
-            $categorias=Categoria::where("condicion","=","1")
-            ->orderBy("idcategoria","desc")
+            $categorias=Categoria::where("condicion","=","Activa")
+            ->orderBy("id","desc")
             ->get();
             return view("almacen.categoria.index",["categorias"=>$categorias]);
         }
-        // if ($request) {
-        //     $query = trim($request->get('buscarTexto'));
-        //     $categorias = DB::table('categoria')->where('nombre', 'LIKE', '%'. $query .'%')
-        //     ->where('condicion', '=', '1')
-        //     ->orderBy('idcategoria', 'desc')
-        //     ->paginate(7);
 
-        //     return view('almacen.categoria.index', ["categorias" => $categorias, "buscarTexto" => $query]);
-        // }
     }
     public function create()
     {
@@ -41,14 +34,15 @@ class CategoriaController extends Controller
     }
     public function store(CategoriaFormRequest $request)
     {
+        // return 'store categoria';
         //creamos un objeto del modelo categoria
         $categoria = new Categoria;
         $categoria->nombre = $request->get('nombre');
         $categoria->descripcion = $request->get('descripcion');
-        $categoria->condicion = '1';
+        $categoria->condicion = 'Activa';
         $categoria->save();
 
-        return Redirect::to('almacen/categoria')->with('success', 'Categoria registrada exitosamente');
+        return Redirect::to('almacen/categoria')->with('status_success', 'Categoria registrada exitosamente');
     }
     public function show($id)
     {
@@ -65,16 +59,22 @@ class CategoriaController extends Controller
         $categoria->descripcion = $request->get('descripcion');
         $categoria->update();
 
-        return Redirect::to('almacen/categoria')->with('success', 'Categoria actualizada exitosamente');
+        return redirect()
+        ->route('categoria.index')
+        ->with('status_success', 'Categoria actualizada exitosamente');
+
+
     }
     public function destroy($id)
     {
         // dd('categoria');
         $categoria = Categoria::findOrFail($id);
-        $categoria->condicion = '0';
+        $categoria->condicion = 'Eliminada';
         $categoria->update();
+        return redirect()
+        ->route('categoria.index')
+        ->with('status_success', 'Categoria eliminada exitosamente');
 
-        return Redirect::to('almacen/categoria');
     }
 
 }

@@ -35,6 +35,13 @@ class JhosagidPermissionInfoSeeder extends Seeder
         if($useradmin){
             $useradmin->delete();
         }
+
+        $superuseradmin = User::create([
+            'name' => 'Jhonny Sagid Pirela Pineda',
+            'email' => 'jhosagid77@gmail.com',
+            'password' => Hash::make('jhosagid')
+        ]);
+
         $useradmin = User::create([
             'name' => 'admin',
             'email' => 'admin@admin.com',
@@ -50,6 +57,7 @@ class JhosagidPermissionInfoSeeder extends Seeder
             'full-access'=>'yes'
         ]);
 
+
         //creamos nuestro rol Registered User
         //rol Registered User
         $roluser=Role::create([
@@ -61,6 +69,7 @@ class JhosagidPermissionInfoSeeder extends Seeder
 
         //tabla role_user
         //pasar rol unico al usuario relacionamos dos tablas admin y usuario
+        $superuseradmin->roles()->sync([$roladmin->id]);
         $useradmin->roles()->sync([$roladmin->id]);
 
         //tabla role_permission

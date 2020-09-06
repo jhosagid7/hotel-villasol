@@ -15,6 +15,8 @@
                 <li><a href="#tasa" data-toggle="tab">Configurar tasa</a></li>
             </ul>
             <div class="tab-content">
+                <a href="{{URL::action('CajaController@show', $caja->id)}}"><button class='btn btn-danger btn-sm'><span class='glyphicon glyphicon-edit'> Cerrar caja</span></button></a>
+
                 <div class="active tab-pane" id="caja">
                     <!-- Main content -->
                     <section class="content">
@@ -93,9 +95,9 @@
                                             <div class="col-sm-4 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-text">INICIO DE CAJA</span>
-                                                    <h5 class="description-header">Dolar: 50,00</h5>
-                                                    <h5 class="description-header">Peso: 100.000,00</h5>
-                                                    <h5 class="description-header">Bolivar: 1.500.000,00</h5>
+                                                    <h5 class="description-header">Dolar: {{ $caja->monto_dolar ?? '' }}</h5>
+                                                    <h5 class="description-header">Peso: {{ $caja->monto_peso ?? '' }}</h5>
+                                                    <h5 class="description-header">Bolivar: {{ $caja->monto_bolivar ?? '' }}</h5>
                                                 </div>
                                             </div>
                                             <div class="col-sm-2 col-xs-6">
@@ -103,7 +105,7 @@
                                                     <span class="description-percentage text-green"><i
                                                             class="fa fa-caret-up"></i>
                                                         {{ $tasaDolar->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">$. 35,210.43</h5>
+                                                    <h5 class="description-header">$. 0,00</h5>
                                                     <span class="description-text">DOLAR</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -114,7 +116,7 @@
                                                     <span class="description-percentage text-yellow"><i
                                                             class="fa fa-caret-left"></i>
                                                         {{ $tasaPeso->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">$10,390.90</h5>
+                                                    <h5 class="description-header">$. 0,00</h5>
                                                     <span class="description-text">PESO</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -125,7 +127,7 @@
                                                     <span class="description-percentage text-green"><i
                                                             class="fa fa-caret-up"></i>
                                                         {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">$24,813.53</h5>
+                                                    <h5 class="description-header">Bs. 0,00</h5>
                                                     <span class="description-text">PUNTO/TRANS</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -137,7 +139,7 @@
                                                     <span class="description-percentage text-red"><i
                                                             class="fa fa-caret-down"></i>
                                                         {{ $tasaEfectivo->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">200.000.000,00</h5>
+                                                    <h5 class="description-header">Bs. 0,00</h5>
                                                     <span class="description-text">EFECTIVO</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -335,7 +337,7 @@
                                         <select name="idcliente" id="idcliente" class="form-control selectpicker"
                                             data-live-search="true">
                                             @foreach ($personas as $persona)
-                                                <option value="{{ $persona->idpersona }}">{{ $persona->nombre }}</option>
+                                                <option value="{{ $persona->id }}">{{ $persona->nombre }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -379,7 +381,7 @@
                                                                 <option value="seleccione...">Seleccione Articulo</option>
                                                                 @foreach ($articulos as $articulo)
                                                                     <option
-                                                                        value="{{ $articulo->idarticulo }}_{{ $articulo->stock }}_{{ $articulo->precio_compra }}_{{ $articulo->nombre }}">
+                                                                        value="{{ $articulo->id }}_{{ $articulo->stock }}_{{ $articulo->precio_costo }}_{{ $articulo->nombre }}">
                                                                         {{ $articulo->articulo }}</option>
                                                                 @endforeach
                                                             </select>

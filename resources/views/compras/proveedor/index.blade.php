@@ -1,19 +1,7 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-<!-- Default box -->
-<!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
+
 
     <!-- Main content -->
     <section class="content">
@@ -57,12 +45,13 @@
                     <th>Dirección</th>
                     <th>Teléfono</th>
                     <th>Email</th>
+                    <th>Imagen</th>
                     <th>Opciones</th>
                 </thead>
                 <tbody>
                     @foreach ($personas as $per)
                     <tr>
-                        <td>{{ $per->idpersona }}</td>
+                        <td>{{ $per->id }}</td>
                         <td>{{ $per->nombre }}</td>
                         <td>{{ $per->tipo_documento }}</td>
                         <td>{{ $per->num_documento }}</td>
@@ -70,8 +59,11 @@
                         <td>{{ $per->telefono }}</td>
                         <td>{{ $per->email }}</td>
                         <td>
-                        <a href="{{URL::action('ProveedorController@edit', $per->idpersona)}}"><button class='btn btn-info'><span class='glyphicon glyphicon-edit'></span></button></a>
-                        <a href="" data-target="#modal-delete-{{$per->idpersona}}" data-toggle="modal"><button class='btn btn-danger'><i class='glyphicon glyphicon-trash'></i></button></a>
+                            <img src="{{asset('imagenes/personas/'.$per->imagen)}}" alt="{{ $per->nombre }}" height="50px" width="50px" class="img-circle">
+                        </td>
+                        <td>
+                        <a href="{{URL::action('ProveedorController@edit', $per->id)}}"><button class='btn btn-info'><span class='glyphicon glyphicon-edit'></span></button></a>
+                        <a href="" data-target="#modal-delete-{{$per->id}}" data-toggle="modal"><button class='btn btn-danger'><i class='glyphicon glyphicon-trash'></i></button></a>
                         </td>
                     </tr>
                     @include('compras.proveedor.modal')
@@ -79,7 +71,7 @@
                 </tbody>
             </table>
         </div>
-        {{$personas->render()}}
+        {{-- {{$personas->render()}} --}}
     </div>
 </div>
 

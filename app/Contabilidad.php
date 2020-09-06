@@ -10,6 +10,7 @@ class Contabilidad extends Model
         'denominacion',
         'valor',
         'cantidad',
+        'subtotal',
         'tipo',
         'modo',
         'caja_id'

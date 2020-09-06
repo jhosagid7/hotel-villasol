@@ -46,7 +46,7 @@
     </div>
 
 
-            <form action="{{ route('cliente.update', $persona->idpersona)}}" method="POST" autocomplete="off" role="buscar">
+            <form action="{{ route('cliente.update', $persona->id)}}" method="POST" autocomplete="off" role="buscar">
                 @csrf
                 @method('PUT')
     <div class="row">
@@ -107,6 +107,15 @@
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="text" name="email" class="form-control" value="{{$persona->email}}" placeholder="Email...">
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="imagen">Imagen</label>
+                <input type="file" name="imagen" class="form-control">
+            @if(($persona->imagen) !="")
+                <img src="{{asset('imagenes/personas/'.$persona->imagen)}}" alt="{{$persona->nombre}}" height="100px" width="100px">
+            @endif
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">

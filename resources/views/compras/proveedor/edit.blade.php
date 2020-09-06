@@ -1,19 +1,6 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-<!-- Default box -->
-<!-- Content Header (Page header) -->
-    {{-- <section class="content-header">
-      <h1>
-        <!--Blank page-->
-        <small>it all starts here</small>
-      </h1>
-      <ol class="breadcrumb">
-        <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-        <li><a href="#">Examples</a></li>
-        <li class="active">Blank page</li>
-      </ol>
-    </section> --}}
 
     <!-- Main content -->
     <section class="content">
@@ -46,7 +33,7 @@
     </div>
 
 
-            <form action="{{ route('proveedor.update', $persona->idpersona)}}" method="POST" autocomplete="off" role="buscar">
+            <form action="{{ route('proveedor.update', $persona->id)}}" enctype="multipart/form-data" method="POST" autocomplete="off" role="buscar">
                 @csrf
                 @method('PUT')
     <div class="row">
@@ -107,6 +94,15 @@
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="text" name="email" class="form-control" value="{{$persona->email}}" placeholder="Email...">
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+            <div class="form-group">
+                <label for="imagen">Imagen</label>
+                <input type="file" name="imagen" class="form-control">
+            @if(($persona->imagen) !="")
+                <img src="{{asset('imagenes/personas/'.$persona->imagen)}}" alt="{{$persona->nombre}}" height="100px" width="100px">
+            @endif
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">

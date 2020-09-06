@@ -80,13 +80,6 @@ class DenominacionSeeder extends Seeder
         $Denominacion= Denominacion::create([
             'moneda'=>'Bolivares',
             'tipo'=>'Billete',
-            'valor'=>'2',
-            'denominacion'=>'Billete de 2 Bolivares'
-        ]);
-
-        $Denominacion= Denominacion::create([
-            'moneda'=>'Bolivares',
-            'tipo'=>'Billete',
             'valor'=>'500',
             'denominacion'=>'Billete de 500 Bolivares'
         ]);
@@ -94,80 +87,29 @@ class DenominacionSeeder extends Seeder
         $Denominacion= Denominacion::create([
             'moneda'=>'Bolivares',
             'tipo'=>'Billete',
-            'valor'=>'10.000',
+            'valor'=>'10000',
             'denominacion'=>'Billete de 10.000 Bolivares'
         ]);
 
         $Denominacion= Denominacion::create([
             'moneda'=>'Bolivares',
             'tipo'=>'Billete',
-            'valor'=>'20.000',
+            'valor'=>'20000',
             'denominacion'=>'Billete de 20.000 Bolivares'
         ]);
 
         $Denominacion= Denominacion::create([
             'moneda'=>'Bolivares',
             'tipo'=>'Billete',
-            'valor'=>'50.000',
+            'valor'=>'50000',
             'denominacion'=>'Billete de 50.000 Bolivares'
         ]);
 
         $Denominacion= Denominacion::create([
             'moneda'=>'Bolivares',
             'tipo'=>'Billete',
-            'valor'=>'100.000',
+            'valor'=>'100000',
             'denominacion'=>'Billete de 100.000 Bolivares'
-        ]);
-
-        // denominacio de pesos billetes 1.000, 2.000, 5.000, 10.000, 20.000, 50.000, 100.000 $.
-
-        $Denominacion= Denominacion::create([
-            'moneda'=>'Pesos',
-            'tipo'=>'Billete',
-            'valor'=>'1.000',
-            'denominacion'=>'Billete de 1.000 Pesos'
-        ]);
-
-        $Denominacion= Denominacion::create([
-            'moneda'=>'Pesos',
-            'tipo'=>'Billete',
-            'valor'=>'2.000',
-            'denominacion'=>'Billete de 2.000 Pesos'
-        ]);
-
-        $Denominacion= Denominacion::create([
-            'moneda'=>'Pesos',
-            'tipo'=>'Billete',
-            'valor'=>'5.000',
-            'denominacion'=>'Billete de 5.000 Pesos'
-        ]);
-
-        $Denominacion= Denominacion::create([
-            'moneda'=>'Pesos',
-            'tipo'=>'Billete',
-            'valor'=>'10.000',
-            'denominacion'=>'Billete de 10.000 Pesos'
-        ]);
-
-        $Denominacion= Denominacion::create([
-            'moneda'=>'Pesos',
-            'tipo'=>'Billete',
-            'valor'=>'20.000',
-            'denominacion'=>'Billete de 20.000 Pesos'
-        ]);
-
-        $Denominacion= Denominacion::create([
-            'moneda'=>'Pesos',
-            'tipo'=>'Billete',
-            'valor'=>'50.000',
-            'denominacion'=>'Billete de 50.000 Pesos'
-        ]);
-
-        $Denominacion= Denominacion::create([
-            'moneda'=>'Pesos',
-            'tipo'=>'Billete',
-            'valor'=>'100.000',
-            'denominacion'=>'Billete de 100.000 Pesos'
         ]);
 
         // denominacio de pesos monedas 50, 100, 200, 500, 1.000.
@@ -203,9 +145,62 @@ class DenominacionSeeder extends Seeder
         $Denominacion= Denominacion::create([
             'moneda'=>'Pesos',
             'tipo'=>'Moneda',
-            'valor'=>'1.000',
+            'valor'=>'1000',
             'denominacion'=>'Moneda de 1.000 Pesos'
         ]);
+
+        // denominacio de pesos billetes 1.000, 2.000, 5.000, 10.000, 20.000, 50.000, 100.000 $.
+
+        $Denominacion= Denominacion::create([
+            'moneda'=>'Pesos',
+            'tipo'=>'Billete',
+            'valor'=>'1000',
+            'denominacion'=>'Billete de 1.000 Pesos'
+        ]);
+
+        $Denominacion= Denominacion::create([
+            'moneda'=>'Pesos',
+            'tipo'=>'Billete',
+            'valor'=>'2000',
+            'denominacion'=>'Billete de 2.000 Pesos'
+        ]);
+
+        $Denominacion= Denominacion::create([
+            'moneda'=>'Pesos',
+            'tipo'=>'Billete',
+            'valor'=>'5000',
+            'denominacion'=>'Billete de 5.000 Pesos'
+        ]);
+
+        $Denominacion= Denominacion::create([
+            'moneda'=>'Pesos',
+            'tipo'=>'Billete',
+            'valor'=>'10000',
+            'denominacion'=>'Billete de 10.000 Pesos'
+        ]);
+
+        $Denominacion= Denominacion::create([
+            'moneda'=>'Pesos',
+            'tipo'=>'Billete',
+            'valor'=>'20000',
+            'denominacion'=>'Billete de 20.000 Pesos'
+        ]);
+
+        $Denominacion= Denominacion::create([
+            'moneda'=>'Pesos',
+            'tipo'=>'Billete',
+            'valor'=>'50000',
+            'denominacion'=>'Billete de 50.000 Pesos'
+        ]);
+
+        $Denominacion= Denominacion::create([
+            'moneda'=>'Pesos',
+            'tipo'=>'Billete',
+            'valor'=>'100000',
+            'denominacion'=>'Billete de 100.000 Pesos'
+        ]);
+
+
 
     }
 }

@@ -18,6 +18,7 @@ class CreateContabilidadsTable extends Migration
             $table->string('denominacion', 100);
             $table->decimal('valor', 11, 2);
             $table->unsignedInteger('cantidad')->nullable();
+            $table->unsignedInteger('subtotal')->nullable();
             $table->string('tipo', 20);
             $table->enum('modo', ['Apertura', 'Cierre']);
             $table->foreignId('caja_id')->references('id')->on('cajas');

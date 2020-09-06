@@ -2,38 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use Illuminate\Support\Facades\Redirect;
-use App\Http\Requests\VentaFormRequest;
-use App\venta;
-use App\DetalleVenta;
-use App\DetallePago;
-use App\Articulo;
-use App\Tasa;
-use Illuminate\Database\MySqlConnection;
 use DB;
 
-use Carbon\Carbon;
-//use Illuminate\Http\Response;
+use App\Tasa;
 use Response;
+use App\venta;
+use App\Articulo;
+use Carbon\Carbon;
+use App\DetallePago;
+use App\Sessioncaja;
+use App\DetalleVenta;
+use App\Http\Requests;
+use Illuminate\Http\Request;
+
 use Illuminate\Support\Collection;
+//use Illuminate\Http\Response;
+use App\Http\Requests\VentaFormRequest;
+use Illuminate\Database\MySqlConnection;
+use Illuminate\Support\Facades\Redirect;
+use App\Caja;
 
 
 class VentaController extends Controller
 {
     public function __construct()
     {
-
+        $this->middleware('auth');
     }
+
     public function index(Request $request)
     {
         if ($request) {
             $title='Ventas';
             $query = trim($request->get('buscarTexto'));
             $ventas = DB::table('venta as v')
-                ->join('persona as p', 'v.idcliente', '=', 'p.idpersona')
+                ->join('personas as p', 'v.idcliente', '=', 'p.id')
                 ->join('detalle_venta as dv', 'v.idventa', '=', 'dv.idventa')
                 ->select('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
                 ->where('v.num_comprobante', 'LIKE', '%'. $query  .'%')
@@ -47,29 +50,53 @@ class VentaController extends Controller
 
     public function create()
     {
-        $title='Nueva venta';
-        $personas = DB::table('persona')->where('tipo_persona', '=', 'Cliente')->get();
-        $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
-        $tasaPeso = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
-        $tasaTransferenciaPunto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
-        $tasaMixto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
-        $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
-        $articulos = DB::table('articulo as art')
-            ->select(DB::raw('CONCAT(art.codigo, " - ", art.nombre) AS articulo'), 'art.idarticulo', 'precio_compra', 'stock', 'art.nombre')
-            ->where('art.estado', '=', 'Activo')
-            ->where('art.stock', '>', '0')
-            ->get();
-        $ventas = DB::table('venta as v')
-        ->join('persona as p', 'v.idcliente', '=', 'p.idpersona')
-        ->join('detalle_venta as dv', 'v.idventa', '=', 'dv.idventa')
-        ->select('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-        ->orderBy('v.idventa', 'desc')
-        ->groupBy('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-        ->paginate(7);
-            // dd($tasaTransferenciaPunto);
-            // return $personas;
+        $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+        // dd($cajaSessionid);
+        $Caja = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
+        // dd($Caja);
 
-        return view('ventas.venta.create', compact('ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
+        $tasa = Tasa::find(1);
+        $tasa->updated_at;
+        $fechaActual = Carbon::now();
+
+        if ($tasa->updated_at->diffInHours($fechaActual) >= 6 ) {
+            return redirect()
+            ->route('tasa.index')
+            ->with('status_danger', '¡Debes Actualizar el margen de gananacia para poder acceder!');
+        }else{
+
+            if ($Caja) {
+                $title='Nueva venta';
+            $personas = DB::table('personas')->where('tipo_persona', '=', 'Cliente')->get();
+            $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
+            $tasaPeso = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
+            $tasaTransferenciaPunto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
+            $tasaMixto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
+            $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
+            $articulos = DB::table('articulos as art')
+                ->select(DB::raw('CONCAT(art.codigo, " - ", art.nombre) AS articulo'), 'art.id', 'precio_costo', 'stock', 'art.nombre')
+                ->where('art.estado', '=', 'Activo')
+                ->where('art.stock', '>', '0')
+                ->get();
+
+                $caja = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
+            $ventas = DB::table('venta as v')
+            ->join('personas as p', 'v.idcliente', '=', 'p.id')
+            ->join('detalle_venta as dv', 'v.idventa', '=', 'dv.idventa')
+            ->select('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+            ->orderBy('v.idventa', 'desc')
+            ->groupBy('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+            ->paginate(7);
+                // dd($tasaTransferenciaPunto);
+                // return $personas;
+
+            return view('ventas.venta.create', compact('caja', 'ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
+            }
+            return redirect()
+            ->route('caja.index')
+            ->with('status_danger', '¡Debes crear una caja para poder acceder!');
+        }
+
     }
 
     public function store(VentaFormRequest $request)

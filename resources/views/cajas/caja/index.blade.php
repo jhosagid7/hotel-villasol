@@ -28,8 +28,13 @@
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
         {{-- <h3>Listado de Categorias <a href="" data-target="#modal-nuevo" data-toggle="modal"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span>Nuevo</button></a></h3> --}}
-        <h3>Listado de Artículos <a href="{{URL::action('CategoriaController@create')}}"><button class='btn btn-success btn-sm'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
-        @include('almacen.categoria.buscar')
+        <h3>Listado de Cajas
+            @if(isset($mostrarNuvaVenta)  && $mostrarNuvaVenta === 1)
+            <a href="{{URL::action('CajaController@create')}}"><button class='btn btn-success btn-sm'><span class='glyphicon glyphicon-plus'></span> Nueva caja</button></a>
+            @endif
+
+        </h3>
+        @include('cajas.caja.buscar')
     </div>
 </div>
 
@@ -39,27 +44,53 @@
             @include('custom.message')
             <table id="cate" class="table table-striped table-bordered table-condensed table-hover table-ms">
                 <thead>
-                    <th>Id</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Opciones</th>
+                    <tr>
+                        <th>Codigo</th>
+                        <th>Fecha</th>
+                        <th>Hora inicio</th>
+                        <th>Hora cierre</th>
+                        <th>Inicio Dolar</th>
+                        <th>Inicio Peso</th>
+                        <th>Inicio Bolivar</th>
+                        <th>Cierre Dolar</th>
+                        <th>Cierre Peso</th>
+                        <th>Cierre Bolivar</th>
+                        <th>Estado</th>
+                        <th>Caja</th>
+                        <th>opciones</th>
+                    </tr>
                 </thead>
                 <tbody>
-                    @foreach ($categorias as $cat)
+                    @foreach ($cajas as $caja)
                     <tr>
-                        <td>{{ $cat->id }}</td>
-                        <td>{{ $cat->nombre }}</td>
-                        <td>{{ $cat->descripcion }}</td>
+                        <td>{{ $caja->codigo }}</td>
+                        <td>{{ $caja->fecha->toDateString() }}</td>
+                        <td>{{ $caja->hora }}</td>
+                        <td>{{ $caja->hora_cierre }}</td>
+                        <td>{{ $caja->monto_dolar }}</td>
+                        <td>{{ $caja->monto_peso }}</td>
+                        <td>{{ $caja->monto_bolivar }}</td>
+                        <td>{{ $caja->monto_dolar_cierre }}</td>
+                        <td>{{ $caja->monto_peso_cierre }}</td>
+                        <td>{{ $caja->monto_bolivar_cierre }}</td>
+                        <td>{{ $caja->estado }}</td>
+                        <td>{{ $caja->caja }}</td>
                         <td>
-                        <a href="{{URL::action('CategoriaController@edit', $cat->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
-                        <a href="" data-target="#modal-delete-{{$cat->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
+                        <a href="{{URL::action('CajaController@show', $caja->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
+                        @if ($caja->estado === 'Cerrada')
+                        <button class='btn btn-danger btn-sm disabled'><i class='glyphicon glyphicon-trash'></i></button>
+                        @else
+                        <a href="" data-target="#modal-delete-{{$caja->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
+                        @endif
+
                         </td>
                     </tr>
-                    @include('almacen.categoria.modal')
+
                     @endforeach
                     {{-- @include('almacen.categoria.nuevo_modal') --}}
                 </tbody>
             </table>
+            @include('cajas.caja.caja')
         </div>
         {{-- {{$categorias->render()}} --}}
     </div>
@@ -69,7 +100,9 @@
 </div>
 <!-- /.box-body -->
 <div class="box-footer">
-  {{-- Footer --}}
+    @if(isset($mostrarNuvaVenta)  && $mostrarNuvaVenta === 0)
+    <a class="btn btn-success" href="{{route('venta.create')}}">{{__('Ir a ventas')}}</a>
+    @endif
 </div>
 <!-- /.box-footer-->
 </div>
