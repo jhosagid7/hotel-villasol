@@ -25,7 +25,6 @@ class CreateVentasTable extends Migration
             $table->decimal('total_venta', 11, 2)->nullable();
             $table->decimal('ganancia_neta', 11, 2)->nullable();
             $table->enum('estado', ['Aceptada', 'Cancelada', 'Procesando']);
-            $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('persona_id')->references('id')->on('personas');
             $table->foreignId('caja_id')->references('id')->on('cajas');
             $table->timestamps();

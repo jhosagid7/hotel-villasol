@@ -16,5 +16,13 @@ class Articulo_venta extends Model
 
     //Haora especificamos los campos guarded
     protected $guarded = [];
+
+    public function venta(){
+        return belongsTo(Venta::class);
+    }
+
+    public function articulo(){
+        return belongsTo(Articulo_Venta::class);
+    }
 }
 

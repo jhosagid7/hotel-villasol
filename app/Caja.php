@@ -36,7 +36,16 @@ class Caja extends Model
 
     public function sucursal()
     {
-        return $this->belongsTo('App\Sucursal');
+        return $this->belongsTo(Sucursal::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function ventas(){
+        return $this->hasMany(Ventas::class);
     }
 
     //este metodo nos ba a verificar si existe una caja abierta en el modelo Caja

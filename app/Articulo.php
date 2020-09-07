@@ -31,5 +31,14 @@ class Articulo extends Model
 
     //Haora especificamos los campos guarded
     protected $guarded = [];
+
+    public function articulo_ventas(){
+        return hasMany(Articulo_Venta::class);
+    }
+
+    public function categoria(){
+        return belongsTo(Categoria::class);
+    }
+
 }
 

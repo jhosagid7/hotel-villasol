@@ -28,4 +28,8 @@ class Categoria extends Model
     protected $guarded=[
 
     ];
+
+    public function articulos(){
+        return hasMany(Articulo::class);
+    }
 }
