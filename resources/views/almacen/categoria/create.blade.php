@@ -40,7 +40,7 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <h3>Nueva Categoria</h3>
+            <h3>Nueva Categoría</h3>
             @include('custom.message')
 
 

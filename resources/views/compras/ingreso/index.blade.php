@@ -50,10 +50,10 @@
             @include('custom.message')
             <table id="ingre" class="table table-striped table-bordered table-condensed table-hover">
                 <thead>
+                    <th>ID</th>
                     <th>Fecha</th>
                     <th>Proveedor</th>
                     <th>Comprobante</th>
-                    <th>Impuesto</th>
                     <th>Total</th>
                     <th>Estado</th>
                     <th>Opciones</th>
@@ -61,15 +61,15 @@
                 <tbody>
                     @foreach ($ingresos as $ing)
                     <tr>
+                        <td>{{ $ing->id }}</td>
                         <td>{{ $ing->fecha_hora }}</td>
                         <td>{{ $ing->nombre }}</td>
                         <td>{{ $ing->tipo_comprobante . ': ' . $ing->serie_comprobante . '-' . $ing->num_comprobante }}</td>
-                        <td>{{ $ing->impuesto }}</td>
                         <td>{{ $ing->total }}</td>
                         <td>{{ $ing->estado }}</td>
                         <td>
-                        <a href="{{URL::action('IngresoController@show', $ing->idingreso)}}"><button class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
-                        <a href="" data-target="#modal-delete-{{$ing->idingreso}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
+                        <a href="{{URL::action('IngresoController@show', $ing->id)}}"><button class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
+                        <a href="" data-target="#modal-delete-{{$ing->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
                         </td>
                     </tr>
                     @include('compras.ingreso.modal')
@@ -92,9 +92,13 @@
 <!-- /.box -->
 @push('sciptsMain')
     <script>
-        $(document).ready(function() {
-           var dataTable = $('#ingre').dataTable({
-            "language": {
+       var table = jQuery(document).ready(function() {
+    jQuery('#ingre').DataTable({
+    rowReorder: {
+    selector: 'td:nth-child(2)'
+    },
+    responsive: true,
+    language: {
                         "info": "_TOTAL_ registros",
                         "search": "Buscar",
                         "paginate": {
@@ -113,13 +117,84 @@
                         "infoEmpty": "",
                         "infoFiltered": ""
                     },
-                    "order": [[0, "desc"]],
-                    "iDisplayLength" : 5,
-           });
-           $("#buscarTexto").keyup(function() {
-               dataTable.fnFilter(this.value);
-           });
-       });
+    iDisplayLength : 5,
+    paging: true,
+    processing: true,
+    columnDefs: [{
+    targets: 'no-sort',
+    orderable: false
+    }],
+    dom: '<"row"<"col-sm-6"Bl><"col-sm-6"f>>' +
+    '<"row"<"col-sm-12"<"table-responsive"tr>>>' +
+    '<"row"<"col-sm-5"i><"col-sm-7"p>>',//'lBfrtip',
+    fixedHeader: {
+    header: true
+  },
+    buttons:[
+                    {
+                    extend:'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
+                    title : function() {
+                    return "Listado de Ingresos";
+                    },
+                    alignment: "center",
+
+                    exportOptions: { columns: [0,1,2,3,4,5] } ,
+                    // pageSize : 'A0',
+                    orientation : 'portrait',
+                    pageSize : 'LEGAL',
+                    titleAttr:'Exportar a Excel',
+                    className:'btn btn-success',
+                    filename: 'listadod_de_Ingresos_excel'
+                    },
+                    {
+                    extend:'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
+                    title : function() {
+                    return "Listado de Ingresos";
+                    },
+                    alignment: "center",
+                    customize : function(doc){
+                    doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
+                    doc.content[1].table.widths = [20,100,100,100,100,60]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                    },
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5],
+                        stripHtml: true,
+
+                    } ,
+                    // pageSize : 'A3',
+                    orientation : 'portrait',//portrait landscape
+                    pageSize : 'LETTER',
+                    titleAttr:'Exportar a PDF',
+                    className:'btn btn-danger',
+                    filename: 'listadod_de_Ingresos_pdf'
+                    },
+                    {
+                    extend:'print',
+                    text: '<i class="fa fa-print fa-inverse"></i>',
+                    title : function() {
+                    return "Listado de Ingresos";
+                    },
+                    alignment: "center",
+
+                    exportOptions: { columns: [0,1,2,3,4,5] } ,
+                    // pageSize : 'A0',
+                    orientation : 'portrait',
+                    pageSize : 'LEGAL',
+                    titleAttr:'Imprimir',
+                    className:'btn btn-info',
+                    filename: 'listadod_de_Ingresos_print'
+                    },
+                ],
+
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    } );
+
+
+
+
+    } );
     </script>
     @endpush
 @endsection

@@ -2,42 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Input;
-use App\Http\Requests\IngresoFormRequest;
-use App\Ingreso;
-use App\Articulo;
-use App\DetalleIngreso;
-use App\DetalleVenta;
-use Illuminate\Database\MySqlConnection;
 use DB;
 
-use Carbon\Carbon;
-//use Illuminate\Http\Response;
 use Response;
+use App\Ingreso;
+use App\Articulo;
+use Carbon\Carbon;
+use App\DetalleVenta;
+use App\Http\Requests;
+use App\DetalleIngreso;
+use App\Articulo_Ingreso;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+
+use Barryvdh\DomPDF\Facade as PDF;
+
+use Illuminate\Support\Facades\Input;
+//use Illuminate\Http\Response;
+use Illuminate\Database\MySqlConnection;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\IngresoFormRequest;
 
 class IngresoController extends Controller
 {
     public function __construct()
     {
-
+        $this->middleware('auth');
     }
     public function index(Request $request)
     {
         if ($request) {
             $title='Ingresos';
             $query = trim($request->get('buscarTexto'));
-            $ingresos = DB::table('ingreso as i')
-                ->join('persona as p', 'i.idproveedor', '=', 'p.idpersona')
-                ->join('detalle_ingreso as di', 'i.idingreso', '=', 'di.idingreso')
-                ->select('i.idingreso', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.impuesto', 'i.estado', DB::raw('sum(di.cantidad*precio_compra) as total'))
+            $ingresos = DB::table('ingresos as i')
+                ->join('personas as p', 'i.persona_id', '=', 'p.id')
+                ->join('articulo__ingresos as ai', 'i.id', '=', 'ai.ingreso_id')
+                ->select('i.id', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado', DB::raw('sum(ai.cantidad*precio_costo_unidad) as total'))
                 ->where('i.num_comprobante', 'LIKE', '%'. $query  .'%')
-                ->orderBy('i.idingreso', 'desc')
-                ->groupBy('i.idingreso', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.impuesto', 'i.estado')
+                ->orderBy('i.id', 'desc')
+                ->groupBy('i.id', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
                 ->get();
 
             return view('compras.ingreso.index', ["title"=>$title,"ingresos" => $ingresos, "buscarTexto" => $query]);
@@ -46,9 +49,9 @@ class IngresoController extends Controller
 
     public function create()
     {
-        $personas = DB::table('persona')->where('tipo_persona', '=', 'Proveedor')->get();
-        $articulos = DB::table('articulo as art')
-            ->select(DB::raw('CONCAT(art.codigo, " ", art.nombre) AS articulo'), 'art.idarticulo')
+        $personas = DB::table('personas')->where('tipo_persona', '=', 'Proveedor')->get();
+        $articulos = DB::table('articulos as art')
+            ->select(DB::raw('CONCAT(art.codigo, " ", art.nombre) AS articulo'), 'art.id')
             ->where('art.estado', '=', 'Activo')
             ->get();
 
@@ -57,12 +60,11 @@ class IngresoController extends Controller
 
     public function store(IngresoFormRequest $request)
     {
-        // return $request->all
+        // return $request->all();
 
         try{
             DB::beginTransaction();
             $ingreso = new Ingreso; //(*) al guardar genera un idingreso automatimanente que luego se usa en la tabla detalle
-            $ingreso->idproveedor = $request->get('idproveedor');
             $ingreso->tipo_comprobante = $request->get('tipo_comprobante');
             $ingreso->serie_comprobante = $request->get('serie_comprobante');
             $ingreso->num_comprobante = $request->get('num_comprobante');
@@ -70,31 +72,32 @@ class IngresoController extends Controller
 
             $myTime = Carbon::now('America/Caracas');
             $ingreso->fecha_hora = $myTime->toDateTimeString();
-            $ingreso->impuesto = '12';
-            $ingreso->estado = 'A';
+            $ingreso->estado = 'Aceptado';
+            $ingreso->persona_id = $request->get('idproveedor');
+            $ingreso->user_id = $request->user()->id;
+            // return $request->user()->id;
             $ingreso->save();
 
             //cargamos los datos del detalle del ingreso en unas variables que reciven
             //un array
 
-            $idarticulo = $request->get('idarticulo');
+            $articulo_id = $request->get('idarticulo');
             $cantidad = $request->get('cantidad');
-            $precio_compra = $request->get('precio_compra');
-            $precio_venta = $request->get('precio_venta');
+            $precio_costo_unidad = $request->get('precio_compra');
+
 
             //creamos un contador
             $cont = 0;
 
             //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            while ($cont < count($idarticulo)) {
+            while ($cont < count($articulo_id)) {
 
-                $detalle = new DetalleIngreso();
-                $detalle->idingreso = $ingreso->idingreso;//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-                $detalle->idarticulo = $idarticulo[$cont];
-                $detalle->cantidad = $cantidad[$cont];
-                $detalle->precio_compra = $precio_compra[$cont];
-                $detalle->precio_venta = $precio_venta[$cont];
-                $detalle->save();
+                $Articulo_Ingreso = new Articulo_Ingreso();
+                $Articulo_Ingreso->cantidad = $cantidad[$cont];
+                $Articulo_Ingreso->precio_costo_unidad = $precio_costo_unidad[$cont];
+                $Articulo_Ingreso->ingreso_id = $ingreso->id;
+                $Articulo_Ingreso->articulo_id = $articulo_id[$cont];
+                $Articulo_Ingreso->save();
 
                 $cont = $cont+1;
             }
@@ -113,22 +116,22 @@ class IngresoController extends Controller
 
     public function show($id)
     {
-        $ingreso = DB::table('ingreso as i')
-            ->join('persona as p', 'i.idproveedor', '=', 'p.idpersona')
-            ->join('detalle_ingreso as di', 'i.idingreso', '=', 'di.idingreso')
-            ->select('i.idingreso', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.impuesto', 'i.estado', DB::raw('sum(di.cantidad*precio_compra) as total'))
-            ->where('i.idingreso', '=', $id)
-            ->groupBy('i.idingreso', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.impuesto', 'i.estado')
+        $ingreso = DB::table('ingresos as i')
+            ->join('personas as p', 'i.id', '=', 'p.id')
+            ->join('articulo__ingresos as ai', 'i.id', '=', 'ai.ingreso_id')
+            ->select('i.id', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado', DB::raw('sum(ai.cantidad*precio_costo_unidad) as total'))
+            ->where('i.id', '=', $id)
+            ->groupBy('i.id', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
 
             ->first();
 
         //traemos los datos de la tabla detalle_articulos
-        $detalles = DB::table('detalle_ingreso as d')
-            ->join('articulo as a', 'd.idarticulo', '=', 'a.idarticulo')
-            ->select('a.nombre as articulo', 'd.cantidad', 'd.precio_compra', 'd.precio_venta')
-            ->where('d.idingreso', '=', $id)->get();
+        $Articulo_Ingresos = DB::table('articulo__ingresos as ai')
+            ->join('articulos as a', 'ai.articulo_id', '=', 'a.id')
+            ->select('a.nombre as articulo', 'ai.cantidad', 'ai.precio_costo_unidad')
+            ->where('ai.ingreso_id', '=', $id)->get();
 
-        return view("compras.ingreso.show", ["ingreso" => $ingreso, "detalles"=> $detalles]);
+        return view("compras.ingreso.show", ["ingreso" => $ingreso, "Articulo_Ingresos"=> $Articulo_Ingresos]);
     }
 
     public function destroy($id)
@@ -136,24 +139,18 @@ class IngresoController extends Controller
         try{
             DB::beginTransaction();
         $ingreso = Ingreso::findOrFail($id);
-        $ingreso->estado = 'C';
+        $ingreso->estado = 'Cancelado';
         $ingreso->update();
 
-        $detalleIngreso = DetalleIngreso::where('idingreso','=',$id)->get();
+        $detalleIngreso = Articulo_Ingreso::where('ingreso_id','=',$id)->get();
 
          //creamos un contador
          $cont = 0;
 
          //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
          while ($cont < count($detalleIngreso)) {
-            $idarticulo = $detalleIngreso[$cont]->idarticulo;
+            $idarticulo = $detalleIngreso[$cont]->articulo_id;
             $articulo = Articulo::findOrFail($idarticulo);
-            $dingre = DetalleIngreso::where('idarticulo','=',$idarticulo)->orderBy('idingreso', 'desc')->first();
-            $idingreso= $dingre->iddetalle_ingreso - 1;
-            $dingreP = DetalleIngreso::findOrFail($idingreso);
-
-            $articulo->precio_venta = $articulo->precio_venta - $dingre->precio_venta;
-            // return $articulo->precio_venta;
             $articulo->stock = $articulo->stock-$detalleIngreso[$cont]->cantidad;
             $articulo->update();
 
@@ -170,5 +167,27 @@ class IngresoController extends Controller
         }
 
         return Redirect::to('compras/ingreso');
+    }
+
+    public function exportToPDF(){
+        $ingresos = Ingreso::get();
+        $pdf = PDF::loadView('compras.ingreso.exportToPdf', Compact('ingresos'));
+        $pdf->setPaper('a4', 'landscape');
+
+        // $order          = Order::find($id);
+        // $customer       = Customer::find($order->customer_id);
+        // $shipping       = Shipping::find($order->shipping_id);
+        // $orderDetails   = OrderDetail::where('order_id', $order->id)->get();
+
+        // $pdf = PDF::loadView('admin.order.download-invoice',[
+        //     'order'=> $order,
+        //     'customer'=>$customer,
+        //     'shipping'=>$shipping,
+        //     'orderDetails'=>$orderDetails
+        // ]);
+
+        // return $pdf->download('invoice.pdf');
+//        return $pdf->stream('invoice.pdf');
+        return $pdf->download('ListadoIngresos.pdf');
     }
 }

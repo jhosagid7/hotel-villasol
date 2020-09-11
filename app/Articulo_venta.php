@@ -8,7 +8,8 @@ class Articulo_venta extends Model
 {
     protected $fillabel = [
     'cantidad',
-    'precio_costo',
+    'precio_costo_unidad',
+    'precio_venta_unidad',
     'descuento',
     'articulo_id',
     'venta_id'

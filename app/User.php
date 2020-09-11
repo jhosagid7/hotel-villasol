@@ -40,7 +40,7 @@ class User extends Authenticatable
 
 
 
-    public function Cajas(){
+    public function cajas(){
         return $this->hasMany(Caja::class);
     }
 

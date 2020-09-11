@@ -1,7 +1,32 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
+@extends ('layouts.admin3')
+@section('contenido')
 
+
+
+    <!-- Main content -->
+    <section class="content">
+
+        <!-- Default box -->
+        <div class="box">
+          <div class="box-header with-border">
+          <h3 class="box-title">@isset($title)
+              {{$title}}
+              @else
+              {!!"Sistema"!!}
+          @endisset</h3>
+
+            <div class="box-tools pull-right">
+              <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                      title="Collapse">
+                <i class="fa fa-minus"></i></button>
+              <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                <i class="fa fa-times"></i></button>
+            </div>
+          </div>
+          <div class="box-body">
 
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -59,9 +84,9 @@
                                     <tr>
                                     <td>{{$detalle->articulo}}</td>
                                     <td>{{$detalle->cantidad}}</td>
-                                    <td>{{$detalle->precio_venta}}</td>
+                                    <td>{{$detalle->precio_venta_unidad}}</td>
                                     <td>{{$detalle->descuento}}</td>
-                                    <td>{{$detalle->cantidad*$detalle->precio_venta-$detalle->descuento}}</td>
+                                    <td>{{$detalle->cantidad*$detalle->precio_venta_unidad-$detalle->descuento}}</td>
 
                                     </tr>
                                 @endforeach
@@ -78,7 +103,8 @@
         </div>
     </div>
 
-
+</div>
+</div>
 
 
 @endsection

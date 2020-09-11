@@ -42,7 +42,7 @@
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
         <h3>Listado de Tasas</h3>
-        @include('ventas.tasa.buscar')
+        {{-- @include('ventas.tasa.buscar') --}}
     </div>
 </div>
 
@@ -92,6 +92,7 @@
 <!-- /.box-body -->
 <div class="box-footer">
     <a href="{{URL::action('TasaController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Actualizar</button></a></h3>
+    <a class="btn btn-success" href="{{route('venta.create')}}">{{__('Ir a ventas')}}</a>
     <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
 </div>
 <!-- /.box-footer-->
@@ -99,9 +100,13 @@
 <!-- /.box -->
 @push('sciptsMain')
     <script>
-        $(document).ready(function() {
-           var dataTable = $('#tas').dataTable({
-            "language": {
+         var table = jQuery(document).ready(function() {
+    jQuery('#tas').DataTable({
+    rowReorder: {
+    selector: 'td:nth-child(2)'
+    },
+    responsive: true,
+    language: {
                         "info": "_TOTAL_ registros",
                         "search": "Buscar",
                         "paginate": {
@@ -120,13 +125,84 @@
                         "infoEmpty": "",
                         "infoFiltered": ""
                     },
-                    "iDisplayLength" : 6,
-                    // "order": [[0, "desc"]],
-           });
-           $("#buscarTexto").keyup(function() {
-               dataTable.fnFilter(this.value);
-           });
-       });
+    iDisplayLength : 5,
+    paging: true,
+    processing: true,
+    columnDefs: [{
+    targets: 'no-sort',
+    orderable: false
+    }],
+    dom: '<"row"<"col-sm-6"Bl><"col-sm-6"f>>' +
+    '<"row"<"col-sm-12"<"table-responsive"tr>>>' +
+    '<"row"<"col-sm-5"i><"col-sm-7"p>>',//'lBfrtip',
+    fixedHeader: {
+    header: true
+  },
+    buttons:[
+                    {
+                    extend:'excelHtml5',
+                    text: '<i class="fa fa-file-excel-o fa-inverse"></i>',
+                    title : function() {
+                    return "Listado de Ventas";
+                    },
+                    alignment: "center",
+
+                    exportOptions: { columns: [0,1,2,3,4,5] } ,
+                    // pageSize : 'A0',
+                    orientation : 'portrait',
+                    pageSize : 'LEGAL',
+                    titleAttr:'Exportar a Excel',
+                    className:'btn btn-success',
+                    filename: 'listadod_de_Ventas_excel'
+                    },
+                    {
+                    extend:'pdfHtml5',
+                    text: '<i class="fa fa-file-pdf-o fa-inverse"></i>',
+                    title : function() {
+                    return "Listado de Ventas";
+                    },
+                    alignment: "center",
+                    customize : function(doc){
+                    doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
+                    doc.content[1].table.widths = [20,100,70,100,100,100]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                    },
+                    exportOptions: {
+                        columns: [0,1,2,3,4,5],
+                        stripHtml: true,
+
+                    } ,
+                    // pageSize : 'A3',
+                    orientation : 'portrait',//portrait landscape
+                    pageSize : 'LEGAL',//LETTER
+                    titleAttr:'Exportar a PDF',
+                    className:'btn btn-danger',
+                    filename: 'listadod_de_Ventas_pdf'
+                    },
+                    {
+                    extend:'print',
+                    text: '<i class="fa fa-print fa-inverse"></i>',
+                    title : function() {
+                    return "Listado de Ventas";
+                    },
+                    alignment: "center",
+
+                    exportOptions: { columns: [0,1,2,3,4,5] } ,
+                    // pageSize : 'A0',
+                    orientation : 'portrait',
+                    pageSize : 'LEGAL',
+                    titleAttr:'Imprimir',
+                    className:'btn btn-info',
+                    filename: 'listadod_de_Ventas_print'
+                    },
+                ],
+
+    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    } );
+
+
+
+
+    } );
     </script>
     @endpush
 @endsection

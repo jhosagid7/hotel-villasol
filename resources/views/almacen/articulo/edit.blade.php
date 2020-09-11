@@ -26,7 +26,7 @@
         {{-- cabecera de box --}}
     <div class="row">
         <div class="col-lg-6">
-            <h3>Editar el Articulo: {{$articulo->nombre}}</h3>
+            <h3>Editar el Artículo: {{$articulo->nombre}}</h3>
             @include('custom.message')
         </div>
     </div>

@@ -26,7 +26,7 @@ Auth::routes([
     'register' => true
 ]);
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'VentaController@index')->name('home');
 
 
 
@@ -89,6 +89,8 @@ Route::resource('cajas/caja', 'CajaController');
 Route::get('listarcaja', 'cajaController@listarcaja')->name('listarcaja');
 
 // Route::get('ventas/tasa', 'TasaController@crearTasas')->name('creartasas');
+
+Route::get('/ingreso/exportToPDF','IngresoController@exportToPDF')->name('pdf');
 
 
 

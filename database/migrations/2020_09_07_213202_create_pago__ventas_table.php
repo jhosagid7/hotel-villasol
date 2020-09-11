@@ -13,9 +13,9 @@ class CreatePagoVentasTable extends Migration
      */
     public function up()
     {
-        Schema::create('pago_ventas', function (Blueprint $table) {
+        Schema::create('pago__ventas', function (Blueprint $table) {
             $table->id();
-            $table->decimal('Divisa', 11, 2)->nullable();
+            $table->string('Divisa', 20)->nullable();
             $table->decimal('MontoDivisa', 11, 2)->nullable();
             $table->decimal('TasaTiket', 11, 2)->nullable();
             $table->decimal('MontoDolar', 11, 2)->nullable();
@@ -32,6 +32,6 @@ class CreatePagoVentasTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pago_ventas');
+        Schema::dropIfExists('pago__ventas');
     }
 }

@@ -79,24 +79,22 @@
                                 <th>Artículo</th>
                                 <th>Cantidad</th>
                                 <th>Precio Compra</th>
-                                <th>Precio Venta</th>
                                 <th>Subtotal</th>
                             </thead>
                             <tfoot>
                                 <th></th>
                                 <th></th>
                                 <th></th>
-                                <th></th>
+
                             <th><h4 id="total"><b>$. {{$ingreso->total}}</b></h4></th>
                             </tfoot>
                             <tbody>
-                                @foreach ($detalles as $detalle)
+                                @foreach ($Articulo_Ingresos as $Articulo_Ingreso)
                                     <tr>
-                                    <td>{{$detalle->articulo}}</td>
-                                    <td>{{$detalle->cantidad}}</td>
-                                    <td>{{$detalle->precio_compra}}</td>
-                                    <td>{{$detalle->precio_venta}}</td>
-                                    <td>{{$detalle->cantidad*$detalle->precio_compra}}</td>
+                                    <td>{{$Articulo_Ingreso->articulo}}</td>
+                                    <td>{{$Articulo_Ingreso->cantidad}}</td>
+                                    <td>{{$Articulo_Ingreso->precio_costo_unidad}}</td>
+                                    <td>{{$Articulo_Ingreso->cantidad*$Articulo_Ingreso->precio_costo_unidad}}</td>
 
                                     </tr>
                                 @endforeach
@@ -116,7 +114,7 @@
 </div>
 <!-- /.box-body -->
 <div class="box-footer">
-  {{-- Footer --}}
+    <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
 </div>
 <!-- /.box-footer-->
 </div>

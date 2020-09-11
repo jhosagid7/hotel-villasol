@@ -16,8 +16,15 @@
   <link rel="stylesheet" href="{{asset('bower_components/Ionicons/css/ionicons.min.css')}}">
   <!-- DataTable -->
   <link rel="stylesheet" href="{{asset('Datatables/datatables.min.css')}}">
+  {{-- <link rel="stylesheet" href="{{asset('Datatables/DataTables-1.10.21/css/dataTables.bootstrap4.min.css')}}"> --}}
   {{-- <link rel="stylesheet" href="//cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css"> --}}
   <!-- Theme style -->
+  <link rel="stylesheet" type="text/css" href="{{asset('DataTables-1.10.21/css/jquery.dataTables.min.css')}}">
+  <link rel="stylesheet" type="text/css" href="{{asset('Buttons-1.6.2/css/buttons.dataTables.min.css')}}">
+
+
+
+
   <link rel="stylesheet" href="{{asset('dist/css/AdminLTE.min.css')}}">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
@@ -31,9 +38,9 @@
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 <style>
-  .dataTables_filter {
+  /* .dataTables_filter {
      display: none;
-}
+} */
 </style>
 </head>
 <body class="hold-transition skin-blue sidebar-mini fixed">
@@ -61,7 +68,7 @@
       <div class="navbar-custom-menu">
         <ul class="nav navbar-nav">
           <!-- Messages: style can be found in dropdown.less-->
-          <li class="dropdown messages-menu">
+          {{-- <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-envelope-o"></i>
               <span class="label label-success">4</span>
@@ -88,9 +95,9 @@
               </li>
               <li class="footer"><a href="#">See All Messages</a></li>
             </ul>
-          </li>
+          </li> --}}
           <!-- Notifications: style can be found in dropdown.less -->
-          <li class="dropdown notifications-menu">
+          {{-- <li class="dropdown notifications-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-bell-o"></i>
               <span class="label label-warning">10</span>
@@ -109,9 +116,9 @@
               </li>
               <li class="footer"><a href="#">View all</a></li>
             </ul>
-          </li>
+          </li> --}}
           <!-- Tasks: style can be found in dropdown.less -->
-          <li class="dropdown tasks-menu">
+          {{-- <li class="dropdown tasks-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-flag-o"></i>
               <span class="label label-danger">9</span>
@@ -142,7 +149,7 @@
                 <a href="#">View all tasks</a>
               </li>
             </ul>
-          </li>
+          </li> --}}
           <!-- User Account: style can be found in dropdown.less -->
           <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -174,13 +181,13 @@
               <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
-                    <a href="#">Caja</a>
+                    <a href="{{asset('cajas/caja')}}">Caja</a>
                   </div>
                   <div class="col-xs-4 text-center">
                     <a href="{{asset('ventas/venta')}}">Ventas</a>
                   </div>
                   <div class="col-xs-4 text-center">
-                    <a href="#">Margenes</a>
+                    <a href="{{asset('ventas/tasa')}}">Margenes</a>
                   </div>
                 </div>
                 <!-- /.row -->
@@ -249,7 +256,7 @@
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
         <li class="header">MENÚ DE NAVIGATIÓN</li>
-        <li class="treeview">
+        {{-- <li class="treeview">
           <a href="#">
           <i class="fa fa-hotel"></i> <span>Hotel</span>
           <span class="pull-right-container">
@@ -261,7 +268,7 @@
               <li><a href="{{asset('compras/ingreso')}}"><i class="fa fa-sign-in"></i> Ingreso</a></li>
           </ul>
 
-      </li>
+      </li> --}}
         <li class="treeview">
           <a href="#">
             <i class="fa fa-database"></i> <span>Almacen</span>
@@ -558,22 +565,60 @@
 <script src="{{asset('dist/js/demo.js')}}"></script>
 <!-- Bootstrap 3.3.7 -->
 <script src="{{asset('Datatables/datatables.min.js')}}"></script>
+{{-- <!-- Bootstrap 3.3.7 -->
+<script src="{{asset('Datatables/Buttons-1.6.2/js/buttons.bootstrap.min.js')}}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{{asset('Datatables/JSZip-2.5.0/jszip.min.js')}}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{{asset('Datatables/pdfmake-0.1.36/pdfmake.min.js')}}"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="{{asset('Datatables/Buttons-1.6.2/js/buttons.html5.min.js')}}"></script> --}}
 {{-- <script src="//cdn.datatables.net/1.10.21/js/jquery.dataTables.min.js"></script> --}}
-<script src="{{asset('bower_components/jquery-sparkline/dist/jquery.sparkline.min.js')}}"></script>
+
+
+
+{{-- <script type="text/javascript" src="{{asset('JSZip-2.5.0/jszip.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('pdfmake-0.1.36/pdfmake.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('pdfmake-0.1.36/vfs_fonts.js')}}"></script>
+<script type="text/javascript" src="{{asset('DataTables-1.10.21/js/jquery.dataTables.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('Buttons-1.6.2/js/dataTables.buttons.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('Buttons-1.6.2/js/buttons.colVis.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('Buttons-1.6.2/js/buttons.html5.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('Buttons-1.6.2/js/buttons.print.min.js')}}"></script> --}}
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+{{-- <script src="{{asset('bower_components/jquery-sparkline/dist/jquery.sparkline.min.js')}}"></script>
 <script src="{{asset('plugins/jvectormap/jquery-jvectormap-1.2.2.min.js')}}"></script>
 <script src="{{asset('plugins/jvectormap/jquery-jvectormap-world-mill-en.js')}}"></script>
 <script src="{{asset('bower_components/chart.js/Chart.js')}}"></script>
-<script src="{{asset('dist/js/pages/dashboard2.js')}}"></script>
+<script src="{{asset('dist/js/pages/dashboard2.js')}}"></script> --}}
 
 {{-- Funtion Main --}}
 @stack('sciptsMain')
 
 
-<script>
-  $(document).ready(function () {
-    $('.sidebar-menu').tree()
-  })
-</script>
+<script type="text/javascript">
+    // jQuery(document).ready(function() {
+    // jQuery('#arti').DataTable({
+    // rowReorder: {
+    // selector: 'td:nth-child(2)'
+    // },
+    // responsive: true,
+    // "language": {
+    // "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
+    // },
+    // "paging": true,
+    // "processing": true,
+
+    // dom: 'lBfrtip',
+    // buttons: [
+    // 'excel', 'pdf', 'print',
+    // ],
+    // "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
+    // } );
+    // } );
+
+    </script>
 
 </body>
 </html>

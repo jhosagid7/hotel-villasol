@@ -17,7 +17,7 @@ class ArticuloController extends Controller
 {
     public function __construct()
     {
-
+        $this->middleware('auth');
     }
 
 
@@ -25,6 +25,11 @@ class ArticuloController extends Controller
     {
         if ($request) {
             $query = trim($request->get('buscarTexto'));
+            $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
+            $tasaPeso = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
+            $tasaTransferenciaPunto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
+            $tasaMixto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
+            $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
             $articulos = DB::table('articulos as a')
             ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
             ->where('a.nombre', 'LIKE', '%' . $query . '%')
@@ -35,7 +40,7 @@ class ArticuloController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
-            return view('almacen.articulo.index', ["articulos" => $articulos, "buscarTexto" => $query]);
+            return view('almacen.articulo.index', ["tasaDolar" => $tasaDolar,"tasaPeso" => $tasaPeso,"tasaTransferenciaPunto" => $tasaTransferenciaPunto,"tasaMixto" => $tasaMixto,"tasaEfectivo" => $tasaEfectivo,"articulos" => $articulos, "buscarTexto" => $query]);
         }
     }
     public function create()
@@ -84,7 +89,7 @@ class ArticuloController extends Controller
     public function update(ArticuloFormRequest $request, $id)
     {
         $articulo = Articulo::findOrFail($id);
-        $articulo->id  = $request->get('categoria_id');
+        $articulo->categoria_id  = $request->get('categoria_id');
         $articulo->codigo       = $request->get('codigo');
         $articulo->nombre       = $request->get('nombre');
         $articulo->stock         = $request->get('stock');

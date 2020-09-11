@@ -15,6 +15,7 @@ class Pago_Venta extends Model
         'venta_id'
     ];
 
-
-    protected $guarded = [];
+    public function venta(){
+        return $this->belongsTo(Venta::class);
+    }
 }

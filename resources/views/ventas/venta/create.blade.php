@@ -89,7 +89,7 @@
                             <div class="col-md-12">
                                 <div class="box box-info">
                                     <div class="box-header with-border">
-                                        <h3 class="box-title">Montos Recividos en Caja</h3>
+                                    <h3 class="box-title">Montos Recividos en Caja </h3>
 
                                         <div class="row">
                                             <div class="col-sm-4 col-xs-6">
@@ -203,14 +203,14 @@
                                                                                 <div class="sparkbar" data-color="#00a65a"
                                                                                     data-height="20">
                                                                                     <a
-                                                                                        href="{{ URL::action('VentaController@show', $venta->idventa) }}">
+                                                                                        href="{{ URL::action('VentaController@show', $venta->id) }}">
                                                                                         {{ $venta->total_venta }}
                                                                                     </a>
                                                                                 </div>
                                                                             </td>
                                                                             <td>
                                                                                 <a href=""
-                                                                                    data-target="#modal-delete-{{ $venta->idventa }}"
+                                                                                    data-target="#modal-delete-{{ $venta->id }}"
                                                                                     data-toggle="modal"><button
                                                                                         class='btn btn-danger btn-xs'><i
                                                                                             class='glyphicon glyphicon-trash'></i></button></a>
@@ -329,7 +329,10 @@
                     <div class="container-small text-sm">
                         <form action="{{ route('venta.store') }}" method="POST" autocomplete="off">
                             @csrf
-
+                            <input id="precio_costo_unidad" name="precio_costo_unidad" type="hidden" value="">
+                            <input id="precio_costo" name="precio_costo" type="hidden" value="">
+                            <input id="tipo_pago" name="tipo_pago" type="hidden" value="">
+                        <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group">
@@ -355,15 +358,15 @@
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="form-group">
                                         <label for="serie_comprobante">Control Comprobante</label>
-                                        <input type="text" name="serie_comprobante" class="form-control"
-                                            value="{{ old('serie_comprobante') }}" placeholder="Control Comprobante...">
+                                        <input readonly type="text" name="serie_comprobante" class="form-control"
+                                    value="{{ old('serie_comprobante') }} {{ $num_comprobante ?? '' }}" placeholder="Control Comprobante...">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="form-group">
                                         <label for="num_comprobante">Número Comprobante</label>
-                                        <input type="text" name="num_comprobante" required class="form-control"
-                                            value="{{ old('num_comprobante') }}" placeholder="Número Comprobante...">
+                                        <input readonly type="text" name="num_comprobante" required class="form-control"
+                                            value="{{ old('num_comprobante') }} {{ $serie_comprobante ?? '' }}" placeholder="Número Comprobante...">
                                     </div>
                                 </div>
                             </div>
@@ -820,6 +823,7 @@
             var cont = 0;
             var total = parseFloat(0.00);
 
+
             // var totalp=parseFloat(0.00);
             // var totaltp=parseFloat(0.00);
             // var totalm=parseFloat(0.00);
@@ -831,6 +835,7 @@
             var total_m = parseFloat(0.00);
             var total_e = parseFloat(0.00);
 
+            var precio_costo = parseFloat(0.00);
             var precio_venta = parseFloat(0.00);
             var precio_compra = parseFloat(0.00);
             subtotal = [];
@@ -840,6 +845,7 @@
             subtotaltp = [];
             subtotalm = [];
             subtotale = [];
+            subtotalc = [];
 
             var tasaD = parseFloat($("#TasaDolar").val());
             var tasaP = parseFloat($("#TasaPeso").val());
@@ -940,6 +946,8 @@
                     $("#PagoTtotal").html(total_d.toFixed(2)); //aqui
                     $("#RestaTtotal").html(total_d.toFixed(2)); //aqui
                     $("#total_venta").val(total_d.toFixed(2));
+                    $("#tipo_pago").val('');
+                    $("#tipo_pago").val('Dolar');
                     $("#spTotal").html('0.00'); //aqui
 
 
@@ -962,7 +970,8 @@
                     $("#PagoTtotal").html(total_p.toFixed(2)); //aqui
                     $("#RestaTtotal").html(total_p.toFixed(2)); //aqui
                     $("#total_venta").val(total_p.toFixed(2));
-
+                    $("#tipo_pago").val('');
+                    $("#tipo_pago").val('Peso');
                     $("#spTotal").html('0.00'); //aqui
 
                     $("#DMontoDolar").val('');
@@ -1019,6 +1028,8 @@
                     $("#PagoTtotal").html(total_tp.toFixed(2)); //aqui
                     $("#RestaTtotal").html(total_tp.toFixed(2)); //aqui
                     $("#total_venta").val(total_tp.toFixed(2));
+                    $("#tipo_pago").val('');
+                    $("#tipo_pago").val('Trans/Punto');
                     $("#spTotal").html('0.00'); //aqui
 
                     $("#DMontoDolar").val('');
@@ -1076,6 +1087,8 @@
                     $("#PagoTtotal").html(total_m.toFixed(2)); //aqui
                     $("#RestaTtotal").html(total_m.toFixed(2)); //aqui
                     $("#total_venta").val(total_m.toFixed(2));
+                    $("#tipo_pago").val('');
+                    $("#tipo_pago").val('Mixto');
                     $("#spTotal").html('0.00'); //aqui
 
                     $("#DMontoDolar").val('');
@@ -1120,7 +1133,7 @@
                     $('#trTP').show("linear");
                     $('#trT').show("linear");
                     $('#trM').show("linear");
-                    // $('#trE').hide("linear");
+                    $('#trE').show("linear");
 
 
                     verify();
@@ -1132,6 +1145,8 @@
                     $("#PagoTtotal").html(total_e.toFixed(2)); //aqui
                     $("#RestaTtotal").html(total_e.toFixed(2)); //aqui
                     $("#total_venta").val(total_e.toFixed(2));
+                    $("#tipo_pago").val('');
+                    $("#tipo_pago").val('Efectivo');
                     $("#spTotal").html('0.00'); //aqui
 
                     $("#DMontoDolar").val('');
@@ -1242,36 +1257,43 @@
 
                 precio_compraD = precio_compra + margenD;
                 precio_compraD = precio_compraD.toFixed(2);
+
+
+
+
                 $("#jprecio_venta_dolar").val(precio_compraD);
                 $("#jprecio_venta_d_dolar").val(precio_compraD);
                 $("#jprecio_venta").val(precio_compraD * tasaD);
                 $("#vprecio_venta_dolar").html("<h4>$. " + formatMoney(precio_compraD * tasaD, 2, ',', '.') + "</h4>");
 
                 precio_compraP = precio_compra + margenP;
-                $("#jprecio_venta_p_dolar").val(precio_compraP);
                 precio_compraP = precio_compraP.toFixed(2);
+                $("#jprecio_venta_p_dolar").val(precio_compraP);
                 $("#jprecio_venta_peso").val(precio_compraP * tasaP);
                 $("#vprecio_venta_peso").html("<h4>$. " + formatMoney(precio_compraP * tasaP, 2, ',', '.') + "</h4>");
 
                 precio_compraTP = precio_compra + margenTP;
-                $("#jprecio_venta_tp_dolar").val(precio_compraTP);
                 precio_compraTP = precio_compraTP.toFixed(2);
+                $("#jprecio_venta_tp_dolar").val(precio_compraTP);
                 $("#jprecio_venta_trans_punto").val(precio_compraTP * tasaTP);
                 $("#vprecio_venta_trans_punto").html("<h4>Bs. " + formatMoney(precio_compraTP * tasaTP, 2, ',', '.') +
                     "</h4>");
 
                 precio_compraM = precio_compra + margenM;
-                $("#jprecio_venta_m_dolar").val(precio_compraM);
                 precio_compraM = precio_compraM.toFixed(2);
+                $("#jprecio_venta_m_dolar").val(precio_compraM);
                 $("#jprecio_venta_mixto").val(precio_compraM * tasaM);
                 $("#vprecio_venta_mixto").html("<h4>Bs. " + formatMoney(precio_compraM * tasaM, 2, ',', '.') + "</h4>");
 
                 precio_compraE = precio_compra + margenE;
-                $("#jprecio_venta_e_dolar").val(precio_compraE);
                 precio_compraE = precio_compraE.toFixed(2);
+                $("#jprecio_venta_e_dolar").val(precio_compraE);
                 $("#jprecio_venta_Efectivo").val(precio_compraE * tasaE);
                 $("#vprecio_venta_Efectivo").html("<h4>Bs. " + formatMoney(precio_compraE * tasaE, 2, ',', '.') + "</h4>");
 
+                precio_costoc = precio_compra;
+                precio_costoc = precio_costoc.toFixed(2);
+                $("#precio_costo").val(precio_costoc);
 
 
             }
@@ -1294,6 +1316,7 @@
                 precio_venta_tp = $("#jprecio_venta_tp_dolar").val();
                 precio_venta_m = $("#jprecio_venta_m_dolar").val();
                 precio_venta_e = $("#jprecio_venta_e_dolar").val();
+                precio_venta_c = $("#precio_costo").val();
 
                 verPreciod = $("#jprecio_venta_dolar").val();
                 verPreciop = $("#jprecio_venta_peso").val();
@@ -1327,8 +1350,14 @@
                         subtotaltp[cont] = (cantidad * precio_venta_tp - descuento);
                         subtotalm[cont] = (cantidad * precio_venta_m - descuento);
                         subtotale[cont] = (cantidad * precio_venta_e);
+                        subtotalc[cont] = (cantidad * precio_venta_c);
 
                         total = total + subtotal[cont];
+
+                        precio_costo = precio_costo + subtotalc[cont];
+
+                        // $("#precio_costo_unidad").val(subtotalc[cont]);
+                        $("#precio_costo").val(precio_costo);
 
                         // totalp=total+subtotalp[cont];
                         // totaltp=total+subtotaltp[cont];
@@ -1364,7 +1393,7 @@
                             '">' + formatMoney(verPreciom, 2, ',', '.') + '</td><td class="warning">' + formatMoney(
                                 parseFloat(
                                     subtotalm[cont] * tasaM), 2, ',', '.') +
-                            '</td><td class="success"><input type="hidden" name="precio_venta_e[]" value="' +
+                            '</td><td class="success"><input name="precio_costo_unidad[]" type="hidden" value="'+precio_venta_c+'"><input type="hidden" name="precio_venta_e[]" value="' +
                             precio_venta_e +
                             '">' + formatMoney(verPrecioe, 2, ',', '.') + '</td><td class="success">' + formatMoney(
                                 parseFloat(

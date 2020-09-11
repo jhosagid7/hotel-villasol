@@ -4,23 +4,26 @@ namespace App\Http\Controllers;
 
 use DB;
 
+use App\Caja;
 use App\Tasa;
 use Response;
 use App\venta;
 use App\Articulo;
 use Carbon\Carbon;
+use App\Pago_Venta;
 use App\DetallePago;
 use App\Sessioncaja;
 use App\DetalleVenta;
-use App\Http\Requests;
-use Illuminate\Http\Request;
 
-use Illuminate\Support\Collection;
+use App\Http\Requests;
 //use Illuminate\Http\Response;
+use App\Articulo_venta;
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\VentaFormRequest;
 use Illuminate\Database\MySqlConnection;
 use Illuminate\Support\Facades\Redirect;
-use App\Caja;
 
 
 class VentaController extends Controller
@@ -35,15 +38,18 @@ class VentaController extends Controller
         if ($request) {
             $title='Ventas';
             $query = trim($request->get('buscarTexto'));
-            $ventas = DB::table('venta as v')
-                ->join('personas as p', 'v.idcliente', '=', 'p.id')
-                ->join('detalle_venta as dv', 'v.idventa', '=', 'dv.idventa')
-                ->select('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+            $ventas = DB::table('ventas as v')
+                ->join('personas as p', 'v.persona_id', '=', 'p.id')
+                ->join('articulo_ventas as av', 'v.id', '=', 'av.venta_id')
+                ->join('cajas as c', 'c.sessioncaja_id', '=', 'v.caja_id')
+                ->join('users as u', 'u.id', '=', 'c.user_id')
+                ->select('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
                 ->where('v.num_comprobante', 'LIKE', '%'. $query  .'%')
-                ->orderBy('v.idventa', 'desc')
-                ->groupBy('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+                ->orderBy('v.id', 'desc')
+                ->groupBy('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
                 ->paginate(7);
             // dd($ventas);
+            // return $ventas;
             return view('ventas.venta.index', ["title" => $title,"ventas" => $ventas, "buscarTexto" => $query]);
         }
     }
@@ -80,19 +86,43 @@ class VentaController extends Controller
                 ->where('art.estado', '=', 'Activo')
                 ->where('art.stock', '>', '0')
                 ->get();
+                $UserId = Auth::id();
+            $caja = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
+            $ventaNum = Venta::latest('id')->first();
+            // dd(is_null($ventaNum));
+            if (is_null($ventaNum)) {
 
-                $caja = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
-            $ventas = DB::table('venta as v')
-            ->join('personas as p', 'v.idcliente', '=', 'p.id')
-            ->join('detalle_venta as dv', 'v.idventa', '=', 'dv.idventa')
-            ->select('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-            ->orderBy('v.idventa', 'desc')
-            ->groupBy('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-            ->paginate(7);
+                $num_comprobante = Sessioncaja::numCodigo('C', $UserId, 1);
+                $serie_comprobante = Sessioncaja::numCodigo('N', $UserId, 1);
+                // dd($serie_comprobante);
+            }else{
+                $num_comprobante = Sessioncaja::numCodigo('C', $UserId, $ventaNum->id+1);
+                $serie_comprobante = Sessioncaja::numCodigo('N', $UserId, $ventaNum->id+1);
+            }
+
+
+
+            $ventas = DB::table('ventas as v')
+                ->join('personas as p', 'v.persona_id', '=', 'p.id')
+                ->join('articulo_ventas as av', 'v.id', '=', 'av.venta_id')
+                ->join('cajas as c', 'v.caja_id', '=', 'c.sessioncaja_id')
+                ->join('users as u', 'u.id', '=', 'c.user_id')
+                ->select('u.name','c.user_id','v.id', 'v.fecha_hora','v.caja_id', 'c.sessioncaja_id', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+                ->where('c.user_id', '=', Auth::user()->id)
+                ->where('c.estado', '=', 'Abierta')
+                ->orderBy('v.id', 'desc')
+                ->groupBy('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+                ->paginate(7);
                 // dd($tasaTransferenciaPunto);
-                // return $personas;
+                // return $ventas;
 
-            return view('ventas.venta.create', compact('caja', 'ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
+                // $sumaDivisa = Venta::find(6);
+                // $sumaDivisa->pago_ventas;
+                // $sumaDivisa->Divisa;
+                // $sumaDivisa->pago_ventas[1]->Divisa;
+                // return  $sumaDivisa->pago_ventas[0]->Divisa;
+
+            return view('ventas.venta.create', compact('sumaDivisa','num_comprobante','serie_comprobante','caja', 'ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
             }
             return redirect()
             ->route('caja.index')
@@ -103,45 +133,57 @@ class VentaController extends Controller
 
     public function store(VentaFormRequest $request)
     {
-       return  $request->all();
+    //    return  $request->all();
     //     dd('hola');
         try{
             DB::beginTransaction();
+            $myTime = Carbon::now('America/Caracas');
+            // number_format($número, 2, '.', '');
+            $utilidad = $request->get('total_venta') - $request->get('precio_costo');
+
+
+;
+            $margen_gananacia = $utilidad / $request->get('total_venta');
+            // dd($margen_gananacia);
+
             $venta = new Venta;
-            $venta->idcliente = $request->get('idcliente');
             $venta->tipo_comprobante = $request->get('tipo_comprobante');
             $venta->serie_comprobante = $request->get('serie_comprobante');
             $venta->num_comprobante = $request->get('num_comprobante');
-            $venta->total_venta = $request->get('total_venta');
-
-
-            $myTime = Carbon::now('America/Caracas');
             $venta->fecha_hora = $myTime->toDateTimeString();
-            $venta->impuesto = '18';
-            $venta->estado = 'A';
+            $venta->tipo_pago = $request->get('tipo_pago');
+            $venta->precio_costo = $request->get('precio_costo');
+            $venta->margen_ganancia = $margen_gananacia;
+            $venta->total_venta = $request->get('total_venta');
+            $venta->ganancia_neta = $utilidad;
+            $venta->estado = 'Aceptada';
+            $venta->persona_id = $request->get('idcliente');
+            $venta->caja_id = $request->get('caja_id');
             $venta->save();
 
-            //cargamos los datos del detalle del ingreso en unas variables que reciven
+            //cargamos los datos del detalle del venta en la tabla articulo_venta en unas variables que reciven
             //un array
 
-            $idarticulo = $request->get('idarticulo');
             $cantidad = $request->get('cantidad');
-            $precio_venta = $request->get('precio_venta');
+            $precio_costo_unidad = $request->get('precio_costo_unidad');
+            $precio_venta_unidad = $request->get('precio_venta');
             $descuento = $request->get('descuento');
+            $articulo_id = $request->get('idarticulo');
 
             //creamos un contador
             $cont = 0;
 
             //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            while ($cont < count($idarticulo)) {
+            while ($cont < count($articulo_id)) {
 
-                $detalle = new DetalleVenta();
-                $detalle->idventa = $venta->idventa;//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-                $detalle->idarticulo = $idarticulo[$cont];
-                $detalle->cantidad = $cantidad[$cont];
-                $detalle->precio_venta = $precio_venta[$cont];
-                $detalle->descuento = $descuento[$cont];
-                $detalle->save();
+                $Articulo_venta = new Articulo_venta();
+                $Articulo_venta->cantidad = $cantidad[$cont];
+                $Articulo_venta->precio_costo_unidad = $precio_costo_unidad[$cont];
+                $Articulo_venta->precio_venta_unidad = $precio_venta_unidad[$cont];
+                $Articulo_venta->descuento = $descuento[$cont];
+                $Articulo_venta->articulo_id = $articulo_id[$cont];
+                $Articulo_venta->venta_id =  $venta->id;//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
+                $Articulo_venta->save();
 
                 $cont = $cont+1;
             }
@@ -172,14 +214,14 @@ class VentaController extends Controller
             //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
             while ($cont < count($MontoDolar)) {
 
-                $detallePago = new DetallePago();
-                $detallePago->idventa = $venta->idventa;//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-                $detallePago->Divisa = $divisa[$cont];
-                $detallePago->MontoDivisa = $MontoDivisa[$cont];
-                $detallePago->TasaTiket = $TasaTiket[$cont];
-                $detallePago->MontoDolar = $MontoDolar[$cont];
-                $detallePago->Vueltos = $Vueltos[$cont];
-                $detallePago->save();
+                $Pago_Venta = new Pago_Venta();
+                $Pago_Venta->Divisa = $divisa[$cont];
+                $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
+                $Pago_Venta->TasaTiket = $TasaTiket[$cont];
+                $Pago_Venta->MontoDolar = $MontoDolar[$cont];
+                $Pago_Venta->Vueltos = $Vueltos[$cont];
+                $Pago_Venta->venta_id = $venta->id;
+                $Pago_Venta->save();
 
                 $cont = $cont+1;
             }
@@ -199,18 +241,18 @@ class VentaController extends Controller
     public function show($id)
     {
         // dd($id);
-        $venta = DB::table('venta as v')
-            ->join('persona as p', 'v.idcliente', '=', 'p.idpersona')
-            ->join('detalle_venta as dv', 'v.idventa', '=', 'dv.idventa')
-            ->select('v.idventa', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-            ->where('v.idventa', '=', $id)
+        $venta = DB::table('ventas as v')
+            ->join('personas as p', 'v.persona_id', '=', 'p.id')
+            ->join('articulo_ventas as av', 'v.id', '=', 'av.venta_id')
+            ->select('v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+            ->where('v.id', '=', $id)
             ->first();
 
         //traemos los datos de la tabla detalle_venta
-        $detalles = DB::table('detalle_venta as d')
-            ->join('articulo as a', 'd.idarticulo', '=', 'a.idarticulo')
-            ->select('a.nombre as articulo', 'd.cantidad', 'd.descuento','d.precio_venta')
-            ->where('d.idventa', '=', $id)->get();
+        $detalles = DB::table('articulo_ventas as av')
+            ->join('articulos as a', 'av.articulo_id', '=', 'a.id')
+            ->select('a.nombre as articulo', 'av.cantidad', 'av.descuento','av.precio_venta_unidad')
+            ->where('av.venta_id', '=', $id)->get();
 
         return view("ventas.venta.show", ["venta" => $venta, "detalles"=> $detalles]);
     }
@@ -220,17 +262,18 @@ class VentaController extends Controller
         try{
             DB::beginTransaction();
         $venta = venta::findOrFail($id);
-        $venta->estado = 'C';
+        $venta->estado = 'Cancelada';
         $venta->update();
 
-        $detalleVenta = DetalleVenta::where('idventa','=',$id)->get();
+        $detalleVenta = articulo_Venta::where('venta_id','=',$id)->get();
+
 
          //creamos un contador
          $cont = 0;
 
          //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
          while ($cont < count($detalleVenta)) {
-            $idarticulo = $detalleVenta[$cont]->idarticulo;
+            $idarticulo = $detalleVenta[$cont]->articulo_id;
             $articulo = Articulo::findOrFail($idarticulo);
             $articulo->stock = $articulo->stock+$detalleVenta[$cont]->cantidad;
             $articulo->update();
@@ -238,6 +281,18 @@ class VentaController extends Controller
             $cont = $cont+1;
 
          };
+
+         $registros = Pago_Venta::where('venta_id',$id)->get();
+         foreach($registros as $registro){
+            $ids[]=$registro->id;
+        }
+
+
+        if (isset($ids)) {
+            $eliminados = Pago_Venta::destroy($ids);
+        }
+
+
          DB::commit();
 
         }catch(\Exception $e)
@@ -256,6 +311,15 @@ class VentaController extends Controller
 // FOR EACH ROW BEGIN
 // 	UPDATE articulo SET stock = stock - NEW.cantidad
 //     WHERE articulo.idarticulo = NEW.idarticulo;
+// END
+// //
+// DELIMITER ;
+
+// DELIMITER //
+// CREATE TRIGGER tr_updStockVentas AFTER INSERT ON articulo_ventas
+// FOR EACH ROW BEGIN
+// 	UPDATE articulos SET stock = stock - NEW.cantidad
+//     WHERE articulo.id = NEW.id;
 // END
 // //
 // DELIMITER ;

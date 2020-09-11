@@ -28,7 +28,7 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <h3>Editar Categoria: {{$categoria->nombre}}</h3>
+            <h3>Editar Categoría: {{$categoria->nombre}}</h3>
             @include('custom.message')
 
 

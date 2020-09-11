@@ -25,7 +25,7 @@
         {{-- cabecera de box --}}
 <div class="row">
     <div class="col-lg-6">
-        <h3>Nuevo Articulo</h3>
+        <h3>Nuevo Artículo</h3>
         @include('custom.message')
     </div>
 </div>

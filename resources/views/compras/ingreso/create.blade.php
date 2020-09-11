@@ -40,7 +40,7 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <h3>Nuevo Ingreso</h3>
+            <h3>Nuevo Ingreso</h3><a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
             @include('custom.message')
         </div>
     </div>
@@ -54,7 +54,7 @@
                 <label for="proveedor">Proveedor</label>
                 <select name="idproveedor" id="idproveedor" class="form-control selectpicker" data-live-search="true">
                     @foreach ($personas as $persona)
-                <option value="{{$persona->idpersona}}">{{$persona->nombre}}</option>
+                <option value="{{$persona->id}}">{{$persona->nombre}}</option>
                     @endforeach
                 </select>
             </div>
@@ -96,27 +96,21 @@
                             <label for="articulo">Artículo</label>
                             <select name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
                                 @foreach ($articulos as $articulo)
-                            <option value="{{$articulo->idarticulo}}">{{$articulo->articulo}}</option>
+                            <option value="{{$articulo->id}}">{{$articulo->articulo}}</option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
-                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                    <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
                         <div class="form group">
                             <label for="cantidad">Cantidad</label>
                             <input type="number" name="jcantidad" id="jcantidad"  class="form-control" placeholder="Cantidad...">
                         </div>
                     </div>
-                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                    <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
                         <div class="form group">
                             <label for="precio_compra">Precio Compra</label>
                             <input type="number" name="jprecio_compra" id="jprecio_compra"  class="form-control" placeholder="Precio compra...">
-                        </div>
-                    </div>
-                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                        <div class="form group">
-                            <label for="precio_venta">Precio Venta</label>
-                            <input type="number" name="jprecio_venta" id="jprecio_venta"  class="form-control" placeholder="Precio venta...">
                         </div>
                     </div>
                     <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
@@ -131,12 +125,10 @@
                                 <th>Artículo</th>
                                 <th>Cantidad</th>
                                 <th>Precio Compra</th>
-                                <th>Precio Venta</th>
                                 <th>Subtotal</th>
                             </thead>
                             <tfoot>
                                 <th>TOTAL</th>
-                                <th></th>
                                 <th></th>
                                 <th></th>
                                 <th></th>
@@ -156,8 +148,9 @@
             <div class="form-group">
 
                 <button class="btn btn-primary" type="submit">Guardar</button>
-                <button class="btn btn-danger" type="reset">Cancelar</button>
+
             </div>
+
         </div>
         </div>
     </div>
@@ -200,7 +193,7 @@
             subtotal[cont]=(cantidad*precio_compra);
             total=total+subtotal[cont];
 
-            var fila='<tr class="selected" id="fila'+cont+'"><td><button type="button" class="btn btn-warning" onclick="eliminar('+cont+');">X</button></td><td><input type="hidden" name="idarticulo[]" value="'+idarticulo+'">'+articulo+'</td><td><input type="number" name="cantidad[]" value="'+cantidad+'"></td><td><input type="number" name="precio_compra[]" value="'+precio_compra+'"></td><td><input type="number" name="precio_venta[]" value="'+precio_venta+'"></td><td>'+parseFloat(subtotal[cont])+'</td></tr>';
+            var fila='<tr class="selected" id="fila'+cont+'"><td><button type="button" class="btn btn-warning" onclick="eliminar('+cont+');">X</button></td><td><input type="hidden" name="idarticulo[]" value="'+idarticulo+'">'+articulo+'</td><td><input type="number" name="cantidad[]" value="'+cantidad+'"></td><td><input type="number" name="precio_compra[]" value="'+precio_compra+'"></td><td>'+parseFloat(subtotal[cont])+'</td></tr>';
             cont++
 
             clear();

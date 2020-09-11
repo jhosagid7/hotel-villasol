@@ -13,16 +13,19 @@ class Venta extends Model
     // public $timestamps = false;
 
     public function articulo_ventas(){
-        return hasMany(Articulo_Venta::Class);
+        return $this->hasMany(Articulo_Venta::Class);
+    }
+    public function pago_ventas(){
+        return $this->hasMany(Pago_Venta::Class);
     }
 
     public function caja(){
-        return belongsTo(Venta::class);
+        return $this->belongsTo(Venta::class);
     }
 
     public function user()
     {
-        return $this->hasOneThrough('App\User', 'App\Caja');
+        return $this->hasOneThrough(User::class, Caja::class);
     }
 
     protected $dates = [
@@ -48,3 +51,21 @@ class Venta extends Model
     protected $guarded = [];
 
 }
+
+// DELIMITER //
+// CREATE TRIGGER tr_updStockVenta AFTER INSERT ON detalle_venta
+// FOR EACH ROW BEGIN
+// 	UPDATE articulo SET stock = stock - NEW.cantidad
+//     WHERE articulo.idarticulo = NEW.idarticulo;
+// END
+// //
+// DELIMITER ;
+
+// DELIMITER //
+// CREATE TRIGGER tr_updStockVentas AFTER INSERT ON articulo_ventas
+// FOR EACH ROW BEGIN
+// 	UPDATE articulos SET stock = stock - NEW.cantidad
+//     WHERE articulo.id = NEW.id;
+// END
+// //
+// DELIMITER ;
