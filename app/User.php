@@ -46,7 +46,7 @@ class User extends Authenticatable
 
     public function ventas()
     {
-        return $this->hasManyThrough('App\Venta', 'App\Caja');
+        return $this->hasManyThrough(Venta::class, Caja::class);
     }
 
 

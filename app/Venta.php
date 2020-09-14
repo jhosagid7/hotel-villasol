@@ -20,7 +20,11 @@ class Venta extends Model
     }
 
     public function caja(){
-        return $this->belongsTo(Venta::class);
+        return $this->belongsTo(Caja::class);
+    }
+
+    public function Persona(){
+        return $this->belongsTo(Persona::class);
     }
 
     public function user()

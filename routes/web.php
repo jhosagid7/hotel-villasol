@@ -91,6 +91,7 @@ Route::get('listarcaja', 'cajaController@listarcaja')->name('listarcaja');
 // Route::get('ventas/tasa', 'TasaController@crearTasas')->name('creartasas');
 
 Route::get('/ingreso/exportToPDF','IngresoController@exportToPDF')->name('pdf');
+Route::get('/cajas/caja/{caja}/print ','CajaController@print')->name('print');
 
 
 

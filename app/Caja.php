@@ -45,7 +45,22 @@ class Caja extends Model
     }
 
     public function ventas(){
-        return $this->hasMany(Ventas::class);
+        return $this->hasMany(Venta::class);
+    }
+
+    public function pago_ventas()
+    {
+        return $this->hasManyThrough(Pago_Venta::class, Venta::class);
+    }
+
+    public function personas()
+    {
+        return $this->hasManyThrough(Persona::class, Venta::class);
+    }
+
+    public function articulo_ventas()
+    {
+        return $this->hasManyThrough(Articulo_Venta::class, Venta::class);
     }
 
     //este metodo nos ba a verificar si existe una caja abierta en el modelo Caja

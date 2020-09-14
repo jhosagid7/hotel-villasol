@@ -118,11 +118,53 @@ class VentaController extends Controller
 
                 // $sumaDivisa = Venta::find(6);
                 // $sumaDivisa->pago_ventas;
-                // $sumaDivisa->Divisa;
-                // $sumaDivisa->pago_ventas[1]->Divisa;
-                // return  $sumaDivisa->pago_ventas[0]->Divisa;
+                // $sumaDivisa->caja->user;
 
-            return view('ventas.venta.create', compact('sumaDivisa','num_comprobante','serie_comprobante','caja', 'ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
+                $cajas = Caja::find($Caja->id);
+                $cajas->user;
+                $cajas->ventas;
+                $cajas->pago_ventas;
+                $cajas->articulo_ventas;
+
+
+                // $cont = 0;
+                // while ($cont < count($cajas->pago_ventas)) {
+                //     $v1[] = $cajas->pago_ventas[$cont]->Divisa;
+                //     $cont = $cont+1;
+                // }
+
+                foreach ($cajas->pago_ventas as $pago ) {
+
+                     if ($pago->Divisa == 'Dolar') {
+                        $cajas->SumaTotalDolar = $cajas->SumaTotalDolar + $pago->MontoDivisa;
+                     }elseif ($pago->Divisa == 'Peso') {
+                        $cajas->SumaTotalPeso = $cajas->SumaTotalPeso + $pago->MontoDivisa;
+                     }elseif ($pago->Divisa == 'Bolivar') {
+                        $cajas->SumaTotalBolivar = $cajas->SumaTotalBolivar + $pago->MontoDivisa;
+                     }elseif ($pago->Divisa == 'Punto') {
+                        $cajas->SumaTotalPunto = $cajas->SumaTotalPunto + $pago->MontoDivisa;
+                     }elseif ($pago->Divisa == 'Transferencia') {
+                        $cajas->SumaTotalTransferencia = $cajas->SumaTotalTransferencia + $pago->MontoDivisa;
+                     }
+
+                }
+
+                foreach ($cajas->ventas as $vent ) {
+                    if ($vent->estado == 'Aceptada') {
+                    $cajas->SumaTotalVentas = $cajas->SumaTotalVentas + $vent->total_venta;
+                    $cajas->SumaTotalCantidadVentas = $cajas->SumaTotalCantidadVentas + 1;
+                    }
+                 }
+
+                 foreach ($cajas->articulo_ventas as $art_vent ) {
+                    $cajas->SumaArticulosVendidos = $cajas->SumaArticulosVendidos + $art_vent->cantidad;
+                 }
+
+
+
+                // return  $cajas;
+
+            return view('ventas.venta.create', compact('cajas','num_comprobante','serie_comprobante','caja', 'ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
             }
             return redirect()
             ->route('caja.index')
@@ -235,7 +277,7 @@ class VentaController extends Controller
             dd($e);
         }
 
-        return Redirect::to('ventas/venta')->with('success', 'La venta fué registrada exitosamente');
+        return Redirect::to('ventas/venta/create')->with('success', 'La venta fué registrada exitosamente');
     }
 
     public function show($id)

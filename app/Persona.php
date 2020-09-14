@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Persona extends Model
 {
 
+    public function Ventas(){
+        return $this->hasMany(Venta::class);
+    }
+
     // protected $table = 'persona';
 
     // protected $primaryKey = 'idpersona';

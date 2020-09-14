@@ -33,7 +33,7 @@
 @csrf
 
 <div class="row">
-ffff
+
     {{-- <input name="estado" type="hidden" value="Apertura"> --}}
     <input id="session_id" name="session_id" type="hidden" value="{{$caja->id}}">
     {{-- <input id="caja_id" name="caja_id" type="hidden" value="{{ $id_caja_activa ?? '' }}"> --}}
@@ -99,7 +99,7 @@ ffff
       <tr>
         <td>{{ $denod->denominacion }}</td>
         <td><input name="dcantidad[{{$i}}]" id="dcantidad_{{$i}}" type="number" class="form-control enteros" value="">
-            <input name="DsubTotald[{{$i}}]" id="DsubTotald_{{$i}}" type="text" class="form-control"  value="">
+            <input name="DsubTotald[{{$i}}]" id="DsubTotald_{{$i}}" type="hidden" class="form-control"  value="">
         </td>
         <td>{{ $denod->valor }}</td>
         <input name="dvalor[{{$i}}]"  id="dvalor_{{$i}}" type="hidden" class="form-control" value="{{ $denod->valor }}">
@@ -154,7 +154,7 @@ ffff
           <tr>
             <td>{{ $penod->denominacion }}</td>
         <td><input name="pcantidad[{{$p}}]" id="pcantidad_{{$p}}" type="number" class="form-control enteros" value="">
-            <input name="PsubTotald[{{$p}}]" id="PsubTotald_{{$p}}" type="text" class="form-control"  value="">
+            <input name="PsubTotald[{{$p}}]" id="PsubTotald_{{$p}}" type="hidden" class="form-control"  value="">
         </td>
         <td>{{ $penod->valor }}</td>
         <input name="pvalor[{{$p}}]"  id="pvalor_{{$p}}" type="hidden" class="form-control" value="{{ $penod->valor }}">
@@ -209,7 +209,7 @@ ffff
               <tr>
                 <td>{{ $benod->denominacion }}</td>
                 <td><input name="bcantidad[{{$b}}]" id="bcantidad_{{$b}}" type="number" class="form-control enteros" value="">
-                    <input name="BsubTotald[{{$b}}]" id="BsubTotald_{{$b}}" type="text" class="form-control"  value="">
+                    <input name="BsubTotald[{{$b}}]" id="BsubTotald_{{$b}}" type="hidden" class="form-control"  value="">
                 </td>
                 <td>{{ $benod->valor }}</td>
                 <input name="bvalor[{{$b}}]"  id="bvalor_{{$b}}" type="hidden" class="form-control" value="{{ $benod->valor }}">

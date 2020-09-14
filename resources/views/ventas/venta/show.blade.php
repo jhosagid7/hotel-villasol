@@ -1,8 +1,6 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-@extends ('layouts.admin3')
-@section('contenido')
 
 
 

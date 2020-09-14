@@ -28,7 +28,7 @@
 
                                     <div class="info-box-content">
                                         <span class="info-box-text">Produc Vendidos</span>
-                                        <span class="info-box-number">12<small>%</small></span>
+                                        <span class="info-box-number">{{ $cajas->SumaArticulosVendidos ?? ' 0' }}</span>
                                     </div>
                                     <!-- /.info-box-content -->
                                 </div>
@@ -41,7 +41,7 @@
 
                                     <div class="info-box-content">
                                         <span class="info-box-text">Ventas Realizadas</span>
-                                        <span class="info-box-number">41</span>
+                                        <span class="info-box-number">{{ $cajas->SumaTotalCantidadVentas ?? ' 0,00' }}</span>
                                     </div>
                                     <!-- </.info-box-content -->
                                 </div>
@@ -58,7 +58,7 @@
 
                                     <div class="info-box-content">
                                         <span class="info-box-text">Ventas</span>
-                                        <span class="info-box-number">$.760</span>
+                                        <span class="info-box-number">$. {{ $cajas->SumaTotalVentas ?? ' 0,00' }}</span>
                                     </div>
                                     <!-- /.info-box-content -->
                                 </div>
@@ -92,12 +92,12 @@
                                     <h3 class="box-title">Montos Recividos en Caja </h3>
 
                                         <div class="row">
-                                            <div class="col-sm-4 col-xs-6">
+                                            <div class="col-sm-2 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-text">INICIO DE CAJA</span>
                                                     <h5 class="description-header">Dolar: {{ $caja->monto_dolar ?? '' }}</h5>
-                                                    <h5 class="description-header">Peso: {{ $caja->monto_peso ?? '' }}</h5>
-                                                    <h5 class="description-header">Bolivar: {{ $caja->monto_bolivar ?? '' }}</h5>
+                                                    <h5 class="description-header">Peso: {{ number_format($caja->monto_peso,2,',','.') ?? '' }}</h5>
+                                                    <h5 class="description-header">Bolivar: {{ number_format($caja->monto_bolivar,2,',','.') ?? '' }}</h5>
                                                 </div>
                                             </div>
                                             <div class="col-sm-2 col-xs-6">
@@ -105,7 +105,7 @@
                                                     <span class="description-percentage text-green"><i
                                                             class="fa fa-caret-up"></i>
                                                         {{ $tasaDolar->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">$. 0,00</h5>
+                                                    <h5 class="description-header">$. {{ $cajas->SumaTotalDolar ?? ' 0,00' }}</h5>
                                                     <span class="description-text">DOLAR</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -116,7 +116,7 @@
                                                     <span class="description-percentage text-yellow"><i
                                                             class="fa fa-caret-left"></i>
                                                         {{ $tasaPeso->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">$. 0,00</h5>
+                                                    <h5 class="description-header">$. {{ number_format($cajas->SumaTotalPeso,2,',','.') ?? ' 0,00' }}</h5>
                                                     <span class="description-text">PESO</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -127,8 +127,20 @@
                                                     <span class="description-percentage text-green"><i
                                                             class="fa fa-caret-up"></i>
                                                         {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">Bs. 0,00</h5>
-                                                    <span class="description-text">PUNTO/TRANS</span>
+                                                    <h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalPunto,2,',','.') ?? ' 0,00' }}</h5>
+                                                    <span class="description-text">PUNTO</span>
+                                                </div>
+                                                <!-- /.description-block -->
+                                            </div>
+                                            <!-- /.col -->
+
+                                            <div class="col-sm-2 col-xs-6">
+                                                <div class="description-block border-right">
+                                                    <span class="description-percentage text-green"><i
+                                                            class="fa fa-caret-up"></i>
+                                                        {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
+                                                    <h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalTransferencia,2,',','.') ?? ' 0,00' }}</h5>
+                                                    <span class="description-text">TRANS</span>
                                                 </div>
                                                 <!-- /.description-block -->
                                             </div>
@@ -139,7 +151,7 @@
                                                     <span class="description-percentage text-red"><i
                                                             class="fa fa-caret-down"></i>
                                                         {{ $tasaEfectivo->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">Bs. 0,00</h5>
+                                                    <h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalBolivar,2,',','.') ?? ' 0,00' }}</h5>
                                                     <span class="description-text">EFECTIVO</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -235,7 +247,7 @@
 
                                         </div>
                                         <!-- /.box -->
-                                        <div class="col-md-4">
+                                        <div class="col-md-4 no-print">
                                             <div class="box-body">
                                                 <div class="box box-info">
                                                     <div class="box-header with-border">
@@ -379,9 +391,8 @@
                                                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                                         <div class="form-group">
                                                             <label for="articulo">Artículo</label>
-                                                            <select name="jidarticulo" id="jidarticulo"
-                                                                class="form-control selectpicker" data-live-search="true">
-                                                                <option value="seleccione...">Seleccione Articulo</option>
+                                                            <select autofocus name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
+                                                                <option value="0">Seleccione Articulo</option>
                                                                 @foreach ($articulos as $articulo)
                                                                     <option
                                                                         value="{{ $articulo->id }}_{{ $articulo->stock }}_{{ $articulo->precio_costo }}_{{ $articulo->nombre }}">
@@ -503,7 +514,7 @@
                                                     </div>
                                                     <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                         <div class="form group">
-                                                            <button id="bt_add" type="button"
+                                                            <button id="bt_add" type="button" "
                                                                 class="btn btn-primary btn-md btn-block">Agregar</button>
                                                         </div>
                                                     </div>
@@ -1298,6 +1309,18 @@
 
             }
 
+            $("#jidarticulo").on("change", function () {
+                document.getElementById("jcantidad").focus();
+                // $("#jidarticulo").val('0');
+                // document.getElementById('jidarticulo').val('0');
+            });
+
+            focusMethod = function getFocus() {
+                document.getElementById("jidarticulo").focus();
+                $("#jidarticulo").val('default');
+                $("#jidarticulo").selectpicker("refresh");
+            }
+
             function add_article() {
                 datosArticulo = document.getElementById('jidarticulo').value.split('_');
 
@@ -1401,6 +1424,8 @@
                             parseFloat(descuento) + '">' + parseFloat(descuento) + '</td></tr>';
                         cont++
 
+
+
                         clear();
                         // $("#total").html("<h4>$. " + total.toFixed(2) + "</h4>");
 
@@ -1468,6 +1493,7 @@
                 $("#vprecio_venta_trans_punto").html("<h4>Bs. 0.00</h4>");
                 $("#vprecio_venta_mixto").html("<h4>Bs. 0.00</h4>");
                 $("#vprecio_venta_Efectivo").html("<h4>Bs. 0.00</h4>");
+                focusMethod();
             }
 
             function verify() {

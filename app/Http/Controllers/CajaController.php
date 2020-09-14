@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Caja;
+use App\Venta;
 use Carbon\Carbon;
 use App\Sessioncaja;
 use App\Contabilidad;
@@ -273,12 +274,69 @@ class CajaController extends Controller
     {
         // return 'hola desde show  id'.$id.' '.$mensaje;
         // return $request;
+        $title = 'Resumen de Caja';
         $caja = Caja::find($id);
         $denominacion_dolar = Denominacion::where('moneda', 'Dolar')->orderBy('id', 'desc')->get();
         $denominacion_peso = Denominacion::where('moneda', 'Pesos')->orderBy('id', 'desc')->get();
         $denominacion_bolivar = Denominacion::where('moneda', 'Bolivares')->orderBy('id', 'desc')->get();
         // return $cajas;
-        return view('cajas.caja.show', compact('caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar'))->with($mensaje);
+
+        // $sumaDivisa = Venta::find(6);
+        // $sumaDivisa->pago_ventas;
+        // $sumaDivisa->caja->user;
+
+        $cajas = Caja::find($caja->id);
+                $cajas->user;
+                $cajas->ventas;
+                // $cajas->ventas->personas;
+                $cajas->pago_ventas;
+                $cajas->articulo_ventas;
+
+        // $v = Venta::find(6);
+        // $v->caja;
+        // $v->pago_ventas;
+        // $v->caja->user;
+        // $v->persona;
+
+        // return $cajas;
+                // $cont = 0;
+                // while ($cont < count($cajas->pago_ventas)) {
+                //     $v1[] = $cajas->pago_ventas[$cont]->Divisa;
+                //     $cont = $cont+1;
+                // }
+
+                foreach ($cajas->pago_ventas as $pago ) {
+
+                     if ($pago->Divisa == 'Dolar') {
+                        $cajas->SumaTotalDolar = $cajas->SumaTotalDolar + $pago->MontoDivisa;
+                     }elseif ($pago->Divisa == 'Peso') {
+                        $cajas->SumaTotalPeso = $cajas->SumaTotalPeso + $pago->MontoDivisa;
+                     }elseif ($pago->Divisa == 'Bolivar') {
+                        $cajas->SumaTotalBolivar = $cajas->SumaTotalBolivar + $pago->MontoDivisa;
+                     }elseif ($pago->Divisa == 'Punto') {
+                        $cajas->SumaTotalPunto = $cajas->SumaTotalPunto + $pago->MontoDivisa;
+                     }elseif ($pago->Divisa == 'Transferencia') {
+                        $cajas->SumaTotalTransferencia = $cajas->SumaTotalTransferencia + $pago->MontoDivisa;
+                     }
+
+                }
+
+                foreach ($cajas->ventas as $vent ) {
+                    if ($vent->estado == 'Aceptada') {
+                    $cajas->SumaTotalVentas = $cajas->SumaTotalVentas + $vent->total_venta;
+                    $cajas->SumaTotalCostoVentas = $cajas->SumaTotalCostoVentas + $vent->precio_costo;
+                    $cajas->SumaTotalMargenVentas = $cajas->SumaTotalMargenVentas + $vent->margen_ganancia;
+                    $cajas->SumaTotalUtilidadVentas = $cajas->SumaTotalUtilidadVentas + $vent->ganancia_neta;
+                    $cajas->SumaTotalCantidadVentas = $cajas->SumaTotalCantidadVentas + 1;
+                    }
+                 }
+
+                 foreach ($cajas->articulo_ventas as $art_vent ) {
+                    $cajas->SumaArticulosVendidos = $cajas->SumaArticulosVendidos + $art_vent->cantidad;
+                 }
+
+                //  return $cajas;
+        return view('cajas.caja.show', compact('title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar'))->with($mensaje);
     }
 
     /**

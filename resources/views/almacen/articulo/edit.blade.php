@@ -87,7 +87,7 @@
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="precio_costo">Precio de costo</label>
-                <input type="number" name="precio_costo" required value="{{$articulo->precio_costo}}" class="form-control decimal">
+                <input type="text" name="precio_costo" required value="{{$articulo->precio_costo}}" class="form-control decimal">
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
