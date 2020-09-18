@@ -36,11 +36,12 @@ class IngresoController extends Controller
             $query = trim($request->get('buscarTexto'));
             $ingresos = DB::table('ingresos as i')
                 ->join('personas as p', 'i.persona_id', '=', 'p.id')
+                ->join('users as u', 'i.user_id', '=', 'u.id')
                 ->join('articulo__ingresos as ai', 'i.id', '=', 'ai.ingreso_id')
-                ->select('i.id', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado', DB::raw('sum(ai.cantidad*precio_costo_unidad) as total'))
+                ->select('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado', DB::raw('sum(ai.cantidad*precio_costo_unidad) as total'))
                 ->where('i.num_comprobante', 'LIKE', '%'. $query  .'%')
                 ->orderBy('i.id', 'desc')
-                ->groupBy('i.id', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
+                ->groupBy('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
                 ->get();
 
             return view('compras.ingreso.index', ["title"=>$title,"ingresos" => $ingresos, "buscarTexto" => $query]);
@@ -116,14 +117,17 @@ class IngresoController extends Controller
 
     public function show($id)
     {
-        $ingreso = DB::table('ingresos as i')
-            ->join('personas as p', 'i.id', '=', 'p.id')
-            ->join('articulo__ingresos as ai', 'i.id', '=', 'ai.ingreso_id')
-            ->select('i.id', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado', DB::raw('sum(ai.cantidad*precio_costo_unidad) as total'))
-            ->where('i.id', '=', $id)
-            ->groupBy('i.id', 'i.fecha_hora', 'p.nombre', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
+        $title = 'Reporte de Ingreso';
 
-            ->first();
+        $ingreso = DB::table('ingresos as i')
+                ->join('personas as p', 'i.persona_id', '=', 'p.id')
+                ->join('users as u', 'i.user_id', '=', 'u.id')
+                ->join('articulo__ingresos as ai', 'i.id', '=', 'ai.ingreso_id')
+                ->select('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado', DB::raw('sum(ai.cantidad*precio_costo_unidad) as total'))
+                ->where('i.id', '=', $id)
+                ->orderBy('i.id', 'desc')
+                ->groupBy('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
+                ->get();
 
         //traemos los datos de la tabla detalle_articulos
         $Articulo_Ingresos = DB::table('articulo__ingresos as ai')
@@ -131,7 +135,9 @@ class IngresoController extends Controller
             ->select('a.nombre as articulo', 'ai.cantidad', 'ai.precio_costo_unidad')
             ->where('ai.ingreso_id', '=', $id)->get();
 
-        return view("compras.ingreso.show", ["ingreso" => $ingreso, "Articulo_Ingresos"=> $Articulo_Ingresos]);
+            // return $ingreso;
+
+        return view("compras.ingreso.show", ["title" => $title, "ingreso" => $ingreso, "Articulo_Ingresos"=> $Articulo_Ingresos]);
     }
 
     public function destroy($id)

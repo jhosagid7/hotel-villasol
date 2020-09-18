@@ -10,7 +10,7 @@
 
         <!-- Default box -->
         <div class="box">
-          <div class="box-header with-border">
+          <div class="box-header with-border  no-print">
           <h3 class="box-title">@isset($title)
               {{$title}}
               @else
@@ -63,8 +63,8 @@
         <strong>Operador: </strong> {{ $caja->user->name}}<br>
         <strong>Fecha: </strong> {{ $caja->fecha->format('d-m-Y')}}<br>
         <strong>Estado: </strong> {{ $caja->estado}}<br>
-        <strong>Ventas Realizadas: </strong> {{ $cajas->SumaTotalCantidadVentas}}<br>
-        <strong>Articulos Vendidos: </strong> {{ $cajas->SumaArticulosVendidos}}<br>
+        <strong>Ventas Realizadas: </strong> {{ $cajas->SumaTotalCantidadVentas ?? '0' }}<br>
+        <strong>Articulos Vendidos: </strong> {{ $cajas->SumaArticulosVendidos ?? '0' }}<br>
 
         </address>
       </div>
@@ -92,7 +92,14 @@
                     <td>${{ $cajas->SumaTotalCostoVentas ?? '0.00' }}</td>
                   </tr>
                   <tr>
-                    <th>Utilidad ({{ number_format($cajas->SumaTotalUtilidadVentas / $cajas->SumaTotalVentas,2,',','.') ?? '0.00' }}%)</th>
+                    <th>
+                        @if ($cajas->SumaTotalVentas)
+                            Utilidad ({{ number_format($cajas->SumaTotalUtilidadVentas / $cajas->SumaTotalVentas,2,',','.') ?? '0.00' }}%)
+                        @else
+                            Utilidad ({{ number_format(0,2,',','.') ?? '0.00' }}%)
+                        @endif
+
+                    </th>
                     <td>${{ $cajas->SumaTotalUtilidadVentas ?? '0.00' }}</td>
                   </tr>
                   <tr>

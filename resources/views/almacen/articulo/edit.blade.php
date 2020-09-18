@@ -37,18 +37,12 @@
     @csrf
     @method('PUT')
     <div class="row">
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-            <div class="form-group">
-                <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" required value="{{$articulo->nombre}}" class="form-control">
-            </div>
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="form-group">
                 <label for="">Categoría</label>
-                <select name="categoria_id" id="categoria_id" class="form-control">
+                <select required name="categoria_id" id="categoria_id" class="form-control select2">
                     @foreach($categorias as $cat)
-                    @if($cat->id==$articulo->id)
+                    @if($cat->id==$articulo->categoria_id)
                     <option value="{{$cat->id}}" selected>{{$cat->nombre}}</option>
                     @else
                     <option value="{{$cat->id}}">{{$cat->nombre}}</option>
@@ -57,25 +51,51 @@
                 </select>
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="form-group">
-                <label for="codigo">Código</label>
-                <input type="text" name="codigo" required value="{{$articulo->codigo}}" class="form-control">
+                <label for="nombre">Nombre</label>
+                <input type="text" name="nombre" required value="{{$articulo->nombre}}" class="form-control">
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-            <div class="form-group">
-                <label for="stock">Stock</label>
-                <input type="text" name="stock" required value="{{$articulo->stock}}" class="form-control">
-            </div>
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
                 <input type="text" name="descripcion" required value="{{$articulo->descripcion}}" class="form-control">
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+            <div class="form-group">
+                <label for="codigo">Código</label>
+                <input type="text" name="codigo" required value="{{$articulo->codigo}}" class="form-control">
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+            <div class="form-group">
+                <label for="stock">Unidades</label>
+                <input readonly type="text" name="unidades" required value="{{$articulo->unidades}}" class="form-control enteros" placeholder="unidades...">
+            </div>
+        </div>
+        <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+            <div class="form-group">
+                <label for="vender_al">Producto para Vender al</label>
+                <select readonly required   class="form-control select2" name="vender_al" id="vender_al">
+
+                    @if($articulo->vender_al)
+                    <option value="{{$articulo->vender_al}}" selected>{{$articulo->vender_al}}</option>
+
+                    @endif
+
+                </select>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+            <div class="form-group">
+                <label for="precio_costo">Precio de costo</label>
+                <input type="text" name="precio_costo" required value="{{$articulo->precio_costo}}" class="form-control decimal">
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="form-group">
                 <label for="imagen">Imagen</label>
                 <input type="file" name="imagen" class="form-control">
@@ -84,20 +104,14 @@
             @endif
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-            <div class="form-group">
-                <label for="precio_costo">Precio de costo</label>
-                <input type="text" name="precio_costo" required value="{{$articulo->precio_costo}}" class="form-control decimal">
-            </div>
-        </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-            <div class="form-group">
-                <button class="btn btn-primary" type="submit">Guardar</button>
-                <a class="btn btn-danger" href="{{route('articulo.index')}}">{{__('Back')}}</a>
-            </div>
+
+    </div>
+    <div class="box-footer">
+        <div class="form-group margin">
+            <button class="btn btn-primary" type="submit">Guardar</button>
+            <a class="btn btn-danger" href="{{route('articulo.index')}}">{{__('Back')}}</a>
         </div>
     </div>
-
             </form>
         </div>
     </div>

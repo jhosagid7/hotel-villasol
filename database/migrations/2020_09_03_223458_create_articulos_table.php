@@ -21,6 +21,8 @@ class CreateArticulosTable extends Migration
             $table->string('stock', 20);
             $table->decimal('precio_costo', 11, 2)->nullable();
             $table->text('descripcion');
+            $table->unsignedInteger('unidades')->nullable();
+            $table->enum('vender_al', ['Mayor', 'Detal']);
             $table->string('imagen', 200);
             $table->enum('estado', ['Activo', 'Inactivo', 'Eliminado']);
             $table->timestamps();

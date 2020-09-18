@@ -173,7 +173,7 @@ class VentaController extends Controller
 
     }
 
-    public function store(VentaFormRequest $request)
+    public function store(Request $request)
     {
     //    return  $request->all();
     //     dd('hola');

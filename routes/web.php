@@ -82,8 +82,11 @@ Route::resource('ventas/venta', 'VentaController');
 
 
 
-Route::resource('ventas/tasa', 'TasaController');
 
+Route::resource('ventas/tasa', 'TasaController');
+Route::resource('almacen/transferencia', 'TransferenciaController', ['except'=>[
+    'edit', 'update', 'destroy'
+]]);
 Route::resource('cajas/caja', 'CajaController');
 
 Route::get('listarcaja', 'cajaController@listarcaja')->name('listarcaja');
@@ -92,6 +95,9 @@ Route::get('listarcaja', 'cajaController@listarcaja')->name('listarcaja');
 
 Route::get('/ingreso/exportToPDF','IngresoController@exportToPDF')->name('pdf');
 Route::get('/cajas/caja/{caja}/print ','CajaController@print')->name('print');
+
+Route::get('/origen', 'TransferenciaController@getProductoOrigenes')->name('origen');
+Route::get('/destino', 'TransferenciaController@getProductoDestinos')->name('destiono');
 
 
 

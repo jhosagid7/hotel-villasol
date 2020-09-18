@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use DB;
 use App\Categoria;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\CategoriaFormRequest;
-use DB;
 
 
 class CategoriaController extends Controller
@@ -17,12 +18,20 @@ class CategoriaController extends Controller
     }
     public function index(Request $request)
     {
-            // return 'index categoria';
+            // return $request;
+
+        $name = $request->get('name');
+        $condition = $request->get('condition');
+        $description = $request->get('descripcion');
+        $fecha = $request->get('fecha');
 
         if($request){
-            // $query=trim($request->get("buscarTexto"));
-            $categorias=Categoria::where("condicion","=","Activa")
-            ->orderBy("id","desc")
+
+            $categorias=Categoria::orderBy('id', 'DESC')
+            ->name($name)
+            ->condition($condition)
+            ->description($description)
+            ->fecha($fecha)
             ->get();
             return view("almacen.categoria.index",["categorias"=>$categorias]);
         }

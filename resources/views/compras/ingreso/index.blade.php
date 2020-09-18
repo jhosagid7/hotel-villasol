@@ -52,6 +52,7 @@
                 <thead>
                     <th>ID</th>
                     <th>Fecha</th>
+                    <th>Operador</th>
                     <th>Proveedor</th>
                     <th>Comprobante</th>
                     <th>Total</th>
@@ -63,6 +64,7 @@
                     <tr>
                         <td>{{ $ing->id }}</td>
                         <td>{{ $ing->fecha_hora }}</td>
+                        <td>{{ $ing->name }}</td>
                         <td>{{ $ing->nombre }}</td>
                         <td>{{ $ing->tipo_comprobante . ': ' . $ing->serie_comprobante . '-' . $ing->num_comprobante }}</td>
                         <td>{{ $ing->total }}</td>
@@ -139,7 +141,7 @@
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',
@@ -159,7 +161,7 @@
                     doc.content[1].table.widths = [20,100,100,100,100,60]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                     },
                     exportOptions: {
-                        columns: [0,1,2,3,4,5],
+                        columns: [0,1,2,3,4,5,6],
                         stripHtml: true,
 
                     } ,
@@ -178,7 +180,7 @@
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',

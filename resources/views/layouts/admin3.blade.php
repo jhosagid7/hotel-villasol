@@ -10,6 +10,18 @@
   <link rel="stylesheet" href="{{asset('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
   <!-- bootstrap-select.min -->
   <link rel="stylesheet" href="{{asset('bower_components/bootstrap/dist/css/bootstrap-select.min.css')}}">
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="{{asset('bower_components/bootstrap-daterangepicker/daterangepicker.css')}}">
+  <!-- bootstrap datepicker -->
+  <link rel="stylesheet" href="{{asset('bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css')}}">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="{{asset('plugins/iCheck/all.css')}}">
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="{{asset('bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css')}}">
+  <!-- Bootstrap time Picker -->
+  <link rel="stylesheet" href="{{asset('plugins/timepicker/bootstrap-timepicker.min.css')}}">
+  <!-- Select2 -->
+  <link rel="stylesheet" href="{{asset('bower_components/select2/dist/css/select2.min.css')}}">
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{{asset('bower_components/font-awesome/css/font-awesome.min.css')}}">
   <!-- Ionicons -->
@@ -279,6 +291,7 @@
           <ul class="treeview-menu">
             <li><a href="{{asset('almacen/categoria')}}"><i class="fa fa-cube"></i> Categorías</a></li>
             <li><a href="{{asset('almacen/articulo')}}"><i class="fa fa-cubes"></i> Artículos</a></li>
+            <li><a href="{{asset('almacen/transferencia')}}"><i class="fa fa-cubes"></i> Transferencias</a></li>
           </ul>
         </li>
         <li class="treeview">
@@ -342,7 +355,7 @@
   </div>
   <!-- /.content-wrapper -->
 
-  <footer class="main-footer">
+  <footer class="main-footer no-print">
     <div class="pull-right hidden-xs">
       <b>Version</b> 1.0 Beta
     </div>
@@ -559,6 +572,27 @@
 <script src="{{asset('bower_components/jquery-slimscroll/jquery.slimscroll.min.js')}}"></script>
 <!-- FastClick -->
 <script src="{{asset('bower_components/fastclick/lib/fastclick.js')}}"></script>
+<!-- Select2 -->
+<script src="{{asset('bower_components/select2/dist/js/select2.full.min.js')}}"></script>
+<!-- InputMask -->
+<script src="{{asset('plugins/input-mask/jquery.inputmask.js')}}"></script>
+<script src="{{asset('plugins/input-mask/jquery.inputmask.date.extensions.js')}}"></script>
+<script src="{{asset('plugins/input-mask/jquery.inputmask.extensions.js')}}"></script>
+<!-- date-range-picker -->
+<script src="{{asset('bower_components/moment/min/moment.min.js')}}"></script>
+<script src="{{asset('bower_components/bootstrap-daterangepicker/daterangepicker.js')}}"></script>
+<!-- bootstrap datepicker -->
+<script src="{{asset('bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js')}}"></script>
+<!-- bootstrap color picker -->
+<script src="{{asset('bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js')}}"></script>
+<!-- bootstrap time picker -->
+<script src="{{asset('plugins/timepicker/bootstrap-timepicker.min.js')}}"></script>
+<!-- SlimScroll -->
+<script src="{{asset('bower_components/jquery-slimscroll/jquery.slimscroll.min.js')}}"></script>
+<!-- iCheck 1.0.1 -->
+<script src="{{asset('plugins/iCheck/icheck.min.js')}}"></script>
+<!-- FastClick -->
+<script src="{{asset('bower_components/fastclick/lib/fastclick.js')}}"></script>
 <!-- AdminLTE App -->
 <script src="{{asset('dist/js/adminlte.min.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
@@ -619,6 +653,135 @@
     // } );
 
     </script>
+<script>
+    $(function () {
+      //Initialize Select2 Elements
+      $('.select2').select2()
 
+      //Datemask dd/mm/yyyy
+      $('#datemask').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' })
+      //Datemask2 mm/dd/yyyy
+      $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
+      //Money Euro
+      $('[data-mask]').inputmask()
+
+      //Date range picker
+      $('#reservation').daterangepicker()
+      //Date range picker with time picker
+      $('#reservationtime').daterangepicker({ timePicker: true, timePickerIncrement: 30, locale: { format: 'MM/DD/YYYY hh:mm A' }})
+      //Date range as a button
+      $('#daterange-btn').daterangepicker(
+        {
+            locale: {
+            applyLabel: "Aplicar",
+            cancelLabel: "Cancelar",
+            customRangeLabel: 'Rango Personalizado',
+            daysOfWeek: [
+                "Do",
+                "Lu",
+                "Ma",
+                "Mi",
+                "Ju",
+                "Vi",
+                "Sa"
+            ],
+            monthNames: [
+                "Enero",
+                "Febrero",
+                "Marzo",
+                "Abril",
+                "Mayo",
+                "Junio",
+                "Julio",
+                "Agosto",
+                "Setiembre",
+                "Octubre",
+                "Noviembre",
+                "Diciembre"
+            ]},
+            ranges   : {
+                'Hoy'       : [moment(), moment()],
+                'Ayer'   : [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Ultimos 7 Días' : [moment().subtract(6, 'days'), moment()],
+                'Ultimos 30 Días': [moment().subtract(29, 'days'), moment()],
+                'Este Mes'  : [moment().startOf('month'), moment().endOf('month')],
+                'Mes Pasado'  : [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            startDate: moment().subtract(29, 'days'),
+            endDate  : moment()
+        },
+        function (start, end) {
+          $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
+        }
+      )
+    //   $('input[name="fecha"]').daterangepicker({
+    //     autoUpdateInput: false,
+    //     format: "DD/MM/YYYY",
+    //     "locale": {
+
+    //         "separator": " - ",
+    //         "applyLabel": "Aplicar",
+    //         "cancelLabel": "Cancelar",
+    //         "fromLabel": "DE",
+    //         "toLabel": "HASTA",
+    //         "customRangeLabel": "Custom",
+    //         "daysOfWeek": [
+    //             "Dom",
+    //             "Lun",
+    //             "Mar",
+    //             "Mie",
+    //             "Jue",
+    //             "Vie",
+    //             "Sáb"
+    //         ],
+    //         "monthNames": [
+    //             "Enero",
+    //             "Febrero",
+    //             "Marzo",
+    //             "Abril",
+    //             "Mayo",
+    //             "Junio",
+    //             "Julio",
+    //             "Agosto",
+    //             "Septiembre",
+    //             "Octubre",
+    //             "Noviembre",
+    //             "Diciembre"
+    //         ],
+    //         "firstDay": 1
+    //     }});
+
+      //Date picker
+      $('#datepicker').datepicker({
+        autoclose: true
+      })
+
+      //iCheck for checkbox and radio inputs
+      $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+        checkboxClass: 'icheckbox_minimal-blue',
+        radioClass   : 'iradio_minimal-blue'
+      })
+      //Red color scheme for iCheck
+      $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+        checkboxClass: 'icheckbox_minimal-red',
+        radioClass   : 'iradio_minimal-red'
+      })
+      //Flat red color scheme for iCheck
+      $('input[type="checkbox"].flat-red, input[type="radio"].flat-red').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass   : 'iradio_flat-green'
+      })
+
+      //Colorpicker
+      $('.my-colorpicker1').colorpicker()
+      //color picker with addon
+      $('.my-colorpicker2').colorpicker()
+
+      //Timepicker
+      $('.timepicker').timepicker({
+        showInputs: false
+      })
+    })
+  </script>
 </body>
 </html>

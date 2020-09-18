@@ -34,17 +34,11 @@
 @csrf
 
 <div class="row">
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-        <div class="form-group">
-            <label for="nombre">Nombre</label>
-            <input type="text" name="nombre" required value="{{old('nombre')}}" class="form-control" placeholder="Nombre...">
-        </div>
-    </div>
 
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
         <div class="form-group">
             <label for="">Categoría</label>
-            <select name="categoria_id" id="categoria_id" class="form-control">
+            <select required name="categoria_id" id="categoria_id" class="form-control select2">
                     @foreach($categorias as $cat)
                         <option value="{{$cat->id}}">{{$cat->nombre}}</option>
                     @endforeach
@@ -52,43 +46,62 @@
         </div>
     </div>
 
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
         <div class="form-group">
-            <label for="codigo">Código</label>
-            <input type="number" name="codigo" required value="{{old('codigo')}}" class="form-control enteros" placeholder="Codigo de articulo...">
+            <label for="nombre">Nombre</label>
+            <input type="text" name="nombre" required value="{{old('nombre')}}" class="form-control" placeholder="Nombre...">
         </div>
     </div>
-
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-        <div class="form-group">
-            <label for="stock">Stock</label>
-            <input type="number" name="stock" required value="{{old('stock')}}" class="form-control enteros" placeholder="Stock de articulo...">
-        </div>
-    </div>
-
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
         <div class="form-group">
             <label for="descripcion">Descripción</label>
             <input type="text" name="descripcion" required value="{{old('descripcion')}}" class="form-control" placeholder="Descripción del articulo...">
         </div>
     </div>
 
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
         <div class="form-group">
-            <label for="imagen">Imagen</label>
-            <input type="file" name="imagen" class="form-control" accept="image/*">
+            <label for="codigo">Código</label>
+            <input type="number" name="codigo" required value="{{old('codigo')}}" class="form-control enteros" placeholder="Codigo de articulo...">
         </div>
     </div>
 
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+    {{-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 hidden">
+        <div class="form-group">
+            <label for="stock">Stock</label>
+            <input type="text" name="stock" required value="0" class="form-control enteros" placeholder="Stock de articulo...">
+        </div>
+    </div> --}}
+
+    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+        <div class="form-group">
+            <label for="stock">Unidades</label>
+            <input type="text" name="unidades" required value="" class="form-control enteros" placeholder="unidades...">
+        </div>
+    </div>
+    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
+        <div class="form-group">
+            <label for="vender_al">Producto para Vender al</label>
+            <select required   class="form-control select2" name="vender_al" id="vender_al">
+                <option value=""></option>
+                <option value="Detal">Detal</option>
+                <option value="Mayor">Mayor</option>
+            </select>
+        </div>
+    </div>
+    {{-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
         <div class="form-group">
             <label for="precio_costo">Precio Compra</label>
             <input type="text" name="precio_costo" required value="{{old('precio_costo')}}" class="form-control decimal" placeholder="Precio de compra en dolares...">
         </div>
+    </div> --}}
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+        <div class="form-group">
+            <label for="imagen">Imagen</label>
+            <input required type="file" name="imagen" class="form-control" accept="image/*">
+        </div>
     </div>
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 
-    </div>
 </div>
 </div>
 <!-- /.box-body -->

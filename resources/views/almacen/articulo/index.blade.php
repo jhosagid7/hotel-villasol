@@ -43,7 +43,7 @@
                     <th class="hidden">Código</th>
                     <th>Código</th>
                     <th>Stock</th>
-                    <th>Precio Costo</th>
+                    <th>Unidades</th>
                     <th>Precio Dolar</th>
                     <th>Precio Peso</th>
                     <th>Precio Trans/Punto</th>
@@ -82,7 +82,7 @@
 
                         </td>
                         <td>{{ $art->stock }}</td>
-                        <td>{{ number_format($art->precio_costo, 2, '.', ' ') }}</td>
+                        <td>{{ $art->stock * $art->unidades ?? ' '  }}</td>
                         <td>{{ number_format($precio_venta_dolar * $tasaDolar->tasa, 2, '.', ' ') }}</td>
                         <td>{{ number_format($precio_venta_peso * $tasaPeso->tasa, 2, ',', '.') }} </td>
                         <td>{{ number_format($precio_venta_tran_p * $tasaTransferenciaPunto->tasa, 2, ',', '.') }} </td>

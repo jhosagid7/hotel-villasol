@@ -36,7 +36,7 @@ class ArticuloController extends Controller
             ->orwhere('a.codigo', 'LIKE', '%' . $query . '%')
             ->orwhere('a.estado', 'LIKE', '%' . $query . '%')
             ->orwhere('c.nombre', 'LIKE', '%' . $query . '%')
-            ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
+            ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
             ->orderBy('id', 'desc')
             ->get();
 
@@ -48,7 +48,7 @@ class ArticuloController extends Controller
         $categorias = DB::table('categorias')->where('condicion', '=', 'Activa')->get();
         return view('almacen.articulo.create', ['categorias'=>$categorias]);
     }
-    public function store(ArticuloFormRequest $request)
+    public function store(Request $request)
     {
         // return $request->all();
         //creamos un objeto del modelo categoria
@@ -56,8 +56,10 @@ class ArticuloController extends Controller
         $articulo->categoria_id  = $request->get('categoria_id');
         $articulo->codigo       = $request->get('codigo');
         $articulo->nombre       = $request->get('nombre');
-        $articulo->stock         = $request->get('stock');
-        $articulo->precio_costo         = $request->get('precio_costo');
+        $articulo->stock         = 0;
+        $articulo->unidades         = $request->get('unidades');
+        $articulo->vender_al         = $request->get('vender_al');
+        $articulo->precio_costo         = 0;
         $articulo->descripcion  = $request->get('descripcion');
 
         if ($request->hasFile('imagen')) {
@@ -86,15 +88,16 @@ class ArticuloController extends Controller
         $categorias = DB::table('categorias')->where('condicion', '=', 'Activa')->get();
         return view("almacen.articulo.edit", ["articulo" => $articulo, 'categorias'=> $categorias]);
     }
-    public function update(ArticuloFormRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $articulo = Articulo::findOrFail($id);
         $articulo->categoria_id  = $request->get('categoria_id');
         $articulo->codigo       = $request->get('codigo');
         $articulo->nombre       = $request->get('nombre');
-        $articulo->stock         = $request->get('stock');
         $articulo->precio_costo         = $request->get('precio_costo');
         $articulo->descripcion  = $request->get('descripcion');
+        $articulo->unidades         = $request->get('unidades');
+        $articulo->vender_al         = $request->get('vender_al');
 
         if ($request->hasFile('imagen')) {
             $file = $request->file('imagen');
