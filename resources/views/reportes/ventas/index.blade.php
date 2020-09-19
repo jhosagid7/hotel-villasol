@@ -43,19 +43,45 @@
                     <th>Id</th>
                     <th>Código</th>
                     <th>Nombre</th>
-                    <th>Costo/Unidad</th>
-                    <th>Venta/unidad</th>
-                    <th>Cantidad</th>
+                    <th>Costo/Unid</th>
+                    <th>Venta/Unid</th>
+                    <th>Cant</th>
                     <th>Costo/Total</th>
-                    <th>% Ganancia</th>
+                    <th>% M/Ganan</th>
                     <th>Venta/Total</th>
                     <th>Utilidad</th>
-                    <th>Descuento</th>
+                    <th>Desc</th>
                     <th>Fecha</th>
 
                 </thead>
                 <tbody>
+                    @php
+                        $margen = 0;
+                        $costo = 0;
+                        $venta = 0;
+                        $utilidad = 0;
+                        $productos = 0;
+                        $descuentos = 0;
+                        $num = 0;
+                    @endphp
                     @foreach ($articulos as $art)
+
+                    @php
+                    $por = ($art->precio_venta_total - $art->precio_costo_total)/$art->precio_venta_total*100;
+                    if($por > 0){
+                        $margen+=($art->precio_venta_total - $art->precio_costo_total)/$art->precio_venta_total*100;
+
+                        $num++;
+                    }
+                    $costo += $art->precio_costo_total;
+                    $venta += $art->precio_venta_total;
+                    $utilidad += $art->precio_venta_total - $art->precio_costo_total;
+                    $productos += $art->cantidad;
+                    $descuentos += $art->descuento;
+
+
+
+                    @endphp
                     <tr>
                         <td>{{ $art->id }}</td>
                         <td>{{ $art->codigo }}</td>
@@ -64,7 +90,7 @@
                         <td>{{ $art->precio_venta_unidad }}</td>
                         <td>{{ $art->cantidad }}</td>
                         <td>{{ $art->precio_costo_total }}</td>
-                        <td>{{ number_format(($art->precio_venta_total - $art->precio_costo_total)/$art->precio_venta_total,2,'.',',') }} %</td>
+                        <td>{{ number_format(($art->precio_venta_total - $art->precio_costo_total)/$art->precio_venta_total*100,2,'.',',') }} %</td>
                         <td>{{ $art->precio_venta_total }}</td>
                         <td>{{ number_format($art->precio_venta_total - $art->precio_costo_total,2,'.',',') }}</td>
                         <td>{{ $art->descuento }}</td>
@@ -77,10 +103,26 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Id</th>
-                        <th>Nombre</th>
-                        <th>Descripción</th>
-                        <th>Opciones</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>Totales: </th>
+                        <th>{{$productos}}</th>
+                        <th>{{number_format($costo,2,'.',',')}}</th>
+                        <th>
+                            @if ($margen)
+                            {{number_format($margen/$num,2,'.',',') ?? '' }} %
+                            @else
+                            {{$margen = 0.00 }} %
+                            @endif
+
+
+                        </th>
+                        <th>{{number_format($venta,2,'.',',')}}</th>
+                        <th>{{number_format($utilidad,2,'.',',')}}</th>
+                        <th>{{number_format($descuentos,2,'.',',')}}</th>
+                        <th></th>
 
                     </tr>
                 </tfoot>
@@ -148,56 +190,58 @@
                     {
                     extend:'excelHtml5',
                     text: '<i class="fa fa-file-excel-o fa-inverse no-print"></i>',
-                    footer: false,
+                    footer: true,
                     title : function() {
-                    return "Listado de Categorías";
+                    return "Reporte de Articulos Vendidos";
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6,7,8,9,10,11] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',
                     titleAttr:'Exportar a Excel',
                     className:'btn btn-success',
-                    filename: 'listadod_de_categorías_excel'
+                    filename: 'Reporte_de_Articulos_Vendidos'
                     },
                     {
                     extend:'pdfHtml5',
                     text: '<i class="fa fa-file-pdf-o fa-inverse no-print"></i>',
-                    footer: false,
+                    footer: true,
+
+                    // messageBottom: 'null',
                     title : function() {
-                    return "Listado de Categorías";
+                    return "Reporte de Articulos Vendidos";
                     },
                     alignment: "center",
                     customize : function(doc){
                     doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
-                    doc.content[1].table.widths = [50,200,250]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                    doc.content[1].table.widths = [20,60,160,40,40,40,40,50,40,40,40,100]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                     },
-                    exportOptions: { columns: [0,1,2] } ,
-                    // pageSize : 'A0',
-                    orientation : 'portrait',//portrai tlandscape
-                    pageSize : 'LEGAL',
+                    exportOptions: { columns: [0,1,2,3,4,5,6,7,8,9,10,11] } ,
+                    pageSize : 'A4',
+                    orientation : 'landscape',//portrait landscape
+                    // pageSize : 'LEGAL',
                     titleAttr:'Exportar a PDF',
                     className:'btn btn-danger',
-                    filename: 'listadod_de_categorías_pdf'
+                    filename: 'Reporte_de_Articulos_Vendidos'
                     },
                     {
                     extend:'print',
                     text: '<i class="fa fa-print fa-inverse no-print"></i>',
-                    footer: false,
+                    footer: true,
                     title : function() {
-                    return "Listado de Categorías";
+                    return "Reporte de Articulos Vendidos";
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6,7,8,9,10,11] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',
                     titleAttr:'Imprimir',
                     className:'btn btn-info',
-                    filename: 'listadod_de_categorías_print'
+                    filename: 'Reporte_de_Articulos_Vendidos'
                     },
 
 
@@ -207,39 +251,12 @@
     "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
     } );
 
-    table.buttons().container()
-        .appendTo( '#example_wrapper .col-sm-6:eq(0)' );
+    // table.buttons().container()
+    //     .appendTo( '#example_wrapper .col-sm-6:eq(0)' );
 
 
     } );
-    //     $(document).ready(function() {
-    //        var dataTable = $('#cate').dataTable({
-    //         "language": {
-    //                     "info": "_TOTAL_ registros",
-    //                     "search": "Buscar",
-    //                     "paginate": {
-    //                         "next": "Siguiente",
-    //                         "previous": "Anterior",
-    //                     },
-    //                     "lengthMenu": 'Mostrar <select >'+
-    //                                 '<option value="5">5</option>'+
-    //                                 '<option value="10">10</option>'+
-    //                                 '<option value="-1">Todos</option>'+
-    //                                 '</select> registros',
-    //                     "loadingRecords": "Cargando...",
-    //                     "processing": "Procesando...",
-    //                     "emptyTable": "No hay datos",
-    //                     "zeroRecords": "No hay coincidencias",
-    //                     "infoEmpty": "",
-    //                     "infoFiltered": ""
-    //                 },
-    //                 "iDisplayLength" : 5,
-    //                 "order": [[0, "desc"]],
-    //        });
-    //        $("#buscarTexto").keyup(function() {
-    //            dataTable.fnFilter(this.value);
-    //        });
-    //    });
+
     </script>
     @endpush
 

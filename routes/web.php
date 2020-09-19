@@ -99,7 +99,7 @@ Route::get('/cajas/caja/{caja}/print ','CajaController@print')->name('print');
 Route::get('/origen', 'TransferenciaController@getProductoOrigenes')->name('origen');
 Route::get('/destino', 'TransferenciaController@getProductoDestinos')->name('destiono');
 
-Route::get('/reportes', 'ReporteController@getReportVentasIndex')->name('reportes');
+Route::resource('reportes/ventas', 'ReporteController');
 
 
 

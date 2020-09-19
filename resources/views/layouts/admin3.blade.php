@@ -322,6 +322,19 @@
         </li>
         <li class="treeview">
             <a href="#">
+            <i class="fa fa-handshake-o"></i> <span>Reportes</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+            <ul class="treeview-menu">
+                <li><a href="{{asset('reportes/ventas')}}"><i class="fa fa-user-plus"></i> Articulos Vendidos</a></li>
+                <li><a href="{{asset('ventas/venta')}}"><i class="fa fa-desktop"></i> Venta</a></li>
+                <li><a href="{{asset('ventas/tasa')}}"><i class="fa fa-desktop"></i> Tasa</a></li>
+            </ul>
+        </li>
+        <li class="treeview">
+            <a href="#">
             <i class="fa fa-handshake-o"></i> <span>Sistema</span>
             <span class="pull-right-container">
               <i class="fa fa-angle-left pull-right"></i>
@@ -714,42 +727,7 @@
           $('#daterange-btn span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'))
         }
       )
-    //   $('input[name="fecha"]').daterangepicker({
-    //     autoUpdateInput: false,
-    //     format: "DD/MM/YYYY",
-    //     "locale": {
 
-    //         "separator": " - ",
-    //         "applyLabel": "Aplicar",
-    //         "cancelLabel": "Cancelar",
-    //         "fromLabel": "DE",
-    //         "toLabel": "HASTA",
-    //         "customRangeLabel": "Custom",
-    //         "daysOfWeek": [
-    //             "Dom",
-    //             "Lun",
-    //             "Mar",
-    //             "Mie",
-    //             "Jue",
-    //             "Vie",
-    //             "Sáb"
-    //         ],
-    //         "monthNames": [
-    //             "Enero",
-    //             "Febrero",
-    //             "Marzo",
-    //             "Abril",
-    //             "Mayo",
-    //             "Junio",
-    //             "Julio",
-    //             "Agosto",
-    //             "Septiembre",
-    //             "Octubre",
-    //             "Noviembre",
-    //             "Diciembre"
-    //         ],
-    //         "firstDay": 1
-    //     }});
 
       //Date picker
       $('#datepicker').datepicker({

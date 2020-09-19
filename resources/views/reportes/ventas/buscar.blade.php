@@ -3,7 +3,7 @@
     <div class="row margin-bottom">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="page-header">
-                <form action="{{ route('reportes')}}" method="GET" autocomplete="off" class="form-inline pull-right" role="buscar">
+                <form action="{{ route('ventas.index')}}" method="GET" autocomplete="off" class="form-inline pull-right" role="buscar">
                     @csrf
 
 
@@ -16,13 +16,17 @@
                     </div>
                     <div class="form-group">
                         <div class="input-group">
-                            <select name="condition" id="condition">
-                                <option value="Activa">Activa</option>
-                                <option value="Eliminada">Eliminada</option>
+                            <select name="tipo" id="tipo">
+                                <option value="">Vendido al</option>
+                                <option value="Mayor">Mayor</option>
+                                <option value="Detal">Detal</option>
                             </select>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="submit"><i class='glyphicon glyphicon-search'></i> Buscar</button>
+                            </span>
                         </div>
-                    </div>
-                    <div class="form-group">
+                     </div>
+                    {{--<div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">
                                 <i class="fa fa-info"></i>
@@ -30,8 +34,8 @@
                             <input type="text" class='form-control' id="descripcion" name="descripcion" placeholder="Descripcion..." value="{{ old('descripcion') }}">
 
                         </div>
-                    </div>
-                    <div class="form-group">
+                    </div> --}}
+                    {{-- <div class="form-group">
                         <div class="input-group">
                             <div class="input-group-addon">
                                 <i class="fa fa-user-o"></i>
@@ -41,7 +45,7 @@
                                 <button class="btn btn-primary" type="submit"><i class='glyphicon glyphicon-search'></i> Buscar</button>
                             </span>
                         </div>
-                    </div>
+                    </div> --}}
                 </form>
             </div>
         </div>

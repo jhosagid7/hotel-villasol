@@ -53,8 +53,8 @@ class Categoria extends Model
 
         if($fecha){
         list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-            $fecha_inicio = Carbon::parse($fecha_inicio)->format('Y-m-d H:i:s');
-            $fecha_fin = Carbon::parse($fecha_fin)->format('Y-m-d H:i:s');
+            $fecha_inicio = Carbon::parse($fecha_inicio. '00:00:00')->format('Y-m-d H:i:s');
+            $fecha_fin = Carbon::parse($fecha_fin. '23:59:59')->format('Y-m-d H:i:s');
         return $query->whereBetween('created_at', [$fecha_inicio, $fecha_fin]);
     }
     }

@@ -2,29 +2,46 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Venta;
 use App\Articulo;
 use App\Articulo_venta;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class ReporteController extends Controller
 {
-    //Reporte de productos vendisos por fecha con margen de utilidad
-    public function getReportVentasIndex(){
-        // $ventas=DB::table('ventas')
-        //     ->join('articulo_ventas', 'ventas.id', '=', 'articulo_ventas.venta_id')
-        //     ->join('articulos', 'articulo_ventas.articulo_id', '=', 'articulos.id')
-            // ->where('despachos.id_cliente', '=', $id)
-            //  ->whereBetween('despachos.fecha', array($fechain,$fechater))
-            // ->select('ventas.tipo_comprobante','ventas.serie_comprobante','ventas.fecha_hora','ventas.tipo_pago',DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_costo_unidad) as precio'),DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_venta_unidad) as total'))
-            // ->groupBy('ventas.id')
-            // ->get();
-        // return $ventas;
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        // return $request->all();
+        // $name = $request->get('name');
+        $tipo = $request->get('tipo');
+        // $description = $request->get('descripcion');
+        $fecha = $request->get('fecha');
+
+        // if($request){
+
+        //     $categorias=Categoria::orderBy('id', 'DESC')
+        //     ->name($name)
+        //     ->condition($condition)
+        //     ->description($description)
+        //     ->fecha($fecha)
+        //     ->get();
+        //     return view("almacen.categoria.index",["categorias"=>$categorias]);
+        // }
+
         $title = 'Reporte de Productos Vendidos';
         $articulos = Articulo_venta::join('articulos', 'articulo_ventas.articulo_id', '=', 'articulos.id')
-        ->select('articulo_ventas.id','articulos.codigo','articulos.nombre','cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at',DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_costo_unidad) as precio_costo_total'),DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_venta_unidad) as precio_venta_total'))
-        ->groupBy('articulo_ventas.id','articulos.codigo','articulos.nombre','cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at')
+        // ->name($name)
+        ->tipo($tipo)
+        // ->description($description)
+        ->select('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at',DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_costo_unidad) as precio_costo_total'),DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_venta_unidad) as precio_venta_total'))
+        ->fecha($fecha)
+        ->groupBy('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at')
         ->get();
 
 
@@ -32,15 +49,70 @@ class ReporteController extends Controller
 
         return view('reportes.ventas.index', ["title" => $title,"articulos" => $articulos]);
     }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        //
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
 }
-// "id": 1,
-// "cantidad": 1,
-// "precio_costo_unidad": "11.00",
-// "precio_venta_unidad": "13.20",
-// "descuento": "0.00",
-// "articulo_id": 1,
-// "venta_id": 1,
-// "created_at": "2020-09-16T07:27:00.000000Z",
-// "updated_at": "2020-09-18T23:36:08.000000Z",
-// $queries = DB::getQueryLog();
-// $last_query = end($queries);
