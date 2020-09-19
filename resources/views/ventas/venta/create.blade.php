@@ -341,6 +341,7 @@
                     <div class="container-small text-sm">
                         <form action="{{ route('venta.store') }}" method="POST" autocomplete="off">
                             @csrf
+                            <input id="modo" name="modo" type="hidden" value="">
                             <input id="precio_costo_unidad" name="precio_costo_unidad" type="hidden" value="">
                             <input id="precio_costo" name="precio_costo" type="hidden" value="">
                             <input id="tipo_pago" name="tipo_pago" type="hidden" value="">

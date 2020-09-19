@@ -85,6 +85,7 @@ class VentaController extends Controller
                 ->select(DB::raw('CONCAT(art.codigo, " - ", art.nombre) AS articulo'), 'art.id', 'precio_costo', 'stock', 'art.nombre')
                 ->where('art.estado', '=', 'Activo')
                 ->where('art.stock', '>', '0')
+                ->where('art.precio_costo', '>', '0')
                 ->get();
                 $UserId = Auth::id();
             $caja = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
@@ -206,9 +207,24 @@ class VentaController extends Controller
             //cargamos los datos del detalle del venta en la tabla articulo_venta en unas variables que reciven
             //un array
 
+            $tipo_pago = $request->get('tipo_pago');
+
+            if ($tipo_pago == 'Dolar') {
+                $precio_venta_unidad = $request->get('precio_venta');
+            }elseif ($tipo_pago == 'Peso') {
+                $precio_venta_unidad = $request->get('precio_venta_p');
+            }elseif ($tipo_pago == 'Trans/Punto') {
+                $precio_venta_unidad = $request->get('precio_venta_tp');
+            }elseif ($tipo_pago == 'Mixto') {
+                $precio_venta_unidad = $request->get('precio_venta_m');
+            }elseif ($tipo_pago == 'Efectivo') {
+                $precio_venta_unidad = $request->get('precio_venta_e');
+            }
+
+
             $cantidad = $request->get('cantidad');
             $precio_costo_unidad = $request->get('precio_costo_unidad');
-            $precio_venta_unidad = $request->get('precio_venta');
+
             $descuento = $request->get('descuento');
             $articulo_id = $request->get('idarticulo');
 
@@ -249,12 +265,17 @@ class VentaController extends Controller
                 $Vueltos[]=$VeltosR[$key];
 
             }
+
+
+
+
             // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
             //creamos un contador
             $cont = 0;
 
             //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
             while ($cont < count($MontoDolar)) {
+
 
                 $Pago_Venta = new Pago_Venta();
                 $Pago_Venta->Divisa = $divisa[$cont];
