@@ -45,7 +45,7 @@
                     <th>Dirección</th>
                     <th>Teléfono</th>
                     <th>Email</th>
-                    <th>Imagen</th>
+                    {{-- <th>Imagen</th> --}}
                     <th>Opciones</th>
                 </thead>
                 <tbody>
@@ -58,9 +58,9 @@
                         <td>{{ $per->direccion }}</td>
                         <td>{{ $per->telefono }}</td>
                         <td>{{ $per->email }}</td>
-                        <td>
+                        {{-- <td>
                             <img src="{{asset('imagenes/personas/'.$per->imagen)}}" alt="{{ $per->nombre }}" height="50px" width="50px" class="img-circle">
-                        </td>
+                        </td> --}}
                         <td>
                         <a href="{{URL::action('ClienteController@edit', $per->id)}}"><button class='btn btn-info'><span class='glyphicon glyphicon-edit'></span></button></a>
                         <a href="" data-target="#modal-delete-{{$per->id}}" data-toggle="modal"><button class='btn btn-danger'><i class='glyphicon glyphicon-trash'></i></button></a>

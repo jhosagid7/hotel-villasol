@@ -37,7 +37,22 @@
           <div class="box-body">
         {{-- cabecera de box --}}
 
-
+        <section id="imprimir" class="invoice">
+            <!-- title row -->
+            <div class="row">
+              <div class="col-xs-12">
+                <h2 class="page-header">
+                  <i class="fa fa-globe"></i> VillaSoft Punto
+                <small class="pull-right">Fecha: {{date('d-m-y')}}</small>
+                </h2>
+              </div>
+              <!-- /.col -->
+            </div>
+            <h3 class="box-title">@isset($title)
+                {{$title}}
+                @else
+                {!!"Sistema"!!}
+            @endisset</h3>
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -152,10 +167,47 @@
 <!-- /.box-body -->
 <div class="box-footer">
     <a class="btn btn-danger no-print" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
+    <a onClick="imprimirContenido('imprimir')" target="_blank" class="btn btn-primary  hidden-print">
+        <i class="fa fa-print"></i>
+        Imprimir
+    </a>
 </div>
 <!-- /.box-footer-->
 </div>
 <!-- /.box -->
+</section>
+@push('sciptsMain')
 
+<script language="javascript">
+
+    function imprimirContenido(el){
+        // $('#guion').show();
+        var restaurarPagina = document.body.innerHTML;
+        // var urlPagina = window.location.href;
+
+//        alert(urlPagina);
+        // $('#headerPagina').show();
+        // $('#firmaPagina').show();
+        var imprimircontenido = document.getElementById(el).innerHTML;
+        document.body.innerHTML = imprimircontenido;
+        window.print();
+        // $('#headerPagina').hide();
+        // $('#firmaPagina').hide();
+        document.body.innerHTML = restaurarPagina;
+        // $('#guion').show();
+        // window.location= urlPagina;
+
+    }
+//     $( document ).ready( function() {
+// $("#print_button1").click(function(){
+//     alert('entro');
+//             var mode = 'iframe'; // popup
+//             var close = mode == "popup";
+//             var options = { mode : mode, popClose : close};
+//             $("div.contePrint").printArea( options );
+//         });
+// });
+</script>
+@endpush
 
 @endsection

@@ -13,6 +13,11 @@ use Illuminate\Support\Str;
 
 class TransferenciaController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -87,13 +92,15 @@ class TransferenciaController extends Controller
             $destinoId = $request->get('destino_id');
             $cantidadRestarOrigen = $request->get('selctOrigen');
             $cantidadSumarDestino = $request->get('origenSelecct');
+            $verStock = $request->get('verStock');
+            $verStockDestino = $request->get('verStockDestino');
 
             $articuloOrigen = Articulo::findOrFail($origenId);
-            $articuloOrigen->stock = $articuloOrigen->stock - $cantidadRestarOrigen;
+            $articuloOrigen->stock = $verStock;
             $articuloOrigen->update();
 
             $articuloDestino = Articulo::findOrFail($destinoId);
-            $articuloDestino->stock = $articuloDestino->stock + $cantidadSumarDestino;
+            $articuloDestino->stock = $verStockDestino;
             $articuloDestino->update();
 
             $transferencia = new Transferencia;

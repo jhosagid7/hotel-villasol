@@ -38,12 +38,18 @@
             <a class="btn btn-success" href="{{route('venta.create')}}">{{__('Ir a ventas')}}</a>
             @endif
             <a class="btn btn-warning" href="{{route('caja.index')}}">{{__('Ir a cajas')}}</a>
+            <a onClick="imprimir('imprimir')" target="_blank" class="btn btn-primary  hidden-print">
+                <i class="fa fa-print"></i>
+                Imprimir
+            </a>
+            {{-- <button onclick="imprimir()">Imprimir pantalla</button> --}}
+
         </div>
         <!-- /.box-footer-->
     </div>
     <!-- /.box -->
     <!-- Main content -->
-<section class="invoice">
+<section id="imprimir" class="invoice">
     <!-- title row -->
     <div class="row">
       <div class="col-xs-12">
@@ -54,6 +60,11 @@
       </div>
       <!-- /.col -->
     </div>
+    <h3 class="box-title">@isset($title)
+        {{$title}}
+        @else
+        {!!"Sistema"!!}
+    @endisset</h3>
     <!-- info row -->
     <div class="row invoice-info">
       <div class="col-sm-4 invoice-col">
@@ -203,30 +214,63 @@
       <!-- /.col -->
     </div>
     <!-- /.row -->
+    <div class="row">
+        <div class="margin"></div>
+        <div class="margin"></div>
+        <div class="margin"></div>
+        <div class="margin"></div>
+        <div class="panel panel-primary">
+            <div class="col-xs-12 table-responsive">
 
-    {{-- <div class="row">
+                <h4><strong>Datos de Articulos</strong></h4>
+                <table class="table table-striped table-bordered table-condensed table-hover">
+                    <thead>
+                        <th>ID</th>
+                        <th>Código</th>
+                        <th>Nombre</th>
+                        <th>Cantidad</th>
+                        <th>Precio Venta</th>
+                        {{-- <th>Precio Costo</th> --}}
+                        <th>Descuento</th>
 
 
+                    </thead>
+                    <tbody>
+                        @php
+                            $count = 0;
+                        @endphp
+                        @foreach ($cajas->articulo_ventas  as $art)
+
+                        <tr>
+                            <td>{{ $art->id ?? '' }}</td>
+                            <th>{{ $cajas->nombreArticulos[$count]->codigo ?? '' }}</th>
+                            <td>{{ $cajas->nombreArticulos[$count]->nombre ?? '' }}</td>
+                            {{-- <td>{{ $art->precio_costo_unidad }}</td> --}}
+                            <td>{{ $art->cantidad ?? '' }}</td>
+                            <td>{{ $art->precio_venta_unidad ?? '' }}</td>
+                            <td>{{ $art->descuento ?? '' }}</td>
+
+
+                        </tr>
+                        @php
+                            $count++;
+                        @endphp
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
       <!-- /.col -->
-    </div> --}}
-    <!-- /.row -->
+    </div>
 
-    <!-- this row will not appear when printing -->
-    {{-- <div class="row no-print">
-      <div class="col-xs-12">
-        <a href="invoice-print.html" target="_blank" class="btn btn-default"><i class="fa fa-print"></i> Print</a>
-        <button type="button" class="btn btn-success pull-right"><i class="fa fa-credit-card"></i> Submit Payment
-        </button>
-        <button type="button" class="btn btn-primary pull-right" style="margin-right: 5px;">
-          <i class="fa fa-download"></i> Generate PDF
-        </button>
-      </div>
-    </div> --}}
-  </section>
+
+</section></section>
   <!-- /.content -->
   <div class="clearfix"></div>
 @push('sciptsMain')
 <script>
+
     $(document).ready(function() {
        var dataTable = $('#ven').dataTable({
         "language": {
@@ -254,6 +298,37 @@
            dataTable.fnFilter(this.value);
        });
    });
+</script>
+
+<script language="javascript">
+
+    function imprimirContenido(el){
+        // $('#guion').show();
+        var restaurarPagina = document.body.innerHTML;
+        // var urlPagina = window.location.href;
+
+//        alert(urlPagina);
+        // $('#headerPagina').show();
+        // $('#firmaPagina').show();
+        var imprimircontenido = document.getElementById(el).innerHTML;
+        document.body.innerHTML = imprimircontenido;
+        window.print();
+        // $('#headerPagina').hide();
+        // $('#firmaPagina').hide();
+        document.body.innerHTML = restaurarPagina;
+        // $('#guion').show();
+        // window.location= urlPagina;
+
+    }
+//     $( document ).ready( function() {
+// $("#print_button1").click(function(){
+//     alert('entro');
+//             var mode = 'iframe'; // popup
+//             var close = mode == "popup";
+//             var options = { mode : mode, popClose : close};
+//             $("div.contePrint").printArea( options );
+//         });
+// });
 </script>
 @endpush
 @endsection

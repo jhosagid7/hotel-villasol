@@ -33,13 +33,13 @@ class IngresoController extends Controller
     {
         if ($request) {
             $title='Ingresos';
-            $query = trim($request->get('buscarTexto'));
+            // $query = trim($request->get('buscarTexto'));
             $ingresos = DB::table('ingresos as i')
                 ->join('personas as p', 'i.persona_id', '=', 'p.id')
                 ->join('users as u', 'i.user_id', '=', 'u.id')
                 ->join('articulo__ingresos as ai', 'i.id', '=', 'ai.ingreso_id')
                 ->select('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado', DB::raw('sum(ai.cantidad*precio_costo_unidad) as total'))
-                ->where('i.num_comprobante', 'LIKE', '%'. $query  .'%')
+                // ->where('i.num_comprobante', 'LIKE', '%'. $query  .'%')
                 ->orderBy('i.id', 'desc')
                 ->groupBy('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
                 ->get();

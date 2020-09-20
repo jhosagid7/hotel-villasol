@@ -40,7 +40,7 @@
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
         <h3>Listado de Ingresos <a href="{{URL::action('IngresoController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
-        @include('compras.ingreso.buscar')
+        {{-- @include('compras.ingreso.buscar') --}}
     </div>
 </div>
 

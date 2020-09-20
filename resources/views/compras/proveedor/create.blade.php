@@ -61,14 +61,14 @@
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" class="form-control" value="{{old('nombre')}}" placeholder="Nombre...">
+                <input required type="text" name="nombre" class="form-control" value="{{old('nombre')}}" placeholder="Nombre...">
             </div>
         </div>
 
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="tipo_documento">Tipo Documento</label>
-                <select class="form-control" name="tipo_documento">
+                <select required class="form-control" name="tipo_documento">
                     <option value="CI">CI.V-</option>
                     <option value="CI">CI.E-</option>
                     <option value="RIF">RIF</option>
@@ -81,36 +81,36 @@
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="num_documento">Número de Documento</label>
-                <input type="text" name="num_documento" class="form-control" value="{{old('num_documento')}}" placeholder="Número de Documento...">
+                <input required type="text" name="num_documento" class="form-control enteros" value="{{old('num_documento')}}" placeholder="Número de Documento...">
             </div>
         </div>
 
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="direccion">Dirección</label>
-                <input type="text" name="direccion" class="form-control" value="{{old('direccion')}}" placeholder="Dirección...">
+                <input required type="text" name="direccion" class="form-control" value="{{old('direccion')}}" placeholder="Dirección...">
             </div>
         </div>
 
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="telefono">Teléfono</label>
-                <input type="text" name="telefono" class="form-control" value="{{old('telefono')}}" placeholder="Teléfono...">
+                <input required type="text" name="telefono" class="form-control" value="{{old('telefono')}}" placeholder="Teléfono...">
             </div>
         </div>
 
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="text" name="email" class="form-control" value="{{old('email')}}" placeholder="Email...">
+                <input required type="email" name="email" class="form-control" value="{{old('email')}}" placeholder="Email...">
             </div>
         </div>
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="imagen">Imagen</label>
                 <input type="file" name="imagen" class="form-control" accept="image/*">
             </div>
-        </div>
+        </div> --}}
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <button class="btn btn-primary" type="submit">Guardar</button>
@@ -129,4 +129,42 @@
 <!-- /.box-footer-->
 </div>
 <!-- /.box -->
+
+@push('sciptsMain')
+        <script>
+            $(document).ready(function() {
+                $(function() {
+    $('.enteros').on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+});
+
+$('.decimal').on('keypress', function(e) {
+    // Backspace = 8, Enter = 13, ’0′ = 48, ’9′ = 57, ‘.’ = 46
+    var field = $(this);
+    key = e.keyCode ? e.keyCode : e.which;
+
+    if (key == 8) return true;
+    if (key > 47 && key < 58) {
+        if (field.val() === "") return true;
+        var existePto = (/[.]/).test(field.val());
+        if (existePto === false) {
+            regexp = /.[0-9]{10}$/;
+        } else {
+            regexp = /.[0-9]{2}$/;
+        }
+
+        return !(regexp.test(field.val()));
+    }
+    if (key == 46) {
+        if (field.val() === "") return false;
+        regexp = /^[0-9]+$/;
+        return regexp.test(field.val());
+    }
+    return false;
+});
+            });
+
+        </script>
+        @endpush
 @endsection

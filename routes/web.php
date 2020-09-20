@@ -97,9 +97,13 @@ Route::get('/ingreso/exportToPDF','IngresoController@exportToPDF')->name('pdf');
 Route::get('/cajas/caja/{caja}/print ','CajaController@print')->name('print');
 
 Route::get('/origen', 'TransferenciaController@getProductoOrigenes')->name('origen');
-Route::get('/destino', 'TransferenciaController@getProductoDestinos')->name('destiono');
+Route::get('/destino', 'TransferenciaController@getProductoDestinos')->name('destino');
 
 Route::resource('reportes/ventas', 'ReporteController');
+Route::resource('reportes/ventas', 'ReporteController');
 
+Route::get('/inventario', 'ReporteController@listadoInventario')->name('inventario');
+Route::get('/precios', 'ReporteController@listadoPrecio')->name('precios');
+Route::get('/reporte-general', 'ReporteController@reporteGeneral')->name('reporte-general');
 
 

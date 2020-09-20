@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Caja;
 use App\Venta;
+use App\Articulo;
 use Carbon\Carbon;
 use App\Sessioncaja;
 use App\Contabilidad;
@@ -291,6 +292,7 @@ class CajaController extends Controller
                 // $cajas->ventas->personas;
                 $cajas->pago_ventas;
                 $cajas->articulo_ventas;
+                // $cajas->articulo_ventas->articulo;
 
         // $v = Venta::find(6);
         // $v->caja;
@@ -330,8 +332,10 @@ class CajaController extends Controller
                     $cajas->SumaTotalCantidadVentas = $cajas->SumaTotalCantidadVentas + 1;
                     }
                  }
-
+                 $nombre = [];
                  foreach ($cajas->articulo_ventas as $art_vent ) {
+                    $nombre[] = Articulo::find($art_vent->articulo_id);
+                    $cajas->nombreArticulos = $nombre;
                     $cajas->SumaArticulosVendidos = $cajas->SumaArticulosVendidos + $art_vent->cantidad;
                  }
 

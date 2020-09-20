@@ -46,12 +46,12 @@ class ProveedorController extends Controller
         $persona->direccion         = $request->get('direccion');
         $persona->telefono          = $request->get('telefono');
         $persona->email             = $request->get('email');
-
-        if ($request->hasFile('imagen')) {
-            $file = $request->file('imagen');
-            $file->move(public_path(). '/imagenes/personas/', $file->getClientOriginalName('imagen'));
-            $persona->imagen   = $file->getClientOriginalName('imagen');
-        }
+        $persona->imagen            = 'thumb_upl_57e81d357d468.jpg';
+        // if ($request->hasFile('imagen')) {
+        //     $file = $request->file('imagen');
+        //     $file->move(public_path(). '/imagenes/personas/', $file->getClientOriginalName('imagen'));
+        //     $persona->imagen   = $file->getClientOriginalName('imagen');
+        // }
 
         $persona->save();
 
@@ -74,12 +74,12 @@ class ProveedorController extends Controller
         $persona->direccion         = $request->get('direccion');
         $persona->telefono          = $request->get('telefono');
         $persona->email             = $request->get('email');
-
-        if ($request->hasFile('imagen')) {
-            $file = $request->file('imagen');
-            $file->move(public_path(). '/imagenes/personas/', $file->getClientOriginalName('imagen'));
-            $persona->imagen   = $file->getClientOriginalName('imagen');
-        }
+        $persona->imagen            = 'thumb_upl_57e81d357d468.jpg';
+        // if ($request->hasFile('imagen')) {
+        //     $file = $request->file('imagen');
+        //     $file->move(public_path(). '/imagenes/personas/', $file->getClientOriginalName('imagen'));
+        //     $persona->imagen   = $file->getClientOriginalName('imagen');
+        // }
 
         $persona->update();
 

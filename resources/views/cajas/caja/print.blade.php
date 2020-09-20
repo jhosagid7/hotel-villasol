@@ -110,7 +110,7 @@
                     </tbody>
                 </table>
 
-                @include('cajas.caja.caja')
+                {{-- @include('cajas.caja.caja') --}}
         </div></div></div>
         <!-- Table row -->
         <div class="row">

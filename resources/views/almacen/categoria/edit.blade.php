@@ -39,12 +39,12 @@
 
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" class="form-control form-control-sm" value="{{ $categoria->nombre }}" placeholder="Nombre...">
+                <input required type="text" name="nombre" class="form-control form-control-sm" value="{{ $categoria->nombre }}" placeholder="Nombre...">
             </div>
 
             <div class="form-group">
                 <label for="descripcion">Descripcion</label>
-                <input type="text" name="descripcion" class="form-control form-control-sm" value="{{ $categoria->descripcion }}" placeholder="Descripcion...">
+                <input required type="text" name="descripcion" class="form-control form-control-sm" value="{{ $categoria->descripcion }}" placeholder="Descripcion...">
             </div>
 
             <div class="form-group">

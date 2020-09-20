@@ -329,8 +329,9 @@
           </a>
             <ul class="treeview-menu">
                 <li><a href="{{asset('reportes/ventas')}}"><i class="fa fa-user-plus"></i> Articulos Vendidos</a></li>
-                <li><a href="{{asset('ventas/venta')}}"><i class="fa fa-desktop"></i> Venta</a></li>
-                <li><a href="{{asset('ventas/tasa')}}"><i class="fa fa-desktop"></i> Tasa</a></li>
+                <li><a href="{{asset('inventario')}}"><i class="fa fa-desktop"></i> Planilla Inventario</a></li>
+                <li><a href="{{asset('precios')}}"><i class="fa fa-desktop"></i> Lista de Precios</a></li>
+                <li><a href="{{asset('reporte-general')}}"><i class="fa fa-desktop"></i> Reporte General</a></li>
             </ul>
         </li>
         <li class="treeview">
@@ -645,6 +646,10 @@
 
 
 <script type="text/javascript">
+
+function imprimir() {
+	window.print();
+}
     // jQuery(document).ready(function() {
     // jQuery('#arti').DataTable({
     // rowReorder: {

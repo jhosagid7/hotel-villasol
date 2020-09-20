@@ -104,13 +104,13 @@
                     <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
                         <div class="form group">
                             <label for="cantidad">Cantidad</label>
-                            <input type="number" name="jcantidad" id="jcantidad"  class="form-control" placeholder="Cantidad...">
+                            <input type="number" name="jcantidad" id="jcantidad"  class="form-control enteros" placeholder="Cantidad...">
                         </div>
                     </div>
                     <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
                         <div class="form group">
                             <label for="precio_compra">Precio Compra</label>
-                            <input type="number" name="jprecio_compra" id="jprecio_compra"  class="form-control" placeholder="Precio compra...">
+                            <input type="number" name="jprecio_compra" id="jprecio_compra"  class="form-control decimal" placeholder="Precio compra...">
                         </div>
                     </div>
                     <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
@@ -193,7 +193,7 @@
             subtotal[cont]=(cantidad*precio_compra);
             total=total+subtotal[cont];
 
-            var fila='<tr class="selected" id="fila'+cont+'"><td><button type="button" class="btn btn-warning" onclick="eliminar('+cont+');">X</button></td><td><input type="hidden" name="idarticulo[]" value="'+idarticulo+'">'+articulo+'</td><td><input type="number" name="cantidad[]" value="'+cantidad+'"></td><td><input type="number" name="precio_compra[]" value="'+precio_compra+'"></td><td>'+parseFloat(subtotal[cont])+'</td></tr>';
+            var fila='<tr class="selected" id="fila'+cont+'"><td><button type="button" class="btn btn-warning" onclick="eliminar('+cont+');">X</button></td><td><input type="hidden" name="idarticulo[]" value="'+idarticulo+'">'+articulo+'</td><td><input readonly type="number" name="cantidad[]" value="'+cantidad+'"></td><td><input readonly type="number" name="precio_compra[]" value="'+precio_compra+'"></td><td>'+parseFloat(subtotal[cont])+'</td></tr>';
             cont++
 
             clear();
@@ -224,6 +224,41 @@
         $("#fila" + index).remove();
         verify();
     };
+</script>
+<script>
+    $(document).ready(function() {
+        $(function() {
+$('.enteros').on('input', function() {
+this.value = this.value.replace(/[^0-9]/g, '');
+});
+});
+
+$('.decimal').on('keypress', function(e) {
+// Backspace = 8, Enter = 13, ’0′ = 48, ’9′ = 57, ‘.’ = 46
+var field = $(this);
+key = e.keyCode ? e.keyCode : e.which;
+
+if (key == 8) return true;
+if (key > 47 && key < 58) {
+if (field.val() === "") return true;
+var existePto = (/[.]/).test(field.val());
+if (existePto === false) {
+    regexp = /.[0-9]{10}$/;
+} else {
+    regexp = /.[0-9]{2}$/;
+}
+
+return !(regexp.test(field.val()));
+}
+if (key == 46) {
+if (field.val() === "") return false;
+regexp = /^[0-9]+$/;
+return regexp.test(field.val());
+}
+return false;
+});
+    });
+
 </script>
 @endpush
 

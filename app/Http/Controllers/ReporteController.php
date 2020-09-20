@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Venta;
 use App\Articulo;
 use App\Articulo_venta;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ReporteController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -48,6 +54,60 @@ class ReporteController extends Controller
         // return $articulos;
 
         return view('reportes.ventas.index', ["title" => $title,"articulos" => $articulos]);
+    }
+
+    public function listadoInventario(){
+        $title = 'Planilla de Inventario';
+        $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
+            $tasaPeso = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
+            $tasaTransferenciaPunto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
+            $tasaMixto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
+            $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
+            $articulos = DB::table('articulos as a')
+            ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
+
+            ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
+            ->orderBy('id', 'desc')
+            ->get();
+        // return $articulos;
+        return view('reportes.inventario.listaInventario', compact('articulos','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo'));
+    }
+
+    public function listadoPrecio(){
+        $title = 'Listado General de Precios';
+        $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
+            $tasaPeso = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
+            $tasaTransferenciaPunto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
+            $tasaMixto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
+            $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
+            $articulos = DB::table('articulos as a')
+            ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
+
+            ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
+            ->orderBy('id', 'desc')
+            ->get();
+        // return $articulos;
+        return view('reportes.inventario.listaPrecio', compact('title','articulos','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo'));
+    }
+
+    public function reporteGeneral(){
+        $title = 'Reporte General';
+        $totalInversion = Articulo::where("estado","=",'Activo')
+        ->select(DB::raw('sum(precio_costo*stock) as precio_costo_total'))
+        ->get();
+
+        $mayor = Articulo::where("estado","=",'Activo')
+        ->where("vender_al","=",'Mayor')
+        ->select(DB::raw('sum(precio_costo*stock) as totalMayor'),DB::raw('sum(unidades*stock) as totalUnidadesMayor'),DB::raw('sum(stock) as totalStockMayor'))
+        ->get();
+
+        $detal = Articulo::where("estado","=",'Activo')
+        ->where("vender_al","=",'Detal')
+        ->select(DB::raw('sum(precio_costo*stock) as totalDetal'),DB::raw('sum(unidades*stock) as totalUnidadesDetal'),DB::raw('sum(stock) as totalStockDetal'))
+        ->get();
+            $user = Auth::user();
+        // return $totalInversion.$mayor.$detal;
+        return view('reportes.inventario.general', compact('title', 'user','totalInversion','mayor','detal'));
     }
 
     /**
