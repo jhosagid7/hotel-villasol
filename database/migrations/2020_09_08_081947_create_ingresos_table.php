@@ -18,6 +18,7 @@ class CreateIngresosTable extends Migration
             $table->string('tipo_comprobante', 20);
             $table->string('serie_comprobante', 20);
             $table->string('num_comprobante', 20);
+            $table->decimal('precio_compra', 25, 9)->nullable();
             $table->datetime('fecha_hora');
             $table->enum('estado', ['Aceptado', 'Cancelado', 'Procesando']);
             $table->foreignId('persona_id')->references('id')->on('personas');

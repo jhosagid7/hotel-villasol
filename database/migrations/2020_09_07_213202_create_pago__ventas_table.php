@@ -16,10 +16,10 @@ class CreatePagoVentasTable extends Migration
         Schema::create('pago__ventas', function (Blueprint $table) {
             $table->id();
             $table->string('Divisa', 20)->nullable();
-            $table->decimal('MontoDivisa', 11, 2)->nullable();
-            $table->decimal('TasaTiket', 11, 2)->nullable();
-            $table->decimal('MontoDolar', 11, 2)->nullable();
-            $table->decimal('Vueltos', 11, 2)->nullable();
+            $table->decimal('MontoDivisa', 25, 3)->nullable();
+            $table->decimal('TasaTiket', 25, 2)->nullable();
+            $table->decimal('MontoDolar', 25, 3)->nullable();
+            $table->decimal('Vueltos', 25, 3)->nullable();
             $table->foreignId('venta_id')->references('id')->on('ventas');
             $table->timestamps();
         });

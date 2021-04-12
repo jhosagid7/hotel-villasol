@@ -25,6 +25,7 @@
           </div>
           <div class="box-body">
         {{-- cabecera de box --}}
+        {{-- <button onclick="setTimeout('saludo()',3000);">Saludo a los 3 segundos</button> --}}
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
         {{-- <h3>Listado de Categorias <a href="" data-target="#modal-nuevo" data-toggle="modal"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span>Nuevo</button></a></h3> --}}
@@ -34,7 +35,7 @@
             @endif
 
         </h3>
-        @include('cajas.caja.buscar')
+        {{-- @include('cajas.caja.buscar') --}}
     </div>
 </div>
 
@@ -100,9 +101,11 @@
 </div>
 <!-- /.box-body -->
 <div class="box-footer">
+    @can('haveaccess', 'ventas.create')
     @if(isset($mostrarNuvaVenta)  && $mostrarNuvaVenta === 0)
     <a class="btn btn-success" href="{{route('venta.create')}}">{{__('Ir a ventas')}}</a>
     @endif
+    @endcan
 </div>
 <!-- /.box-footer-->
 </div>
@@ -212,6 +215,40 @@
 
 
     } );
+
+    /*FUNCION TIMER, CUENTA REGRESIVA*/
+var timer;
+var cc = 10;
+function cuenta(){
+
+clearTimeout(timer);
+cc=cc-1;
+$("#min").html(cc+'intento:'+intento);
+
+if(cc > 0){
+timer=setTimeout(function() {
+//console.log(cc);
+cuenta();
+}, 1000);
+}else
+{
+if (cc==0){
+
+$('.tiempo').addClass('incorrecto fuente blanco centrar').html('Se te acabó el tiempo').fadeIn();
+$('#opciones').hide();
+$('#siguiente').fadeIn();
+cc=10;
+
+}
+
+cc=10;
+}
+}
+/* FIN DE LA FUNCION TIMER, CUENTA REGRESIVA*/
+
+    function saludo(){
+    alert("Han pasado 3 segundos");
+    }
     </script>
     @endpush
 

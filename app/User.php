@@ -6,7 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use  App\Permission\Traits\UserTrait;
-
+use App\Permission\Models\Role;
 class User extends Authenticatable
 {
     use Notifiable, UserTrait;
@@ -44,10 +44,29 @@ class User extends Authenticatable
         return $this->hasMany(Caja::class);
     }
 
+
+
     public function ventas()
     {
         return $this->hasManyThrough(Venta::class, Caja::class);
     }
 
+    public function ingresos(){
+        return $this->hasMany(Ingreso::class);
+    }
+
+
+    public function persona(){
+        return $this->hasOneThrough(Persona::class, Ingreso::class);
+    }
+
+    public function Transactions(){
+        return $this->hasMany(Transactions::class);
+    }
+
+    public function scopeOperador($query, $operador){
+        if($operador)
+        return $query->where('user_id', '=', "$operador");
+    }
 
 }

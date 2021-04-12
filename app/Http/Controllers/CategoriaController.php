@@ -20,7 +20,7 @@ class CategoriaController extends Controller
     {
             // return $request;
 
-        $name = $request->get('name');
+        $nombre = $request->get('nombre');
         $condition = $request->get('condition');
         $description = $request->get('descripcion');
         $fecha = $request->get('fecha');
@@ -28,7 +28,7 @@ class CategoriaController extends Controller
         if($request){
 
             $categorias=Categoria::orderBy('id', 'DESC')
-            ->name($name)
+            ->nombre($nombre)
             ->condition($condition)
             ->description($description)
             ->fecha($fecha)

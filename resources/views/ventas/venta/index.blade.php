@@ -27,7 +27,9 @@
         {{-- cabecera de box --}}
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+        @can('haveaccess', 'venta.create')
         <h3>Ventas Realizadas <a href="{{URL::action('VentaController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nueva</button></a></h3>
+        @endcan
         {{-- @include('compras.proveedor.buscar') --}}
     </div>
 </div>
@@ -48,7 +50,7 @@
                     <th>Fecha</th>
                     <th>Cliente</th>
                     <th>Comprobante</th>
-                    {{-- <th>Impuesto</th> --}}
+                    <th>N° punto/trans</th>
                     <th>Total Venta</th>
                     <th>Estado</th>
                     <th>Opciones</th>
@@ -60,7 +62,7 @@
                         <td>{{ $venta->fecha_hora }}</td>
                         <td>{{ $venta->nombre }}</td>
                         <td>{{ $venta->tipo_comprobante . ': ' . $venta->serie_comprobante . '-' . $venta->num_comprobante }}</td>
-                        {{-- <td>{{ $venta->impuesto }}</td> --}}
+                        <td>{{ $venta->num_punto ?? 'S/N' }} - {{ $venta->num_trans ?? 'S/N' }}</td>
                         <td>{{ $venta->total_venta }}</td>
                         <td>{{ $venta->estado }}</td>
                         <td>
@@ -73,7 +75,7 @@
                 </tbody>
             </table>
         </div>
-        {{$ventas->render()}}
+
     </div>
 </div>
 

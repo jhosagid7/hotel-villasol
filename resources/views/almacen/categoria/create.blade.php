@@ -49,12 +49,12 @@
             @csrf
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input required type="text" name="nombre" class="form-control form-control-sm" placeholder="Nombre...">
+                <input required type="text" name="nombre" class="form-control form-control-sm mayusculas" placeholder="Nombre...">
             </div>
 
             <div class="form-group">
                 <label for="descripcion">Descripcion</label>
-                <input required type="text" name="descripcion" class="form-control form-control-sm" placeholder="Descripcion...">
+                <input required type="text" name="descripcion" class="form-control form-control-sm mayusculas" placeholder="Descripcion...">
             </div>
 
             <div class="form-group">
@@ -75,5 +75,20 @@
 <!-- /.box-footer-->
 </div>
 <!-- /.box -->
+@push('sciptsMain')
+  <script>
+$(document).ready(function() {
+// Funcion JavaScript para la conversion a mayusculas
+$(function() {
+            $('.mayusculas').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
 
+});
+
+
+
+</script>
+@endpush
 @endsection

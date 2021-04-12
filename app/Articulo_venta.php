@@ -11,6 +11,12 @@ class Articulo_venta extends Model
     'cantidad',
     'precio_costo_unidad',
     'precio_venta_unidad',
+    'porEspecial',
+    'isDolar',
+    'isPeso',
+    'isTransPunto',
+    'isMixto',
+    'isEfectivo',
     'descuento',
     'articulo_id',
     'venta_id'
@@ -22,11 +28,11 @@ class Articulo_venta extends Model
     protected $guarded = [];
 
     public function venta(){
-        return belongsTo(Venta::class);
+        return $this->belongsTo(Venta::class);
     }
 
     public function articulo(){
-        return belongsTo(Articulo_Venta::class);
+        return $this->belongsTo(Articulo::class);
     }
 
 

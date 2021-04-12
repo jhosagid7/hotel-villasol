@@ -54,13 +54,13 @@
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" required value="{{$articulo->nombre}}" class="form-control">
+                <input id="nombre" type="text" name="nombre" required value="{{$articulo->nombre}}" class="form-control mayuscula">
             </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
-                <input type="text" name="descripcion" required value="{{$articulo->descripcion}}" class="form-control">
+                <input id="descripcion" type="text" name="descripcion" required value="{{$articulo->descripcion}}" class="form-control mayuscula">
             </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -86,13 +86,83 @@
                     @endif
 
                 </select>
+
+            </div>
+            <div style="margin-left: 20px" class="checkbox">
+                <input name="isKilo" type="checkbox"
+                @if ($articulo->isKilo =="1")
+                        checked
+                    @elseif (old('isKilo')=="1")
+                        checked
+                    @endif
+                  >
+                  <b>Venta por Kilogramos</b>
+                </label>
             </div>
         </div>
 
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
             <div class="form-group">
                 <label for="precio_costo">Precio de costo</label>
-                <input type="text" name="precio_costo" required value="{{$articulo->precio_costo}}" class="form-control decimal">
+                <input type="text" name="precio_costo" required value="{{ floatval($articulo->precio_costo) ?? ''}}" class="form-control decimal">
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+            <div class="form-group">
+                <label for="porEspecial">Porcentaje</label>
+                <input type="text" name="porEspecial" value="{{old('porEspecial')}} {{$articulo->porEspecial}}" class="form-control decimal" placeholder="Porcentaje especial...">
+                <div class="checkbox">
+                    <label>
+                      <input name="isDolar" type="checkbox"
+                      @if ($articulo->isDolar =="1")
+                            checked
+                        @elseif (old('isDolar')=="1")
+                            checked
+                        @endif
+                      >
+                      Dolar&nbsp;
+                    </label>
+                    <label>
+                        <input name="isPeso" type="checkbox"
+                        @if ($articulo->isPeso =="1")
+                              checked
+                          @elseif (old('isPeso')=="1")
+                              checked
+                          @endif
+                        >
+                        Peso&nbsp;
+                      </label>
+                      <label>
+                        <input name="isTransPunto" type="checkbox"
+                      @if ($articulo->isTransPunto =="1")
+                            checked
+                        @elseif (old('isTransPunto')=="1")
+                            checked
+                        @endif
+                      >
+                        Trans/Punto&nbsp;
+                      </label>
+                      <label>
+                        <input name="isMixto" type="checkbox"
+                      @if ($articulo->isMixto =="1")
+                            checked
+                        @elseif (old('isMixto')=="1")
+                            checked
+                        @endif
+                      >
+                        Mixto&nbsp;
+                      </label>
+                      <label>
+                        <input name="isEfectivo" type="checkbox"
+                      @if ($articulo->isEfectivo =="1")
+                            checked
+                        @elseif (old('isEfectivo')=="1")
+                            checked
+                        @endif
+                      >
+                        Efectivo&nbsp;
+                      </label>
+                  </div>
             </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -127,6 +197,13 @@
 <!-- /.box -->
 @push('sciptsMain')
   <script>
+
+$(document).ready(function () {
+    $("#nombre").keyup(function () {
+        var value = $(this).val();
+        $("#descripcion").val(value);
+    });
+});
 $(document).ready(function() {
 
     $(function() {
@@ -146,7 +223,7 @@ $(document).ready(function() {
             if (existePto === false) {
                 regexp = /.[0-9]{10}$/;
             } else {
-                regexp = /.[0-9]{2}$/;
+                regexp = /.[0-9]{9}$/;
             }
 
             return !(regexp.test(field.val()));

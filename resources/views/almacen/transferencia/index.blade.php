@@ -40,10 +40,11 @@
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
         <h3>Listado de Transferencias <a href="{{URL::action('TransferenciaController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Nuevo</button></a></h3>
-        @include('almacen.transferencia.buscar')
-    </div>
-</div>
 
+    </div>
+
+</div>
+@include('almacen.transferencia.buscar')
 <div class="row">
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="table-responsive">

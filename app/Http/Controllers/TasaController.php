@@ -32,7 +32,7 @@ class TasaController extends Controller
     public function create()
     {
         $tasas = Tasa::get();
-        $title='Aptualizar tasa';
+        $title='Actualizar tasa';
 
         return view('ventas.tasa.create', compact('title','tasas'));
     }
@@ -148,8 +148,6 @@ class TasaController extends Controller
         $tasa = Tasa::find($id);
         $tasa->tasa = $request->tasa;
         $tasa->porcentaje_ganancia = $request->porcentaje_ganancia;
-        $tasa->estado = $request->estado;
-        $tasa->caja = 'Abierta';
         $tasa->save();
         return redirect()
         ->route('tasa.index')

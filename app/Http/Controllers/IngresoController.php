@@ -44,7 +44,7 @@ class IngresoController extends Controller
                 ->groupBy('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
                 ->get();
 
-            return view('compras.ingreso.index', ["title"=>$title,"ingresos" => $ingresos, "buscarTexto" => $query]);
+            return view('compras.ingreso.index', ["title"=>$title,"ingresos" => $ingresos]);
         }
     }
 
@@ -52,7 +52,7 @@ class IngresoController extends Controller
     {
         $personas = DB::table('personas')->where('tipo_persona', '=', 'Proveedor')->get();
         $articulos = DB::table('articulos as art')
-            ->select(DB::raw('CONCAT(art.codigo, " ", art.nombre) AS articulo'), 'art.id')
+            ->select(DB::raw('CONCAT(art.codigo, " ", art.nombre) AS articulo'), 'art.id', 'art.precio_costo')
             ->where('art.estado', '=', 'Activo')
             ->get();
 
@@ -69,6 +69,7 @@ class IngresoController extends Controller
             $ingreso->tipo_comprobante = $request->get('tipo_comprobante');
             $ingreso->serie_comprobante = $request->get('serie_comprobante');
             $ingreso->num_comprobante = $request->get('num_comprobante');
+            $ingreso->precio_compra = $request->get('total');
 
 
             $myTime = Carbon::now('America/Caracas');

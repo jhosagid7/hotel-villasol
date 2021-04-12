@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Caja;
+use App\Tasa;
 use App\Venta;
 use App\Articulo;
 use Carbon\Carbon;
@@ -86,7 +87,7 @@ class CajaController extends Controller
             $session_id = $request->get('session_id');
             $estatus_caja = 'Apertura';
 
-
+            $tasaVentaEfectivo = Tasa::where('nombre', 'efectivoVenta')->first();
 
 
                 $Caja = new Caja;
@@ -104,6 +105,8 @@ class CajaController extends Controller
                 $Caja->monto_bolivar_cierre = 0.00;
                 $Caja->estado               = 'Abierta';
                 $Caja->caja                 = $request->get('caja');
+                $Caja->tasaActualVenta      = $tasaVentaEfectivo->tasa;
+                $Caja->margenActualVenta    = $tasaVentaEfectivo->porcentaje_ganancia;
                 $Caja->user_id              =  $idUsuario;
                 $Caja->sucursal_id          = 1;
                 $Caja->sessioncaja_id       = $request->get('session_id');
@@ -280,6 +283,7 @@ class CajaController extends Controller
         $denominacion_dolar = Denominacion::where('moneda', 'Dolar')->orderBy('id', 'desc')->get();
         $denominacion_peso = Denominacion::where('moneda', 'Pesos')->orderBy('id', 'desc')->get();
         $denominacion_bolivar = Denominacion::where('moneda', 'Bolivares')->orderBy('id', 'desc')->get();
+        // $tasa_efectivoVenta = Tasa::where('nombre', 'efectivoVenta')->first();
         // return $cajas;
 
         // $sumaDivisa = Venta::find(6);
@@ -300,7 +304,7 @@ class CajaController extends Controller
         // $v->caja->user;
         // $v->persona;
 
-        // return $cajas;
+         //dd($cajas->ventas);
                 // $cont = 0;
                 // while ($cont < count($cajas->pago_ventas)) {
                 //     $v1[] = $cajas->pago_ventas[$cont]->Divisa;
@@ -336,8 +340,11 @@ class CajaController extends Controller
                  foreach ($cajas->articulo_ventas as $art_vent ) {
                     $nombre[] = Articulo::find($art_vent->articulo_id);
                     $cajas->nombreArticulos = $nombre;
-                    $cajas->SumaArticulosVendidos = $cajas->SumaArticulosVendidos + $art_vent->cantidad;
-                 }
+                    if ($art_vent->venta->estado == 'Aceptada') {
+                        $cajas->SumaArticulosVendidos = $cajas->SumaArticulosVendidos + $art_vent->cantidad;
+                    }
+                }
+
 
                 //  return $cajas;
         return view('cajas.caja.show', compact('title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar'))->with($mensaje);

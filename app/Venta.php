@@ -13,7 +13,7 @@ class Venta extends Model
     // public $timestamps = false;
 
     public function articulo_ventas(){
-        return $this->hasMany(Articulo_Venta::Class);
+        return $this->hasMany(Articulo_venta::Class);
     }
     public function pago_ventas(){
         return $this->hasMany(Pago_Venta::Class);
@@ -42,6 +42,18 @@ class Venta extends Model
         'num_comprobante',
         'fecha_hora',
         'tipo_pago',
+        'tasaDolar',
+        'porDolar',
+        'tasaPeso',
+        'porPeso',
+        'tasaTransPunto',
+        'porTransPunto',
+        'tasaMixto',
+        'porMixto',
+        'tasaEfectivo',
+        'porEfectivo',
+        'num_Punto',
+        'num_trans',
         'precio_costo',
         'margen_ganancia',
         'total_venta',

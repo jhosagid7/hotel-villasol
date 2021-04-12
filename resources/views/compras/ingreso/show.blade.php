@@ -115,15 +115,15 @@
                                 <th></th>
                                 <th></th>
 
-                            <th><h4 id="total"><b>$. {{$ingreso[0]->total ?? ''}}</b></h4></th>
+                            <th><h4 id="total"><b>$. {{ floatval($ingreso[0]->total) ?? ''}}</b></h4></th>
                             </tfoot>
                             <tbody>
                                 @foreach ($Articulo_Ingresos as $Articulo_Ingreso)
                                     <tr>
                                     <td>{{$Articulo_Ingreso->articulo ?? ''}}</td>
                                     <td>{{$Articulo_Ingreso->cantidad ?? ''}}</td>
-                                    <td>{{$Articulo_Ingreso->precio_costo_unidad ?? ''}}</td>
-                                    <td>{{$Articulo_Ingreso->cantidad*$Articulo_Ingreso->precio_costo_unidad}}</td>
+                                    <td>{{ floatval($Articulo_Ingreso->precio_costo_unidad) ?? ''}}</td>
+                                    <td>{{ floatval($Articulo_Ingreso->cantidad*$Articulo_Ingreso->precio_costo_unidad) ?? '' }}</td>
 
                                     </tr>
                                 @endforeach

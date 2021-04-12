@@ -83,18 +83,18 @@
 
                     @endphp
                     <tr>
-                        <td>{{ $art->id }}</td>
-                        <td>{{ $art->codigo }}</td>
-                        <td>{{ $art->nombre }}</td>
-                        <td>{{ $art->precio_costo_unidad }}</td>
-                        <td>{{ $art->precio_venta_unidad }}</td>
-                        <td>{{ $art->cantidad }}</td>
-                        <td>{{ $art->precio_costo_total }}</td>
+                        <td>{{ $art->id ?? '' }}</td>
+                        <td>{{ $art->codigo ?? '' }}</td>
+                        <td>{{ $art->nombre ?? '' }}</td>
+                        <td>{{ floatval($art->precio_costo_unidad) ?? '' }}</td>
+                        <td>{{ floatval($art->precio_venta_unidad) ?? '' }}</td>
+                        <td>{{ $art->cantidad ?? '' }}</td>
+                        <td>{{ number_format($art->precio_costo_total,3,'.',',') ?? '' }}</td>
                         <td>{{ number_format(($art->precio_venta_total - $art->precio_costo_total)/$art->precio_venta_total*100,2,'.',',') }} %</td>
-                        <td>{{ $art->precio_venta_total }}</td>
-                        <td>{{ number_format($art->precio_venta_total - $art->precio_costo_total,2,'.',',') }}</td>
-                        <td>{{ $art->descuento }}</td>
-                        <td>{{ $art->created_at }}</td>
+                        <td>{{ number_format($art->precio_venta_total,3,'.',',')  ?? '' }}</td>
+                        <td>{{ number_format($art->precio_venta_total - $art->precio_costo_total,3,'.',',') ?? '' }}</td>
+                        <td>{{ floatval($art->descuento) ?? '' }}</td>
+                        <td>{{ $art->created_at ?? '' }}</td>
 
                     </tr>
                     {{-- @include('almacen.categoria.modal') --}}
@@ -108,20 +108,20 @@
                         <th></th>
                         <th></th>
                         <th>Totales: </th>
-                        <th>{{$productos}}</th>
-                        <th>{{number_format($costo,2,'.',',')}}</th>
+                        <th>{{ $productos ?? '' }}</th>
+                        <th>{{ number_format($costo,3,'.',',') ?? ''}}</th>
                         <th>
                             @if ($margen)
-                            {{number_format($margen/$num,2,'.',',') ?? '' }} %
+                            {{ number_format($margen/$num,2,'.',',') ?? '' }} %
                             @else
-                            {{$margen = 0.00 }} %
+                            {{ $margen = 0.00 ?? ''}} %
                             @endif
 
 
                         </th>
-                        <th>{{number_format($venta,2,'.',',')}}</th>
-                        <th>{{number_format($utilidad,2,'.',',')}}</th>
-                        <th>{{number_format($descuentos,2,'.',',')}}</th>
+                        <th>{{ number_format($venta,3,'.',',')  ?? '' }}</th>
+                        <th>{{ number_format($utilidad,3,'.',',') ?? ''}}</th>
+                        <th>{{ number_format($descuentos,3,'.',',') ?? ''}}</th>
                         <th></th>
 
                     </tr>

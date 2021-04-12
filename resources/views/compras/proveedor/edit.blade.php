@@ -40,7 +40,7 @@
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" class="form-control" value="{{$persona->nombre}}" placeholder="Nombre...">
+                <input type="text" name="nombre" class="form-control titulo" value="{{$persona->nombre}}" placeholder="Nombre...">
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -81,13 +81,13 @@
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="direccion">Dirección</label>
-                <input required type="text" name="direccion" class="form-control" value="{{$persona->direccion}}" placeholder="Dirección...">
+                <input required type="text" name="direccion" class="form-control mayuscula" value="{{$persona->direccion}}" placeholder="Dirección...">
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="telefono">Teléfono</label>
-                <input required type="text" name="telefono" class="form-control" value="{{$persona->telefono}}" placeholder="Teléfono...">
+                <input required type="text" name="telefono" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{$persona->telefono}}" placeholder="Teléfono...">
             </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">

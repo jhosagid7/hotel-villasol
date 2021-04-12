@@ -17,7 +17,7 @@ class CreateDenominacionsTable extends Migration
             $table->id();
             $table->string('moneda', 20);
             $table->string('tipo', 20);
-            $table->decimal('valor', 11, 2);
+            $table->decimal('valor', 25, 2);
             $table->string('denominacion', 100);
             $table->timestamps();
         });

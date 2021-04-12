@@ -92,7 +92,9 @@
 <!-- /.box-body -->
 <div class="box-footer">
     <a href="{{URL::action('TasaController@create')}}"><button class='btn btn-success'><span class='glyphicon glyphicon-plus'></span> Actualizar</button></a></h3>
+    @can('haveaccess', 'ventas.create')
     <a class="btn btn-success" href="{{route('venta.create')}}">{{__('Ir a ventas')}}</a>
+    @endcan
     <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
 </div>
 <!-- /.box-footer-->

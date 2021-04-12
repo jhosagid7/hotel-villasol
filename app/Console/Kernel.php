@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        //
+
     ];
 
     /**
@@ -24,6 +24,21 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+        $schedule->command('backup:clean')->everyMinute();
+
+        $schedule->command('backup:run')->hourly()
+        ->timezone('America/Caracas')
+        ->between('7:00', '22:00');
+
+        // $schedule->call(function () {
+        //     DB::table('recent_users')->delete();
+        // })->daily();
+
+        // $schedule->call('App\Http\Controllers\CajaController@index')
+        // ->everyMinute()
+        // ->sendOutputTo('cron-output.txt');
+
+        // $schedule->exec('node /home/forge/script.js')->everyMinute();
         // $schedule->command('inspire')->hourly();
     }
 

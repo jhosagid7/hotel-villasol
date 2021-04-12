@@ -1,0 +1,1 @@
+SCHTASKS /Create /sc minute /mo 1 /tn "BackupDbHotel" /tr C:\Users\jhosagid\Dropbox\laragon\www\hotelvillasol\schtasks\backup.vbs /f

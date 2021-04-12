@@ -55,7 +55,7 @@
                     <label for="accion">Acción a realizar</label>
                     <select required   class="form-control select2" name="accion" id="accion">
                         <option value=""></option>
-                        <option value="Detal a Mayor">Pasar Productos de De Tal a Mayor</option>
+                        <option value="Detal a Mayor">Pasar Productos de Detal a Mayor</option>
                         <option value="Mayor a Detal">Pasar Productos de Mayor a Detal</option>
                     </select>
                     <input id="tipo" name="tipo" type="hidden">
@@ -249,14 +249,11 @@
                     data: "accion=" + accion,
                     success: function (origens) {
 
-
-
-
-                        if (origens.length) {
+                if (origens.length) {
                             $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
                             // alert(origens[0].nombre);
                             for(var i = 0; i < origens.length; i++){
-                            $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'</option>');
+                            $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
                             }
                         }
                     }
@@ -271,9 +268,13 @@
             $("#guardar").hide();
 
             accionProductoOrigen = document.getElementById('origen').value.split('_');
+            // alert(accionProductoOrigen[0]);
+            var nombreArticuloBuscar = accionProductoOrigen[0];
+            // alert(nombreArticuloBuscar);
             $('#accionProductoOrigen').html(accionProductoOrigen[0]);
             $('#stkActOrigen').html(accionProductoOrigen[1]);
             var articulo = $(this).val();
+            // alert(articulo);
             var tipo = $('#tipo').val();
             $('#verStock').val('');
             $('#verStockDestino').val('');
@@ -293,9 +294,9 @@
                 $.ajax({
                     type: 'get',
                     url: '{{ url ("destino") }}',
-                    data: "articulo=" + articulo + "&tipo=" + tipo,
+                    data: "articulo=" + articulo + "&tipo=" + tipo + "&nombre=" + nombreArticuloBuscar,
                     success: function (destinos) {
-
+// console.log(destinos);
                         $('#destino').empty();
                         if ($('#origen').val() == '0') {
                             $('#destino').empty();
@@ -306,7 +307,7 @@
                             $('#destino').append("<option value='Selecciones Producto a Cargar'>Selecciones Producto a Cargar</option>");
                             // alert(origens[0].nombre);
                             for(var i = 0; i < destinos.length; i++){
-                            $('#destino').append('<option value="'+ destinos[i].nombre +'_'+destinos[i].stock+'_'+destinos[i].unidades+'_'+destinos[i].vender_al+'_'+destinos[i].id+'">'+ destinos[i].nombre +'</option>');
+                            $('#destino').append('<option value="'+ destinos[i].nombre +'_'+destinos[i].stock+'_'+destinos[i].unidades+'_'+destinos[i].vender_al+'_'+destinos[i].id+'">'+ destinos[i].nombre +'-'+ destinos[i].codigo +'</option>');
                             }
                         }
                         }

@@ -48,6 +48,7 @@
 
 <form action="{{route('ingreso.store')}}" method="POST">
     @csrf
+    <input id="total_compra" type="hidden" name="total" value="">
     <div class="row">
         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <div class="form-group">
@@ -64,7 +65,7 @@
             <div class="form-group">
                 <label for="tipo_comprobante">Tipo Comprobante</label>
                 <select name="tipo_comprobante" class="form-control">
-                    <option value="Oreden">Oreden</option>
+                    <option value="Orden">Orden</option>
                     <option value="Factura">Factura</option>
                     <option value="Ticket">Ticket</option>
                 </select>
@@ -96,7 +97,7 @@
                             <label for="articulo">Artículo</label>
                             <select name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
                                 @foreach ($articulos as $articulo)
-                            <option value="{{$articulo->id}}">{{$articulo->articulo}}</option>
+                            <option value="{{$articulo->id}}_{{ $articulo->precio_costo }}">{{$articulo->articulo}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -170,6 +171,7 @@
 <script>
 
     $(document).ready(function(){
+        focusMethod();
         $("#bt_add").click(function(){
             add_article();
         });
@@ -181,9 +183,37 @@
     var precio_venta=parseFloat(0.00);
     subtotal=[];
     $("#guardar").hide();
+    $("#jidarticulo").change(showValues);
+
+    $("#jidarticulo").on("change", function () {
+                document.getElementById("jcantidad").focus();
+                // $("#jidarticulo").val('0');
+                // document.getElementById('jidarticulo').val('0');
+            });
+
+    focusMethod = function getFocus() {
+                document.getElementById("jidarticulo").focus();
+                $("#jidarticulo").val('default');
+                $("#jidarticulo").selectpicker("refresh");
+            }
+
+            function showValues() {
+                // alert('show');
+                datosArticulo = document.getElementById('jidarticulo').value.split('_');
+                // $("#jprecio_venta").val(datosArticulo[2]);
+                $("#jprecio_compra").val(datosArticulo[1]);
+                // $("#jstock").val(datosArticulo[2]);
+
+
+                // $("#jmarjen_venta_dolar").val(12);
+
+
+            }
+
 
     function add_article(){
-        idarticulo=$("#jidarticulo").val();
+        datosArticulo = document.getElementById('jidarticulo').value.split('_');
+        idarticulo=datosArticulo[0];
         articulo=$("#jidarticulo option:selected").text();
         cantidad=$("#jcantidad").val();
         precio_compra=$("#jprecio_compra").val();
@@ -197,6 +227,7 @@
             cont++
 
             clear();
+            $("#total_compra").val(total);
             $("#total").html("$. " + total);
             verify();
             $("#detalles").append(fila);
@@ -209,6 +240,7 @@
         $("#jcantidad").val("");
         $("#jprecio_compra").val("");
         $("#jprecio_venta").val("");
+        focusMethod();
     }
 
     function verify(){
@@ -221,6 +253,7 @@
     function eliminar(index){
         total=total-subtotal[index];
         $("#total").html("$/. " + total);
+        $("#total_compra").val('');
         $("#fila" + index).remove();
         verify();
     };
@@ -245,7 +278,7 @@ var existePto = (/[.]/).test(field.val());
 if (existePto === false) {
     regexp = /.[0-9]{10}$/;
 } else {
-    regexp = /.[0-9]{2}$/;
+    regexp = /.[0-9]{9}$/;
 }
 
 return !(regexp.test(field.val()));

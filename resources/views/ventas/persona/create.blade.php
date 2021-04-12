@@ -40,7 +40,7 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <h3>Nuevo Proveedor</h3>
+            <h3>Nuevo Cliente</h3>
             @if (count($errors) > 0)
             <div class="alert alert-danger">
                 <ul>
@@ -61,7 +61,7 @@
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input required type="text" name="nombre" class="form-control" value="{{old('nombre')}}" placeholder="Nombre...">
+                <input required type="text" name="nombre" class="form-control titulo" value="{{old('nombre')}}" placeholder="Nombre...">
             </div>
         </div>
 
@@ -88,14 +88,14 @@
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="direccion">Dirección</label>
-                <input required type="text" name="direccion" class="form-control" value="{{old('direccion')}}" placeholder="Dirección...">
+                <input required type="text" name="direccion" class="form-control mayuscula" value="{{old('direccion')}}" placeholder="Dirección...">
             </div>
         </div>
 
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="form-group">
                 <label for="telefono">Teléfono</label>
-                <input required type="text" name="telefono" class="form-control" value="{{old('telefono')}}" placeholder="Teléfono...">
+                <input required type="text" name="telefono" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('telefono')}}" placeholder="Teléfono...">
             </div>
         </div>
 

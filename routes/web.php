@@ -1,11 +1,16 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 use App\User;
+
+use App\Ingreso;
+use App\Articulo;
+use App\Articulo_Ingreso;
 use App\Permission\Models\Role;
-use App\Permission\Models\Permission;
+// use Facade\FlareClient\Http;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Http;
+use App\Permission\Models\Permission;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,23 +36,56 @@ Route::get('/home', 'VentaController@index')->name('home');
 
 
 Route::get('/test', function () {
-    $user = User::find(2);
+    // $user = User::find(2);
 
     //$user->roles()->sync([2]);
     // return $user->roles;
     // return $user->havePermission('role.create');
-    Gate::authorize('haveaccess', 'role.index');
-    $caja =  App\Caja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+    // Gate::authorize('haveaccess', 'role.index');
+    // $caja =  App\Caja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
 
-    $tasa = App\Tasa::find(1);
-    $tasa->updated_at;
-    $fechaActual = Carbon\Carbon::now();
+    // $tasa = App\Tasa::find(1);
+    // $tasa->updated_at;
+    // $fechaActual = Carbon\Carbon::now();
 
-    if ($tasa->updated_at->diffInHours($fechaActual) >= 3 ) {
-        return 'Debes actualizar el margen de ganancia';
-    }else{
-        return 'Puedes continuar';
-    }
+    // if ($tasa->updated_at->diffInHours($fechaActual) >= 3 ) {
+    //     return 'Debes actualizar el margen de ganancia';
+    // }else{
+    //     return 'Puedes continuar';
+    // }
+
+    // $detalleingresos = Articulo_Ingreso::get();
+    // $detalleingresos->ingreso;
+    // $ingreso = Ingreso::get();
+
+    // foreach ($ingreso as $ing) {
+    //     $ing->persona;
+    //     $ing->user;
+    //     // $ing->articulo_ingresos;
+    //     foreach ($ing->articulo_ingresos as $art) {
+    //         $art->articulo;
+    //     }
+
+
+    // }
+    // $venderAlDetal = Articulo::activo()->get();
+
+    // $haystack = ['Caja de arros Juana','Caja de arros primor'];
+    // foreach ($haystack as $key) {
+    //     $dato = Str::contains($key,'arros maria');
+    //     if (isset($dato) && $dato == 1) {
+    //         $valor = $key;
+    //     }else{
+    //         $valor = 'No hay datos relacionados';
+    //     }
+
+    // }
+    //     $url = "https://dolartoday.com/api/";
+    //     $cliente = new GuzzleHttp\Client;
+    //     // $valor = HTTP::get($url)->json();
+    //     $response = $cliente->get($url);
+
+    //  var_dump($response->getBody()->getContents());
 
 
 });
@@ -105,5 +143,29 @@ Route::resource('reportes/ventas', 'ReporteController');
 Route::get('/inventario', 'ReporteController@listadoInventario')->name('inventario');
 Route::get('/precios', 'ReporteController@listadoPrecio')->name('precios');
 Route::get('/reporte-general', 'ReporteController@reporteGeneral')->name('reporte-general');
+Route::get('/reporte-ingreso', 'ReporteController@reportIngresosIndex')->name('reporte-ingreso');
+Route::get('/reporte-compras', 'ReporteController@reportIngresosShow')->name('reporte-compras');
 
 
+Route::resource('/cargos', 'CargoController', ['except'=>[
+    'edit', 'update'
+]])->names('cargo');
+
+Route::resource('/descargos', 'DescargoController', ['except'=>[
+    'edit', 'update'
+]])->names('descargo');
+
+Route::resource('config/level', 'LevelController');
+Route::resource('config/cat', 'CatController');
+Route::resource('config/habitacion', 'HabitacioneController');
+Route::resource('config/horario', 'HorarioController');
+Route::resource('config/precio', 'PrecioController');
+
+Route::get('/recepcion', 'RecepcionController@index');
+Route::post('/proceso', 'RecepcionController@proceso')->name('proceso');
+// Route::post('/registrar', 'RecepcionController@registrarHabitacion')->name('registrar');
+
+Route::get('/precio', 'RecepcionController@getPrecio')->name('precio');
+Route::post('/buscarcliente', 'RecepcionController@getCliente')->name('buscarcliente');
+
+Route::resource('/servicio', 'ServicioController');

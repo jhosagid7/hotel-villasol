@@ -1,0 +1,1 @@
+SCHTASKS /delete /tn "BackupDbHotel" /f

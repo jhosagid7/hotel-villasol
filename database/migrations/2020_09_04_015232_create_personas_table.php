@@ -19,10 +19,10 @@ class CreatePersonasTable extends Migration
             $table->string('nombre', 100);
             $table->string('tipo_documento', 20);
             $table->string('num_documento', 15);
-            $table->string('direccion', 256);
-            $table->string('telefono', 20);
-            $table->string('email', 100);
-            $table->string('imagen', 200);
+            $table->string('direccion', 256)->nullable();
+            $table->string('telefono', 20)->nullable();
+            $table->string('email', 100)->nullable();
+            $table->string('imagen', 200)->nullable();
             $table->timestamps();
         });
     }

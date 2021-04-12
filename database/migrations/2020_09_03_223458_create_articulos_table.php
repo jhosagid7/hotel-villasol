@@ -19,7 +19,14 @@ class CreateArticulosTable extends Migration
             $table->string('codigo', 50);
             $table->string('nombre', 100);
             $table->string('stock', 20);
-            $table->decimal('precio_costo', 11, 2)->nullable();
+            $table->decimal('precio_costo', 25, 9)->nullable();
+            $table->decimal('porEspecial', 25, 2)->nullable();
+            $table->unsignedInteger('isDolar')->nullable();
+            $table->unsignedInteger('isPeso')->nullable();
+            $table->unsignedInteger('isTransPunto')->nullable();
+            $table->unsignedInteger('isMixto')->nullable();
+            $table->unsignedInteger('isEfectivo')->nullable();
+            $table->unsignedInteger('isKilo')->nullable();
             $table->text('descripcion');
             $table->unsignedInteger('unidades')->nullable();
             $table->enum('vender_al', ['Mayor', 'Detal']);

@@ -71,8 +71,8 @@
                             <tr>
                                 <td>{{ $tasa->id }}</td><input name="id[]" type="hidden" class="form-control" id="id" value="{{ old('id',  $tasa->id)}}" placeholder="{{__('id')}}...">
                                 <td>{{ $tasa->nombre }}</td>
-                                <td><input name="tasa[]" type="text" class="form-control" id="name" value="{{ old('tasa', $tasa->tasa)}}" placeholder="{{__('Tasa')}}..."></td>
-                                <td><input name="porcentaje[]" type="text" class="form-control" id="name" value="{{ old('porcentaje', $tasa->porcentaje_ganancia)}}" placeholder="{{__('Porcentaje ganancia')}}..."></td>
+                                <td><input name="tasa[]" type="text" class="form-control decimal" id="name" value="{{ old('tasa', $tasa->tasa)}}" placeholder="{{__('Tasa')}}..."></td>
+                                <td><input name="porcentaje[]" type="text" class="form-control decimal" id="name" value="{{ old('porcentaje', $tasa->porcentaje_ganancia)}}" placeholder="{{__('Porcentaje ganancia')}}..."></td>
                                 <td>{{ $tasa->created_at }}</td>
                                 <td>{{ $tasa->updated_at }}</td>
 
@@ -91,6 +91,7 @@
                 </div>
             </form>
 
+
 {{-- fin de la cabecera de box --}}
 </div>
 <!-- /.box-body -->
@@ -100,4 +101,44 @@
 <!-- /.box-footer-->
 </div>
 <!-- /.box -->
+@push('sciptsMain')
+        <script>
+            $(document).ready(function() {
+                $(function() {
+    $('.enteros').on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+});
+
+$('.decimal').on('keypress', function(e) {
+    // Backspace = 8, Enter = 13, ’0′ = 48, ’9′ = 57, ‘.’ = 46
+    var field = $(this);
+    key = e.keyCode ? e.keyCode : e.which;
+
+    if (key == 8) return true;
+    if (key > 47 && key < 58) {
+        if (field.val() === "") return true;
+        var existePto = (/[.]/).test(field.val());
+        if (existePto === false) {
+            regexp = /.[0-9]{10}$/;
+        } else {
+            regexp = /.[0-9]{2}$/;
+        }
+
+        return !(regexp.test(field.val()));
+    }
+    if (key == 46) {
+        if (field.val() === "") return false;
+        regexp = /^[0-9]+$/;
+        return regexp.test(field.val());
+    }
+    return false;
+});
+            });
+
+        </script>
+
+        @endpush
+
+
 @endsection

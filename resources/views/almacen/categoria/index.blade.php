@@ -225,6 +225,8 @@
     //            dataTable.fnFilter(this.value);
     //        });
     //    });
+
+
     </script>
     @endpush
 

@@ -22,9 +22,11 @@ class Caja extends Model
         'monto_bolivar_cierre',
         'estado',
         'caja',
+        'tasaActualVenta',
+        'margenActualVenta',
         'user_id',
         'sucursal_id',
-        'session_caja_id'
+        'sessioncaja_id'
     ];
 
     //Ahora especificamos los campos guarded

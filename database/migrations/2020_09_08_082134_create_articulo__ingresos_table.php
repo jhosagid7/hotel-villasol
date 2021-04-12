@@ -16,7 +16,7 @@ class CreateArticuloIngresosTable extends Migration
         Schema::create('articulo__ingresos', function (Blueprint $table) {
             $table->id();
             $table->unsignedInteger('cantidad')->nullable();
-            $table->decimal('precio_costo_unidad', 11, 2)->nullable();
+            $table->decimal('precio_costo_unidad', 25, 9)->nullable();
             $table->foreignId('ingreso_id')->references('id')->on('ingresos');
             $table->foreignId('articulo_id')->references('id')->on('articulos');
             $table->timestamps();

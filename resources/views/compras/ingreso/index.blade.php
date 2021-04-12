@@ -62,13 +62,13 @@
                 <tbody>
                     @foreach ($ingresos as $ing)
                     <tr>
-                        <td>{{ $ing->id }}</td>
+                        <td>{{ $ing->id ?? '' }}</td>
                         <td>{{ $ing->fecha_hora }}</td>
-                        <td>{{ $ing->name }}</td>
-                        <td>{{ $ing->nombre }}</td>
-                        <td>{{ $ing->tipo_comprobante . ': ' . $ing->serie_comprobante . '-' . $ing->num_comprobante }}</td>
-                        <td>{{ $ing->total }}</td>
-                        <td>{{ $ing->estado }}</td>
+                        <td>{{ $ing->name ?? '' }}</td>
+                        <td>{{ $ing->nombre ?? '' }}</td>
+                        <td>{{ $ing->tipo_comprobante . ': ' . $ing->serie_comprobante . '-' . $ing->num_comprobante ?? '' }}</td>
+                        <td>{{ floatval($ing->total) ?? '' }}</td>
+                        <td>{{ $ing->estado ?? '' }}</td>
                         <td>
                         <a href="{{URL::action('IngresoController@show', $ing->id)}}"><button class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
                         <a href="" data-target="#modal-delete-{{$ing->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>

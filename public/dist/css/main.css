@@ -1,0 +1,345 @@
+.tile .tile-header.dvd .controls {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.tile .tile-header .controls {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 9;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+.tile .tile-header .controls>li>a {
+    display: block;
+    height: 100%;
+    line-height: 43px;
+    min-width: 41px;
+    padding: 0 10px;
+    text-align: center;
+    color: #03041c;
+}
+
+.tile .tile-header.dvd .controls {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.tile .tile-header .controls {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 9;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+}
+
+.bg-greensea {
+    background-color: #337ab7 !important;
+    color: #03041c !important;
+}
+
+.tile {
+    position: relative;
+    margin-bottom: 20px;
+    color: #001030;
+    background-color: white;
+    filter: alpha(opacity=100);
+    opacity: 1;
+    -webkit-transition: opacity 0.25s ease-out;
+    -moz-transition: opacity 0.25s ease-out;
+    transition: opacity 0.25s ease-out;
+}
+
+body {
+    font-family: "Lato", "Arial", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    -ms-overflow-style: scrollbar;
+    background-color: #e7eaeb;
+    color: #001030;
+}
+
+body {
+    font-family: "Lato", "Arial", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    -ms-overflow-style: scrollbar;
+    background-color: #e7eaeb;
+    color: #001030;
+}
+
+element.style {}
+
+.tile[class*='bg-']:not(.bg-default) .dvd,
+.tile[class*='bg-']:not(.bg-default).dvd,
+.tile-header[class*='bg-']:not(.bg-default) .dvd,
+.tile-header[class*='bg-']:not(.bg-default).dvd,
+.tile-widget[class*='bg-']:not(.bg-default) .dvd,
+.tile-widget[class*='bg-']:not(.bg-default).dvd,
+.tile-body[class*='bg-']:not(.bg-default) .dvd,
+.tile-body[class*='bg-']:not(.bg-default).dvd,
+.tile-footer[class*='bg-']:not(.bg-default) .dvd,
+.tile-footer[class*='bg-']:not(.bg-default).dvd {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tile .dvd.dvd-btm {
+    border-bottom-width: 1px;
+}
+
+.tile .tile-header {
+    padding: 2px 6px;
+}
+
+.tile .dvd {
+    border-color: rgba(0, 0, 0, 0.1);
+    border-style: solid;
+    border-width: 0;
+}
+
+.tile .tile-header,
+.tile .tile-widget,
+.tile .tile-body,
+.tile .tile-footer {
+    position: relative;
+    padding: 15px;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+user agent stylesheet div {
+    display: block;
+}
+
+.bg-greensea {
+    background-color: #337ab7 !important;
+    color: #03041c !important;
+}
+
+.tile {
+    position: relative;
+    margin-bottom: 20px;
+    color: #001030;
+    background-color: white;
+    filter: alpha(opacity=100);
+    opacity: 1;
+    -webkit-transition: opacity 0.25s ease-out;
+    -moz-transition: opacity 0.25s ease-out;
+    transition: opacity 0.25s ease-out;
+}
+
+body {
+    font-family: "Lato", "Arial", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    -ms-overflow-style: scrollbar;
+    background-color: #e7eaeb;
+    color: #001030;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+    background-color: #fff;
+}
+
+html {
+    font-size: 10px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+html {
+    font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+:after,
+ :before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+:after,
+ :before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.tile .tile-header h1,
+.tile .tile-header h2,
+.tile .tile-header h3,
+.tile .tile-header h4 {
+    padding: 0;
+    margin: 0;
+    display: inline-block;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 26px;
+}
+
+.custom-font {
+    font-family: "Dosis", "Arial", sans-serif;
+}
+
+.h1,
+h1 {
+    font-size: 36px;
+}
+
+.h1,
+.h2,
+.h3,
+h1,
+h2,
+h3 {
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    color: inherit;
+}
+
+h1 {
+    margin: .67em 0;
+    font-size: 2em;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+user agent stylesheet:-webkit-any(article, aside, nav, section) :-webkit-any(article, aside, nav, section) :-webkit-any(article, aside, nav, section) h1 {
+    font-size: 1em;
+    margin-block-start: 1.33em;
+    margin-block-end: 1.33em;
+}
+
+user agent stylesheet:-webkit-any(article, aside, nav, section) :-webkit-any(article, aside, nav, section) h1 {
+    font-size: 1.17em;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+}
+
+user agent stylesheet:-webkit-any(article, aside, nav, section) h1 {
+    font-size: 1.5em;
+    margin-block-start: 0.83em;
+    margin-block-end: 0.83em;
+}
+
+user agent stylesheet h1 {
+    display: block;
+    font-size: 2em;
+    margin-block-start: 0.67em;
+    margin-block-end: 0.67em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    font-weight: bold;
+}
+
+.bg-greensea {
+    background-color: #337ab7 !important;
+    color: #03041c !important;
+}
+
+.tile {
+    position: relative;
+    margin-bottom: 20px;
+    color: #001030;
+    background-color: white;
+    filter: alpha(opacity=100);
+    opacity: 1;
+    -webkit-transition: opacity 0.25s ease-out;
+    -moz-transition: opacity 0.25s ease-out;
+    transition: opacity 0.25s ease-out;
+}
+
+body {
+    font-family: "Lato", "Arial", sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    text-rendering: optimizeLegibility !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    -ms-overflow-style: scrollbar;
+    background-color: #e7eaeb;
+    color: #001030;
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #333;
+    background-color: #fff;
+}
+
+html {
+    font-size: 10px;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+html {
+    font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+:after,
+ :before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+:after,
+ :before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}

@@ -120,19 +120,19 @@
                           <table class="table">
                             <tr>
                               <th style="width:50%">Total Mayor:</th>
-                              <td>$ {{ $mayor[0]->totalMayor }}</td>
+                              <td>$ {{ number_format($mayor[0]->totalMayor, 3,',','.') ?? '0,000' }}</td>
                             </tr>
                             <tr>
                               <th>
                                   Total Detal:
                               </th>
-                              <td>$ {{ $detal[0]->totalDetal }}</td>
+                              <td>$ {{ number_format($detal[0]->totalDetal, 3,',','.') ?? '0.000' }}</td>
                             </tr>
                             <tr>
                               <th>Total General:</th>
 
                             <td>
-                                <h3>$ {{ $totalInversion[0]->precio_costo_total }}</h3></td>
+                                <h3>$ {{ number_format($totalInversion[0]->precio_costo_total,3,',','.') ?? '0.000' }}</h3></td>
                             </tr>
 
                           </table>

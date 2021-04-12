@@ -35,7 +35,9 @@
         <div class="box-footer no-print">
             @if ($caja->estado === 'Abierta')
             <a href="" data-target="#modal-delete-{{$caja->id}}" data-toggle="modal"><button class='btn btn-danger'><i class='glyphicon glyphicon-trash'></i> Cerrar caja</button></a>
+            @can('haveaccess', 'ventas.create')
             <a class="btn btn-success" href="{{route('venta.create')}}">{{__('Ir a ventas')}}</a>
+            @endcan
             @endif
             <a class="btn btn-warning" href="{{route('caja.index')}}">{{__('Ir a cajas')}}</a>
             <a onClick="imprimir('imprimir')" target="_blank" class="btn btn-primary  hidden-print">
@@ -76,19 +78,48 @@
         <strong>Estado: </strong> {{ $caja->estado}}<br>
         <strong>Ventas Realizadas: </strong> {{ $cajas->SumaTotalCantidadVentas ?? '0' }}<br>
         <strong>Articulos Vendidos: </strong> {{ $cajas->SumaArticulosVendidos ?? '0' }}<br>
-
+        @can('haveaccess', 'cajautilidad.show')
+        <strong>Tasa Venta Efectivo: </strong> {{ $cajas->tasaActualVenta ?? '0' }}<br>
+        <strong>% Venta Efectivo: </strong> {{ $cajas->margenActualVenta ?? '0' }}<br>
+        @endcan
         </address>
       </div>
       <!-- /.col -->
       <div class="col-sm-4 invoice-col">
         <h4><strong>Bolsa Ventas:</strong></h4>
+             @php
+                if($cajas->margenActualVenta){
+                    $utilidadEfectivo = $cajas->SumaTotalBolivar*$cajas->margenActualVenta/100;
+                    if($utilidadEfectivo == 0){
+                        $margenGananciaVentaEfectivo = 0;
+                    }else{
+                        $totalVentaEfectivo = $utilidadEfectivo + $cajas->SumaTotalBolivar;
+                        $margenGananciaVentaEfectivo = $utilidadEfectivo/ $totalVentaEfectivo;
+                    }
+                }else{
+                    $utilidadEfectivo = 0;
+                }
+
+
+
+                if($cajas->tasaActualVenta){
+                    $efectivoToDolar = $utilidadEfectivo/$cajas->tasaActualVenta;
+
+                }
+
+                else{
+                    $efectivoToDolar = 0;
+                }
+            @endphp
         <address>
-            <strong>Total Dolar: </strong> {{ $cajas->SumaTotalDolar ?? '0.00' }}<br>
+            <strong>Total Dolar: </strong> {{ $cajas->SumaTotalDolar ?? '0.000' }}<br>
             <strong>Total Peso: </strong> {{ number_format($cajas->SumaTotalPeso,2,'.',',') ?? '0.00' }}<br>
             <strong>Total Punto: </strong> {{ number_format($cajas->SumaTotalPunto,2,'.',',') ?? '0.00' }}<br>
             <strong>Total Transf: </strong> {{ number_format($cajas->SumaTotalTransferencia,2,'.',',') ?? '0.00' }}<br>
             <strong>Total Bolivar: </strong> {{ number_format($cajas->SumaTotalBolivar,2,'.',',') ?? '0.00' }}<br>
-
+            @can('haveaccess', 'cajautilidad.show')
+            <strong>Total Efectivo venta: </strong> {{ number_format($utilidadEfectivo,2,'.',',') ?? '0.00' }}<br>
+            @endcan
         </address>
       </div>
       <!-- /.col -->
@@ -97,28 +128,45 @@
         <address>
 
             <div class="table-responsive">
+            @can('haveaccess', 'cajatotales.show')
                 <table class="table">
+                    @can('haveaccess', 'cajapreciocosto.show')
                   <tr>
-                    <th style="width:50%">Precio Costo:</th>
-                    <td>${{ $cajas->SumaTotalCostoVentas ?? '0.00' }}</td>
+                    <th style="width:60%">Precio Costo:</th>
+                    <td>${{ number_format($cajas->SumaTotalCostoVentas, 3,',','.') ?? '0.00' }}</td>
                   </tr>
+                  @endcan
+                  @can('haveaccess', 'cajautilidad.show')
                   <tr>
                     <th>
                         @if ($cajas->SumaTotalVentas)
-                            Utilidad ({{ number_format($cajas->SumaTotalUtilidadVentas / $cajas->SumaTotalVentas,2,',','.') ?? '0.00' }}%)
+                            Utilidad ({{ number_format($cajas->SumaTotalUtilidadVentas / $cajas->SumaTotalVentas,3,',','.') ?? '0.00' }}%)
                         @else
-                            Utilidad ({{ number_format(0,2,',','.') ?? '0.00' }}%)
+                            Utilidad ({{ number_format(0,2,',','.') ?? '0.000' }}%)
                         @endif
 
                     </th>
-                    <td>${{ $cajas->SumaTotalUtilidadVentas ?? '0.00' }}</td>
+                    <td>${{ $cajas->SumaTotalUtilidadVentas ?? '0.000' }}</td>
                   </tr>
+                  @endcan
+                  @can('haveaccess', 'cajatotalventa.show')
                   <tr>
                     <th>Total Venta:</th>
-                    <td>${{ $cajas->SumaTotalVentas ?? '0.00' }}</td>
+                    <td>${{ $cajas->SumaTotalVentas ?? '0.000' }}</td>
                   </tr>
-
+                  @endcan
+                  @can('haveaccess', 'cajautilidad.show')
+                  <tr>
+                    <th>Utilidad V/EF ({{ number_format($margenGananciaVentaEfectivo,3,',','.') ?? '0.000' }}%)</th>
+                    <td>${{ number_format($efectivoToDolar,3,',','.') ?? '0.000' }}</td>
+                  </tr>
+                  <tr>
+                    <th>Total Operación:</th>
+                    <td>${{ number_format($cajas->SumaTotalVentas+$efectivoToDolar,3,',','.') ?? '0.000' }}</td>
+                  </tr>
+                  @endcan
                 </table>
+                @endcan
               </div>
 
         </address>
@@ -151,18 +199,18 @@
                 <tbody id="listarcaja">
 
                     <tr>
-                        <td>{{ $caja->codigo }}</td>
+                        <td>{{ $caja->codigo ?? '' }}</td>
                         <td>{{ $caja->created_at->diffForHumans() }}</td>
-                        <td>{{ $caja->hora }}</td>
-                        <td>{{ $caja->hora_cierre }}</td>
-                        <td>{{ $caja->monto_dolar }}</td>
-                        <td>{{ $caja->monto_peso }}</td>
-                        <td>{{ $caja->monto_bolivar }}</td>
-                        <td>{{ $caja->monto_dolar_cierre }}</td>
-                        <td>{{ $caja->monto_peso_cierre }}</td>
-                        <td>{{ $caja->monto_bolivar_cierre }}</td>
-                        <td>{{ $caja->estado }}</td>
-                        <td>{{ $caja->caja }}</td>
+                        <td>{{ $caja->hora ?? '' }}</td>
+                        <td>{{ $caja->hora_cierre ?? '' }}</td>
+                        <td>{{ $caja->monto_dolar ?? '' }}</td>
+                        <td>{{ $caja->monto_peso ?? '' }}</td>
+                        <td>{{ $caja->monto_bolivar ?? '' }}</td>
+                        <td>{{ $caja->monto_dolar_cierre ?? '' }}</td>
+                        <td>{{ $caja->monto_peso_cierre ?? '' }}</td>
+                        <td>{{ $caja->monto_bolivar_cierre ?? '' }}</td>
+                        <td>{{ $caja->estado ?? '' }}</td>
+                        <td>{{ $caja->caja ?? '' }}</td>
                 </tr>
 
 
@@ -172,6 +220,8 @@
 
             @include('cajas.caja.caja')
     </div></div></div>
+
+    @can('haveaccess', 'cajadatosventas.show')
     <!-- Table row -->
     <div class="row">
         <div class="panel panel-primary">
@@ -183,26 +233,46 @@
                 <th>ID</th>
                 <th>Fecha</th>
                 <th>Comprobante</th>
+                <th>Tasa</th>
                 <th>Tipo Pago</th>
+                <th>N° punto/trans</th>
+                @can('haveaccess', 'cajacosto.show')
                 <th>Precio Costo</th>
                 <th>% Ganancia</th>
+                @endcan
+
                 <th>Precio Venta</th>
+
+                @can('haveaccess', 'cajacosto.show')
                 <th>Utilidad</th>
+                @endcan
                 <th>Estado</th>
 
             </thead>
             <tbody>
                 @foreach ($cajas->ventas as $venta)
-                <tr>
-                    <td>{{ $venta->id }}</td>
-                    <td>{{ $venta->fecha_hora }}</td>
-                    <td>{{ $venta->tipo_comprobante . ': ' . $venta->serie_comprobante . '-' . $venta->num_comprobante }}</td>
-                    <td>{{ $venta->tipo_pago }}</td>
-                    <td>{{ $venta->precio_costo }}</td>
-                    <td>{{ $venta->margen_ganancia }}</td>
-                    <td>{{ $venta->total_venta }}</td>
-                    <td>{{ $venta->ganancia_neta }}</td>
-                    <td>{{ $venta->estado }}</td>
+                    @if ($venta->estado == 'Cancelada')
+                        <tr style="background-color: red;" class="text-black ">
+                    @else
+                        <tr style="background-color: lightblue;" class="text-black ">
+                    @endif
+                    <td>{{ $venta->id ?? '' }}</td>
+                    <td>{{ $venta->fecha_hora ?? '' }}</td>
+                    <td>{{ $venta->serie_comprobante ?? '' }}</td>
+                    <td>{{ $venta->tasaTransPunto ?? '' }}</td>
+                    <td>{{ $venta->tipo_pago ?? '' }}</td>
+                    <td>&nbsp;{{ $venta->num_Punto ?? '' }} &nbsp;{{ $venta->num_Trans ?? '' }}</td>
+                    @can('haveaccess', 'cajacosto.show')
+                    <td>{{ floatval($venta->precio_costo) ?? '' }}</td>
+                    <td>{{ $venta->margen_ganancia ?? '' }}</td>
+                    @endcan
+
+                    <td>{{ floatval($venta->total_venta) ?? '' }}</td>
+
+                    @can('haveaccess', 'cajacosto.show')
+                    <td>{{ floatval($venta->ganancia_neta) ?? '' }}</td>
+                    @endcan
+                    <td>{{ $venta->estado ?? '' }}</td>
 
                 </tr>
 
@@ -214,6 +284,8 @@
       <!-- /.col -->
     </div>
     <!-- /.row -->
+    @endcan
+    @can('haveaccess', 'cajadatosarticulos.show')
     <div class="row">
         <div class="margin"></div>
         <div class="margin"></div>
@@ -224,31 +296,128 @@
 
                 <h4><strong>Datos de Articulos</strong></h4>
                 <table class="table table-striped table-bordered table-condensed table-hover">
-                    <thead>
-                        <th>ID</th>
-                        <th>Código</th>
-                        <th>Nombre</th>
-                        <th>Cantidad</th>
-                        <th>Precio Venta</th>
-                        {{-- <th>Precio Costo</th> --}}
-                        <th>Descuento</th>
 
-
-                    </thead>
                     <tbody>
                         @php
                             $count = 0;
+                            $actual = 0;
+
                         @endphp
+
                         @foreach ($cajas->articulo_ventas  as $art)
+                        @if ($art->venta_id !== $actual)
+                            @php
+                            $actual = $art->venta_id;
+
+
+
+                            @endphp
+                            @if ($art->venta->estado == 'Cancelada')
+                                <tr style="background-color: red;" class="text-black ">
+                            @else
+                                <tr style="background-color: lightblue;" class="text-black ">
+                            @endif
+                                <td colspan="2"><b>ID Factura: </b> {{$actual}}</td><td colspan="2"> <b>Tipo pago: </b> {{$art->venta->tipo_pago}}
+                                     @if ($art->venta->tipo_pago == 'Trans/Punto')
+                                        @if ($art->venta->num_Punto !== null)<b> &nbsp; Nº Punto:</b>{{$art->venta->num_Punto}}@endif
+                                        @if ($art->venta->num_Trans !== null)<b> &nbsp; Nº Trans:</b>{{$art->venta->num_Trans}}@endif
+                                    @endif
+                                    @if ($art->venta->tipo_pago == 'Mixto')
+                                        @if ($art->venta->num_Punto !== null)<b>&nbsp; Nº Punto:</b>{{$art->venta->num_Punto}}@endif
+                                        @if ($art->venta->num_Trans !== null)<b>&nbsp; Nº Trans:</b>{{$art->venta->num_Trans}}@endif
+                                    @endif
+                                </td><td colspan="2"> <b>Tasa: </b> {{$art->venta->tasaTransPunto}}
+                                </td><td colspan="3"><b>Porcentaje: </b>
+                                     @if ($art->venta->tipo_pago == 'Dolar')
+
+                                        {{$art->venta->porDolar}} %
+                                     @endif
+                                     @if ($art->venta->tipo_pago == 'Peso')
+                                             @php
+                                             if($art->porEspecial && $art->venta->tipo_pago == 'Peso' && $art->isPeso == '1'){
+                                                 $v = 1;
+                                             }
+                                             @endphp
+                                        {{$art->venta->porPeso}} %
+                                     @endif
+                                     @if ($art->venta->tipo_pago == 'Trans/Punto')
+                                             @php
+                                             if($art->porEspecial && $art->venta->tipo_pago == 'Trans/Punto' && $art->isTransPunto == '1'){
+                                                 $v = 1;
+                                             }
+                                             @endphp
+                                        {{$art->venta->porTransPunto}} %
+                                     @endif
+                                     @if ($art->venta->tipo_pago == 'Mixto')
+                                             @php
+                                             if($art->porEspecial && $art->venta->tipo_pago == 'Mixto' && $art->isMixto == '1'){
+                                                 $v = 1;
+                                             }
+                                             @endphp
+                                        {{$art->venta->porMixto}} %
+                                     @endif
+                                     @if ($art->venta->tipo_pago == 'Efectivo')
+                                             @php
+                                             if($art->porEspecial && $art->venta->tipo_pago == 'Efectivo' && $art->isEfectivo == '1'){
+                                                $v = 1;
+                                             }
+                                             @endphp
+                                        {{$art->venta->porEfectivo}} %
+                                     @endif
+
+                                    </td>
+                                    <td colspan="2"><b>Operacion: </b>{{$art->venta->estado}}</td>
+                            </tr>
+                            <tr>
+                                <th>ID</th>
+                                <th>Código</th>
+                                <th>Nombre</th>
+                                @can('haveaccess', 'cajacosto.show')
+                                <th>P/Costo</th>
+                                <th>%/Espal</th>
+                                @endcan
+                                <th>Cant.</th>
+                                @can('haveaccess', 'cajacosto.show')
+                                <th>T/Costo.</th>
+                                @endcan
+                                <th>P/Venta</th>
+                                <th>T/Venta.</th>
+                                <th>Utilidad.</th>
+                                <th>% Margen.</th>
+
+
+                            </tr>
+
+                        @endif
 
                         <tr>
                             <td>{{ $art->id ?? '' }}</td>
                             <th>{{ $cajas->nombreArticulos[$count]->codigo ?? '' }}</th>
                             <td>{{ $cajas->nombreArticulos[$count]->nombre ?? '' }}</td>
-                            {{-- <td>{{ $art->precio_costo_unidad }}</td> --}}
+                            @can('haveaccess', 'cajacosto.show')
+                            <td>{{ floatval($art->precio_costo_unidad) ?? '' }}</td>
+                            <td>
+                                @if ($art->porEspecial != null  && $art->isDolar == '1' && $art->venta->tipo_pago == 'Dolar')
+                                    {{ $art->porEspecial ?? '-'}}
+                                @elseif($art->porEspecial != null  && $art->isPeso == '1' && $art->venta->tipo_pago == 'Peso')
+                                    {{ $art->porEspecial ?? '-'}}
+                                @elseif($art->porEspecial != null  && $art->isTransPunto == '1' && $art->venta->tipo_pago == 'Trans/Punto')
+                                    {{ $art->porEspecial ?? '-'}}
+                                @elseif($art->porEspecial != null  && $art->isMixto == '1' && $art->venta->tipo_pago == 'Mixto')
+                                    {{ $art->porEspecial ?? '-'}}
+                                @elseif($art->porEspecial != null && $art->isEfectivo == '1' && $art->venta->tipo_pago == 'Efectivo')
+                                    {{ $art->porEspecial ?? '-'}}
+                                @endif
+                            </td>
+                            @endcan
                             <td>{{ $art->cantidad ?? '' }}</td>
-                            <td>{{ $art->precio_venta_unidad ?? '' }}</td>
-                            <td>{{ $art->descuento ?? '' }}</td>
+                            @can('haveaccess', 'cajacosto.show')
+                            <td>{{ floatval($art->cantidad * $art->precio_costo_unidad) ?? '' }}</td>
+                            @endcan
+                            <td>{{ floatval($art->precio_venta_unidad) ?? '' }}</td>
+                            <td>{{ floatval(($art->cantidad * $art->precio_venta_unidad)) ?? '' }}</td>
+                            <td>{{ number_format(floatval(($art->cantidad * $art->precio_venta_unidad) - ($art->cantidad * $art->precio_costo_unidad)),3,'.',',') ?? '' }}</td>
+                            <td>{{ number_format(floatval(($art->cantidad * $art->precio_venta_unidad - $art->cantidad * $art->precio_costo_unidad)) / ($art->cantidad * $art->precio_venta_unidad),2,'.',',') ?? '' }}</td>
 
 
                         </tr>
@@ -257,13 +426,29 @@
                         @endphp
                         @endforeach
                     </tbody>
+                    {{-- <tfoot>
+                        <th></th>
+                        <th></th>
+                        <th>Totales:</th>
+                        @can('haveaccess', 'cajacosto.show')
+                        <th>P/Costo</th>
+                        @endcan
+                        <th>Cant.</th>
+                        @can('haveaccess', 'cajacosto.show')
+                        <th>T/Costo.</th>
+                        @endcan
+                        <th>P/Venta</th>
+                        <th>T/Venta.</th>
+
+
+                    </tfoot> --}}
                 </table>
             </div>
 
         </div>
       <!-- /.col -->
     </div>
-
+    @endcan
 
 </section></section>
   <!-- /.content -->

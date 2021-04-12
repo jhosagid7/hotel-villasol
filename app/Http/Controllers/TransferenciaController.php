@@ -23,10 +23,18 @@ class TransferenciaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $nombre = $request->get('nombre');
+        $accion = $request->get('accion');
+        $fecha = $request->get('fecha');
+
         $title = 'Transferencias Realizadas';
-        $transferencias = Transferencia::all();
+        $transferencias = Transferencia::orderBy('id','DESC')
+        ->nombre($nombre)
+        ->accion($accion)
+        ->fecha($fecha)
+        ->get();
 
         return view('almacen.transferencia.index', compact('transferencias', 'title'));
     }
@@ -45,6 +53,7 @@ class TransferenciaController extends Controller
 
     public function getProductoDestinos(Request $request){
         // return $request;
+        // return $request->ajax();
         if ($request->ajax()) {
 
             if ($request->tipo == 'Mayor') {
@@ -57,6 +66,7 @@ class TransferenciaController extends Controller
                 ->where('estado', '=', 'Activo')
                 ->where('stock', '>=', '0')
                 ->get();
+
 
                 return response()->json($origenDestinos);
         }

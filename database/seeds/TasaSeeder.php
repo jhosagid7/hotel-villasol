@@ -21,9 +21,7 @@ class TasaSeeder extends Seeder
          $TasaDolar=Tasa::create([
              'nombre'=>'Dolar',
              'tasa'=> 0,
-             'porcentaje_ganancia'=>0,
-             'estado'=>'Activo',
-             'caja'=>'Cerrada'
+             'porcentaje_ganancia'=>0
          ]);
 
          //creamos nuestro registro para la tasa Peso
@@ -31,9 +29,7 @@ class TasaSeeder extends Seeder
          $TasaPeso=Tasa::create([
              'nombre'=>'Peso',
              'tasa'=> 0,
-             'porcentaje_ganancia'=>0,
-             'estado'=>'Activo',
-             'caja'=>'Cerrada'
+             'porcentaje_ganancia'=>0
          ]);
 
          //creamos nuestro registro para la tasa Transferencia_Punto
@@ -41,9 +37,7 @@ class TasaSeeder extends Seeder
          $TasaTransferencia_Punto=Tasa::create([
              'nombre'=>'Transferencia_Punto',
              'tasa'=> 0,
-             'porcentaje_ganancia'=>0,
-             'estado'=>'Activo',
-             'caja'=>'Cerrada'
+             'porcentaje_ganancia'=>0
          ]);
 
          //creamos nuestro registro para la tasa Mixto
@@ -51,9 +45,7 @@ class TasaSeeder extends Seeder
          $TasaMixto=Tasa::create([
              'nombre'=>'Mixto',
              'tasa'=> 0,
-             'porcentaje_ganancia'=>0,
-             'estado'=>'Activo',
-             'caja'=>'Cerrada'
+             'porcentaje_ganancia'=>0
          ]);
 
          //creamos nuestro registro para la tasa Efectivo
@@ -61,9 +53,31 @@ class TasaSeeder extends Seeder
          $TasaEfectivo=Tasa::create([
              'nombre'=>'Efectivo',
              'tasa'=> 0,
-             'porcentaje_ganancia'=>0,
-             'estado'=>'Activo',
-             'caja'=>'Cerrada'
+             'porcentaje_ganancia'=>0
          ]);
+
+         //creamos nuestro registro para la tasa EfectivoVenta
+         //Tasa EfectivoVenta
+         $TasaEfectivo=Tasa::create([
+            'nombre'=>'EfectivoVenta',
+            'tasa'=> 0,
+            'porcentaje_ganancia'=>0
+        ]);
+
+        //creamos nuestro registro para la tasa DolarHabitacion
+         //Tasa DolarHabitacion
+         $TasaEfectivo=Tasa::create([
+            'nombre'=>'DolarHabitacion',
+            'tasa'=> 0,
+            'porcentaje_ganancia'=>0
+        ]);
+
+        //creamos nuestro registro para la tasa PesoHabitacion
+         //Tasa PesoHabitacion
+         $TasaEfectivo=Tasa::create([
+            'nombre'=>'PesoHabitacion',
+            'tasa'=> 0,
+            'porcentaje_ganancia'=>0
+        ]);
     }
 }

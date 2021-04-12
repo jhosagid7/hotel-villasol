@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use App\Venta;
+use App\Ingreso;
+use App\Persona;
 use App\Articulo;
+use Carbon\Carbon;
 use App\Articulo_venta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,12 +46,14 @@ class ReporteController extends Controller
 
         $title = 'Reporte de Productos Vendidos';
         $articulos = Articulo_venta::join('articulos', 'articulo_ventas.articulo_id', '=', 'articulos.id')
+        ->join('ventas', 'articulo_ventas.venta_id', '=', 'ventas.id')
+        ->where('ventas.estado', '=','Aceptada')
         // ->name($name)
         ->tipo($tipo)
         // ->description($description)
-        ->select('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at',DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_costo_unidad) as precio_costo_total'),DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_venta_unidad) as precio_venta_total'))
+        ->select('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at',DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_costo_unidad) as precio_costo_total'),DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_venta_unidad) as precio_venta_total'))
         ->fecha($fecha)
-        ->groupBy('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at')
+        ->groupBy('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at')
         ->get();
 
 
@@ -83,7 +89,7 @@ class ReporteController extends Controller
             $articulos = DB::table('articulos as a')
             ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
 
-            ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
+            ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'a.porEspecial', 'a.isDolar', 'a.isPeso', 'a.isTransPunto', 'a.isMixto', 'a.isEfectivo', 'c.nombre as categoria')
             ->orderBy('id', 'desc')
             ->get();
         // return $articulos;
@@ -108,6 +114,66 @@ class ReporteController extends Controller
             $user = Auth::user();
         // return $totalInversion.$mayor.$detal;
         return view('reportes.inventario.general', compact('title', 'user','totalInversion','mayor','detal'));
+    }
+
+    public function reportIngresosIndex(){
+
+        $title = 'Reporte General de Compras por Fechas';
+
+        $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();
+        $proveedors = Persona::where('tipo_persona', '=', 'proveedor')->get();
+        // $ingresos = Ingreso::get()
+        // // ->name($name)
+        // //     ->codigo($codigo)
+        // //     ->venderal($venderal)
+        //     ->fecha($fecha);
+
+        // foreach ($ingresos as $ing) {
+        //     $ing->persona;
+        //     $ing->user;
+        //     foreach ($ing->articulo_ingresos as $art) {
+        //         $art->articulo;
+        //     }
+        // }
+// return $ingresos;
+        return view('reportes.ingresos.index', compact('users','proveedors', 'title'));
+    }
+
+    public function reportIngresosShow(Request $request){
+        $fecha = $request->get('fecha');
+        $estado = $request->get('estado');
+        $proveedor = $request->get('proveedor');
+        $operador = $request->get('operador');
+        $title = 'Reporte General de Compras';
+        $ingresos = Ingreso::fecha($fecha)
+        ->estado($estado)
+        ->proveedor($proveedor)
+        ->operador($operador)
+        ->get();
+
+        if($fecha){
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+
+            }
+
+
+            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+        // ->name($name)
+        //     ->codigo($codigo)
+        //     ->venderal($venderal)
+
+
+        // foreach ($ingresos as $ing) {
+        //     $ing->persona;
+        //     $ing->user;
+        //     foreach ($ing->articulo_ingresos as $art) {
+        //         $art->articulo;
+        //     }
+        // }
+// return $ingresos;
+        return view('reportes.ingresos.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','estado','proveedor','operador', 'title'));
     }
 
     /**

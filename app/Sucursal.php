@@ -20,6 +20,10 @@ class Sucursal extends Model
         return $this->belongsTo('App\Empresa');
     }
 
+    public function levels(){
+        return $this->hasMany('App\Level');
+    }
+
     public function cajas()
     {
         return $this->hasMany('App\Caja');

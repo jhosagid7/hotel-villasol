@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Administracion | Villasoft Punto</title>
+  <title>Administracion | {{ config('app.name', 'VillaSoft') }}</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
@@ -37,13 +37,14 @@
 
 
 
+  <link rel="stylesheet" href="{{asset('dist/css/main.css')}}">
   <link rel="stylesheet" href="{{asset('dist/css/AdminLTE.min.css')}}">
   <!-- AdminLTE Skins. Choose a skin from the css/skins
        folder instead of downloading all of them to reduce the load. -->
   <link rel="stylesheet" href="{{asset('dist/css/skins/_all-skins.min.css')}}">
   <!-- jvectormap -->
   <link rel="stylesheet" href="{{asset('bower_components/jvectormap/jquery-jvectormap.css')}}">
-
+  @yield('styles')
 
 
 
@@ -65,7 +66,7 @@
       <!-- mini logo for sidebar mini 50x50 pixels -->
       <span class="logo-mini"><b>V</b>S</span>
       <!-- logo for regular state and mobile devices -->
-      <span class="logo-lg"><b>V</b>illa<b>S</b>oft <b>P</b>unto</span>
+      <span class="logo-lg"><b>{{ config('app.name', 'VillaSoft') }}</span>
     </a>
     <!-- Header Navbar: style can be found in header.less -->
     <nav class="navbar navbar-static-top">
@@ -195,9 +196,11 @@
                   <div class="col-xs-4 text-center">
                     <a href="{{asset('cajas/caja')}}">Caja</a>
                   </div>
+                  @can('haveaccess', 'ventas.create')
                   <div class="col-xs-4 text-center">
-                    <a href="{{asset('ventas/venta')}}">Ventas</a>
+                    <a href="{{asset('ventas/venta/create')}}">Ventas</a>
                   </div>
+                  @endcan
                   <div class="col-xs-4 text-center">
                     <a href="{{asset('ventas/tasa')}}">Margenes</a>
                   </div>
@@ -267,7 +270,7 @@
       <!-- /.search form -->
       <!-- sidebar menu: : style can be found in sidebar.less -->
       <ul class="sidebar-menu" data-widget="tree">
-        <li class="header">MENÚ DE NAVIGATIÓN</li>
+        <li class="header">MENÚ DE NAVEGACIÓN</li>
         {{-- <li class="treeview">
           <a href="#">
           <i class="fa fa-hotel"></i> <span>Hotel</span>
@@ -276,24 +279,64 @@
           </span>
         </a>
           <ul class="treeview-menu">
+              @can('haveaccess', 'proveedor.index')
               <li><a href="{{asset('compras/proveedor')}}"><i class="fa fa-truck"></i> Proveedor</a></li>
+              @endcan
+              @can('haveaccess', 'ingreso.index')
               <li><a href="{{asset('compras/ingreso')}}"><i class="fa fa-sign-in"></i> Ingreso</a></li>
+              @endcan
           </ul>
 
       </li> --}}
-        <li class="treeview">
-          <a href="#">
-            <i class="fa fa-database"></i> <span>Almacen</span>
-            <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
-          </a>
-          <ul class="treeview-menu">
+        @can('haveaccess', 'boton.almacen')
+            <li class="active">
+                <a href="{{asset('recepcion')}}">
+                    <i class="fa fa-th"></i> <span>Recepcion</span>
+                    <span class="pull-right-container">
+                    <small class="label pull-right bg-green">new</small>
+                    </span>
+                </a>
+            </li>
+        @endcan
+      @can('haveaccess', 'boton.almacen')
+      <li class="treeview">
+        <a href="#"><i class="fa fa-database"></i> Almacen
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+            @can('haveaccess', 'categoria.index')
             <li><a href="{{asset('almacen/categoria')}}"><i class="fa fa-cube"></i> Categorías</a></li>
+            @endcan
+            @can('haveaccess', 'articulo.index')
             <li><a href="{{asset('almacen/articulo')}}"><i class="fa fa-cubes"></i> Artículos</a></li>
-            <li><a href="{{asset('almacen/transferencia')}}"><i class="fa fa-cubes"></i> Transferencias</a></li>
-          </ul>
-        </li>
+            @endcan
+            @can('haveaccess', 'menu.transactions')
+            <li class="treeview">
+                <a href="#"><i class="fa fa-exchange"></i> Transacciones
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+                </a>
+                <ul class="treeview-menu">
+                    @can('haveaccess', 'transferencia.index')
+                    <li><a href="{{asset('almacen/transferencia')}}"><i class="fa fa-cubes"></i> Transferencias</a></li>
+                    @endcan
+                    @can('haveaccess', 'cargos.index')
+                    <li><a href="{{asset('cargos')}}"><i class="fa fa-truck"></i> Cargos</a></li>
+                    @endcan
+                    @can('haveaccess', 'descargos.index')
+                    <li><a href="{{asset('descargos')}}"><i class="fa fa-sign-in"></i> Descargos</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
+        </ul>
+      </li>
+
+        @endcan
+        @can('haveaccess', 'boton.compras')
         <li class="treeview">
           <a href="#">
           <i class="fa fa-cart-arrow-down"></i> <span>Compras</span>
@@ -302,11 +345,17 @@
           </span>
         </a>
           <ul class="treeview-menu">
+              @can('haveaccess', 'proveedore.index')
               <li><a href="{{asset('compras/proveedor')}}"><i class="fa fa-truck"></i> Proveedor</a></li>
+              @endcan
+              @can('haveaccess', 'ingreso.index')
               <li><a href="{{asset('compras/ingreso')}}"><i class="fa fa-sign-in"></i> Ingreso</a></li>
+              @endcan
           </ul>
 
       </li>
+      @endcan
+        @can('haveaccess', 'boton.venta')
         <li class="treeview">
             <a href="#">
             <i class="fa fa-handshake-o"></i> <span>Ventas</span>
@@ -315,11 +364,21 @@
             </span>
           </a>
             <ul class="treeview-menu">
-                <li><a href="{{asset('ventas/cliente')}}"><i class="fa fa-user-plus"></i> Clietnes</a></li>
+                @can('haveaccess', 'cliente.index')
+                <li><a href="{{asset('ventas/cliente')}}"><i class="fa fa-user-plus"></i> Clientes</a></li>
+                @endcan
+                @can('haveaccess', 'venta.index')
                 <li><a href="{{asset('ventas/venta')}}"><i class="fa fa-desktop"></i> Venta</a></li>
+                @endcan
+                @can('haveaccess', 'tasa.index')
                 <li><a href="{{asset('ventas/tasa')}}"><i class="fa fa-desktop"></i> Tasa</a></li>
+                @endcan
             </ul>
         </li>
+        @endcan
+
+
+        @can('haveaccess', 'boton.reportes')
         <li class="treeview">
             <a href="#">
             <i class="fa fa-handshake-o"></i> <span>Reportes</span>
@@ -328,12 +387,22 @@
             </span>
           </a>
             <ul class="treeview-menu">
+                @can('haveaccess', 'reporte.index')
                 <li><a href="{{asset('reportes/ventas')}}"><i class="fa fa-user-plus"></i> Articulos Vendidos</a></li>
+                @endcan
+
                 <li><a href="{{asset('inventario')}}"><i class="fa fa-desktop"></i> Planilla Inventario</a></li>
+
                 <li><a href="{{asset('precios')}}"><i class="fa fa-desktop"></i> Lista de Precios</a></li>
+
+                @can('haveaccess', 'reporte.index')
                 <li><a href="{{asset('reporte-general')}}"><i class="fa fa-desktop"></i> Reporte General</a></li>
+                <li><a href="{{asset('reporte-ingreso')}}"><i class="fa fa-desktop"></i> Reporte General Compras</a></li>
+                @endcan
             </ul>
         </li>
+        @endcan
+        @can('haveaccess', 'boton.sistema')
         <li class="treeview">
             <a href="#">
             <i class="fa fa-handshake-o"></i> <span>Sistema</span>
@@ -351,7 +420,57 @@
             </ul>
         </li>
 
+
+        @endcan
+
+        @can('haveaccess', 'menu.configuracion')
+      <li class="treeview">
+        <a href="#"><i class="fa fa-database"></i> Configruación
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+        <ul class="treeview-menu">
+            @can('haveaccess', 'level.index')
+            <li><a href="{{asset('config/level')}}"><i class="fa fa-cube"></i> Niveles</a></li>
+            @endcan
+            @can('haveaccess', 'cat.index')
+            <li><a href="{{asset('config/cat')}}"><i class="fa fa-cubes"></i> Categoría</a></li>
+            @endcan
+            @can('haveaccess', 'habitacione.index')
+            <li><a href="{{asset('config/habitacion')}}"><i class="fa fa-cubes"></i> Habitacion</a></li>
+            @endcan
+            @can('haveaccess', 'horarios.index')
+            <li><a href="{{asset('config/horario')}}"><i class="fa fa-cubes"></i> Horario</a></li>
+            @endcan
+
+            @can('haveaccess', 'precio.index')
+            <li><a href="{{asset('config/precio')}}"><i class="fa fa-cubes"></i> Precio</a></li>
+            @endcan
+            @can('haveaccess', 'menu.transactions')
+            <li class="treeview">
+                <a href="#"><i class="fa fa-exchange"></i> Transacciones
+                <span class="pull-right-container">
+                    <i class="fa fa-angle-left pull-right"></i>
+                </span>
+                </a>
+                <ul class="treeview-menu">
+                    @can('haveaccess', 'transferencia.index')
+                    <li><a href="{{asset('almacen/transferencia')}}"><i class="fa fa-cubes"></i> Transferencias</a></li>
+                    @endcan
+                    @can('haveaccess', 'cargos.index')
+                    <li><a href="{{asset('cargos')}}"><i class="fa fa-truck"></i> Cargos</a></li>
+                    @endcan
+                    @can('haveaccess', 'descargos.index')
+                    <li><a href="{{asset('descargos')}}"><i class="fa fa-sign-in"></i> Descargos</a></li>
+                    @endcan
+                </ul>
+            </li>
+            @endcan
         </ul>
+      </li>
+    </ul>
+        @endcan
     </section>
     <!-- /.sidebar -->
   </aside>
@@ -611,6 +730,7 @@
 <script src="{{asset('dist/js/adminlte.min.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('dist/js/demo.js')}}"></script>
+
 <!-- Bootstrap 3.3.7 -->
 <script src="{{asset('Datatables/datatables.min.js')}}"></script>
 {{-- <!-- Bootstrap 3.3.7 -->
@@ -643,35 +763,53 @@
 
 {{-- Funtion Main --}}
 @stack('sciptsMain')
-
-
-<script type="text/javascript">
-
-function imprimir() {
-	window.print();
-}
-    // jQuery(document).ready(function() {
-    // jQuery('#arti').DataTable({
-    // rowReorder: {
-    // selector: 'td:nth-child(2)'
-    // },
-    // responsive: true,
-    // "language": {
-    // "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
-    // },
-    // "paging": true,
-    // "processing": true,
-
-    // dom: 'lBfrtip',
-    // buttons: [
-    // 'excel', 'pdf', 'print',
-    // ],
-    // "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]]
-    // } );
-    // } );
-
-    </script>
 <script>
+    $(document).ready(function() {
+
+        $('form').keypress(function(e){
+            if(e == 13){
+                return false;
+            }
+        });
+
+        $('input').keypress(function(e){
+            if(e.which == 13){
+                return false;
+            }
+        });
+
+    });
+
+
+
+    $(document).ready(function() {
+        // Funcion JavaScript para la conversion a mayusculas
+        $(function() {
+            $('.mayuscula').on('input', function() {
+                this.value = this.value.toUpperCase();
+            });
+        });
+
+        $(function() {
+            $('.titulo').on('input', function() {
+                this.value = this.value.replace(/^([a-z\u00E0-\u00FC])|\s+([a-z\u00E0-\u00FC])/g, function($1){
+                    return $1.toUpperCase();
+                });
+            });
+        });
+
+    });
+
+
+
+
+    $('.titulo').css('textTransform', 'capitalize');
+    function imprimir() {
+        window.print();
+    }
+
+
+
     $(function () {
       //Initialize Select2 Elements
       $('.select2').select2()
@@ -766,5 +904,6 @@ function imprimir() {
       })
     })
   </script>
+  @yield('scriptOtro')
 </body>
 </html>

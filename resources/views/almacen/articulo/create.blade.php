@@ -49,13 +49,13 @@
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
         <div class="form-group">
             <label for="nombre">Nombre</label>
-            <input type="text" name="nombre" required value="{{old('nombre')}}" class="form-control" placeholder="Nombre...">
+            <input id="nombre" type="text" name="nombre" required value="{{old('nombre')}}" class="form-control mayuscula" placeholder="Nombre...">
         </div>
     </div>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
         <div class="form-group">
             <label for="descripcion">Descripción</label>
-            <input type="text" name="descripcion" required value="{{old('descripcion')}}" class="form-control" placeholder="Descripción del articulo...">
+            <input id="descripcion" type="text" name="descripcion" required value="{{old('descripcion')}}" class="form-control mayuscula" placeholder="Descripción del articulo...">
         </div>
     </div>
 
@@ -78,6 +78,7 @@
             <label for="stock">Unidades</label>
             <input type="text" name="unidades" required value="" class="form-control enteros" placeholder="unidades...">
         </div>
+
     </div>
     <div class="col-lg-2 col-md-2 col-sm-2 col-xs-12">
         <div class="form-group">
@@ -88,17 +89,46 @@
                 <option value="Mayor">Mayor</option>
             </select>
         </div>
-    </div>
-    {{-- <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-        <div class="form-group">
-            <label for="precio_costo">Precio Compra</label>
-            <input type="text" name="precio_costo" required value="{{old('precio_costo')}}" class="form-control decimal" placeholder="Precio de compra en dolares...">
+        <div class="checkbox">
+
+            <label>
+                <input name="isKilo" type="checkbox">
+                <b>Vender por Kilo</b>
+              </label>
         </div>
-    </div> --}}
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+        <div class="form-group">
+            <label for="porEspecial">Porcentaje</label>
+            <input type="text" name="porEspecial" value="{{old('porEspecial')}}" class="form-control decimal" placeholder="Porcentaje especial...">
+            <div class="checkbox">
+                <label>
+                  <input name="isDolar" type="checkbox">
+                  Dolar&nbsp;
+                </label>
+                <label>
+                    <input name="isPeso" type="checkbox">
+                    Peso&nbsp;
+                  </label>
+                  <label>
+                    <input name="isTransPunto" type="checkbox">
+                    Trans/Punto&nbsp;
+                  </label>
+                  <label>
+                    <input name="isMixto" type="checkbox">
+                    Mixto&nbsp;
+                  </label>
+                  <label>
+                    <input name="isEfectivo" type="checkbox">
+                    Efectivo&nbsp;
+                  </label>
+              </div>
+        </div>
+    </div>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
         <div class="form-group">
             <label for="imagen">Imagen</label>
-            <input required type="file" name="imagen" class="form-control" accept="image/*">
+            <input type="file" name="imagen" class="form-control" accept="image/*">
         </div>
     </div>
 
@@ -122,6 +152,14 @@
 
 @push('sciptsMain')
   <script>
+
+
+$(document).ready(function () {
+    $("#nombre").keyup(function () {
+        var value = $(this).val();
+        $("#descripcion").val(value);
+    });
+});
 $(document).ready(function() {
 
     $(function() {
@@ -141,7 +179,7 @@ $(document).ready(function() {
             if (existePto === false) {
                 regexp = /.[0-9]{10}$/;
             } else {
-                regexp = /.[0-9]{2}$/;
+                regexp = /.[0-9]{9}$/;
             }
 
             return !(regexp.test(field.val()));

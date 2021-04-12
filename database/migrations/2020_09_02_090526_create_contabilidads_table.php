@@ -16,9 +16,9 @@ class CreateContabilidadsTable extends Migration
         Schema::create('contabilidads', function (Blueprint $table) {
             $table->id();
             $table->string('denominacion', 100);
-            $table->decimal('valor', 11, 2);
+            $table->decimal('valor', 25, 3);
             $table->unsignedInteger('cantidad')->nullable();
-            $table->decimal('subtotal', 11, 2)->nullable();
+            $table->decimal('subtotal', 25, 3)->nullable();
             $table->string('tipo', 20);
             $table->enum('modo', ['Apertura', 'Cierre']);
             $table->foreignId('caja_id')->references('id')->on('cajas');

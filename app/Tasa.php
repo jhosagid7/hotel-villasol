@@ -10,9 +10,7 @@ class Tasa extends Model
     protected $fillabel = [
         'nombre',
         'tasa',
-        'porcentaje_ganancia',
-        'estado',
-        'caja'
+        'porcentaje_ganancia'
     ];
 
     protected $guarded = [];

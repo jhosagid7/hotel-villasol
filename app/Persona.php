@@ -11,6 +11,16 @@ class Persona extends Model
         return $this->hasMany(Venta::class);
     }
 
+    public function ingresos(){
+        return $this->hasMany(Ingreso::class);
+    }
+
+
+
+    public function user(){
+        return $this->hasOneThrough(User::class,Ingreso::class);
+    }
+
     // protected $table = 'persona';
 
     // protected $primaryKey = 'idpersona';

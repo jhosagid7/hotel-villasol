@@ -59,33 +59,65 @@
                         $total_costo = 0;
                     @endphp
                     @foreach ($articulos as $art)
-                        @php
 
+                    @php
+                    if ($art->precio_costo){
+
+                        if ($art->isDolar){
+                            $precio_venta_dolar = $art->precio_costo + $art->precio_costo * ($art->porEspecial/100);
+                        }else{
                             $precio_venta_dolar = $art->precio_costo + $art->precio_costo * ($tasaDolar->porcentaje_ganancia/100);
-                            $total_costo += $art->precio_costo;
+                        }
+                        if ($art->isPeso){
+                            $precio_venta_peso = $art->precio_costo + $art->precio_costo * ($art->porEspecial/100);
+                        }else{
                             $precio_venta_peso = $art->precio_costo + $art->precio_costo * ($tasaPeso->porcentaje_ganancia/100);
+                        }
+                        if ($art->isTransPunto){
+                            $precio_venta_tran_p = $art->precio_costo + $art->precio_costo * ($art->porEspecial/100);
+                        }else{
                             $precio_venta_tran_p = $art->precio_costo + $art->precio_costo * ($tasaTransferenciaPunto->porcentaje_ganancia/100);
+                        }
+                        if ($art->isMixto){
+                            $precio_venta_mixto = $art->precio_costo + $art->precio_costo * ($art->porEspecial/100);
+                        }else{
                             $precio_venta_mixto = $art->precio_costo + $art->precio_costo * ($tasaMixto->porcentaje_ganancia/100);
+                        }
+                        if ($art->isEfectivo){
+                            $precio_venta_efectvo = $art->precio_costo + $art->precio_costo * ($art->porEspecial/100);
+                        }else{
                             $precio_venta_efectvo = $art->precio_costo + $art->precio_costo * ($tasaEfectivo->porcentaje_ganancia/100);
-                        @endphp
+                        }
+                    }else{
+
+                        $precio_venta_dolar = $art->precio_costo + $art->precio_costo * ($tasaDolar->porcentaje_ganancia/100);
+                        $precio_venta_peso = $art->precio_costo + $art->precio_costo * ($tasaPeso->porcentaje_ganancia/100);
+                        $precio_venta_tran_p = $art->precio_costo + $art->precio_costo * ($tasaTransferenciaPunto->porcentaje_ganancia/100);
+                        $precio_venta_mixto = $art->precio_costo + $art->precio_costo * ($tasaMixto->porcentaje_ganancia/100);
+                        $precio_venta_efectvo = $art->precio_costo + $art->precio_costo * ($tasaEfectivo->porcentaje_ganancia/100);
+                    }
+
+                    $total_costo += $art->precio_costo;
+                    @endphp
+
                     <tr>
-                        <td>{{ $art->id }}</td>
-                        <td class="hidden">{{ $art->categoria }}</td>
-                        <td>{{ $art->nombre }}</td>
+                        <td>{{ $art->id ?? '' }}</td>
+                        <td class="hidden">{{ $art->categoria ?? '' }}</td>
+                        <td>{{ $art->nombre ?? '' }}</td>
                         <td class="hidden">
-                            {{ $art->codigo }}
+                            {{ $art->codigo ?? '' }}
                         </td>
                         <td>
-                            {{ $art->codigo }}
+                            {{ $art->codigo ?? '' }}
                             {{-- {!! DNS1D :: getBarcodeHTML ( $art->codigo , 'UPCE' ) !!} --}}
                             {{-- {!! DNS1D::getBarcodeHTML($art->codigo, 'PHARMA2T')!!} --}}
 
                         </td>
-                        <td>{{ $art->stock }}</td>
-                        <td>{{ $art->stock * $art->unidades ?? ' '  }}</td>
-                        <td>{{ number_format($precio_venta_dolar * $tasaDolar->tasa, 2, '.', ' ') }}</td>
-                        <td>{{ number_format($precio_venta_peso * $tasaPeso->tasa, 2, ',', '.') }} </td>
-                        <td>{{ number_format($precio_venta_tran_p * $tasaTransferenciaPunto->tasa, 2, ',', '.') }} </td>
+                        <td>{{ $art->stock ?? '' }}</td>
+                        <td>{{ $art->stock * $art->unidades ?? ''  }}</td>
+                        <td>{{ floatval($precio_venta_dolar * $tasaDolar->tasa) }}</td>
+                        <td>{{ number_format(round($precio_venta_peso * $tasaPeso->tasa,-2), 2, ',', '.') }} </td>
+                        <td>{{ number_format(round($precio_venta_tran_p * $tasaTransferenciaPunto->tasa,-2), 2, ',', '.') }} </td>
                         <td>{{ number_format($precio_venta_mixto * $tasaMixto->tasa, 2, ',', '.') }} </td>
                         <td>{{ number_format($precio_venta_efectvo * $tasaEfectivo->tasa, 2, ',', '.') }} </td>
                         <td class="hidden">{{ $art->descripcion }}</td>
@@ -203,7 +235,7 @@ var table = jQuery(document).ready(function() {
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,5,6,8,9,10,11] } ,
+                    exportOptions: { columns: [0,1,2,3,5,6,7,8,9,10,11] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',
@@ -220,10 +252,10 @@ var table = jQuery(document).ready(function() {
                     alignment: "center",
                     customize : function(doc){
                     doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
-                    doc.content[1].table.widths = [20,60,170,100,40,50,100,100,100,100]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                    doc.content[1].table.widths = [20,60,170,100,40,50,100,100,100,100,100]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                     },
                     exportOptions: {
-                        columns: [0,1,2,3,5,6,8,9,10,11],
+                        columns: [0,1,2,3,5,6,7,8,9,10,11],
                         stripHtml: true,
 
                     } ,
@@ -242,7 +274,7 @@ var table = jQuery(document).ready(function() {
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,5,6,8,9,10,11] } ,
+                    exportOptions: { columns: [0,1,2,3,5,6,7,8,9,10,11] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',
