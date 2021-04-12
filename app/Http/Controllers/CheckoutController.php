@@ -34,7 +34,7 @@ class CheckoutController extends Controller
 
         $levels = Level::orderBy('id','desc')->get();
         $horarios = Horario::get();
-        $habitaciones = Habitacione::where('status','=','Ocupada')->get();
+        $habitaciones = 'App/Habitacione'::where('status','=','Ocupada')->get();
         $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
         // return $tasaDolarHabitacion->tasa;
         $tasaPesoHabitacion = Tasa::where('nombre','=','PesoHabitacion')->first();
@@ -111,7 +111,7 @@ class CheckoutController extends Controller
 
         $horarios_id = Horario::where('nombre',$servicio->horario)->first();
         // return $horarios_id;
-        $habitacionese = Habitacione::where('status','Disponible')->get();
+        $habitacionese = 'App/Habitacione'::where('status','Disponible')->get();
         // $habitacionese =[];
 
         //creamos un contador
@@ -312,7 +312,7 @@ return $request;
         $servicio->status_servicio = 'Finalizado';
         $servicio->update();
 
-        $habitacion = Habitacione::findOrFail($id);
+        $habitacion = 'App/Habitacione'::findOrFail($id);
         $habitacion->status = 'Limpieza';
         $habitacion->update();
 

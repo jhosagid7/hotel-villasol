@@ -736,7 +736,7 @@ class ServicioController extends Controller
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
             //ahora actualizamos la tabla Habitaico con un estatus de ocupada
-            $habitacion = Habitacione::findOrFail($id_habitaicon);
+            $habitacion = 'App/Habitacione'::findOrFail($id_habitaicon);
             $habitacion->status = 'Ocupada';
             $habitacion->update();
 
@@ -1121,7 +1121,7 @@ class ServicioController extends Controller
             }
         }
             //ahora actualizamos la tabla Habitaico con un estatus de ocupada
-            $habitacion = Habitacione::findOrFail($id_habitaicon);
+            $habitacion = 'App/Habitacione'::findOrFail($id_habitaicon);
             $habitacion->status = 'Ocupada';
             $habitacion->update();
 
@@ -1136,7 +1136,7 @@ class ServicioController extends Controller
                 $servicio->status_servicio = 'Finalizado';
                 $servicio->update();
 
-                $habitacionCambio = Habitacione::findOrFail($habitacion_id_vieja);
+                $habitacionCambio = 'App/Habitacione'::findOrFail($habitacion_id_vieja);
                 $habitacionCambio->status = 'Limpieza';
                 $habitacionCambio->update();
 
