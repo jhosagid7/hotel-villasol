@@ -22,7 +22,11 @@ class CreatePersonasTable extends Migration
             $table->string('direccion', 256)->nullable();
             $table->string('telefono', 20)->nullable();
             $table->string('email', 100)->nullable();
+            $table->unsignedInteger('isCortesia')->nullable();
+            $table->unsignedInteger('isCredito')->nullable();
             $table->string('imagen', 200)->nullable();
+            $table->integer('limite_fecha')->nullable();
+            $table->decimal('limite_monto',25,2)->nullable();
             $table->timestamps();
         });
     }

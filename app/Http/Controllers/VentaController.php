@@ -8,16 +8,21 @@ use App\Caja;
 use App\Tasa;
 use Response;
 use App\venta;
+use App\Credito;
 use App\Articulo;
+use App\Cortesia;
+use App\Excedente;
 use Carbon\Carbon;
 use App\Pago_Venta;
+
 use App\DetallePago;
+//use Illuminate\Http\Response;
 use App\Sessioncaja;
 use App\DetalleVenta;
-
 use App\Http\Requests;
-//use Illuminate\Http\Response;
 use App\Articulo_venta;
+use App\Detalle_credito;
+use App\Servicios_Ventas;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +41,9 @@ class VentaController extends Controller
     public function index(Request $request)
     {
         if ($request) {
+            $mesActual = Carbon::now()->format('Y-m-d');
+            $restaMes = Carbon::now()->subWeek(1);
+            $restaMes = $restaMes->format('Y-m-d');
             $title='Ventas';
             $query = trim($request->get('buscarTexto'));
             $ventas = DB::table('ventas as v')
@@ -45,6 +53,8 @@ class VentaController extends Controller
                 ->join('users as u', 'u.id', '=', 'c.user_id')
                 ->select('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
                 ->where('v.num_comprobante', 'LIKE', '%'. $query  .'%')
+                ->where("v.created_at",">=",$restaMes)
+                ->where("v.created_at","<=",$mesActual)
                 ->orderBy('v.id', 'desc')
                 ->groupBy('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
                 ->get();
@@ -64,10 +74,98 @@ class VentaController extends Controller
         $fechaActual = Carbon::now();
         // dd($tasa->updated_at->diffInHours($fechaActual));
         if ($tasa->tasa <= 0 || $tasa->updated_at->diffInHours($fechaActual) >= 6 ) {
+
+
+            $date   = Carbon::now('America/Caracas');
+            $fecha_actual  = $date->format('d-m-Y');
+            $creditos_clientes = Credito::get();
+
+
+            return $creditos_clientes;
+
+            if($fecha_actual->gt($fechaVigencia)){
+
+            }
+
+
             return redirect()
             ->route('tasa.index')
             ->with('status_danger', '¡Debes Actualizar el margen de gananacia para poder acceder!');
         }else{
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // este codigo maneja las fechas de los creditos vencidos
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            $date   = Carbon::now('America/Caracas');
+
+            $creditos_clientes = Credito::get();
+            if ($creditos_clientes) {
+
+
+            foreach ($creditos_clientes as $fecha_limite) {
+
+                $now = Carbon::parse($date);
+                $second = Carbon::parse($fecha_limite->fecha_limite_pago);
+
+                if ($second->gte($now)) {
+                    // return 'tiene credito vigente';
+                    $credito_id = $fecha_limite->id;
+                    $upCredito = Credito::findOrFail($credito_id);
+                    if ($upCredito->total_deuda > 0) {
+                        $upCredito->estado_credito = 'Moroso';
+                        $upCredito->update();
+                    }else{
+                        $upCredito->estado_credito = 'Activo';
+                        $upCredito->update();
+                    }
+
+                    $upCredito->estado_credito = 'Activo';
+                        $upCredito->update();
+
+                }else{
+                    // return 'tiene credito vencido';
+                    $credito_id = $fecha_limite->id;
+                    $upCredito = Credito::findOrFail($credito_id);
+
+                    $upCredito->estado_credito = 'Moroso';
+                    $upCredito->update();
+
+
+                    if ($upCredito->total_deuda > 0) {
+                        $upCredito->estado_credito = 'Moroso';
+                        $upCredito->update();
+                    }else{
+                        $upCredito->estado_credito = 'Activo';
+                        $upCredito->update();
+                    }
+                }
+
+            }
+        }
+            $detalle_creditos = Detalle_credito::get();
+            // return $detalle_credito;
+            foreach ($detalle_creditos as $detalle_credito) {
+
+                if ($date >= $detalle_credito->fecha_vencimiento) {
+
+                    $detalle_credito_id = $detalle_credito->id;
+                    $upDetalleCredito = Detalle_credito::findOrFail($detalle_credito_id);
+                    if ($upDetalleCredito->estado_pago == 'Pendiente') {
+                        $upDetalleCredito->estado_credito = 'Vencido';
+                        $upDetalleCredito->update();
+                    }
+
+
+                }
+
+        }
+            // echo $difference = $date->diff($date2)->days;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 
             $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
             // dd($cajaSessionid);
@@ -125,7 +223,7 @@ class VentaController extends Controller
                         // $sumaDivisa->pago_ventas;
                         // $sumaDivisa->caja->user;
 
-                    $cajas = Caja::find($Caja->id);
+                    $cajas = Caja::find($caja->id);
                     $cajas->user;
                     $cajas->ventas;
                     $cajas->pago_ventas;
@@ -188,12 +286,73 @@ class VentaController extends Controller
 
     public function store(Request $request)
     {
-        // return $request;
+        return $request;
     //     dd('hola');
         try{
             DB::beginTransaction();
             $myTime = Carbon::now('America/Caracas');
             // number_format($número, 2, '.', '');
+
+            $id_habitaicon = $request->get('id_habitacion');
+            $servicio_id = $request->get('servicio_id');
+
+            $tipo_pago = $request->get('tipo_pago');
+            $modo_pago = $request->get('modo_pago');
+            $monto_dejado = $request->get('monto_dejado');
+            $total_costo = $request->get('total_costo');
+            $status = '';
+
+
+
+
+
+            // if($modo_pago == 'cortesia'){
+            //     $status = 'Exonerado';
+            //     $estado = 'Aceptada';
+
+            // }
+
+            // if($modo_pago == 'credito'){
+
+            //     $status = 'Falta pagar';
+            //     $estado = 'Aceptada';
+            // }
+
+
+
+            // if($modo_pago == 'contado'){
+
+            //     if($monto_dejado == $total_costo){
+            //         $status = 'Pagado';
+            //         $estado = 'Aceptada';
+            //         $estado_pago = 'Pagado';
+            //     }
+
+            //     if($monto_dejado > $total_costo){
+            //         $status = 'Pagado';
+            //         $estado = 'Aceptada';
+            //         $estado_pago = 'Pagado';
+            //         // dd($status);
+
+            //         $exced = $monto_dejado - $total_costo;
+
+            //         $excedente = new Excedente;
+            //         $excedente->nombre_cliente = $request->get('nombre_cliente');
+            //         $excedente->cedula_cliente = $request->get('cedula_cliente');
+            //         $excedente->direccion_cliente = $request->get('direccion_cliente');
+            //         $excedente->telefono_cliente = $request->get('telefono_cliente');
+            //         $excedente->excedente = $exced;
+            //         $excedente->persona_id = $request->get('cliente_id');
+            //         $excedente->save();
+            //     }
+
+            //     if($monto_dejado < $total_costo){
+            //         $status = 'Falta pagar';
+            //         $estado = 'Pendiente';
+            //         $estado_pago = 'Falta pagar';
+            //     }
+            // }
+
 
             $articulo_id = $request->get('idarticulo');
             $cantidad = $request->get('cantidad');
@@ -243,6 +402,41 @@ class VentaController extends Controller
             $venta->persona_id = $request->get('idcliente');
             $venta->caja_id = $request->get('caja_id');
             $venta->save();
+
+            // $servicioVentas = new Servicios_Ventas;
+            // $servicioVentas->servicio_id = $servicio_id;
+            // $servicioVentas->venta_id = $venta->id;
+            // $servicioVentas->save();
+// return $modo_pago;
+
+            // if($modo_pago == 'credito'){
+            //     $credito = new Credito;
+            //     $credito->nombre_cliente = $request->get('nombre');
+            //     $credito->cedula_cliente = $request->get('num_documento');
+            //     $credito->direccion_cliente = $request->get('direccion');
+            //     $credito->telefono_cliente = $request->get('telefono');
+            //     $credito->deuda = $monto_dejado - $total_costo;
+            //     $credito->estado = 'Por pagar';
+            //     $credito->persona_id = $request->get('cliente_id');
+            //     $credito->servicios_venta_id = $venta->id;
+            //     $credito->save();
+
+            // }
+
+            // if($modo_pago == 'cortesia'){
+
+            //     $exon = $total_costo;
+
+            //         $cortesia = new Cortesia;
+            //         $cortesia->nombre_cliente = $request->get('nombre');
+            //         $cortesia->cedula_cliente = $request->get('num_documento');
+            //         $cortesia->direccion_cliente = $request->get('direccion');
+            //         $cortesia->telefono_cliente = $request->get('telefono');
+            //         $cortesia->exonerado = $exon;
+            //         $cortesia->persona_id = $request->get('cliente_id');
+            //         $cortesia->servicios_venta_id = $Ventas->id;
+            //         $cortesia->save();
+            // }
 
             //cargamos los datos del detalle del venta en la tabla articulo_venta en unas variables que reciven
             //un array
@@ -314,12 +508,14 @@ class VentaController extends Controller
                 $Articulo_venta->isMixto = $activoM;
                 $Articulo_venta->isEfectivo = $activoE;
                 $Articulo_venta->descuento = $descuento[$cont];
+                $Articulo_venta->estado_pago = 'Pagado';
                 $Articulo_venta->articulo_id = $articulo_id[$cont];
                 $Articulo_venta->venta_id =  $venta->id;//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
                 $Articulo_venta->save();
 
                 $cont = $cont+1;
             }
+
 
             $MontoDivisaR = $request->get('MontoDivisa');
             $divisaR = $request->get('divisa');
@@ -397,50 +593,54 @@ class VentaController extends Controller
 
     public function destroy($id)
     {
-        try{
-            DB::beginTransaction();
-        $venta = venta::findOrFail($id);
-        $venta->estado = 'Cancelada';
-        $venta->update();
+        $VentaCancelada = venta::findOrFail($id);
+        // return $VentaCancelada->estado;
+        if($VentaCancelada->estado != 'Cancelada'){
+            try{
+                DB::beginTransaction();
+            $venta = venta::findOrFail($id);
+            $venta->estado = 'Cancelada';
+            $venta->update();
 
-        $detalleVenta = articulo_Venta::where('venta_id','=',$id)->get();
+            $detalleVenta = articulo_Venta::where('venta_id','=',$id)->get();
 
 
-         //creamos un contador
-         $cont = 0;
+            //creamos un contador
+            $cont = 0;
 
-         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-         while ($cont < count($detalleVenta)) {
-            $idarticulo = $detalleVenta[$cont]->articulo_id;
-            $articulo = Articulo::findOrFail($idarticulo);
-            $articulo->stock = $articulo->stock+$detalleVenta[$cont]->cantidad;
-            $articulo->update();
+            //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+            while ($cont < count($detalleVenta)) {
+                $idarticulo = $detalleVenta[$cont]->articulo_id;
+                $articulo = Articulo::findOrFail($idarticulo);
+                $articulo->stock = $articulo->stock+$detalleVenta[$cont]->cantidad;
+                $articulo->update();
 
-            $cont = $cont+1;
+                $cont = $cont+1;
 
-         };
+            };
 
-         $registros = Pago_Venta::where('venta_id',$id)->get();
-         foreach($registros as $registro){
-            $ids[]=$registro->id;
+            $registros = Pago_Venta::where('venta_id',$id)->get();
+            foreach($registros as $registro){
+                $ids[]=$registro->id;
+            }
+
+
+            if (isset($ids)) {
+                $eliminados = Pago_Venta::destroy($ids);
+            }
+
+
+            DB::commit();
+
+            }catch(\Exception $e)
+            {
+
+                DB::rollback();
+                // dd($e);
+            }
+
+            return Redirect::to('ventas/venta');
         }
-
-
-        if (isset($ids)) {
-            $eliminados = Pago_Venta::destroy($ids);
-        }
-
-
-         DB::commit();
-
-        }catch(\Exception $e)
-        {
-
-            DB::rollback();
-            // dd($e);
-        }
-
-        return Redirect::to('ventas/venta');
     }
 }
 

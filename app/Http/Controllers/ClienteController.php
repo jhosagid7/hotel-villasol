@@ -48,6 +48,10 @@ class ClienteController extends Controller
         $persona->telefono = $request->get('telefono');
         $persona->email = $request->get('email');
         $persona->imagen            = 'thumb_upl_57e81d357d468.jpg';
+        $persona->isCortesia            = $request->isCortesia;
+        $persona->isCredito            = $request->isCredito;
+        $persona->limite_fecha            = $request->get('limite_fecha');
+        $persona->limite_monto            = $request->get('limite_monto');
 
         // if ($request->hasFile('imagen')) {
         //     $file = $request->file('imagen');
@@ -77,6 +81,10 @@ class ClienteController extends Controller
         $persona->telefono = $request->get('telefono');
         $persona->email = $request->get('email');
         $persona->imagen            = 'thumb_upl_57e81d357d468.jpg';
+        $persona->isCortesia            = $request->isCortesia;
+        $persona->isCredito            = $request->isCredito;
+        $persona->limite_fecha            = $request->get('limite_fecha');
+        $persona->limite_monto            = $request->get('limite_monto');
 
         // if ($request->hasFile('imagen')) {
         //     $file = $request->file('imagen');

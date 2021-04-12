@@ -22,6 +22,12 @@ class Habitacione extends Model
         return $this->belongsTo(Cat::class);
     }
 
+    public function servicios(){
+        return $this->hasMany(Servicio::class);
+    }
+
+
+
     public function level()
     {
         return $this->belongsTo(Level::class);
@@ -36,5 +42,6 @@ class Habitacione extends Model
                ->get();
         // return Sessioncaja::find($session_caja_id);
     }
+
 
 }

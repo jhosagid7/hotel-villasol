@@ -735,7 +735,7 @@
                                                                             type="hidden">
                                                                         <td><input name="MontoDivisa[]" class="decimal"
                                                                                 type="texto" id="DMontoDolar">
-                                                                                <button type="button" id="cargarDolar" class="btn btn-primary btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                                <button type="button" id="cargarDolar" class="btn btn-primary btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                         </td>
 
                                                                         <td><input name="TasaTike[]" type="texto" readonly
@@ -757,7 +757,7 @@
                                                                             type="hidden">
                                                                         <td><input name="MontoDivisa[]" class="decimal"
                                                                                 type="texto" id="DMontoPeso">
-                                                                                <button type="button" id="cargarPeso" class="btn btn-info btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                                <button type="button" id="cargarPeso" class="btn btn-info btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                         </td>
                                                                         <td><input name="TasaTike[]" type="texto" readonly
                                                                                 id="TasaPeso" value="{{ $tasaPeso->tasa }}">
@@ -777,7 +777,7 @@
                                                                             type="hidden">
                                                                         <td><input name="MontoDivisa[]" class="decimal"
                                                                                 type="texto" id="DMontoBolivar">
-                                                                                <button type="button" id="cargarBolivar" class="btn btn-warning btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                                <button type="button" id="cargarBolivar" class="btn btn-warning btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                         </td>
                                                                         <td><input name="TasaTike[]" type="texto" readonly
                                                                                 id="TasaBolivar"
@@ -798,7 +798,7 @@
                                                                             type="hidden">
                                                                         <td><input name="MontoDivisa[]" class="decimal"
                                                                                 type="texto" id="DMontoPunto">
-                                                                                <button type="button" id="cargarPunto" class="btn btn-danger btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                                <button type="button" id="cargarPunto" class="btn btn-danger btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                             </td>
                                                                         <td>
                                                                             <input
@@ -823,7 +823,7 @@
                                                                             type="hidden">
                                                                         <td><input name="MontoDivisa[]" class="decimal"
                                                                                 class="" type="texto" id="DMontoTrans">
-                                                                                <button type="button" id="cargarTrans" class="btn btn-success btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                                <button type="button" id="cargarTrans" class="btn btn-success btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                             </td>
                                                                         <td>
                                                                             <input
@@ -984,6 +984,13 @@
             var vcargarb = 0;
             var vcargarpto = 0;
             var vcargart = 0;
+
+
+            var vcargarV = 0;
+            var vcargarpV = 0;
+            var vcargarbV = 0;
+            var vcargarptoV = 0;
+            var vcargartV = 0;
 
 
 
@@ -1757,9 +1764,10 @@
                     console.log(e)
                 }
             };
+
             function numDecimalExp(valor){
-            let result = Number((valor)).toFixed(3);
-            return result;
+                let result = Number((valor)).toFixed(3);
+                return result;
             }
 
             function por() {

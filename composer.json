@@ -18,7 +18,9 @@
         "laravel/slack-notification-channel": "^2.3",
         "laravel/tinker": "^2.0",
         "laravel/ui": "^2.1",
+        "mike42/escpos-php": "^3.0",
         "milon/barcode": "^7.0",
+        "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-backup": "^6.11"
     },
     "require-dev": {

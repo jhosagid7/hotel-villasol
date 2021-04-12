@@ -143,7 +143,7 @@ class TasaController extends Controller
      */
     public function update(Request $request)
     {
-        return $request;
+        // return $request;
         $title='Crear Tasa o Margen de ganancia';
         $tasa = Tasa::find($id);
         $tasa->tasa = $request->tasa;

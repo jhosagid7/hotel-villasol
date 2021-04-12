@@ -48,7 +48,7 @@ class Sessioncaja extends Model
                 // dd(SessionCaja::buscarCajaAbierta());
                return Sessioncaja::buscarCajaAbierta();
             }else {
-               //si no existe Bamos a crear un session_caja_id
+               //si no existe vamos a crear un session_caja_id
             return Sessioncaja::crearSinSession();
             }
 

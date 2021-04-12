@@ -25,6 +25,7 @@ class CreateArticuloVentasTable extends Migration
             $table->unsignedInteger('isMixto')->nullable();
             $table->unsignedInteger('isEfectivo')->nullable();
             $table->decimal('descuento', 25, 3)->nullable();
+            $table->enum('estado_pago', ['Pagado', 'Falta pagar', 'Exonerado']);
             $table->foreignId('articulo_id')->references('id')->on('articulos');
             $table->foreignId('venta_id')->references('id')->on('ventas');
             $table->timestamps();

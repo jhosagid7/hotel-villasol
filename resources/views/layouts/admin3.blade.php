@@ -8,6 +8,7 @@
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="{{asset('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
+  <link rel="stylesheet" type="text/css" media="print" href="{{asset('bower_components/bootstrap/dist/css/bootstrap_imprimir.css')}}">
   <!-- bootstrap-select.min -->
   <link rel="stylesheet" href="{{asset('bower_components/bootstrap/dist/css/bootstrap-select.min.css')}}">
   <!-- daterange picker -->
@@ -44,17 +45,27 @@
   <link rel="stylesheet" href="{{asset('dist/css/skins/_all-skins.min.css')}}">
   <!-- jvectormap -->
   <link rel="stylesheet" href="{{asset('bower_components/jvectormap/jquery-jvectormap.css')}}">
+  <link rel="stylesheet" href="{{asset('css/submit.css')}}">
   @yield('styles')
 
 
 
   <!-- Google Font -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-<style>
-  /* .dataTables_filter {
-     display: none;
-} */
-</style>
+  {{-- <style type="text/css" media="print">
+@media print {
+    * {
+        /* color: rgb(231, 12, 12) !important; */
+        text-shadow: none !important;
+        /* background: all !important; */
+        box-shadow: none !important;
+        -webkit-print-color-adjust: exact;
+    }
+    .tituloRojo {
+        background-color: #ff0000 !important;
+    }
+}
+    </style> --}}
 </head>
 <body class="hold-transition skin-blue sidebar-mini fixed">
 <!-- Site wrapper -->
@@ -288,7 +299,7 @@
           </ul>
 
       </li> --}}
-        @can('haveaccess', 'boton.almacen')
+
             <li class="active">
                 <a href="{{asset('recepcion')}}">
                     <i class="fa fa-th"></i> <span>Recepcion</span>
@@ -297,7 +308,29 @@
                     </span>
                 </a>
             </li>
-        @endcan
+
+            <li class="active">
+                <a href="{{asset('checkout')}}">
+                    <i class="fa fa-th"></i> <span>Check Out</span>
+
+                </a>
+            </li>
+
+
+
+            <li class="active">
+                <a href="{{asset('preventa')}}">
+                    <i class="fa fa-th"></i> <span>Vender</span>
+
+                </a>
+            </li>
+            <li class="active">
+                <a href="{{asset('creditos')}}">
+                    <i class="fa fa-th"></i> <span>Créditos</span>
+
+                </a>
+            </li>
+
       @can('haveaccess', 'boton.almacen')
       <li class="treeview">
         <a href="#"><i class="fa fa-database"></i> Almacen
@@ -730,6 +763,8 @@
 <script src="{{asset('dist/js/adminlte.min.js')}}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{asset('dist/js/demo.js')}}"></script>
+<script src="{{asset('js/submit.js')}}"></script>
+<script src="{{asset('js/decimal.min.js')}}"></script>
 
 <!-- Bootstrap 3.3.7 -->
 <script src="{{asset('Datatables/datatables.min.js')}}"></script>

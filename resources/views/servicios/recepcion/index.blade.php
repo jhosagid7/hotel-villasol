@@ -1,6 +1,7 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
+
 <style type="text/css">
     .bootstrap-select { width: 400px !important; }
     </style>
@@ -11,7 +12,12 @@
 
             <div style="background-color: #e7eaeb" class="box-body">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="row">
+                        <div class="col-lg-12">
 
+                            @include('custom.message')
+                        </div>
+                    </div>
                         <!-- Custom Tabs (Pulled to the right) -->
                         <div class="nav-tabs-custom">
                           <ul class="nav nav-tabs pull-right">
@@ -42,19 +48,128 @@
                             @foreach ($levels as $level)
                             <div <?php if($level->id==1){ ?> class="tab-pane active" <?php }else{ ?> class="tab-pane" <?php }; ?> id="tab_1-{{$level->id}}">
                               {{-- <b>How to use: {{$level->id}}</b> --}}
-                              <?php $habitaciones = "App\Habitacione"::where('level_id',$level->id)->get(); ?>
-                              @foreach ($habitaciones as $habitacion)
-                              {{-- {{$habitacion->nombre}} --}}
-                              <div class="col-md-3 col-sm-6 col-xs-12">
+                                <?php $habitaciones = "App\Habitacione"::where('level_id',$level->id)->get(); ?>
+                                @foreach ($habitaciones as $habitacion)
+                                    {{-- {{$habitacion->nombre}} --}}
+
+                                    @if ($habitacion->status == 'Disponible')
+                                        <a href="#" data-toggle="modal" data-target="#disponible<?php echo $habitacion->id.''.$habitacion->level->id; ?>"  class="small small-box-footer text-success">
+                                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                                <div class="info-box">
+
+                                                    <span class="info-box-icon bg-green-gradient"><i class="fa fa-hotel"></i></span>
+
+                                                    <div class="tile-body">
+                                                        <h4 style="text-align: center;"><i class="fa fa-bed"></i><b> {{$habitacion->nombre}}</b></h4>
+                                                    </div>
+
+                                                    <div class="info-box-content">
+                                                        <span class="info-box-text">{{$habitacion->cat->nombre}}</span>
+                                                        <span class="info-box-text info-box-number text-success">{{$habitacion->status}} <i class="small small-box-footer fa fa-clock-o"></i></span>
+                                                    </div>
+                                                    <!-- /.info-box-content -->
+
+                                                </div>
+                                                <!-- /.info-box -->
+
+                                            </div>
+                                        </a>
+                                    @elseif ($habitacion->status == 'Ocupada')
+                                        <a href="#" data-toggle="modal" data-target="#ocupada<?php echo $habitacion->id.''.$habitacion->level->id; ?>"  class="small small-box-footer text-danger">
+                                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                                <div class="info-box">
+
+                                                    <span class="info-box-icon bg-red-gradient"><i class="fa fa-bed"></i></span>
+
+                                                    <div class="tile-body">
+                                                        <h4 style="text-align: center;"><i class="fa fa-bed"></i><b> {{$habitacion->nombre}}</b></h4>
+                                                    </div>
+
+                                                    <div class="info-box-content">
+                                                        <span class="info-box-text">{{$habitacion->cat->nombre}}</span>
+                                                        <span class="info-box-text info-box-number text-danger">{{$habitacion->status}} <i class="small small-box-footer fa fa-clock-o"></i></span>
+                                                    </div>
+                                                    <!-- /.info-box-content -->
+
+                                                </div>
+                                                <!-- /.info-box -->
+                                            </div>
+                                        </a>
+                                    @elseif ($habitacion->status == 'Limpieza')
+                                        <a href="#"  data-toggle="modal" data-target="#limpieza<?php echo $habitacion->id.''.$habitacion->level->id; ?>" class="small small-box-footer text-primary">
+                                            <div class="col-md-3 col-sm-6 col-xs-12">
+                                                <div class="info-box">
+
+                                                    <span class="info-box-icon bg-aqua-gradient"><i class="fa fa-bed"></i></span>
+
+
+                                                    <div class="tile-body">
+                                                        <h4 style="text-align: center;"><i class="fa fa-bed"></i><b> {{$habitacion->nombre}}</b></h4>
+                                                    </div>
+
+                                                    <div class="info-box-content">
+                                                        <span class="info-box-text info-box-text">{{$habitacion->cat->nombre}}</span>
+                                                        <span class="info-box-text info-box-number text-primary">{{$habitacion->status}} <i class="small small-box-footer fa fa-spinner  fa-pulse fa-fw"></i></span>
+                                                    </div>
+                                                    <!-- /.info-box-content -->
+
+                                                </div>
+                                                <!-- /.info-box -->
+
+                                            </div>
+                                        </a>
+                                    @elseif ($habitacion->status == 'Finalizando')
+                                        <div class="col-md-3 col-sm-6 col-xs-12">
+                                            <div class="info-box">
+
+                                                <span class="info-box-icon bg-yellow-gradient"><i class="fa fa-bed"></i></span>
+
+
+                                                <div class="tile-body">
+                                                    <h4 style="text-align: center;"><i class="fa fa-bed"></i><b> {{$habitacion->nombre}}</b></h4>
+                                                </div>
+
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text">{{$habitacion->cat->nombre}}</span>
+                                                    <span class="info-box-text small small-box-footer info-box-number text-warning"><div class="small small-box-footer">{{$habitacion->status}} <i class="small fa fa-spinner  fa-history"></i></div></span>
+                                                </div>
+                                                <!-- /.info-box-content -->
+
+                                            </div>
+                                            <!-- /.info-box -->
+
+                                        </div>
+                                    @elseif ($habitacion->status == 'En reparacion')
+                                        <div class="col-md-3 col-sm-6 col-xs-12">
+                                            <div class="info-box">
+
+                                                <span class="info-box-icon bg-default"><i class="fa fa-bed"></i></span>
+
+                                                <div class="tile-body">
+                                                    <h4 style="text-align: center;"><i class="fa fa-bed"></i><b> {{$habitacion->nombre}}</b></h4>
+                                                </div>
+
+                                                <div class="info-box-content">
+                                                    <span class="info-box-text info-box-text">{{$habitacion->cat->nombre}}</span>
+                                                    <span class="info-box-text small small-box-footer info-box-number text-default"><div class="small small-box-footer">{{$habitacion->status}} <i class="small small-box-footer fa fa-wrench"></i></div></span>
+                                                </div>
+                                                <!-- /.info-box-content -->
+
+                                            </div>
+                                            <!-- /.info-box -->
+
+                                        </div>
+                                    @endif
+                              {{-- <div class="col-md-3 col-sm-6 col-xs-12">
                                 <div class="info-box">
                                     @if ($habitacion->status == 'Disponible')
-                                        <span class="info-box-icon bg-green"><i class="fa fa-hotel"></i></span>
+                                        <span class="info-box-icon bg-green-gradient"><i class="fa fa-hotel"></i></span>
                                     @elseif ($habitacion->status == 'Ocupada')
-                                        <span class="info-box-icon bg-red"><i class="fa fa-bed"></i></span>
+                                        <span class="info-box-icon bg-red-gradient"><i class="fa fa-bed"></i></span>
                                     @elseif ($habitacion->status == 'Limpieza')
-                                        <span class="info-box-icon bg-aqua"><i class="fa fa-bed"></i></span>
+                                        <span class="info-box-icon bg-aqua-gradient"><i class="fa fa-bed"></i></span>
                                     @elseif ($habitacion->status == 'Finalizando')
-                                        <span class="info-box-icon bg-yellow"><i class="fa fa-bed"></i></span>
+                                        <span class="info-box-icon bg-yellow-gradient"><i class="fa fa-bed"></i></span>
                                         @elseif ($habitacion->status == 'En reparacion')
                                         <span class="info-box-icon bg-default"><i class="fa fa-bed"></i></span>
                                     @endif
@@ -67,12 +182,12 @@
                                     <span class="info-box-text">{{$habitacion->cat->nombre}}</span>
 
                                         @if ($habitacion->status == 'Disponible')
-                                        {{-- <span class="info-box-number text-success"> <a  href="index.php?view=proceso&id_habitacion=<?php echo $habitacion->id; ?>" class="small small-box-footer text-success"> {{$habitacion->status}} <i class="small small-box-footer fa fa-arrow-circle-right"></i></a></span> --}}
-                                        <span class="info-box-number text-success"><a href="#" data-toggle="modal" data-target="#myModal2<?php echo $habitacion->id.''.$habitacion->level->id; ?>"  class="small small-box-footer text-success">{{$habitacion->status}} <i class="small small-box-footer fa fa-clock-o"></i></a></span>
+                                        {{-- <span class="info-box-number text-success"> <a  href="index.php?view=proceso&id_habitacion=<?php // echo $habitacion->id; ?>" class="small small-box-footer text-success"> {{$habitacion->status}} <i class="small small-box-footer fa fa-arrow-circle-right"></i></a></span> --}}
+                                        {{-- <span class="info-box-number text-success"><a href="#" data-toggle="modal" data-target="#disponible<?php // echo $habitacion->id.''.$habitacion->level->id; ?>"  class="small small-box-footer text-success">{{$habitacion->status}} <i class="small small-box-footer fa fa-clock-o"></i></a></span>
                                         @elseif ($habitacion->status == 'Ocupada')
-                                            <span class="info-box-number text-danger"><a href="#" data-toggle="modal" data-target="#myModal1<?php echo $habitacion->id.''.$habitacion->level->id; ?>"  class="small small-box-footer text-danger">{{$habitacion->status}} <i class="small small-box-footer fa fa-clock-o"></i></a></span>
+                                            <span class="info-box-number text-danger"><a href="#" data-toggle="modal" data-target="#ocupada<?php // echo $habitacion->id.''.$habitacion->level->id; ?>"  class="small small-box-footer text-danger">{{$habitacion->status}} <i class="small small-box-footer fa fa-clock-o"></i></a></span>
                                         @elseif ($habitacion->status == 'Limpieza')
-                                            <span class="info-box-number text-primary"><a href="#"  data-toggle="modal" data-target="#myModal<?php echo $habitacion->id.''.$habitacion->level->id; ?>" class="small small-box-footer text-primary">{{$habitacion->status}} <i class="small small-box-footer fa fa-spinner  fa-pulse fa-fw"></i></a></span>
+                                            <span class="info-box-number text-primary"><a href="#"  data-toggle="modal" data-target="#limpieza<?php // echo $habitacion->id.''.$habitacion->level->id; ?>" class="small small-box-footer text-primary">{{$habitacion->status}} <i class="small small-box-footer fa fa-spinner  fa-pulse fa-fw"></i></a></span>
                                         @elseif ($habitacion->status == 'Finalizando')
                                             <span class="small small-box-footer info-box-number text-warning"><div class="small small-box-footer">{{$habitacion->status}} <i class="small fa fa-spinner  fa-history"></i></div></span>
                                         @elseif ($habitacion->status == 'En reparacion')
@@ -85,12 +200,14 @@
                                 </div>
                                 <!-- /.info-box -->
 
-                            </div>
-                            <div class="modal fade bs-example-modal-xm" id="myModal<?php echo $habitacion->id.''.$habitacion->level->id; ?>" role="dialog" aria-labelledby="myModalLabel">
+                            </div> --}}
+                            <div class="modal fade bs-example-modal-xm" id="limpieza<?php echo $habitacion->id.''.$habitacion->level->id; ?>" role="dialog" aria-labelledby="myModalLabel">
                                 <div class="modal-dialog modal-info">
                                   <div class="modal-dialog">
                                     <div class="modal-content">
-
+                                        {{-- <form action="{{ route('habitacion.show', $habitacion->id)}}" method="POST" autocomplete="off" role="buscar" name="sumar">
+                                            @csrf
+                                            @method('PUT') --}}
                                       <div class="modal-header">
                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                           <span aria-hidden="true">&times;</span></button>
@@ -140,12 +257,12 @@
                                             </div>
                                         </div>
 
-                                        <div class="form-group">
+                                        {{-- <div class="form-group">
                                             <div class="input-group">
                                               <span class="input-group-addon"> OBSERVACIÓN </span>
                                               <input type="text" class="form-control col-md-8 observacionLimpiesa" name="observacion" value="" required placeholder="Observación">
                                             </div>
-                                          </div>
+                                          </div> --}}
 
                                         </div>
                                         </div>
@@ -153,8 +270,11 @@
                                       </div>
                                       <div class="modal-footer">
                                         <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-                                        <a href="index.php?view=limpieza&id=<?php echo $habitacion->id; ?>" class="btn btn-outline">Finalizar limpieza</a>
-                                      </div>
+                                        {{-- <button class="btn btn-outline" type="submit"><i class='glyphicon glyphicon-search'></i> Finalizar limpieza</button> --}}
+                                        {{-- <a href="{{URL::action('HabitacioneController@show', $habitacion->id)}}"  data-target="#myModal{{$habitacion->id}}" class="small-box-footer">Finalizar limpieza <i class="fa fa-spinner"></i></a> --}}
+                                        <a href="{{URL::action('HabitacioneController@show', $habitacion->id)}}" class="btn btn-outline">Finalizar limpieza</a>
+                                    {{-- </form> --}}
+                                    </div>
 
                                     </div>
                                     <!-- /.modal-content -->
@@ -162,14 +282,14 @@
                                   <!-- /.modal-dialog -->
                                 </div>
                                 <!-- /.modal -->
-                              </div>
+                            </div>
 
 
-                            <div class="modal fade bs-example-modal-xm refrescar" id="myModal2<?php echo $habitacion->id.''.$level->id; ?>" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal fade bs-example-modal-xm refrescar" id="disponible<?php echo $habitacion->id.''.$level->id; ?>" role="dialog" aria-labelledby="myModalLabel">
                                 <div class="modal-dialog modal-success">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <form action="{{route('proceso')}}" method="post">
+                                            <form id="form2" action="{{route('proceso')}}" method="post">
                                                 @csrf
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -231,7 +351,7 @@
                                     </div>
                                       <div class="modal-footer">
                                         <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-                                        <button class="btn btn-outline" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+                                        <button name="procesarServicio" id="procesarServicio" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
                                         {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
                                       </div>
                                     </form>
@@ -250,7 +370,7 @@
 
 
 
-                              <div class="modal fade bs-example-modal-xm" id="myModal1<?php echo $habitacion->id.''.$level->id; ?>" role="dialog" aria-labelledby="myModalLabel">
+                              <div class="modal fade bs-example-modal-xm" id="ocupada<?php echo $habitacion->id.''.$level->id; ?>" role="dialog" aria-labelledby="myModalLabel">
                                 <div class="modal-dialog modal-lg modal-danger">
                                   <div class="modal-dialog">
                                     <div class="modal-content">
@@ -263,7 +383,7 @@
 
                                       <div class="modal-footer">
                                         <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cerrar</button>
-                                        <a href="index.php?view=pre_salida" class="btn btn-outline">Ir a check out</a>
+                                        <a href="#" class="btn btn-outline">Ir a check out</a>
                                       </div>
 
                                     </div>
@@ -294,6 +414,18 @@
   <div class="clearfix"></div>
 @push('sciptsMain')
 <script>
+    // $('.ocular').hide();
+    $(document).ready(function() {
+        // alert('enviar');
+        // $('.ocular').hide();
+
+    });
+    // $('#procesarServicio').on('click', function() {
+    //     alert('enviar');
+    //     return false;
+    //     $("#form2").submit();
+
+    // });
 
 // focusMethod = function getFocus() {
 //                 document.getElementById(".selval").focus();
@@ -306,6 +438,7 @@
             $(".selval").val('default');
                 $(".selval").selectpicker("refresh");
             $('.detalle').hide('swing');
+            $('.ocular').hide('swing');
 
         });
     });
@@ -321,8 +454,10 @@
     // });
 
 $('.detalle').hide();
+$('.ocular').hide();
     $(function() {
         $('.selval').on('change', function() {
+            $('.ocular').hide('swing');
             $('.detalle').hide("swing");
             let valor = this.value;
             let catid = $(this).attr('data-id');
@@ -361,6 +496,10 @@ $('.detalle').hide();
                             // for(var i = 0; i < origens.length; i++){
                             // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
                             // }
+
+                            $('.ocular').show('swing');
+                        }else{
+                            $('.ocular').hide('swing');
                         }
                     }
                 });

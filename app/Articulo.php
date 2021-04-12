@@ -45,6 +45,10 @@ class Articulo extends Model
         return hasMany(Articulo_venta::class);
     }
 
+    public function servicios_ventas(){
+        return hasMany(Servicios_ventas::class);
+    }
+
     public function articulo_ingresos(){
         return hasMany(Articulo_Ingreso::class);
     }
@@ -52,6 +56,8 @@ class Articulo extends Model
     public function categoria(){
         return belongsTo(Categoria::class);
     }
+
+
 
     public function scopeName($query, $name){
         if($name)

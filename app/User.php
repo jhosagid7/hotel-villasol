@@ -44,6 +44,14 @@ class User extends Authenticatable
         return $this->hasMany(Caja::class);
     }
 
+    public function servicios(){
+        return $this->hasMany(Servicio::class);
+    }
+
+    public function creditos_pagados(){
+        return $this->hasMany(Credito_Pagado::class);
+    }
+
 
 
     public function ventas()

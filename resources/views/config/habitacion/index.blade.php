@@ -42,22 +42,31 @@
                 <thead>
                     <th>Id</th>
                     <th>Nombre</th>
-                    <th>Nivel</th>
-                    <th>Categoría</th>
-                    <th>Estado</th>
-                    <th>Status</th>
-                    <th>Opciones</th>
+                    <th>QR</th>
+                    <th class="no-print">Nivel</th>
+                    <th class="no-print">Categoría</th>
+                    <th class="no-print">Estado</th>
+                    <th class="no-print">Status</th>
+                    <th class="no-print">Opciones</th>
                 </thead>
                 <tbody>
                     @foreach ($habitaciones as $habitacion)
                     <tr>
                         <td>{{ $habitacion->id }}</td>
                         <td>{{ $habitacion->nombre }}</td>
-                        <td>{{ $habitacion->level->nombre }}</td>
-                        <td>{{ $habitacion->cat->nombre }}</td>
-                        <td>{{ $habitacion->estado }}</td>
-                        <td>{{ $habitacion->status }}</td>
-                        <td>
+                        <td >
+                            {{-- <img src="data:image/png;base, {!! base64_encode(QrCode::format('png')->size(100)->generate($habitacion->nombre)) !!} "> --}}
+                            {!! QrCode :: generate ( str_pad($habitacion->nombre,7,'0',STR_PAD_LEFT) ) !!}
+                            {{-- <div class="visible-print text-center">
+                            {!! QrCode::size(100)->generate(Request::url()); !!}
+                            <p>Escanéame para volver a la página principal.</p>
+                        </div> --}}
+                    </td>
+                        <td class="no-print">{{ $habitacion->level->nombre }}</td>
+                        <td class="no-print">{{ $habitacion->cat->nombre }}</td>
+                        <td class="no-print">{{ $habitacion->estado }}</td>
+                        <td class="no-print">{{ $habitacion->status }}</td>
+                        <td class="no-print">
                         <a href="{{URL::action('HabitacioneController@edit', $habitacion->id)}}"><button class='btn btn-info btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
                         <a href="" data-target="#modal-delete-{{$habitacion->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a>
                         </td>
@@ -70,11 +79,12 @@
                     <tr>
                         <th>Id</th>
                         <th>Nombre</th>
-                        <th>Nivel</th>
-                        <th>Categoría</th>
-                        <th>Estado</th>
-                        <th>Status</th>
-                        <th>Opciones</th>
+                        <th>QR</th>
+                        <th class="no-print">Nivel</th>
+                        <th class="no-print">Categoría</th>
+                        <th class="no-print">Estado</th>
+                        <th class="no-print">Status</th>
+                        <th class="no-print">Opciones</th>
 
                     </tr>
                 </tfoot>

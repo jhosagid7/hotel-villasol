@@ -161,7 +161,7 @@ Route::resource('config/habitacion', 'HabitacioneController');
 Route::resource('config/horario', 'HorarioController');
 Route::resource('config/precio', 'PrecioController');
 
-Route::get('/recepcion', 'RecepcionController@index');
+Route::get('/recepcion', 'RecepcionController@index')->name('recepcion');
 Route::post('/proceso', 'RecepcionController@proceso')->name('proceso');
 // Route::post('/registrar', 'RecepcionController@registrarHabitacion')->name('registrar');
 
@@ -169,3 +169,13 @@ Route::get('/precio', 'RecepcionController@getPrecio')->name('precio');
 Route::post('/buscarcliente', 'RecepcionController@getCliente')->name('buscarcliente');
 
 Route::resource('/servicio', 'ServicioController');
+Route::resource('/checkout', 'CheckoutController');
+Route::resource('/preventa', 'PreventaController');
+Route::resource('/procesoventa', 'ProcesoVentaController');
+Route::resource('/creditos', 'PagoCreditoController');
+
+//Creamos rutas para la Impresion de tickets
+Route::get('print/servicio/{$id}','PrinterController@ticketServicio');
+
+Route::get('print/credito-pagado/{$id}','PrinterController@ticketCreditoPagado');
+

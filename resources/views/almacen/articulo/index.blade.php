@@ -114,7 +114,14 @@
                         <td>
                             {{ $art->codigo }}
                             {!! DNS1D :: getBarcodeHTML ( $art->codigo , 'UPCE' ) !!}
-                            {{-- {!! DNS1D::getBarcodeHTML($art->codigo, 'PHARMA2T')!!} --}}
+                            {{-- {!! QrCode :: generate ( $art->codigo ) !!} --}}
+                            {{-- <div class="visible-print text-center">
+                                {!! QrCode::size(100)->generate(Request::url()); !!}
+                                <p>Escanéame para volver a la página principal.</p>
+                            </div> --}}
+
+                        {{-- <img src="data:image/phb;base64,{{DNS2D::getBarcodePNG($art->codigo,'QRCODE')}}" alt="barcode" /> --}}
+                            {{-- {!! DNS2D::getBarcodeHTML($art->codigo, 'QRCODE')!!} --}}
 
                         </td>
                         <td>{{ $art->stock }}</td>

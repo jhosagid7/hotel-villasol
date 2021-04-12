@@ -50,6 +50,14 @@ class Caja extends Model
         return $this->hasMany(Venta::class);
     }
 
+    public function excedente_anterior(){
+        return $this->hasMany(Excedentes_Pendientes_Caja_Anterior::class);
+    }
+
+    public function excedente_actual(){
+        return $this->hasMany(Excedentes_Recibidos_Caja_Actual::class);
+    }
+
     public function pago_ventas()
     {
         return $this->hasManyThrough(Pago_Venta::class, Venta::class);
@@ -64,6 +72,46 @@ class Caja extends Model
     {
         return $this->hasManyThrough(Articulo_Venta::class, Venta::class);
     }
+
+    public function servicios(){
+        return $this->hasMany(Servicio::class);
+    }
+
+    public function detalle_creditos(){
+        return $this->hasMany(Detalle_credito::class);
+    }
+
+    public function creditos_pagados(){
+        return $this->hasMany(Credito_Pagado::class);
+    }
+
+
+    public function creditos()
+    {
+        return $this->hasManyThrough(Credito::class, Detalle_credito::class);
+    }
+
+    public function cortesias()
+    {
+        return $this->hasManyThrough(Cortesia::class, Servicio::class);
+    }
+
+    public function pago_servicios()
+    {
+        return $this->hasManyThrough(Pago_Servicio::class, Servicio::class);
+    }
+
+    public function pago_vueltos()
+    {
+        return $this->hasManyThrough(Pago_Vuelto::class, Servicio::class);
+    }
+
+    public function pago_creditos()
+    {
+        return $this->hasManyThrough(Pago_Credito::class, Detalle_credito::class);
+    }
+
+
 
     //este metodo nos ba a verificar si existe una caja abierta en el modelo Caja
     public static function buscarCaja() {

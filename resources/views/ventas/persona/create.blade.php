@@ -111,13 +111,64 @@
                 <input required type="file" name="imagen" class="form-control" accept="image/*">
             </div>
         </div> --}}
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-            <div class="form-group">
-                <button class="btn btn-primary" type="submit">Guardar</button>
-                <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
-            </div>
+
+    </div>
+    <div class="box box-default">
+        <div class="box-header with-border">
+          <h3 class="box-title">Conceder Privilegios</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <div class="table-responsive">
+            <table class="table no-margin">
+
+              <tbody style="padding: 0px;">
+              <tr style="padding: 0px;">
+                <td><h4 class="text-primary" style="margin-top: 0px !important;">Puede tener Cortesía: &nbsp;&nbsp;&nbsp; </h4></td>
+                <td><label>
+                    <input name="isCortesia" type="checkbox">
+
+                  </label></td>
+                <td><h4 class="text-primary" style="margin-top: 0px !important;">Puede tener Crédito: &nbsp;&nbsp;&nbsp;</h4></td>
+                <td>
+                  <div class="sparkbar" data-color="#00a65a" data-height="20"><label>
+                    <input name="isCredito" type="checkbox">
+
+                  </label></div>
+                </td>
+              </tr>
+              <tr style="padding: 0px;">
+                <td><h4 class="text-primary" style="margin-top: 0px !important;">Fecha limite: (en días)&nbsp;&nbsp;&nbsp; </h4></td>
+                <td><label>
+                    <input required type="limite_fecha" name="limite_fecha" class="form-control" value="{{old('limite_fecha')}}" placeholder="Fecha limite... (15)">
+
+                  </label></td>
+                <td><h4 class="text-primary" style="margin-top: 0px !important;">Monto limite de crédito: (en Dolar)&nbsp;&nbsp;&nbsp;</h4></td>
+                <td>
+                  <div class="sparkbar" data-color="#00a65a" data-height="20"><label>
+                    <input required type="limite_monto" name="limite_monto" class="form-control" value="{{old('limite_monto')}}" placeholder="Monto limite crédito... (40)">
+
+                  </label></div>
+                </td>
+              </tr>
+
+
+              </tbody>
+            </table>
+
+          </div>
+          <!-- /.table-responsive -->
+        </div>
+
+
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <div class="form-group">
+            <button class="btn btn-primary" type="submit">Guardar</button>
+            <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
         </div>
     </div>
+      <!-- /.box -->
             </form>
 
 {{-- fin de la cabecera de box --}}

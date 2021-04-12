@@ -8,6 +8,9 @@ date_default_timezone_set('America/Lima');
 
    $dia24 = strtotime('+1 day', strtotime($hoy));
    $dia24 = date('Y-m-d', $dia24);
+
+   $diaComercial = strtotime('+1 day', strtotime($hoy));
+   $diaComercial = date('Y-m-d', $diaComercial);
 //    $hora24 = $dia24->format('H:i:s A');
 
    $hora24 = strtotime('+24 hour', strtotime($hora));
@@ -98,7 +101,8 @@ date_default_timezone_set('America/Lima');
                                             <tbody style="padding: 0px;">
                                             <tr style="padding: 0px;">
                                               <td><h4 class="text-primary" style="margin-top: 0px !important;">Nombre:</h4></td>
-                                              <td>{{$habitacion->nombre}}</td>
+                                              <td>{{$habitacion->nombre}} <input type="hidden" name="nombreHabitacion" value="{{$habitacion->nombre ?? ''}}">
+                                                <input type="hidden" name="nombreHabitacionBarcode" id="nombreHabitacionBarcode" value="{{str_pad($habitacion->nombre,7,'0',STR_PAD_LEFT) ?? ''}}"></td>
                                               <td><h4 class="text-primary" style="margin-top: 0px !important;">Tipo:</h4></td>
                                               <td>
                                                 <div class="sparkbar" data-color="#00a65a" data-height="20">{{$habitacion->cat->nombre}}</div>
@@ -106,12 +110,13 @@ date_default_timezone_set('America/Lima');
                                             </tr>
                                             <tr style="padding: 0px;">
                                               <td><h4 class="text-primary" style="margin-top: 0px !important;">Detalles:</h4></td>
-                                              <td>{{$habitacion->cat->descripcion}}</td>
+                                              <td>{{$habitacion->cat->descripcion}} <input type="hidden" name="detalle_habitacion" value="{{$habitacion->cat->descripcion ?? ''}}"></td>
                                               <td><h4 class="text-primary" style="margin-top: 0px !important;">Estado:</h4></td>
                                               <td>
                                                 <div class="sparkbar" data-color="#f39c12" data-height="20"><span class="label label-success">DISPONIBLE</span></div>
                                               </td>
                                             </tr>
+
 
                                             </tbody>
                                           </table>
@@ -152,8 +157,14 @@ date_default_timezone_set('America/Lima');
                                             <select name="buscarCliente" id="buscarCliente" class="form-control selectpicker"
                                             data-live-search="true">
                                             <option value="0">Ingrese cliente para buscar</option>
+                                            @php
+                                                $i = 0;
+                                            @endphp
                                             @foreach ($clientes as $cliente)
-                                                <option value="{{ $cliente->id }}_{{ $cliente->nombre }}_{{ $cliente->num_documento }}_{{ $cliente->direccion }}">{{ $cliente->nombre }}</option>
+                                                <option value="{{ $cliente->id }}_{{ $cliente->nombre }}_{{ $cliente->num_documento }}_{{ $cliente->direccion }}_{{ $cliente->isCortesia }}_{{ $cliente->isCredito }}_{{ $cliente->telefono }}_{{ $cliente->limite_fecha }}_{{ $cliente->limite_monto }}_<?php $deuda_cliente = "App\Credito"::where('persona_id',$cliente->id)->select('total_deuda')->first(); ?>{{$deuda_cliente['total_deuda']}}_<?php $deuda_cliente = "App\Credito"::where('persona_id',$cliente->id)->select('estado_credito')->first(); ?>{{$deuda_cliente['estado_credito']}}_<?php $excedente_cliente = "App\Excedente"::where('persona_id',$cliente->id)->select('excedente')->first(); ?>{{$excedente_cliente['excedente']}}">{{ $cliente->nombre }}</option>
+                                                @php
+                                                $i++;
+                                            @endphp
                                             @endforeach
                                         </select>
                                         <div class="input-group-addon">
@@ -185,8 +196,12 @@ date_default_timezone_set('America/Lima');
                                             <div class="input-group-addon">
                                               <i class="fa  fa-arrow-circle-o-right"></i>
                                             </div>
-                                            <input type="text" class="form-control" name="num_documento" id="num_documento" required="required" placeholder="Ingrese número de documento">
-                                            <input type="hidden" id="id">
+                                            <input type="text" class="form-control" name="num_documento" id="num_documento" readonly required="required" placeholder="Ingrese número de documento">
+                                            <input type="hidden" name="cliente_id" value="" id="cliente_id">
+                                            <input type="hidden" name="limite_fecha" value="" id="limite_fecha">
+                                            <input type="hidden" name="limite_monto" value="" id="limite_monto">
+                                            <input type="hidden" name="total_credito_pendiente" value="" id="total_credito_pendiente">
+                                            <input type="hidden" name="estado_credito" value="" id="estado_credito">
                                             {{-- <div class="input-group-addon">
                                                 <i class="fa fa-search-plus"></i>
                                               </div> --}}
@@ -201,7 +216,7 @@ date_default_timezone_set('America/Lima');
                                             <div class="input-group-addon">
                                               <i class="fa fa-user-secret"></i>
                                             </div>
-                                            <input type="text" class="form-control" name="nombre" id="nombre"  required placeholder="Ingrese nombres" >
+                                            <input type="text" class="form-control" name="nombre" id="nombre"  readonly required placeholder="Ingrese nombres" >
                                           </div>
                                           <!-- /.input group -->
                                         </div>
@@ -213,7 +228,8 @@ date_default_timezone_set('America/Lima');
                                             <div class="input-group-addon">
                                               <i class="fa fa-map-marker"></i>
                                             </div>
-                                            <input type="text" class="form-control" name="direccion" id="direccion"  placeholder="Ingrese direccion (No es obligatorio)"  data-mask>
+                                            <input type="text" class="form-control" name="direccion" id="direccion" readonly  placeholder="Ingrese direccion (No es obligatorio)"  data-mask>
+                                            <input id="telefono" type="hidden" name="telefono" value="">
                                           </div>
                                           <!-- /.input group -->
                                         </div>
@@ -253,7 +269,7 @@ date_default_timezone_set('America/Lima');
                                             <div class="input-group-addon">
                                               <i class="fa fa-globe"></i>
                                             </div>
-                                        <input type="text" class="form-control" name="horario" id="horario" placeholder="Ingrese Servicio" value="{{$horario->nombre}}">
+                                        <input type="text" readonly class="form-control" name="horario" id="horario" placeholder="Ingrese Servicio" value="{{$horario->nombre}}">
                                         <input type="hidden" class="form-control" name="horario_tipo" id="horario" placeholder="Ingrese Servicio" value="{{$horario->tipo}}">
                                           </div>
                                           <!-- /.input group -->
@@ -269,11 +285,11 @@ date_default_timezone_set('America/Lima');
                                                   <div class="input-group-addon">
                                                       <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input type="date" class="form-control" name="fecha_entrada" value="<?php echo $hoy; ?>"  data-mask>
+                                            <input readonly type="date" class="form-control" id="fecha_entrada" name="fecha_entrada" value="<?php echo $hoy; ?>"  data-mask>
                                             <div class="input-group-addon">
                                                 <i class="fa fa-clock-o"></i>
                                             </div>
-                                            <input type="time" class="form-control" name="hora_entrada" value="<?php echo $hora; ?>"  data-mask>
+                                            <input readonly type="time" class="form-control" name="hora_entrada" value="<?php echo $hora; ?>"  data-mask>
                                         </div>
                                         <!-- /.input group -->
                                     </div>
@@ -287,15 +303,31 @@ date_default_timezone_set('America/Lima');
                                             </div>
                                             <?php
                                               if($horario->is24Horas){
+                                                ?>
+                                                  <input id="is24" type="hidden" value="1">
+                                                  <?php
                                                 $dia = $dia24;
                                                 $hora = $hora24;
                                               }else{
+                                                ?>
+                                                  <input id="is24" type="hidden" value="0">
+                                                  <?php
+
+                                              }
+
+                                              if ($horario->tipo == 'COMERCIAL') {
+                                                $dia = $diaComercial;
+                                                // echo $dia;
+                                                $hora = $horario->hasta;
+                                              }
+
+                                              if ($horario->tipo == 'DIURNO') {
                                                 $dia = $hoy;
                                                 $hora = $horario->hasta;
                                               }
 
                                                ?>
-                                              <input type="date" class="form-control" name="fecha_salida" value="{{$dia}}"  data-mask>
+                                              <input type="date" class="form-control" id="fecha_salida" name="fecha_salida" value="{{$dia}}"  data-mask>
                                               <div class="input-group-addon">
                                                   <i class="fa fa-clock-o"></i>
                                                 </div>
@@ -312,28 +344,52 @@ date_default_timezone_set('America/Lima');
                                             <div class="col-sm-4 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-percentage text-primary"><i class="fa fa-caret-up"></i> Dolar</span>
-                                                    <h5 class="description-header">${{floatval($precio->precio)}}</h5>
+                                                    <h5 id="mostrarPrecioDolar" class="description-header">${{floatval($precio->precio)}}</h5>
+
                                                     <input type="hidden" id="precioDolarHabitacio" name="precioDolarHabitacion" value="{{floatval($precio->precio)}}">
                                                 </div>
                                             </div>
                                             <div class="col-sm-4 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-percentage text-primary"><i class="fa fa-caret-up"></i> Pesos</span>
-                                                    <h5 class="description-header">${{number_format($precio->precio*$tasaPesoHabitacion->tasa,2,',','.')}}</h5>
+                                                    <h5 id="mostrarPrecioPeso" class="description-header">${{number_format($precio->precio*$tasaPesoHabitacion->tasa,2,',','.')}}</h5>
                                                     <input type="hidden" id="precioPesoHabitacio" name="precioPesoHabitacion" value="{{$precio->precio*$tasaPesoHabitacion->tasa}}">
                                                 </div>
                                             </div>
                                             <div class="col-sm-4 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-percentage text-primary"><i class="fa fa-caret-up"></i> Bolivares</span>
-                                                    <h5 class="description-header">Bs.{{number_format($precio->precio*$tasaDolarHabitacion->tasa,2,',','.')}}</h5>
+                                                    <h5 id="mostrarPrecioBolivar" class="description-header">Bs.{{number_format($precio->precio*$tasaDolarHabitacion->tasa,2,',','.')}}</h5>
                                                     <input type="hidden" id="precioBolivarHabitacion" name="precioBolivarHabitacion" value="{{$precio->precio*$tasaDolarHabitacion->tasa}}">
                                                 </div>
                                             </div>
                                             </div>
-                                            <div
-                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12 small">
-                                                <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar"  class="btn btn-xs btn-primary btn-block col-lg-pull-2 small">Dolar</a>
+                                            <div id="contado"
+                                                class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
+
+                                            </div>
+                                            <div id="precortesia"
+                                                class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
+                                                <a href="#" data-toggle="modal" data-target="#precortesiamodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
+
+                                            </div>
+                                            {{-- <div id="cortesia"
+                                                class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                <a id="modalPago" href="#"   class="btn btn-xs btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
+
+                                            </div> --}}
+
+                                            {{-- <div id="creditoa"
+                                                class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Crédito</a>
+
+                                            </div> --}}
+                                            <div id="precredito"
+                                                class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
+                                                <a href="#" data-toggle="modal" data-target="#precreditomodal"  class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crédito</a>
 
                                             </div>
                                             <!-- /.input group -->
@@ -342,8 +398,8 @@ date_default_timezone_set('America/Lima');
                                            <div class="box-footer">
                                           <a href="index.php?view=recepcion" class="btn btn-danger">Cancelar</a>
                                           <input type="hidden" name="id_habitacion" value="<?php echo $habitacion->id; ?>">
-                                          <button type="submit" class="btn btn-success pull-right">Registrar ingreso</button>
-                                          <button type="button" id="procesoH" class="btn btn-success pull-right">Registrar ingreso</button>
+                                          <button type="submit" class="btn btn-success pull-right hidden">Registrar ingreso</button>
+                                          <button type="button" id="procesoH" class="btn btn-success pull-right hidden">Registrar ingreso</button>
                                         </div>
 
                           </td>
@@ -358,7 +414,13 @@ date_default_timezone_set('America/Lima');
 
                                         </div>
                                         <!-- /.table-responsive -->
-                                      </div>
+                                        {{-- /////////////////////////////////////////////////////////////////////////////////// --}}
+
+
+
+
+                                        {{-- /////////////////////////////////////////////////////////////////////////////////// --}}
+                                    </div>
 
                                     </div>
 
@@ -378,7 +440,60 @@ date_default_timezone_set('America/Lima');
 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 
 
+<div class="modal fade bs-example-modal-xm" id="precreditomodal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg modal-success">
+      <div class="modal-dialog">
+        <div class="modal-content">
 
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><span class="fa fa-warning"></span>CREDITO ACTIVADO... ¡Favor escanear el codigo QR!</h4>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cerrar</button>
+            <a id="credito" href="#" class="btn btn-outline">Procesar credito</a>
+
+          </div>
+
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+  </div>
+
+{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+
+{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+
+
+<div class="modal fade bs-example-modal-xm" id="precortesiamodal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg modal-warning">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><span class="fa fa-warning"></span>CORTESÍA ACTIVADA... ¡Favor escanear el codigo QR!</h4>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cerrar</button>
+            <a id="cortesia" href="#" class="btn btn-outline">Procesar cortesía</a>
+
+          </div>
+
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+  </div>
 
 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 </section>
@@ -423,46 +538,59 @@ date_default_timezone_set('America/Lima');
                         <div class="row small-box">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 small-box">
 
-                                <div id="gestionpago small">
+                                <div id="gestionpago_boton">
                                     <label>Forma de pago:</label>
-                                        <div class="input-group">
+                                        {{-- <div class="input-group"> --}}
 
-                                            <div class="container-fluit small-box">
+                                            <div class="container-fluit">
                                                 <div class="row">
-
                                                     <div
                                                         class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                         <button id='bt_addD' type='button'
-                                                            class='btn btn-xs btn-primary btn-block col-lg-pull-2 small'>Dolar</button>
+                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Dolar</button>
                                                     </div>
                                                     <div
                                                         class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                         <button id='bt_addP' type='button'
-                                                            class='btn btn-xs btn-primary btn-block col-lg-pull-2 small'>Peso</button>
+                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Peso</button>
                                                     </div>
                                                     <div
-                                                        class="panel-group col-lg-3 col-sm-3 col-md-3 col-xs-12 small">
+                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                         <button id='bt_addTP' type='button'
-                                                            class='btn btn-xs btn-primary btn-block col-lg-pull-2 small'>Punto/Trans</button>
+                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Punto/Trans</button>
                                                     </div>
                                                     <div
-                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12 small">
+                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                         <button id='bt_addM' type='button'
-                                                            class='btn btn-xs btn-primary btn-block col-lg-pull-2 small'>Mixto</button>
+                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Mixto</button>
                                                     </div>
                                                     <div
-                                                        class="panel-group col-lg-3 col-sm-3 col-md-3 col-xs-12 small">
+                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                         <button id='bt_addE' type='button'
-                                                            class='btn btn-xs btn-primary btn-block col-lg-pull-2 small'>Efectivo</button>
+                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Efectivo</button>
                                                     </div>
                                                 </div>
                                             </div>
 
+                                        {{-- </div> --}}
                                         </div>
+                                        <div id="gestionpago">
                                     <div class="panel panel-primary">
                                         <div class="panel-heading">
                                             <h2 id="gestionPago" class="panel-title">Gestion de pagos efectivo
                                             </h2>
+                                        </div>
+                                        <div class="row">
+                                            <div id="excedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
+                                                <label for="pagoConExcedente"><h2 class="text-blue">Exedente disponible: <b id="dispExcedenteShow">$.0.00</b></h2></label>
+                                                <input class="form-control" type="text" id="pagoConExcedente" name="pagoConExcedente" >
+                                                <input class="form-control" type="hidden" id="dispExcedente" name="dispExcedente" >
+                                            </div>
+                                            <div id="nocredito" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
+                                                {{-- <label for="pagoConCredito"><h2 class="text-blue">Crédito disponible: <b id="dispCreditoShow">$.0.00</b></h2></label> --}}
+                                                <input class="form-control" type="text" id="pagoConCredito" name="pagoConCredito" >
+                                                <input class="form-control" type="hidden" id="dispCredito" name="dispCredito" >
+                                            </div>
                                         </div>
                                         <div class="panel-body">
                                             <div class="table-responsive">
@@ -485,17 +613,17 @@ date_default_timezone_set('America/Lima');
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" size="10px" class="decimal"
                                                                     type="texto" id="DMontoDolar">
-                                                                    <button type="button" id="cargarDolar" class="btn btn-primary btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarDolar" class="btn btn-primary btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
 
-                                                            <td><input name="TasaTike[]"  size="10px" type="texto" readonly
+                                                            <td><input name="TasaTike[]"  size="10px" type="texto"
                                                                     id="TasaDolar"
                                                                     value="{{ $tasaDolar->tasa }}">
                                                             </td>
-                                                            <td><input name="MontoDolar[]"  size="10px" type="text" readonly
+                                                            <td><input name="MontoDolar[]"  size="10px" type="text"
                                                                     id="DolarToDolar" class="monto"
                                                                     onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]"  size="10px" type="text" readonly
+                                                            <td><input name="Veltos[]"  size="10px" type="text"
                                                                     id="RestaDolar"></td>
                                                             <td id="DsubTotal"></td>
                                                         </tr>
@@ -507,7 +635,7 @@ date_default_timezone_set('America/Lima');
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]"  size="10px" class="decimal"
                                                                     type="texto" id="DMontoPeso">
-                                                                    <button type="button" id="cargarPeso" class="btn btn-info btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarPeso" class="btn btn-info btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
                                                             <td><input name="TasaTike[]"  size="10px" type="texto" readonly
                                                                     id="TasaPeso" value="{{ $tasaPeso->tasa }}">
@@ -527,7 +655,7 @@ date_default_timezone_set('America/Lima');
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" class="decimal"
                                                                     type="texto"  size="10px" id="DMontoBolivar">
-                                                                    <button type="button" id="cargarBolivar" class="btn btn-warning btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarBolivar" class="btn btn-warning btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
                                                             <td><input name="TasaTike[]"  size="10px" type="texto" readonly
                                                                     id="TasaBolivar"
@@ -548,7 +676,7 @@ date_default_timezone_set('America/Lima');
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" class="decimal"
                                                                     type="texto"  size="10px" id="DMontoPunto">
-                                                                    <button type="button" id="cargarPunto" class="btn btn-danger btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarPunto" class="btn btn-danger btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                 </td>
                                                             <td>
                                                                 <input
@@ -573,7 +701,7 @@ date_default_timezone_set('America/Lima');
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" class="decimal"
                                                                     class="" type="texto"  size="10px" id="DMontoTrans">
-                                                                    <button type="button" id="cargarTrans" class="btn btn-success btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarTrans" class="btn btn-success btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                 </td>
                                                             <td>
                                                                 <input
@@ -598,30 +726,210 @@ date_default_timezone_set('America/Lima');
                                                         <th></th>
                                                         <th>
                                                             <h4 id="tp" class="text-bold">TOTAL PAGADO</h4>
+                                                            <h4 id="ex" class="text-bold">TOTAL EXCEDENTE</h4>
                                                             <h4 id="r" class="text-bold">RESTA</h4>
                                                             <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
+                                                            <input id="monto_dejado" name="monto_dejado" type="text" value="">
+                                                            <input id="isVueltos" name="isVueltos" type="hidden" value="0">
+                                                            <input id="cantidad" name="cantidad" type="hidden" value="">
+                                                            <input id="num_servicio" name="num_servicio" type="hidden" value="{{$num_servicio}}">
+                                                            <input id="operador" name="operador" type="hidden" value="{{$UserName}}">
+                                                            <input id="total_costo" name="total_costo" type="hidden" value="">
+                                                            <input id="precio_costo" name="precio_costo" type="hidden" value="">
+                                                            <input id="tipo_pago" name="tipo_pago" type="hidden" value="">
+                                                            <input id="modo_pago" name="modo_pago" type="hidden" value="">
+                                                            <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}">
+                                                            <input id="user_id" name="user_id" type="hidden" value="{{$UserId}}">
                                                         <th>
                                                             <h4 class="text-bold" id="spTotal">0.00</h4>
+                                                            <h4 class="text-bold" id="excdt">0.00</h4>
                                                             <h4 class="text-bold" id="RestaTtotal">0.00</h4>
                                                             <h4 class="text-bold" id="PagoTtotal">0.00</h4>
                                                         </th>
                                                     </tfoot>
                                                 </table>
                                             </div>
+
+
+                                            <div id="vueltos" class="vueltos">
+
+                                                <div class="box  text-black">
+                                                    <div class="box-header">
+                                                    <h3 class="box-title">Procesar Vueltos</h3>
+                                                    </div>
+                                                    <!-- /.box-header -->
+                                                    <div class="box-body no-padding">
+
+                                                        <div class="table-responsive">
+                                                            <table id="pagosV"
+                                                                class="table table-striped table-borderd table-condensed table-hover">
+                                                                <thead>
+                                                                    <th>Divisa</th>
+                                                                    <th>En Caja</th>
+                                                                    <th>Monto</th>
+
+                                                                    <th>Tasa</th>
+                                                                    <th>Divisa a dolar</th>
+                                                                    <th>Resta</th>
+                                                                    <th>Subtotal</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr id="trDV">
+                                                                        <td>
+                                                                            <h4 class="text-bold text-primary">Dolar</h4>
+                                                                        </td><input name="divisaV[]" value="Dolar"
+                                                                            type="hidden">
+                                                                            <td><h5 class="description-header text-bold">$. {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso,2,',','.') ?? ' 0,00' }}</h5></td>
+                                                                        <td><input name="MontoDivisaV[]" size="10px" class="decimal"
+                                                                                type="texto" id="DMontoDolarV">
+                                                                                <button type="button" id="cargarDolarV" class="btn btn-primary btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                        </td>
+
+                                                                        <td><input name="TasaTikeV[]"  size="10px" type="texto" readonly
+                                                                                id="TasaDolarV"
+                                                                                value="{{ $tasaDolar->tasa }}">
+                                                                        </td>
+                                                                        <td><input name="MontoDolarV[]"  size="10px" type="text" readonly
+                                                                                id="DolarToDolarV" class="montoV"
+                                                                                onchange="sumarV();"></td>
+                                                                        <td><input name="VeltosV[]"  size="10px" type="text" readonly
+                                                                                id="RestaDolarV"></td>
+                                                                        <td id="DsubTotalV"></td>
+                                                                    </tr>
+                                                                    <tr id="trPV">
+                                                                        <td>
+                                                                            <h4 class="text-bold text-primary">Peso</h4>
+                                                                        </td>
+                                                                        </th><input name="divisaV[]" value="Peso"
+                                                                            type="hidden">
+                                                                            <td><h5 class="description-header text-bold">$. {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso,2,',','.') ?? ' 0,00' }}</h5></td>
+                                                                        <td><input name="MontoDivisaV[]"  size="10px" class="decimal"
+                                                                                type="texto" id="DMontoPesoV">
+                                                                                <button type="button" id="cargarPesoV" class="btn btn-info btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                        </td>
+                                                                        <td><input name="TasaTikeV[]"  size="10px" type="texto" readonly
+                                                                                id="TasaPesoV" value="{{ $tasaPeso->tasa }}">
+                                                                        </td>
+                                                                        <td><input name="MontoDolarV[]"  size="10px" type="text" readonly
+                                                                                id="PesoToDolarV" class="montoV"
+                                                                                onchange="sumarV();"></td>
+                                                                        <td><input name="VeltosV[]"  size="10px" type="text" readonly
+                                                                                id="RestaPesoV"></td>
+                                                                        <td id="PeSubTotalV"></td>
+                                                                    </tr>
+                                                                    <tr id="trEV">
+                                                                        <td>
+                                                                            <h4 class="text-bold text-primary">Efectivo</h4>
+                                                                        </td>
+                                                                        </th><input name="divisaV[]" value="Bolivar"
+                                                                            type="hidden">
+                                                                            <td><h5 class="description-header  text-bold">Bs. {{ number_format($cajas->SumaTotalPunto + $caja->monto_bolivar,2,',','.') ?? ' 0,00' }}</h5></td>
+                                                                        <td><input name="MontoDivisaV[]" class="decimal"
+                                                                                type="texto"  size="10px" id="DMontoBolivarV">
+                                                                                <button type="button" id="cargarBolivarV" class="btn btn-warning btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                        </td>
+                                                                        <td><input name="TasaTikeV[]"  size="10px" type="texto" readonly
+                                                                                id="TasaBolivarV"
+                                                                                value="{{ $tasaTransferenciaPunto->tasa }}">
+                                                                        </td>
+                                                                        <td><input name="MontoDolarV[]"  size="10px" type="texto" readonly
+                                                                                id="BolivarToDolarV" class="montoV"
+                                                                                onchange="sumarV();"></td>
+                                                                        <td><input name="VeltosV[]"  size="10px" type="text" readonly
+                                                                                id="RestaBolivarV"></td>
+                                                                        <td id="BoSubTotalV"></td>
+                                                                    </tr>
+
+
+                                                                </tbody>
+                                                                <tfoot>
+                                                                    <th></th>
+                                                                    <th></th>
+                                                                    <th></th>
+                                                                    <th></th>
+                                                                    <th></th>
+                                                                    <th>
+                                                                        <h4 id="tpV" class="text-bold">TOTAL PAGADO</h4>
+                                                                        <h4 id="rV" class="text-bold">RESTA</h4>
+                                                                        <h4 id="tapV" class="text-bold">TOTAL A PAGAR</h4>
+                                                                    <th>
+                                                                        <h4 class="text-bold" id="spTotalV">0.00</h4>
+                                                                        <h4 class="text-bold" id="RestaTtotalV">0.00</h4>
+                                                                        <h4 class="text-bold" id="PagoTtotalV">0.00</h4>
+                                                                    </th>
+                                                                </tfoot>
+                                                            </table>
+                                                        </div>
+
+                                                    {{-- <table class="table table-condensed">
+                                                        <tbody><tr>
+                                                            <th>Divisa</th>
+                                                            <th>Disponible</th>
+                                                            <th>Vuelto</th>
+                                                            <th >Monto a devitar</th>
+                                                            <th>Quedan</th>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>Dolar</td>
+                                                        <td>
+                                                            <h5 class="description-header">$. {{ number_format($cajas->SumaTotalDolar + $caja->monto_dolar,3,',','.') ?? ' 0,00' }}</h5>
+                                                            <input type="hidden" value=""  id="deuda">
+
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" value=""  id="deuda2">
+                                                        </td>
+                                                        <td><input type="text" class="Can_Dolar"><br/></td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>Peso</td>
+                                                        <td><h5 class="description-header">$. {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso,2,',','.') ?? ' 0,00' }}</h5></td>
+                                                        <td>
+                                                            <input type="text" value=""  id="deuda2Peso">
+                                                        </td>
+                                                        <td><input type="text" class="Can_Peso"></td>
+                                                        </tr>
+                                                        <tr>
+                                                        <td>Bolivar</td>
+                                                        <td><h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalPunto + $caja->monto_bolivar,2,',','.') ?? ' 0,00' }}</h5></td>
+                                                        <td>
+                                                            <input type="text" value=""  id="deuda2Bolivar">
+                                                        </td>
+                                                        <td><input type="text" class="Can_Bolivar"><br/></td>
+                                                        </tr>
+
+                                                    </tbody></table> --}}
+                                                    </div>
+                                                    <!-- /.box-body -->
+                                                </div>
                                         </div>
-                                        <div class="panel-footer" id="guardar">
+                                        <div class="panel-footer" id="guardar1">
                                             <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
-                                                id="guardar">
-                                                <input name="_token" value="{{ csrf_token() }}" type="hidden">
-                                                <button id="enviar" class="btn btn-primary btn-block"
-                                                    type="button">Guardar</button>
+                                                >
+                                                <input name="tasaDolar" value="{{ $tasaDolar->tasa }}" type="hidden">
+                                                <input name="porDolar" value="{{ $tasaDolar->porcentaje_ganancia }}" type="hidden">
+                                                <input name="tasaPeso" value="{{ $tasaPeso->tasa }}" type="hidden">
+                                                <input name="porPeso" value="{{ $tasaPeso->porcentaje_ganancia }}" type="hidden">
+                                                <input name="tasaTransPunto" value="{{ $tasaTransferenciaPunto->tasa }}" type="hidden">
+                                                <input name="porTransPunto" value="{{ $tasaTransferenciaPunto->porcentaje_ganancia }}" type="hidden">
+                                                <input name="tasaMixto" value="{{ $tasaMixto->tasa }}" type="hidden">
+                                                <input name="porMixto" value="{{ $tasaMixto->porcentaje_ganancia }}" type="hidden">
+                                                <input name="tasaEfectivo" value="{{ $tasaEfectivo->tasa }}" type="hidden">
+                                                <input name="porEfectivo" value="{{ $tasaEfectivo->porcentaje_ganancia }}" type="hidden">
+                                                <input id="tasaDolarHabitacion" name="tasaDolarHabitacion" value="{{ $tasaDolarHabitacion->tasa }}" type="hidden">
+                                                <input name="porDolarHabitacion" value="{{ $tasaDolarHabitacion->porcentaje_ganancia }}" type="hidden">
+                                                <input id="tasaPesoHabitacion" name="tasaPesoHabitacion" value="{{ $tasaPesoHabitacion->tasa }}" type="hidden">
+                                                <input name="porPesoHabitacion" value="{{ $tasaPesoHabitacion->porcentaje_ganancia }}" type="hidden">
+                                                {{-- <button id="enviar" class="btn btn-primary btn-block"
+                                                    type="button">Guardar</button> --}}
                                             </div>
-                                            <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
-                                                id="guardar">
+                                            {{-- <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
+                                                id="guardar1">
                                                 <button class="btn btn-danger btn-block"
                                                     type="reset">Cancelar</button>
-                                            </div>
+                                            </div> --}}
                                         </div>
+                                    </div>
                                     </div>
                                 </div>
                             </div>
@@ -630,7 +938,10 @@ date_default_timezone_set('America/Lima');
             </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-                <button class="btn btn-outline" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+                <div class=""
+                id="guardar">
+                <button id="enviar" class="btn btn-outline" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+            </div>
                 {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
               </div>
             </form>
@@ -645,6 +956,7 @@ date_default_timezone_set('America/Lima');
   <div class="clearfix"></div>
 @push('sciptsMain')
 <script src="{{asset('dist/js/moment.min.js')}}"></script>
+<script src="{{asset('dist/js/onscan.js')}}"></script>
 <script>
 
 
@@ -654,8 +966,18 @@ moment.locale('es');
     const hoy = moment();
 console.log(moment().format('MMMM Do YYYY, h:mm:ss a'));
 
+
+
+
+
+
+
 $("#buscarCliente").change(showValues);
 
+
+$("#excedente").hide();
+$("#ex").hide();
+$("#excdt").hide();
 function showValues() {
                 // alert('show');
                 datosArticulo = document.getElementById('buscarCliente').value.split('_');
@@ -664,6 +986,73 @@ function showValues() {
                 $("#nombre").val(datosArticulo[1]);
                 $("#num_documento").val(datosArticulo[2]);
                 $("#direccion").val(datosArticulo[3]);
+                let isCortesia = datosArticulo[4];
+                let isCredito = datosArticulo[5];
+                $("#telefono").val(datosArticulo[6]);
+                $("#limite_fecha").val(datosArticulo[7]);
+                $("#limite_monto").val(datosArticulo[8]);
+                $("#total_credito_pendiente").val(datosArticulo[9]);
+                $("#estado_credito").val(datosArticulo[10]);
+
+                // alert(datosArticulo[9]);
+
+                let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+                // alert(deuda_credito_pendiente);
+                let limite_fecha_credito = $("#limite_fecha").val();
+                let limite_monto_credito = $("#limite_monto").val();
+                let credito_disponible = 0;
+
+                if (deuda_credito_pendiente) {
+                    credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+                }else{
+                    credito_disponible = limite_monto_credito;
+                }
+
+                $("#dispCredito").val(credito_disponible);
+
+                $("#dispExcedente").val(datosArticulo[11]);
+                var verCajaExcedente = datosArticulo[11];
+                if(verCajaExcedente > 0){
+                $("#excedente").show();
+                $("#ex").show();
+                $("#excdt").show();
+
+                }else{
+                    $("#excedente").hide();
+                    $("#ex").hide();
+                    $("#excdt").hide();
+                }
+
+
+                let dispCredito = credito_disponible;
+                let dispExcedente =datosArticulo[11];
+
+                $("#dispCreditoShow").html('$'+dispCredito);
+                $("#dispExcedenteShow").html('$'+dispExcedente);
+
+
+                if(isCortesia){
+                    let precio = $("#precioDolarHabitacio").val();
+                    $("#precio_costo").val(precio);
+                    $('#cortesia').show();
+                    $('#precortesia').show();
+                    // console.log('Este cliente puede tener credito');
+                }else{
+                    $('#cortesia').hide();
+                    $('#precortesia').hide();
+                }
+                if(isCredito){
+                    let precio = $("#precioDolarHabitacio").val();
+                    $("#precio_costo").val(precio);
+                    // console.log('Este cliente puede tener credito');
+                    $('#credito').show();
+                    $('#precredito').show();
+
+                }else{
+
+                    $('#credito').hide();
+                    $('#precredito').hide();
+                }
 
             }
 
@@ -832,13 +1221,14 @@ function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
 </script> --}}
 
 <script>
-    var end = new Date('11/19/2020 7:08 AM');
+    var end = new Date('1/02/2021 10:41 AM');
 
         var _second = 1000;
         var _minute = _second * 60;
         var _hour = _minute * 60;
         var _day = _hour * 24;
         var timer;
+
 
 
         function showRemaining() {
@@ -881,6 +1271,9 @@ console.log('Falta '+minutes);
     </script>
 
 <script>
+    var pagoExc = 0;
+    var pagoCred = 0;
+
     var cont            = 0;
     var total           = parseFloat(0.00);
     var porEspecial     = null;
@@ -934,12 +1327,18 @@ console.log('Falta '+minutes);
     var vcargarpto = 0;
     var vcargart = 0;
 
+    var vcargarV = 0;
+    var vcargarpV = 0;
+    var vcargarbV = 0;
+
+
 
 
 
 
     $("#guardar").hide();
-    $("#gestionpago").show();
+    $("#gestionpago").hide();
+    $("#gestionpago_boton").show();
     $("#jidarticulo").change(showValues);
     $("#jidarticulo").change(por);
     $('#bt_addD').show();
@@ -948,11 +1347,120 @@ console.log('Falta '+minutes);
     $('#bt_addM').show();
     $('#bt_addE').show();
     $("#procesarkilos").hide();
+    $("#vueltos").hide();
+
+    $("#precortesia").hide();
+    $("#cortesia").hide();
+    $("#precredito").hide();
+    $("#credito").hide();
+
+    function is_negative_number(number=0){
+
+        if( (is_numeric(number)) && (number>0) ){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
 
     $(document).ready(function() {
         $("#enviar").on('click', function() {
             $("#form1").submit();
+        });
+
+        $("#contado").on('click', function() {
+            let cliente_id = $("#cliente_id").val();
+            if(cliente_id == 0 || cliente_id == null){
+                alert('No has seleccionado un cliente...!');
+                return false;
+            }
+            $("#bt_addD").click();
+            $('#modo_pago').val('contado');
+        });
+        $("#precortesia").on('click', function() {
+            let cliente_id = $("#cliente_id").val();
+            if(cliente_id == 0 || cliente_id == null){
+                alert('No has seleccionado un cliente...!');
+                return false;
+            }
+            $('#modo_pago').val('cortesia');
+
+        });
+        $("#cortesia").on('click', function() {
+            addHabitacion();
+            $("#monto_dejado").val(0);
+            $('#modo_pago').val('cortesia');
+            $("#form1").submit();
+        });
+        $("#precredito").on('click', function() {
+
+            let cliente_id = $("#cliente_id").val();
+            if(cliente_id == 0 || cliente_id == null){
+                alert('No has seleccionado un cliente...!');
+                return false;
+            }
+            $('#modo_pago').val('credito');
+
+        });
+        $("#credito").on('click', function() {
+            let estado_credito = $("#estado_credito").val();
+            if (estado_credito == 'Moroso') {
+                alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
+            } else {
+
+
+            addHabitacion();
+            $("#monto_dejado").val(0);
+            $('#modo_pago').val('credito');
+            let costo = $("#total_costo").val();
+            // alert('total costo '+costo);
+            let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+            // alert(deuda_credito_pendiente);
+            let limite_fecha_credito = $("#limite_fecha").val();
+            let limite_monto_credito = $("#limite_monto").val();
+
+            if (deuda_credito_pendiente) {
+                let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+                // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+                if (credito_disponible > 0) {
+                    // alert('es mayor puede continuar costo '+ costo);
+                    let credito_disponible_total_operacion = credito_disponible - costo;
+
+                    if (credito_disponible_total_operacion >= 0) {
+                        // alert('puede seguir');
+                        $("#form1").submit();
+                    }else{
+                        alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+                    }
+
+                }else{
+                    alert('El cliente no tiene Credito...');
+                }
+            } else {
+                // alert('no hay deuda pendiente');
+                let credito_disponible = limite_monto_credito;
+                // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+                if (credito_disponible > 0) {
+                    // alert('es mayor puede continuar costo '+ costo);
+                    let credito_disponible_total_operacion = credito_disponible - costo;
+
+                    if (credito_disponible_total_operacion >= 0) {
+                        // alert('puede seguir');
+                        $("#form1").submit();
+                    }else{
+                        alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+                    }
+
+                }else{
+                    alert('El cliente no tiene Credito...');
+                }
+            }
+
+
+            }
         });
 
         $("#cargarDolar").on('click', function() {
@@ -962,6 +1470,11 @@ console.log('Falta '+minutes);
                 vcargarb = 0;
                 vcargarpto = 0;
                 vcargart = 0;
+                $("#isVueltos").val('');
+                $("#deuda").val('');
+                $("#deuda2").val('');
+                $("#deudaPeso").val('');
+                $("#deuda2Bolivar").val('');
                 $("#DMontoPeso").val('');
                 DMontoPeso();
                 $("#DMontoBolivar").val('');
@@ -987,6 +1500,11 @@ console.log('Falta '+minutes);
                 vcargarb = 0;
                 vcargarpto = 0;
                 vcargart = 0;
+                $("#isVueltos").val('');
+                $("#deuda").val('');
+                $("#deuda2").val('');
+                $("#deudaPeso").val('');
+                $("#deuda2Bolivar").val('');
                 $("#DMontoPunto").val('');
                 DMontoPunto();
                 $("#DMontoTrans").val('');
@@ -1012,6 +1530,11 @@ console.log('Falta '+minutes);
                 vcargarp = 0;
                 vcargarpto = 0;
                 vcargart = 0;
+                $("#isVueltos").val('');
+                $("#deuda").val('');
+                $("#deuda2").val('');
+                $("#deudaPeso").val('');
+                $("#deuda2Bolivar").val('');
                 $("#DMontoPunto").val('');
                 DMontoPunto();
                 $("#DMontoTrans").val('');
@@ -1037,6 +1560,11 @@ console.log('Falta '+minutes);
                 vcargarp = 0;
                 vcargarb = 0;
                 vcargart = 0;
+                $("#isVueltos").val('');
+                $("#deuda").val('');
+                $("#deuda2").val('');
+                $("#deudaPeso").val('');
+                $("#deuda2Bolivar").val('');
                 $("#DMontoTrans").val('');
                 DMontoTrans();
                 $("#DMontoBolivar").val('');
@@ -1062,6 +1590,11 @@ console.log('Falta '+minutes);
                 vcargarp = 0;
                 vcargarb = 0;
                 vcargarpto = 0;
+                $("#isVueltos").val('');
+                $("#deuda").val('');
+                $("#deuda2").val('');
+                $("#deudaPeso").val('');
+                $("#deuda2Bolivar").val('');
                 $("#DMontoPunto").val('');
                 DMontoPunto();
                 $("#DMontoBolivar").val('');
@@ -1171,6 +1704,37 @@ console.log('Falta '+minutes);
             $("#DMontoBolivar").keyup();
             $("#DMontoPunto").keyup();
             $("#DMontoTrans").keyup();
+
+            //////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////
+
+            $("#DMontoDolarV").val('');
+            $("#DMontoPesoV").val('');
+            $("#DMontoBolivarV").val('');
+
+
+            $("#RestaDolarV").val('');
+            $("#RestaPesoV").val('');
+            $("#RestaBolivarV").val('');
+            $("#RestaPuntoV").val('');
+            $("#RestaTransV").val('');
+
+            $("#DolarToDolarV").val('');
+            $("#DsubTotaVl").html('');
+            $("#RestaDolarV").val();
+
+            $("#PesoToDolarV").val('');
+            $("#PeSubTotalV").html('');
+            $("#RestaPesoV").val();
+
+            $("#BolivarToDolarV").val('');
+            $("#BoSubTotalV").html('');
+            $("#RestaBolivarV").val();
+
+
+            //////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////
+
         }
 
         $("#bt_addD").click(function() {
@@ -1187,6 +1751,7 @@ console.log('Falta '+minutes);
             $("#tipo_pago").val('');
             $("#tipo_pago").val('Dolar');
             $("#spTotal").html('0.00'); //aqui
+            $('#monto_dejado').val(0.00);
 
 
             prepara();
@@ -1198,6 +1763,7 @@ console.log('Falta '+minutes);
             $('#trT').hide("linear");
             $('#trM').hide("linear");
             $('#trE').hide("linear");
+            $('#vueltos').hide("linear");
 
             verify();
             resta();
@@ -1217,6 +1783,7 @@ console.log('Falta '+minutes);
             $("#tipo_pago").val('');
             $("#tipo_pago").val('Peso');
             $("#spTotal").html('0.00'); //aqui
+            $('#monto_dejado').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -1255,12 +1822,43 @@ console.log('Falta '+minutes);
             $("#DMontoPunto").keyup();
             $("#DMontoTrans").keyup();
 
+            //////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////
+
+            $("#DMontoDolarV").val('');
+            $("#DMontoPesoV").val('');
+            $("#DMontoBolivarV").val('');
+
+
+            $("#RestaDolarV").val('');
+            $("#RestaPesoV").val('');
+            $("#RestaBolivarV").val('');
+            $("#RestaPuntoV").val('');
+            $("#RestaTransV").val('');
+
+            $("#DolarToDolarV").val('');
+            $("#DsubTotaVl").html('');
+            $("#RestaDolarV").val();
+
+            $("#PesoToDolarV").val('');
+            $("#PeSubTotalV").html('');
+            $("#RestaPesoV").val();
+
+            $("#BolivarToDolarV").val('');
+            $("#BoSubTotalV").html('');
+            $("#RestaBolivarV").val();
+
+
+            //////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////
+
             $('#trD').hide("linear");
             $('#trP').show("linear");
             $('#trTP').hide("linear");
             $('#trT').hide("linear");
             $('#trM').hide("linear");
             $('#trE').hide("linear");
+            $('#vueltos').hide("linear");
 
             verify();
             resta();
@@ -1281,6 +1879,7 @@ console.log('Falta '+minutes);
             $("#tipo_pago").val('');
             $("#tipo_pago").val('Trans/Punto');
             $("#spTotal").html('0.00'); //aqui
+            $('#monto_dejado').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -1319,6 +1918,36 @@ console.log('Falta '+minutes);
             $("#DMontoPunto").keyup();
             $("#DMontoTrans").keyup();
 
+            //////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////
+
+            $("#DMontoDolarV").val('');
+            $("#DMontoPesoV").val('');
+            $("#DMontoBolivarV").val('');
+
+
+            $("#RestaDolarV").val('');
+            $("#RestaPesoV").val('');
+            $("#RestaBolivarV").val('');
+            $("#RestaPuntoV").val('');
+            $("#RestaTransV").val('');
+
+            $("#DolarToDolarV").val('');
+            $("#DsubTotaVl").html('');
+            $("#RestaDolarV").val();
+
+            $("#PesoToDolarV").val('');
+            $("#PeSubTotalV").html('');
+            $("#RestaPesoV").val();
+
+            $("#BolivarToDolarV").val('');
+            $("#BoSubTotalV").html('');
+            $("#RestaBolivarV").val();
+
+
+            //////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////
+
 
             $('#trD').hide("linear");
             $('#trP').hide("linear");
@@ -1326,6 +1955,7 @@ console.log('Falta '+minutes);
             $('#trT').show("linear");
             $('#trM').hide("linear");
             $('#trE').hide("linear");
+            $('#vueltos').hide("linear");
 
             verify();
             resta();
@@ -1346,6 +1976,7 @@ console.log('Falta '+minutes);
             $("#tipo_pago").val('');
             $("#tipo_pago").val('Mixto');
             $("#spTotal").html('0.00'); //aqui
+            $('#monto_dejado').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -1384,12 +2015,43 @@ console.log('Falta '+minutes);
             $("#DMontoPunto").keyup();
             $("#DMontoTrans").keyup();
 
+            //////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////
+
+            $("#DMontoDolarV").val('');
+            $("#DMontoPesoV").val('');
+            $("#DMontoBolivarV").val('');
+
+
+            $("#RestaDolarV").val('');
+            $("#RestaPesoV").val('');
+            $("#RestaBolivarV").val('');
+            $("#RestaPuntoV").val('');
+            $("#RestaTransV").val('');
+
+            $("#DolarToDolarV").val('');
+            $("#DsubTotaVl").html('');
+            $("#RestaDolarV").val();
+
+            $("#PesoToDolarV").val('');
+            $("#PeSubTotalV").html('');
+            $("#RestaPesoV").val();
+
+            $("#BolivarToDolarV").val('');
+            $("#BoSubTotalV").html('');
+            $("#RestaBolivarV").val();
+
+
+            //////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////
+
             $('#trD').show("linear");
             $('#trP').show("linear");
             $('#trTP').show("linear");
             $('#trT').show("linear");
             $('#trM').show("linear");
             $('#trE').show("linear");
+            $('#vueltos').hide("linear");
 
 
             verify();
@@ -1410,6 +2072,7 @@ console.log('Falta '+minutes);
             $("#tipo_pago").val('');
             $("#tipo_pago").val('Efectivo');
             $("#spTotal").html('0.00'); //aqui
+            $('#monto_dejado').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -1448,6 +2111,36 @@ console.log('Falta '+minutes);
             $("#DMontoPunto").keyup();
             $("#DMontoTrans").keyup();
 
+            //////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////
+
+            $("#DMontoDolarV").val('');
+            $("#DMontoPesoV").val('');
+            $("#DMontoBolivarV").val('');
+
+
+            $("#RestaDolarV").val('');
+            $("#RestaPesoV").val('');
+            $("#RestaBolivarV").val('');
+            $("#RestaPuntoV").val('');
+            $("#RestaTransV").val('');
+
+            $("#DolarToDolarV").val('');
+            $("#DsubTotaVl").html('');
+            $("#RestaDolarV").val();
+
+            $("#PesoToDolarV").val('');
+            $("#PeSubTotalV").html('');
+            $("#RestaPesoV").val();
+
+            $("#BolivarToDolarV").val('');
+            $("#BoSubTotalV").html('');
+            $("#RestaBolivarV").val();
+
+
+            //////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////
+
 
             $('#trD').hide("linear");
             $('#trP').hide("linear");
@@ -1455,6 +2148,7 @@ console.log('Falta '+minutes);
             $('#trT').hide("linear");
             $('#trM').hide("linear");
             $('#trE').show("linear");
+            $('#vueltos').hide("linear");
 
             verify();
             resta()
@@ -1601,42 +2295,42 @@ console.log('Falta '+minutes);
         return result;
     }
 
-    function showValues() {
-        // alert('show');
-        datosArticulo = document.getElementById('jidarticulo').value.split('_');
-        // $("#jprecio_venta").val(datosArticulo[2]);
-        $("#jprecio_compra").val(datosArticulo[2]);
-        $("#jstock").val(datosArticulo[1]);
+    // function showValues() {
+    //     // alert('show');
+    //     datosArticulo = document.getElementById('jidarticulo').value.split('_');
+    //     // $("#jprecio_venta").val(datosArticulo[2]);
+    //     $("#jprecio_compra").val(datosArticulo[2]);
+    //     $("#jstock").val(datosArticulo[1]);
 
 
-        stock           = datosArticulo[1]
-        porEspecial     = datosArticulo[4];
-        isDolar         = datosArticulo[5];
-        isPeso          = datosArticulo[6];
-        isTransPunto    = datosArticulo[7];
-        isMixto         = datosArticulo[8];
-        isEfectivo      = datosArticulo[9];
-        isKilo          = datosArticulo[10];
-        // $("#jmarjen_venta_dolar").val(12);
-        // alert(isKilo);
+    //     stock           = datosArticulo[1]
+    //     porEspecial     = datosArticulo[4];
+    //     isDolar         = datosArticulo[5];
+    //     isPeso          = datosArticulo[6];
+    //     isTransPunto    = datosArticulo[7];
+    //     isMixto         = datosArticulo[8];
+    //     isEfectivo      = datosArticulo[9];
+    //     isKilo          = datosArticulo[10];
+    //     // $("#jmarjen_venta_dolar").val(12);
+    //     // alert(isKilo);
 
-       var exkilo = 0;
-       var exgramos = 0;
+    //    var exkilo = 0;
+    //    var exgramos = 0;
 
-       var res = divisorEnteroDecimala(stock);
+    //    var res = divisorEnteroDecimala(stock);
 
-       exkilo = res[0];
-       exgramos = res[1];
+    //    exkilo = res[0];
+    //    exgramos = res[1];
 
-        $("#exkilo").html(exkilo);
-        $("#exgramos").html(fijaLargoDerecha(exgramos));
-        $("#stockRealKilos").val(stock);
+    //     $("#exkilo").html(exkilo);
+    //     $("#exgramos").html(fijaLargoDerecha(exgramos));
+    //     $("#stockRealKilos").val(stock);
 
-        $("#restaKilos").val(stock);
+    //     $("#restaKilos").val(stock);
 
 
 
-    }
+    // }
 
     $(document).ready(function() {
         // var kilo = 0;
@@ -1726,8 +2420,8 @@ console.log('Falta '+minutes);
         }
     };
     function numDecimalExp(valor){
-    let result = Number((valor)).toFixed(3);
-    return result;
+        let result = Number((valor)).toFixed(3);
+        return result;
     }
 
     function por() {
@@ -1870,8 +2564,62 @@ console.log('Falta '+minutes);
         $("#jidarticulo").selectpicker("refresh");
     }
 
+    $("#fecha_salida").on('change', function() {
+    var is24 = $('#is24').val();
+    if(is24 == 1){
+    // addHabitacion();
+            // alert('hola');
+            var entrada = $("#fecha_entrada").val();
+            var salida = $("#fecha_salida").val();
+
+            var fecha1 = moment(entrada);
+            var fecha2 = moment(salida);
+            let resultado = fecha2.diff(fecha1, 'days');
+
+            $('#cantidad').val(resultado);
+
+           let tasaDolar =  $("#tasaDolarHabitacion").val();
+           let tasaPeso =  $("#tasaPesoHabitacion").val();
+
+
+            total =$("#precioDolarHabitacio").val();
+            $("#precio_costo").val(total);
+            console.log('totoal '+total);
+
+            var k = total*resultado;
+            $("#total_costo").val(k);
+
+            $("#mostrarPrecioDolar").html(k);
+            $("#mostrarPrecioPeso").html(formatMoney(k * tasaPeso,2,',','.'));
+            $("#mostrarPrecioBolivar").html(formatMoney(k * tasaDolar,2,',','.'));
+            // $("#precioDolarHabitacio").val();
+
+
+            console.log(k);
+            // $("#PagoTtotal").html(numDecimal(k));
+
+            console.log(fecha2.diff(fecha1, 'days'), ' dias de diferencia');
+        }
+        });
+
+
     function addHabitacion(){
-        total = $("#precioDolarHabitacio").val();
+        totalcosto = $("#total_costo").val();
+        var is24 = $('#is24').val();
+        if (totalcosto == '') {
+            total = $("#precioDolarHabitacio").val();
+            totalcosto = total;
+            $("#total_costo").val(total);
+            $('#cantidad').val(1);
+
+
+        } else {
+            // alert('no 24');
+            total = $("#total_costo").val();
+            totalr = $("#precioDolarHabitacio").val();
+            $("#precio_costo").val(totalr);
+        }
+
 
                 total_costo = total_costo + subtotalPC[cont];
                 total_d     = total;
@@ -1890,16 +2638,18 @@ console.log('Falta '+minutes);
         //     $("#total_venta").val(numDecimal(total_e));
 
         $("#PagoTtotal").html(numDecimal(total));
+        // $("#PagoTtotalV").html(numDecimal(total));
 
 
 
 
 
-        DMontoDolar();
-        DMontoPeso();
-        DMontoBolivar();
-        DMontoPunto();
-        DMontoTrans();
+
+        // DMontoDolar();
+        // DMontoPeso();
+        // DMontoBolivar();
+        // DMontoPunto();
+        // DMontoTrans();
         // sumar();
         // resta();
 
@@ -1909,179 +2659,179 @@ console.log('Falta '+minutes);
         // $("#PagoTtotal").html(numDecimal(total));
     }
 
-    function add_article() {
-        datosArticulo = document.getElementById('jidarticulo').value.split('_');
+    // function add_article() {
+    //     datosArticulo = document.getElementById('jidarticulo').value.split('_');
 
 
-        idarticulo = datosArticulo[0];
-        articulo = datosArticulo[3];
-
-
-
-        // if(porEspecial){
-        //     alert('Si tiene precio especial '+porEspecial);
-        // }else{
-        //     alert('No tiene precio especial '+porEspecial);
-        // }
-
-        // alert(articulo);
-        cantidad        = $("#jcantidad").val();
-        descuento       = $("#jdescuento").val();
-        precio_compra   = $("#jprecio_compra").val();
-        precio_venta    = $("#jprecio_venta").val();
-
-        jporEspecial    = porEspecial;
-
-        // alert('por especial'+jporEspecial);
-
-        precio_venta_d  = $("#jprecio_venta_d_dolar").val();
-        precio_venta_p  = $("#jprecio_venta_p_dolar").val();
-        precio_venta_tp = $("#jprecio_venta_tp_dolar").val();
-        precio_venta_m  = $("#jprecio_venta_m_dolar").val();
-        precio_venta_e  = $("#jprecio_venta_e_dolar").val();
-        precio_venta_c  = $("#precio_costo").val();
+    //     idarticulo = datosArticulo[0];
+    //     articulo = datosArticulo[3];
 
 
 
-        $("#cantidadj").show();
-        $("#procesarkilos").hide();
+    //     // if(porEspecial){
+    //     //     alert('Si tiene precio especial '+porEspecial);
+    //     // }else{
+    //     //     alert('No tiene precio especial '+porEspecial);
+    //     // }
+
+    //     // alert(articulo);
+    //     cantidad        = $("#jcantidad").val();
+    //     descuento       = $("#jdescuento").val();
+    //     precio_compra   = $("#jprecio_compra").val();
+    //     precio_venta    = $("#jprecio_venta").val();
+
+    //     jporEspecial    = porEspecial;
+
+    //     // alert('por especial'+jporEspecial);
+
+    //     precio_venta_d  = $("#jprecio_venta_d_dolar").val();
+    //     precio_venta_p  = $("#jprecio_venta_p_dolar").val();
+    //     precio_venta_tp = $("#jprecio_venta_tp_dolar").val();
+    //     precio_venta_m  = $("#jprecio_venta_m_dolar").val();
+    //     precio_venta_e  = $("#jprecio_venta_e_dolar").val();
+    //     precio_venta_c  = $("#precio_costo").val();
 
 
 
-        stock = $("#jstock").val();
-
-        if (idarticulo != "" && cantidad != "" && cantidad > 0 && precio_venta != "") {
-            var stock = parseInt(stock)
-            var cantidad = parseInt(cantidad)
-
-            // var tasaD = parseFloat($("#TasaDolar").val());
-            // var tasaP = parseFloat($("#TasaPeso").val());
-            // var tasaTP = parseFloat($("#tasaTransPunto").val());
-            // var tasaM = parseFloat($("#tasaMixto").val());
-            // var tasaE = parseFloat($("#tasaEfectivo").val());
-
-            // var descuento=parseFloat(0.00);
-
-            if (stock >= cantidad) {
-                subtotal[cont]      = (cantidad * precio_venta - descuento);
-                subtotalPC[cont]    = (cantidad * precio_venta_c);
-                subtotald[cont]     = (cantidad * precio_venta_d - descuento);
-                subtotalp[cont]     = (cantidad * precio_venta_p - descuento);
-                subtotaltp[cont]    = (cantidad * precio_venta_tp - descuento);
-                subtotalm[cont]     = (cantidad * precio_venta_m - descuento);
-                subtotale[cont]     = (cantidad * precio_venta_e);
-                subtotalc[cont]     = (cantidad * precio_venta_c);
+    //     $("#cantidadj").show();
+    //     $("#procesarkilos").hide();
 
 
 
+    //     stock = $("#jstock").val();
 
-                total = total + subtotal[cont];
+    //     if (idarticulo != "" && cantidad != "" && cantidad > 0 && precio_venta != "") {
+    //         var stock = parseInt(stock)
+    //         var cantidad = parseInt(cantidad)
 
-                precio_costo = precio_costo + subtotalc[cont];
+    //         // var tasaD = parseFloat($("#TasaDolar").val());
+    //         // var tasaP = parseFloat($("#TasaPeso").val());
+    //         // var tasaTP = parseFloat($("#tasaTransPunto").val());
+    //         // var tasaM = parseFloat($("#tasaMixto").val());
+    //         // var tasaE = parseFloat($("#tasaEfectivo").val());
 
+    //         // var descuento=parseFloat(0.00);
 
-                $("#precio_costo").val(precio_costo);
-
-
-                total_costo = total_costo + subtotalPC[cont];
-                total_d     = total_d + subtotald[cont];
-                total_p     = total_p + subtotalp[cont];
-                total_tp    = total_tp + subtotaltp[cont];
-                total_m     = total_m + subtotalm[cont];
-                total_e     = total_e + subtotale[cont];
-
-
-
-                verPreciod      = $("#jprecio_venta_dolar").val();
-                verPreciop      = $("#jprecio_venta_peso").val();
-                verPreciotp     = $("#jprecio_venta_trans_punto").val();
-                verPreciom      = $("#jprecio_venta_mixto").val();
-                verPrecioe      = $("#jprecio_venta_Efectivo").val();
-
-                // alert('nada');
-                if (descuento == "") {
-                    descuento = 0;
-                }
-
-                if (isKilo) {
-                    cantidadVer = cantidadMostrar;
-                } else {
-                    cantidadVer  = cantidad;
-                }
-                // $("#total_venta").val(total.toFixed(2));
-                $("#precio_costo").val(numDecimal(total_costo));
-                $("#total_ventad").val(numDecimal(total_d));
-                $("#total_ventap").val(numDecimal(total_p));
-                $("#total_ventatp").val(numDecimal(total_tp));
-                $("#total_ventam").val(numDecimal(total_m));
-                $("#total_ventae").val(numDecimal(total_e));
-
-                var fila = '<tr class="selected" id="fila' + cont +
-                    '"><td><button type="button" class="btn btn-warning btn-xs" onclick="eliminar(' + cont +
-                    ');">X</button></td><td><input type="hidden" name="idarticulo[]" value="' + idarticulo + '">' +
-                    articulo + '</td><td><input type="hidden" name="cantidad[]" value="' + cantidad + '">' + cantidadVer
-                     +
-                    '</td><td class="success"><input type="hidden" name="precio_venta[]" value="' + precio_venta +
-                    '">' + verPreciod + '</td><td class="success">' + numDecimal(subtotal[cont]) +
-                    '</td><td class="warning"><input type="hidden" name="precio_venta_p[]" value="' +
-                    dividir(multiplicar(precio_venta_p)) +
-                    '">' + formatMoney(verPreciop, 2, ',', '.') + '</td><td class="warning">' + formatMoney(
-
-                            numDecimal(subtotalp[cont]) * tasaP, 2, ',', '.') +
-                    '</td><td  class="success"><input type="hidden" name="precio_venta_tp[]" value="' +
-                        dividir(multiplicar(precio_venta_tp)) + '">' + formatMoney(verPreciotp, 2, ',', '.') + '</td><td class="success">' +
-                    formatMoney(numDecimal(subtotaltp[cont]) * tasaTP, 2, ',', '.') +
-                    '</td><td class="warning"><input type="hidden" name="precio_venta_m[]" value="' +
-                        dividir(multiplicar(precio_venta_m)) +
-                    '">' + formatMoney(verPreciom, 2, ',', '.') + '</td><td class="warning">' + formatMoney(
-                        numDecimal(subtotalm[cont]) * tasaM, 2, ',', '.') +
-                    '</td><td class="success"><input name="precio_costo_unidad[]" type="hidden" value="'+dividir(multiplicar(precio_venta_c))+'"><input type="hidden" name="precio_venta_e[]" value="' +
-                        dividir(multiplicar(precio_venta_e)) +
-                    '">' + formatMoney(verPrecioe, 2, ',', '.') + '</td><td class="success">' + formatMoney(
-                        numDecimal(subtotale[cont]) * tasaE, 2, ',', '.') + '</td><td><input type="hidden" name="descuento[]" value="' +
-                    parseFloat(descuento) + '">' + parseFloat(descuento) + '<input type="hidden" name="porEspecial[]" value="'+jporEspecial+'"></td></tr>';
-                cont++
+    //         if (stock >= cantidad) {
+    //             subtotal[cont]      = (cantidad * precio_venta - descuento);
+    //             subtotalPC[cont]    = (cantidad * precio_venta_c);
+    //             subtotald[cont]     = (cantidad * precio_venta_d - descuento);
+    //             subtotalp[cont]     = (cantidad * precio_venta_p - descuento);
+    //             subtotaltp[cont]    = (cantidad * precio_venta_tp - descuento);
+    //             subtotalm[cont]     = (cantidad * precio_venta_m - descuento);
+    //             subtotale[cont]     = (cantidad * precio_venta_e);
+    //             subtotalc[cont]     = (cantidad * precio_venta_c);
 
 
 
-                clear();
-                // $("#total").html("<h4>$. " + total.toFixed(2) + "</h4>");
 
-                $("#totald").html("<h4 class='text-bold text-primary'>$. " + numDecimal(total_d * tasaD)+
-                    "</h4>");
-                $("#totalp").html("<h4 class='text-bold text-primary'>$. " + formatMoney(numDecimal(total_p) * tasaP, 2, ',',
-                        '.') +
-                    "</h4>");
-                $("#totaltp").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_tp) * tasaTP, 2,
-                    ',',
-                    '.') + "</h4>");
-                $("#totalm").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_m) * tasaM, 2, ',',
-                    '.') + "</h4>");
-                $("#totale").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_e) * tasaE, 2, ',',
-                    '.') + "</h4>");
+    //             total = total + subtotal[cont];
 
-                $("#PagoTtotal").html(numDecimal(total)); //aqui
+    //             precio_costo = precio_costo + subtotalc[cont];
 
 
-                // verify(); deplega el div gestion de pagos
-                mostrarBonotesPago();
-                $("#detalles").append(fila);
-                // alert('resta');
-                $("#DMontoDolar").keyup();
-                $("#DMontoPeso").keyup();
-                $("#DMontoBolivar").keyup();
-                $("#DMontoPunto").keyup();
-                $("#DMontoTrans").keyup();
-                $('#gestionpago').hide("linear");
-            } else {
-                alert('La cantidad a vender supera el stock...!');
-                $("#jcantidad").val('');
-            }
+    //             $("#precio_costo").val(precio_costo);
 
-        } else {
-            alert("Error al ingresar el detalle de la venta, revise los datos del articulo");
-        }
-    };
+
+    //             total_costo = total_costo + subtotalPC[cont];
+    //             total_d     = total_d + subtotald[cont];
+    //             total_p     = total_p + subtotalp[cont];
+    //             total_tp    = total_tp + subtotaltp[cont];
+    //             total_m     = total_m + subtotalm[cont];
+    //             total_e     = total_e + subtotale[cont];
+
+
+
+    //             verPreciod      = $("#jprecio_venta_dolar").val();
+    //             verPreciop      = $("#jprecio_venta_peso").val();
+    //             verPreciotp     = $("#jprecio_venta_trans_punto").val();
+    //             verPreciom      = $("#jprecio_venta_mixto").val();
+    //             verPrecioe      = $("#jprecio_venta_Efectivo").val();
+
+    //             // alert('nada');
+    //             if (descuento == "") {
+    //                 descuento = 0;
+    //             }
+
+    //             if (isKilo) {
+    //                 cantidadVer = cantidadMostrar;
+    //             } else {
+    //                 cantidadVer  = cantidad;
+    //             }
+    //             // $("#total_venta").val(total.toFixed(2));
+    //             $("#precio_costo").val(numDecimal(total_costo));
+    //             $("#total_ventad").val(numDecimal(total_d));
+    //             $("#total_ventap").val(numDecimal(total_p));
+    //             $("#total_ventatp").val(numDecimal(total_tp));
+    //             $("#total_ventam").val(numDecimal(total_m));
+    //             $("#total_ventae").val(numDecimal(total_e));
+
+    //             var fila = '<tr class="selected" id="fila' + cont +
+    //                 '"><td><button type="button" class="btn btn-warning btn-xs" onclick="eliminar(' + cont +
+    //                 ');">X</button></td><td><input type="hidden" name="idarticulo[]" value="' + idarticulo + '">' +
+    //                 articulo + '</td><td><input type="hidden" name="cantidad[]" value="' + cantidad + '">' + cantidadVer
+    //                  +
+    //                 '</td><td class="success"><input type="hidden" name="precio_venta[]" value="' + precio_venta +
+    //                 '">' + verPreciod + '</td><td class="success">' + numDecimal(subtotal[cont]) +
+    //                 '</td><td class="warning"><input type="hidden" name="precio_venta_p[]" value="' +
+    //                 dividir(multiplicar(precio_venta_p)) +
+    //                 '">' + formatMoney(verPreciop, 2, ',', '.') + '</td><td class="warning">' + formatMoney(
+
+    //                         numDecimal(subtotalp[cont]) * tasaP, 2, ',', '.') +
+    //                 '</td><td  class="success"><input type="hidden" name="precio_venta_tp[]" value="' +
+    //                     dividir(multiplicar(precio_venta_tp)) + '">' + formatMoney(verPreciotp, 2, ',', '.') + '</td><td class="success">' +
+    //                 formatMoney(numDecimal(subtotaltp[cont]) * tasaTP, 2, ',', '.') +
+    //                 '</td><td class="warning"><input type="hidden" name="precio_venta_m[]" value="' +
+    //                     dividir(multiplicar(precio_venta_m)) +
+    //                 '">' + formatMoney(verPreciom, 2, ',', '.') + '</td><td class="warning">' + formatMoney(
+    //                     numDecimal(subtotalm[cont]) * tasaM, 2, ',', '.') +
+    //                 '</td><td class="success"><input name="precio_costo_unidad[]" type="hidden" value="'+dividir(multiplicar(precio_venta_c))+'"><input type="hidden" name="precio_venta_e[]" value="' +
+    //                     dividir(multiplicar(precio_venta_e)) +
+    //                 '">' + formatMoney(verPrecioe, 2, ',', '.') + '</td><td class="success">' + formatMoney(
+    //                     numDecimal(subtotale[cont]) * tasaE, 2, ',', '.') + '</td><td><input type="hidden" name="descuento[]" value="' +
+    //                 parseFloat(descuento) + '">' + parseFloat(descuento) + '<input type="hidden" name="porEspecial[]" value="'+jporEspecial+'"></td></tr>';
+    //             cont++
+
+
+
+    //             clear();
+    //             // $("#total").html("<h4>$. " + total.toFixed(2) + "</h4>");
+
+    //             $("#totald").html("<h4 class='text-bold text-primary'>$. " + numDecimal(total_d * tasaD)+
+    //                 "</h4>");
+    //             $("#totalp").html("<h4 class='text-bold text-primary'>$. " + formatMoney(numDecimal(total_p) * tasaP, 2, ',',
+    //                     '.') +
+    //                 "</h4>");
+    //             $("#totaltp").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_tp) * tasaTP, 2,
+    //                 ',',
+    //                 '.') + "</h4>");
+    //             $("#totalm").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_m) * tasaM, 2, ',',
+    //                 '.') + "</h4>");
+    //             $("#totale").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_e) * tasaE, 2, ',',
+    //                 '.') + "</h4>");
+
+    //             $("#PagoTtotal").html(numDecimal(total)); //aqui
+
+
+    //             // verify(); deplega el div gestion de pagos
+    //             mostrarBonotesPago();
+    //             $("#detalles").append(fila);
+    //             // alert('resta');
+    //             $("#DMontoDolar").keyup();
+    //             $("#DMontoPeso").keyup();
+    //             $("#DMontoBolivar").keyup();
+    //             $("#DMontoPunto").keyup();
+    //             $("#DMontoTrans").keyup();
+    //             $('#gestionpago').hide("linear");
+    //         } else {
+    //             alert('La cantidad a vender supera el stock...!');
+    //             $("#jcantidad").val('');
+    //         }
+
+    //     } else {
+    //         alert("Error al ingresar el detalle de la venta, revise los datos del articulo");
+    //     }
+    // };
 
     function clear() {
         $("#jcantidad").val("");
@@ -2204,24 +2954,293 @@ console.log('Falta '+minutes);
 
     // Gestion de pagos
 
+    $('.Can_Dolar').keyup(function() {
+
+        var limite = parseInt($("#deuda").val());
+        var nuevo_valor =  $(this).val();
+        var importe_total = 0;
+
+        $(".Can_Dolar").each(
+            function(index, value) {
+                if ( $.isNumeric($(this).val()) ){
+                    importe_total += parseInt($(this).val());
+                }
+            }
+            );
+
+            let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
+            let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
+
+            let precioDolarReal = limite + importe_total;
+
+
+            $("#deuda2").val(precioDolarReal);
+            $("#deuda2Peso").val(precioDolarReal * tasaPesoHabitacion);
+            $("#deuda2Bolivar").val(precioDolarReal * tasaDolarHabitacion);
+    });
+
+    $('.Can_Peso').keyup(function() {
+
+        var limite = parseInt($("#deuda").val());
+        var nuevo_valor =  $(this).val();
+        var importe_total = 0;
+
+        $(".Can_Peso").each(
+            function(index, value) {
+                if ( $.isNumeric($(this).val()) ){
+                importe_total += parseInt($(this).val());
+            }
+            }
+        );
+
+        let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
+        let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
+
+            let montoBase = importe_total;
+            let montoBaseA = importe_total / tasaPesoHabitacion;
+            let precioDolarReal = limite + (importe_total / tasaPesoHabitacion);
+
+
+
+        $("#deuda2").val(precioDolarReal);
+        $("#deuda2Peso").val(precioDolarReal * tasaPesoHabitacion);
+        $("#deuda2Bolivar").val(precioDolarReal * tasaDolarHabitacion);
+    });
+
+    $('.Can_Bolivar').keyup(function() {
+
+        var limite = parseInt($("#deuda").val());
+        var nuevo_valor =  $(this).val();
+        var importe_total = 0;
+
+        $(".Can_Bolivar").each(
+            function(index, value) {
+                if ( $.isNumeric($(this).val()) ){
+                importe_total += parseInt($(this).val());
+            }
+            }
+        );
+
+        let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
+        let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
+
+            let precioDolarReal = limite + importe_total;
+
+
+        $("#deuda2").val(precioDolarReal);
+        $("#deuda2Peso").val(precioDolarReal * tasaPesoHabitacion);
+        $("#deuda2Bolivar").val(precioDolarReal * tasaDolarHabitacion);
+    });
+
+// $('.Can_Produc').keyup(function() {
+
+// var limite = parseInt($("#deuda").val());
+// var nuevo_valor =  $(this).val();
+// var importe_total = 0;
+
+// $(".Can_Produc").each(
+//     function(index, value) {
+//         if ( $.isNumeric($(this).val()) ){
+//           importe_total += parseInt($(this).val());
+//        }
+//     }
+//   );
+
+//   let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
+//   let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
+
+//     let precioDolarReal = limite + importe_total;
+
+
+//   $("#deuda2").val(precioDolarReal);
+//   $("#deuda2Peso").val(precioDolarReal * tasaPesoHabitacion);
+//   $("#deuda2Bolivar").val(precioDolarReal * tasaDolarHabitacion);
+// });
+
     /* Restar dos números. */
+    // $("#PagoTtotalV").html(numDecimal(total));
+
     function resta() {
         // alert('resta');
         const RestaTotal    = document.getElementById('RestaTtotal');
+        const Excdt    = document.getElementById('excdt');
         const PagoTtotal    = document.getElementById('PagoTtotal');
         const spTotal       = document.getElementById('spTotal');
         const tp            = document.getElementById('tp');
         const r             = document.getElementById('r');
         const tap           = document.getElementById('tap');
+        const RestaTotalV    = document.getElementById('RestaTtotalV');
+        // const PagoTtotalV    = document.getElementById('PagoTtotalV');
+        // const spTotalV       = document.getElementById('spTotalV');
+        // const tpV            = document.getElementById('tp');
+        // const rV             = document.getElementById('r');
+        // const tapV           = document.getElementById('tap');
 
 
+
+        let Exc = $('#pagoConExcedente').val();
+
+
+        if(Exc > 0){
+            pagoExc = Exc;
+
+            pagoExced = Exc;
+
+            if(pagoExced > 0){
+
+                var dispExcedente = $("#dispExcedente").val();
+
+                var dispExced = dispExcedente - pagoExced;
+
+                // 0.1 <= (0.3 - 0.2)                              // false
+                dispExced = new Decimal(dispExced);
+                // dispExced.lessThanOrEqualTo(Decimal(0.3).minus(0.2))    // true
+                // new Decimal(-1).lte(x)
+                var validarDispExced = dispExced.isNeg();
+                // alert(validarDispExced);
+
+                $("#dispExcedenteShow").html('$'+dispExced.toFixed(2));
+            }
+            if (validarDispExced){
+                alert('El montoddd disponible no supera el monto a pagar... Credito disponible es de: $'+dispExcedente+ ' y el monto que decea pagar es de: $'+dispExced.toFixed(2));
+                pagoExc = 0;
+                excedenteDispSet = $("#dispExcedente").val();
+                $('#pagoConExcedente').val('');
+                $("#dispExcedenteShow").html('$'+excedenteDispSet);
+            }
+
+        }else{
+            pagoExc = 0;
+            excedenteDispSet = $("#dispExcedente").val();
+            $('#pagoConExcedente').val('');
+            $("#dispExcedenteShow").html('$'+excedenteDispSet);
+        }
+
+
+        // let Cred = $('#pagoConCredito').val();
+
+
+        // if(Cred > 0){
+
+        //     pagoCred = Cred;
+
+        //     if(pagoCred > 0){
+        //         let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+        //         // alert(deuda_credito_pendiente);
+        //         let limite_fecha_credito = $("#limite_fecha").val();
+        //         let limite_monto_credito = $("#limite_monto").val();
+        //         let credito_disponible = 0;
+
+        //         if (deuda_credito_pendiente) {
+        //             credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+        //         }else{
+        //             credito_disponible = limite_monto_credito;
+        //         }
+
+        //         $("#dispCredito").val(credito_disponible);
+
+
+        //         let dispCredito = credito_disponible - pagoCred;
+
+        //         $("#dispCreditoShow").html('$'+dispCredito);
+
+        //         // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+        //         if (credito_disponible > 0) {
+        //             // alert('es mayor puede continuar costo '+ costo);
+        //             credito_disponible_total_operacion = credito_disponible - pagoCred;
+
+        //             if (credito_disponible_total_operacion >= 0) {
+        //                 // DMontoDolar();
+
+
+        //                 // $("#form1").submit();
+        //             }else{
+        //                 alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' y el monto que decea pagar es de: $'+pagoCred);
+        //                 pagoCred = 0;
+        //                 $('#pagoConCredito').val('');
+        //                 $("#dispCreditoShow").html('$'+credito_disponible);
+        //             }
+
+        //         }
+
+        //     }
+        // }else{
+        //     pagoCred = 0;
+        //     creditoDispSet = $("#dispCredito").val();
+        //     $('#pagoConCredito').val('');
+        //     $("#dispCreditoShow").html('$'+creditoDispSet);
+        // }
 
         var valor           = PagoTtotal.innerHTML;
-        var valor_restar    = spTotal.innerHTML;
-        var resta           = numDecimal(valor -valor_restar);
+        var PagoTotal = PagoTtotal.innerHTML;
 
+        valor = valor - pagoExc - pagoCred;
+        var valor_restar    = spTotal.innerHTML;
+        var resta           = valor - valor_restar;
+        if(Exc > 0){
+            x1 = new Decimal(pagoExc);
+            x2 = new Decimal(resta);
+            x3 = new Decimal(PagoTotal);
+            x4 = x1.plus(x2).equals(x3);
+            // alert(x1);
+            // alert(x2);
+            // alert(x3);
+            // alert(x4);
+            if(x2.isNegative()){
+
+
+
+                pagoExc = 0;
+                excedenteDispSet = $("#dispExcedente").val();
+                $('#pagoConExcedente').val('');
+                $("#dispExcedenteShow").html('$'+excedenteDispSet);
+                resta = x3 - valor_restar;
+                Exc = numDecimal(pagoExc);
+                alert('Error! Debe ingresar un valor menor o igual al monto que resta....');
+
+
+
+            // }else{
+            //     if(x4){
+            //         alert('puede ...');
+            //     }
+            }
+
+        }
+        // var valorV           = PagoTtotalV.innerHTML;
+        // var valor_restarV    = spTotalV.innerHTML;
+        // var restaV           = numDecimal(valorV -valor_restarV);
+        valor = parseFloat(valor);
+        valor_restar = parseFloat(valor_restar);
+        resta = parseFloat(resta);
+
+        Excdt.innerHTML = numDecimal(Exc); //se llena el campo resta
         RestaTotal.innerHTML = numDecimal(resta); //se llena el campo resta
 
+// alert('valor resta = '+ valor_restar + ' valor = ' + valor + 'resta = ' + resta);
+
+            if (valor_restar > valor) {
+               let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
+               let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
+
+            RestaTotalV.innerHTML = numDecimal(resta); //se llena el campo resta
+        PagoTtotalV.innerHTML = numDecimal(resta); //se llena el campo resta
+
+        DMontoDolarV();
+
+            } else {
+                $("#vueltos").hide();
+
+            }
+
+
+
+            if (RestaTotal.innerHTML <= -1) {
+            // alert('soy menor');
+            $("#vueltos").show("linear");
+            $("#guardar").hide("linear");
+            }
 
 
         if (RestaTotal.innerHTML <= 0) {
@@ -2237,13 +3256,37 @@ console.log('Falta '+minutes);
             $("#tap").html("MONTO COMPLETO...");
             $("#r").html("VUELTOS...");
             // verify();
-            $("#guardar").show("linear");;
+            // TODO  boton enviar lo escondemos para usar el lector qr
+            // $("#guardar").show("linear");
+            $("#guardar").show("linear");
+
 
 
 
 
         }
+
+        // if (RestaTotal.innerHTML < 0) {
+        //     // alert('soy menor');
+        //     RestaTotal.classList.remove('text-primary');
+        //     RestaTotal.classList.add('text-danger');
+        //     r.classList.remove('text-primary');
+        //     r.classList.add('text-danger');
+
+        //     PagoTtotal.classList.add('text-success');
+        //     tap.classList.add('text-success');
+
+        //     $("#tap").html("MONTO COMPLETO...");
+        //     $("#r").html("VUELTOS...");
+        //     // verify();
+        //     $("#guardar").show("linear");;
+
+
+
+
+        // }
         if (RestaTotal.innerHTML > 0) {
+
             // alert('soy mayor');
             RestaTotal.classList.remove('text-danger');
             RestaTotal.classList.add('text-primary');
@@ -2256,6 +3299,7 @@ console.log('Falta '+minutes);
             $("#r").html("RESTA");
             $("#tap").html("TOTAL A PAGAR");
             $("#guardar").hide("linear");
+
         }
 
 
@@ -2284,12 +3328,13 @@ console.log('Falta '+minutes);
         });
         // alert(total_suma);
         document.getElementById('spTotal').innerHTML = numDecimal(total_suma);
+        $('#monto_dejado').val(total_suma);
 
     }
 
     function DMontoDolar(){
              // alert('clic');
-             Mdolar      = $("#DMontoDolar").val();
+            Mdolar      = $("#DMontoDolar").val();
             Tdolar      = $("#TasaDolar").val();
             Tpeso       = $("#TasaPeso").val();
             Tbolivar    = $("#TasaBolivar").val();
@@ -2314,6 +3359,7 @@ console.log('Falta '+minutes);
             $("#RestaPunto").val(RmultPu);
             var RmultT      = valor * Ttrans;
             $("#RestaTrans").val(RmultT);
+
         }
 
         function DMontoPeso(){
@@ -2432,34 +3478,523 @@ console.log('Falta '+minutes);
             $("#RestaPunto").val(RmultPu);
             var RmultT = valor * Ttrans;
             $("#RestaTrans").val(RmultT);
+
         }
 
     $(document).ready(function() {
 
-
+        var aprovMontoDolar = 0;
         $("#DMontoDolar").keyup(function() {
+            aprovMontoDolar = 1;
+            $("#isVueltos").val('');
             DMontoDolar();
         });
 
         $("#DMontoPeso").keyup(function() {
+            aprovMontoDolar = 1;
+            $("#isVueltos").val('');
             DMontoPeso();
         });
 
         $("#DMontoBolivar").keyup(function() {
+            aprovMontoDolar = 1;
+            $("#isVueltos").val('');
             DMontoBolivar();
         });
 
         $("#DMontoPunto").keyup(function() {
+            aprovMontoDolar = 1;
+            $("#isVueltos").val('');
             DMontoPunto();
         });
 
         $("#DMontoTrans").keyup(function() {
+            aprovMontoDolar = 1;
+            $("#isVueltos").val('');
             DMontoTrans();
+        });
+
+        $("#pagoConExcedente").keyup(function() {
+            DMontoDolar();
+
+        });
+        $("#pagoConCredito").keyup(function() {
+
+
+            DMontoDolar();
+
+
+
+
+
         });
 
 
 
+
+
     });
+
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /* Restar dos números. */
+    function restaV() {
+                // alert('resta');
+                const RestaTotalV    = document.getElementById('RestaTtotalV');
+                const PagoTtotalV    = document.getElementById('PagoTtotalV');
+                const spTotalV       = document.getElementById('spTotalV');
+                const tpV            = document.getElementById('tpV');
+                const rV             = document.getElementById('rV');
+                const tapV           = document.getElementById('tapV');
+
+
+
+                var valorV           = PagoTtotalV.innerHTML;
+                var valor_restarV    = spTotalV.innerHTML;
+                var restaV           = numDecimal(valorV - valor_restarV);
+
+                RestaTotalV.innerHTML = numDecimal(restaV); //se llena el campo resta
+
+
+
+                if (RestaTotalV.innerHTML >= 0) {
+                    // alert('soy menor');
+                    RestaTotalV.classList.remove('text-primary');
+                    RestaTotalV.classList.add('text-danger');
+                    rV.classList.remove('text-primary');
+                    rV.classList.add('text-danger');
+
+                    PagoTtotalV.classList.add('text-success');
+                    tapV.classList.add('text-success');
+
+                    $("#tapV").html("MONTO COMPLETO...");
+                    $("#rV").html("VUELTOS...");
+                    // verify();
+                    $("#guardar").show("linear");;
+
+
+
+
+                }
+                if (RestaTotalV.innerHTML < 0) {
+
+                    // alert('soy mayor');
+                    RestaTotalV.classList.remove('text-danger');
+                    RestaTotalV.classList.add('text-primary');
+                    rV.classList.remove('text-danger');
+                    rV.classList.add('text-primary');
+
+                    PagoTtotalV.classList.remove('text-success');
+                    tapV.classList.remove('text-success');
+
+                    $("#rV").html("RESTA");
+                    $("#tapV").html("TOTAL A PAGAR");
+                    $("#guardar").hide("linear");
+                }
+
+
+
+                // document.getElementById('RestaTtotal').addClass('btn btn-primary');
+            }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            /* Sumar dos números. */
+            function sumarV() {
+                var total_sumaV = 0;
+                var tsV = 0;
+                $(".montoV").each(function() {
+                    if (isNaN(parseFloat($(this).val()))) {
+                        total_sumaV -= 0;
+                        tsV += 0;
+                    } else {
+                        total_sumaV -= parseFloat($(this).val());
+                        tsV += parseFloat($(this).val());
+                    }
+                });
+                // alert(total_suma);
+                // let md = $('#monto_dejado').val();
+                // rmd = total_sumaV - md;
+                // $('#monto_dejado').val(rmd);
+
+                if(tsV > 0){
+                let md = $('#monto_dejado').val();
+                rmd =  md - tsV;
+                $('#isVueltos').val(tsV);
+                $('#monto_dejado').val(rmd);
+                }
+               document.getElementById('spTotalV').innerHTML = numDecimal(total_sumaV);
+
+            }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    function DMontoDolarV(){
+                     // alert('clic');
+                     MdolarV      = $("#DMontoDolarV").val();
+                    TdolarV      = $("#TasaDolarV").val();
+                    TpesoV       = $("#TasaPesoV").val();
+                    TbolivarV    = $("#TasaBolivarV").val();
+
+
+                    DsupTotalV = MdolarV * TdolarV;
+                    $("#DolarToDolarV").val(DsupTotalV);
+                    $("#DsubTotalV").html(DsupTotalV);
+
+                    sumarV();
+                    restaV();
+                    const RestaV     = document.getElementById('RestaTtotalV');
+                    var valorV       = RestaV.innerHTML;
+                    var RmultDV      = valorV * TdolarV;
+                    $("#RestaDolarV").val(RmultDV);
+                    var RmultPV      = valorV * TpesoV;
+                    $("#RestaPesoV").val(RmultPV);
+                    var RmultBV      = valorV * TbolivarV;
+                    $("#RestaBolivarV").val(RmultBV);
+
+
+                }
+
+                function DMontoPesoV(){
+                    MpesoV       = $("#DMontoPesoV").val();
+                    TdolarV      = $("#TasaDolarV").val();
+                    TpesoV      = $("#TasaPesoV").val();
+                    TbolivarV   = $("#TasaBolivarV").val();
+
+
+                    PsupTotalV = MpesoV / TpesoV;
+                    $("#PesoToDolarV").val(PsupTotalV);
+                    $("#PeSubTotalV").html(PsupTotalV);
+                    $("#RestaPesoV").val();
+                    sumarV();
+                    restaV();
+                    const RestaV = document.getElementById('RestaTtotalV');
+                    var valorV   = RestaV.innerHTML;
+                    var RmultDV  = valorV * TdolarV;
+                    $("#RestaDolarV").val(RmultDV);
+                    var RmultPV  = valorV * TpesoV;
+                    $("#RestaPesoV").val(RmultPV);
+                    var RmultBV  = valorV * TbolivarV;
+                    $("#RestaBolivarV").val(RmultBV);
+
+
+                }
+
+                function DMontoBolivarV(){
+                    MbolivarV = $("#DMontoBolivarV").val();
+                    TdolarV   = $("#TasaDolarV").val();
+                    TpesoV    = $("#TasaPesoV").val();
+                    TbolivarV = $("#TasaBolivarV").val();
+
+
+                    pesoV = $("#RestaPesoV").val();
+                    // 10767280  alert(Mpeso);
+                    BsupTotalV = MbolivarV / TbolivarV;
+                    $("#BolivarToDolarV").val(BsupTotalV);
+                    $("#BoSubTotalV").html(BsupTotalV);
+                    $("#RestaBolivarV").val();
+                    sumarV();
+                    restaV();
+                    const RestaV = document.getElementById('RestaTtotalV');
+                    var valorV = RestaV.innerHTML;
+                    var RmultDV = valorV * TdolarV;
+                    $("#RestaDolarV").val(RmultDV);
+                    var RmultPV = valorV * TpesoV;
+                    $("#RestaPesoV").val(RmultPV);
+                    var RmultBV = valorV * TbolivarV;
+                    $("#RestaBolivarV").val(RmultBV);
+
+
+                }
+
+
+
+
+
+            $(document).ready(function() {
+
+
+                $("#DMontoDolarV").keyup(function() {
+                    $("#isVueltos").val('');
+                    DMontoDolarV();
+                });
+
+                $("#DMontoPesoV").keyup(function() {
+                    $("#isVueltos").val('');
+                    DMontoPesoV();
+                });
+
+                $("#DMontoBolivarV").keyup(function() {
+                    $("#isVueltos").val('');
+                    DMontoBolivarV();
+                });
+
+
+
+
+
+            });
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    $("#cargarDolarV").on('click', function() {
+        // alert('2');
+            if(vcargarV == 0){
+                // alert('0');
+                vcargarV = 1;
+                vcargarpV = 0;
+                vcargarbV = 0;
+
+                $("#isVueltos").val('');
+
+                $("#DMontoPesoV").val('');
+                DMontoPesoV();
+                $("#DMontoBolivarV").val('');
+                DMontoBolivarV();
+
+                let RdV    = document.getElementById('RestaDolarV').value;
+
+                RdV = -1 * RdV;
+                // alert('valor = '+RdV);
+                $("#DMontoDolarV").val(RdV);
+                DMontoDolarV();
+            }else{
+                // alert('1');
+                vcargarV = 0;
+                $("#DMontoDolarV").val('');
+                $("#isVueltos").val('');
+                DMontoDolarV();
+            }
+        });
+
+        $("#cargarPesoV").on('click', function() {
+
+            if(vcargarpV == 0){
+                vcargarpV = 1;
+                vcargarV = 0;
+                vcargarbV = 0;
+
+
+
+                $("#isVueltos").val('');
+                $("#DMontoDolarV").val('');
+                DMontoDolarV();
+                $("#DMontoBolivarV").val('');
+                DMontoBolivarV();
+                let RpV    = document.getElementById('RestaPesoV').value;
+
+                RpV = -1 * RpV;
+                $("#DMontoPesoV").val(RpV);
+                DMontoPesoV();
+            }else{
+                vcargarpV = 0;
+                $("#isVueltos").val('');
+                $("#DMontoPesoV").val('');
+                DMontoPesoV();
+            }
+        });
+
+        $("#cargarBolivarV").on('click', function() {
+            if(vcargarbV == 0){
+                vcargarbV = 1;
+                vcargarV = 0;
+                vcargarpV = 0;
+
+
+                $("#isVueltos").val('');
+
+                $("#DMontoPesoV").val('');
+                DMontoPesoV();
+                $("#DMontoDolarV").val('');
+                DMontoDolarV();
+                let RbV    = document.getElementById('RestaBolivarV').value;
+
+                RbV = -1 * RbV;
+                $("#DMontoBolivarV").val(RbV);
+                DMontoBolivarV();
+            }else{
+                vcargarbV = 0;
+                $("#isVueltos").val('');
+                $("#DMontoBolivarV").val('');
+                DMontoBolivarV();
+            }
+        });
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        try {
+
+
+            onScan.attachTo(document, {
+                //configuración del sufijo/ tecla esperada al finalizar la lectura del scan, esto indica a onScan la finalización del evento
+                suffixKeyCodes: [13],
+                minLength: 2,
+                onScan: function(barcode) { //función callback que se dispara después de una lectura
+                    console.log(barcode)
+                        // alert(barcode);
+                        // window.livewire.emit('doCheckOut', barcode, 2) //emitimos el evento para consultar la info y cobrar el ticket
+                        let nombreHabitacionBarcode = $("#nombreHabitacionBarcode").val();
+                        // alert(nombreHabitacionBarcode);
+                        var n = barcode;
+                        // alert(n);
+                        // return false;
+                        // $('#btnImprimir').focusout();
+                        // let cliente_id = $("#cliente_id").val();
+
+                        // if(cliente_id == 0 || cliente_id == null){
+                        //     alert('No has seleccionado un cliente...!');
+                        //     return false;
+                        // }
+
+                        if (barcode == nombreHabitacionBarcode) {
+                            // alert('es igual barcode');
+                            // return false;
+                            modoPagoOn = $('#modo_pago').val();
+                            tipoPago = $('#tipo_pago').val();
+                            monto_dejadoR = $('#monto_dejado').val();
+                            // alert(monto_dejadoR);
+
+                            if (modoPagoOn == 'contado') {
+                                if(cliente_id == 0 || cliente_id == null){
+                                    alert('No has seleccionado un cliente...!');
+                                    return false;
+                                }
+                                if(tipoPago == 0 || tipoPago == null){
+                                    alert('No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...');
+                                    return false;
+                                }
+
+                                if(monto_dejadoR == 0 || monto_dejadoR == null){
+                                    alert('No has ingresado el monto a pagar...!');
+                                    return false;
+                                }
+
+                                // alert('contado');
+                                $("#form1").submit();
+                            }else if (modoPagoOn == 'cortesia'){
+                                let cliente_id = $("#cliente_id").val();
+
+                                if(cliente_id == 0 || cliente_id == null){
+                                    alert('No has seleccionado un cliente...!');
+                                    return false;
+                                }
+                                $("#form1").submit();
+                            }else if (modoPagoOn == 'credito') {
+                                let cliente_id = $("#cliente_id").val();
+
+                                if(cliente_id == 0 || cliente_id == null){
+                                    alert('No has seleccionado un cliente...!');
+                                    return false;
+                                }
+                                let estado_credito = $("#estado_credito").val();
+                                if (estado_credito == 'Moroso') {
+                                    alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
+                                } else {
+
+
+                                    addHabitacion();
+                                    $("#monto_dejado").val(0);
+                                    $('#modo_pago').val('credito');
+                                    let costo = $("#total_costo").val();
+                                    // alert('total costo '+costo);
+                                    let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+                                    // alert(deuda_credito_pendiente);
+                                    let limite_fecha_credito = $("#limite_fecha").val();
+                                    let limite_monto_credito = $("#limite_monto").val();
+
+                                    if (deuda_credito_pendiente) {
+                                        let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+                                        // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+                                        if (credito_disponible > 0) {
+                                            // alert('es mayor puede continuar costo '+ costo);
+                                            let credito_disponible_total_operacion = credito_disponible - costo;
+
+                                            if (credito_disponible_total_operacion >= 0) {
+                                                // alert('puede seguir');
+                                                $("#form1").submit();
+                                            }else{
+                                                alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+                                            }
+
+                                        }else{
+                                            alert('El cliente no tiene Credito...');
+                                        }
+                                    } else {
+                                        // alert('no hay deuda pendiente');
+                                        let credito_disponible = limite_monto_credito;
+                                        // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+                                        if (credito_disponible > 0) {
+                                            // alert('es mayor puede continuar costo '+ costo);
+                                            let credito_disponible_total_operacion = credito_disponible - costo;
+
+                                            if (credito_disponible_total_operacion >= 0) {
+                                                // alert('puede seguir');
+                                                $("#form1").submit();
+                                            }else{
+                                                alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+                                            }
+
+                                        }else{
+                                        alert('El cliente no tiene Credito...');
+                                        }
+                                    }
+
+
+                                }
+                            }else{
+                                let cliente_id = $("#cliente_id").val();
+
+                                if(cliente_id == 0 || cliente_id == null){
+                                    alert('No has seleccionado un cliente...!');
+                                    return false;
+                                }
+                                alert('No has seleccionado un modo de pago! ... (Contado, Crédito o Cortesía.)');
+                            }
+                        }else{
+                            alert('¡Error al Ingresar el QR!... Por favor Ingrese el QR correcto. (llave incorrecta)');
+                            return false;
+                        }
+                },
+
+                // onScanError: function(e) { //función callback para captura de errores de lectura
+                //     console.log('Error de lectura' + e[0]);
+                //     // toastr.error('', 'Error de lectura' + e)
+                // },
+                onScanError: function(err) {
+                    var sFormatedErrorString = "Error Details: {\n";
+                    for (var i in err) {
+                        sFormatedErrorString += '    ' + i + ': ' + err[i] + ",\n";
+                    }
+                    sFormatedErrorString = sFormatedErrorString.trim().replace(/,$/, '') + "\n}";
+                    console.log("[onScanError]: " + sFormatedErrorString);
+                }
+
+            })
+            // alert('OnScan ready!');
+            // toastr.success('', 'OnScan ready!')
+
+        } catch (e) { //captura de errores generales de inicialización de onscan.js
+            alert('Error OnScan' + e);
+            // toastr.error('', 'Error OnScan' + e)
+        }
+
+    })
+
 
 </script>
 @endpush

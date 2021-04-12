@@ -19,7 +19,9 @@ class CreateVentasTable extends Migration
             $table->string('serie_comprobante', 20);
             $table->string('num_comprobante', 20);
             $table->datetime('fecha_hora');
+            $table->enum('modo_pago', ['Contado', 'Crédito', 'Cortesía']);
             $table->string('tipo_pago', 20);
+            $table->enum('status', ['Pagado', 'Falta pagar', 'Exonerado']);
             $table->decimal('tasaDolar', 25, 2)->nullable();
             $table->decimal('porDolar', 25, 2)->nullable();
             $table->decimal('tasaPeso', 25, 2)->nullable();

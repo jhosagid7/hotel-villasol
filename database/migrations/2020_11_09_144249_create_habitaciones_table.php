@@ -19,7 +19,7 @@ class CreateHabitacionesTable extends Migration
             $table->foreignId('level_id')->references('id')->on('levels');
             $table->string('nombre', 20);
             $table->enum('estado', ['Activa', 'Eliminada']);
-            $table->enum('status', ['Desocupada', 'Ocupada', 'Limpieza','Reparaciones'])->nullable();
+            $table->enum('status', ['Disponible', 'Ocupada', 'Limpieza','Finalizando','En reparacion'])->nullable();
             $table->timestamps();
         });
     }

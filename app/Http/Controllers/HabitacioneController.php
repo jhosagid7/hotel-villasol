@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Cat;
 use App\Level;
+use App\Servicio;
 use App\Habitacione;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
@@ -67,9 +68,18 @@ class HabitacioneController extends Controller
      * @param  \App\Habitacione  $habitacione
      * @return \Illuminate\Http\Response
      */
-    public function show(Habitacione $habitacione)
+    public function show($id)
     {
-        //
+
+
+
+        $habitacion = Habitacione::findOrFail($id);
+        $habitacion->status = 'Disponible';
+        $habitacion->update();
+
+        return redirect()
+        ->route('checkout.index')
+        ->with('status_success', 'La habitacion fue cerrada  exitosamente');
     }
 
     /**

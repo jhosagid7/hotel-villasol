@@ -35,7 +35,7 @@ class ProveedorController extends Controller
     {
         return view('compras.proveedor.create');
     }
-    public function store(PersonaFormRequest $request)
+    public function store(Request $request)
     {
         //creamos un objeto del modelo categoria
         $persona                    = new Persona;
@@ -65,7 +65,7 @@ class ProveedorController extends Controller
     {
         return view("compras.proveedor.edit", ["persona" => Persona::findOrFail($id)]);
     }
-    public function update(PersonaFormRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $persona                    = Persona::findOrFail($id);
         $persona->nombre            = $request->get('nombre');
