@@ -3886,18 +3886,24 @@ $('#infoPago').hide();
 
 
 
+                // TODO utilizamos la libreria decimal.js para realizar operaciones de comparacion en el precio de las habitaciones
 
 
                     $('.detalle').show("swing");
 
+                    x1 = new Decimal(precio);
 
-                    if (numDecimal(precio) > numDecimal(precioVieja)) {
-                        // alert('mayor');
+                    y1 = new Decimal(precioVieja);
+
+
+                    if (x1.greaterThan(y1)) {
+                        alert('mayor');
                         $('#btnPago').show("swing");
                         $('#infoQR').hide("swing");
                         $('#infoPago').show("swing");
                     }
-                    if (precio <= precioVieja) {
+                    if (x1.lessThanOrEqualTo(y1)) {
+                        alert('menor o igual');
                         $('#btnPago').hide("swing");
                         $('#infoQR').show("swing");
                         $('#infoPago').hide("swing");
@@ -3910,14 +3916,15 @@ $('#infoPago').hide();
                             // for(var i = 0; i < origens.length; i++){
                             // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
                             // }
-                        }else{
-                            $('.detalle').hide("swing");
-                            $('#procesarServicio').hide("swing");
-                            $('#btnPago').hide("swing");
-                            $('#infoQR').hide("swing");
-                            $('#infoPago').hide("swing");
+                }else{
+                    alert('no precio');
+                    $('.detalle').hide("swing");
+                    $('#procesarServicio').hide("swing");
+                    $('#btnPago').hide("swing");
+                    $('#infoQR').hide("swing");
+                    $('#infoPago').hide("swing");
 
-                        }
+                }
 
 
 
