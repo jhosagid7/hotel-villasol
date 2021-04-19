@@ -58,6 +58,10 @@ class Caja extends Model
         return $this->hasMany(Excedentes_Recibidos_Caja_Actual::class);
     }
 
+    public function historial_vueltos_pendientes(){
+        return $this->hasMany(Historial_Vueltos_Pendiente::class);
+    }
+
     public function pago_ventas()
     {
         return $this->hasManyThrough(Pago_Venta::class, Venta::class);

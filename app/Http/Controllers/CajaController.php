@@ -17,6 +17,7 @@ use App\Pago_Servicio;
 use App\Detalle_credito;
 use App\Excedentes_Pendientes_Caja_Anterior;
 use App\Excedentes_Recibidos_Caja_Actual;
+use App\Historial_Vueltos_Pendiente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -424,64 +425,81 @@ class CajaController extends Controller
     // TODO Traer los vueltos pendientes de las cajas ateriores
 
 
-    $vueltosPendientesCajaAnterior = Excedentes_Pendientes_Caja_Anterior::where('Registrado_por','Sistema')->where('caja_id', '<>',$cajas->id)->latest('id')->first();
-    // return $vueltosPendientesCajaAnterior;
+    // $vueltosPendientesCajaAnterior = Excedentes_Pendientes_Caja_Anterior::where('Registrado_por','Sistema')->where('caja_id', '<>',$cajas->id)->latest('id')->first();
+    // // return $vueltosPendientesCajaAnterior;
 
-        if ($vueltosPendientesCajaAnterior) {
-            $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDivisa = $vueltosPendientesCajaAnterior->Dolar;
-            $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDolar = $vueltosPendientesCajaAnterior->Dolar_To_Dolar;
-            $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDivisa = $vueltosPendientesCajaAnterior->Peso;
-            $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDolar = $vueltosPendientesCajaAnterior->Peso_To_Dolar;
-            $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDivisa = $vueltosPendientesCajaAnterior->Punto;
-            $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDolar = $vueltosPendientesCajaAnterior->Punto_To_Dolar;
-            $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDivisa = $vueltosPendientesCajaAnterior->Transferencia;
-            $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDolar = $vueltosPendientesCajaAnterior->Trans_To_Dolar;
-            $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDivisa = $vueltosPendientesCajaAnterior->Bolivar;
-            $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDolar = $vueltosPendientesCajaAnterior->Bolivar_To_Dolar;
-            $cajas->VueltosCajaAnteriorPendientesOperador = $vueltosPendientesCajaAnterior->Operador;
-            $cajas->VueltosCajaAnteriorPendientesOperadorId = $vueltosPendientesCajaAnterior->Operador_id;
+    //     if ($vueltosPendientesCajaAnterior) {
+    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDivisa = $vueltosPendientesCajaAnterior->Dolar;
+    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDolar = $vueltosPendientesCajaAnterior->Dolar_To_Dolar;
+    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDivisa = $vueltosPendientesCajaAnterior->Peso;
+    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDolar = $vueltosPendientesCajaAnterior->Peso_To_Dolar;
+    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDivisa = $vueltosPendientesCajaAnterior->Punto;
+    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDolar = $vueltosPendientesCajaAnterior->Punto_To_Dolar;
+    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDivisa = $vueltosPendientesCajaAnterior->Transferencia;
+    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDolar = $vueltosPendientesCajaAnterior->Trans_To_Dolar;
+    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDivisa = $vueltosPendientesCajaAnterior->Bolivar;
+    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDolar = $vueltosPendientesCajaAnterior->Bolivar_To_Dolar;
+    //         $cajas->VueltosCajaAnteriorPendientesOperador = $vueltosPendientesCajaAnterior->Operador;
+    //         $cajas->VueltosCajaAnteriorPendientesOperadorId = $vueltosPendientesCajaAnterior->Operador_id;
+    //     }
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //TODO Traer los vueltos pendientes de las cajas ateriores
+// return $cajas->id;
+        if ($cajas->estado == 'Cerrada') {
+            $vueltosPendientesCajaAnterior = Historial_Vueltos_Pendiente::where('caja_id','<>', $cajas->id)->get();
+        }
+        if ($cajas->estado == 'Abierta'){
+            $vueltosPendientesCajaAnterior = Historial_Vueltos_Pendiente::where('caja_id', '<>', $cajas->id)->get();
         }
 
 
 
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    // TODO Traer los vueltos pendientes de las cajas ateriores
-
-        // $vueltosPendientesCajaAnterior = Excedentes_Recibidos_Caja_Actual::where('caja_id', '<>', $cajas->id)->get();
-
-        // foreach ($vueltosPendientesCajaAnterior as $TotalVuetosPendientesCajaAnterior) {
-        //     if ($TotalVuetosPendientesCajaAnterior->Estado == 'Pendiente') {
-        //         if ($TotalVuetosPendientesCajaAnterior->Divisa == 'Dolar') {
-        //             $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDivisa = $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDivisa  + $TotalVuetosPendientesCajaAnterior->MontoDivisa;
-        //             $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDolar = $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDolar  + $TotalVuetosPendientesCajaAnterior->MontoDolar;
-        //         }elseif ($TotalVuetosPendientesCajaAnterior->Divisa == 'Peso') {
-        //             $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDivisa = $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDivisa  + $TotalVuetosPendientesCajaAnterior->MontoDivisa;
-        //             $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDolar = $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDolar  + $TotalVuetosPendientesCajaAnterior->MontoDolar;
-        //         }elseif ($TotalVuetosPendientesCajaAnterior->Divisa == 'Bolivar') {
-        //             $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDivisa = $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDivisa  + $TotalVuetosPendientesCajaAnterior->MontoDivisa;
-        //             $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDolar = $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDolar  + $TotalVuetosPendientesCajaAnterior->MontoDolar;
-        //         }elseif ($TotalVuetosPendientesCajaAnterior->Divisa == 'Punto') {
-        //             $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDivisa = $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDivisa  + $TotalVuetosPendientesCajaAnterior->MontoDivisa;
-        //             $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDolar = $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDolar  + $TotalVuetosPendientesCajaAnterior->MontoDolar;
-        //         }elseif ($TotalVuetosPendientesCajaAnterior->Divisa == 'Transferencia') {
-        //             $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDivisa = $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDivisa  + $TotalVuetosPendientesCajaAnterior->MontoDivisa;
-        //             $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDolar = $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDolar  + $TotalVuetosPendientesCajaAnterior->MontoDolar;
-        //         }
-        //     }
-        // }
+        foreach ($vueltosPendientesCajaAnterior as $TotalVuetosPendientesCajaAnterior) {
+            if ($TotalVuetosPendientesCajaAnterior->Estado == 'Pendiente') {
+                if ($TotalVuetosPendientesCajaAnterior->Divisa == 'Dolar') {
+                    $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDivisa = $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDivisa  + $TotalVuetosPendientesCajaAnterior->MontoDivisa;
+                    $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDolar = $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDolar  + $TotalVuetosPendientesCajaAnterior->MontoDolar;
+                }elseif ($TotalVuetosPendientesCajaAnterior->Divisa == 'Peso') {
+                    $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDivisa = $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDivisa  + $TotalVuetosPendientesCajaAnterior->MontoDivisa;
+                    $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDolar = $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDolar  + $TotalVuetosPendientesCajaAnterior->MontoDolar;
+                }elseif ($TotalVuetosPendientesCajaAnterior->Divisa == 'Bolivar') {
+                    $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDivisa = $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDivisa  + $TotalVuetosPendientesCajaAnterior->MontoDivisa;
+                    $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDolar = $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDolar  + $TotalVuetosPendientesCajaAnterior->MontoDolar;
+                }elseif ($TotalVuetosPendientesCajaAnterior->Divisa == 'Punto') {
+                    $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDivisa = $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDivisa  + $TotalVuetosPendientesCajaAnterior->MontoDivisa;
+                    $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDolar = $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDolar  + $TotalVuetosPendientesCajaAnterior->MontoDolar;
+                }elseif ($TotalVuetosPendientesCajaAnterior->Divisa == 'Transferencia') {
+                    $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDivisa = $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDivisa  + $TotalVuetosPendientesCajaAnterior->MontoDivisa;
+                    $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDolar = $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDolar  + $TotalVuetosPendientesCajaAnterior->MontoDolar;
+                }
+            }
+        }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // TODO optenemos los datos de la tabla excedente actual
 
-    foreach ($cajas->excedente_actual as $excedenteActual) {
+    if ($cajas->estado == 'Cerrada') {
+        $valor = Historial_Vueltos_Pendiente::where('caja_id', $cajas->id)->get();
+    }
+    if ($cajas->estado == 'Abierta'){
+
+        $valor = $cajas->excedente_actual;
+        // $vueltosPendientesCajaAnterior = Historial_Vueltos_Pendiente::where('caja_id', '<>', $cajas->id)->get();
+    }
+
+    foreach ($valor as $excedenteActual) {
 
         // TODO sacamos los totales devueltos recibidos por excedentes totales
         if ($excedenteActual->Divisa == 'Dolar') {
@@ -523,6 +541,9 @@ class CajaController extends Controller
                 $cajas->SumaVueltosPendientesTransferenciaDivisa = $cajas->SumaVueltosPendientesTransferenciaDivisa  + $excedenteActual->MontoDivisa;
                 $cajas->SumaVueltosPendientesTransferenciaDolar = $cajas->SumaVueltosPendientesTransferenciaDolar  + $excedenteActual->MontoDolar;
             }
+
+            $cajas->TotalSumaVueltosPendienteDolarToDolar = $cajas->TotalSumaVueltosPendienteDolarToDolar + $excedenteActual->MontoDolar;
+
         }elseif($excedenteActual->Estado == 'Devueltos'){
             if ($excedenteActual->Divisa == 'Dolar') {
                 $cajas->SumaVueltosDevueltosDolarDivisa = $cajas->SumaVueltosDevueltosDolarDivisa  + $excedenteActual->MontoDivisa;
@@ -540,6 +561,9 @@ class CajaController extends Controller
                 $cajas->SumaVueltosDevueltosTransferenciaDivisa = $cajas->SumaVueltosDevueltosTransferenciaDivisa  + $excedenteActual->MontoDivisa;
                 $cajas->SumaVueltosDevueltosTransferenciaDolar = $cajas->SumaVueltosDevueltosTransferenciaDolar  + $excedenteActual->MontoDolar;
             }
+
+            $cajas->TotalSumaVueltosDevueltosDolarToDolar = $cajas->TotalSumaVueltosDevueltosDolarToDolar + $excedenteActual->MontoDolar;
+
         }elseif($excedenteActual->Estado == 'PagarOficina'){
             if ($excedenteActual->Divisa == 'Dolar') {
                 $cajas->SumaVueltosPagarOficinaDolarDivisa = $cajas->SumaVueltosPagarOficinaDolarDivisa  + $excedenteActual->MontoDivisa;
@@ -557,6 +581,9 @@ class CajaController extends Controller
                 $cajas->SumaVueltosPagarOficinaTransferenciaDivisa = $cajas->SumaVueltosPagarOficinaTransferenciaDivisa  + $excedenteActual->MontoDivisa;
                 $cajas->SumaVueltosPagarOficinaTransferenciaDolar = $cajas->SumaVueltosPagarOficinaTransferenciaDolar  + $excedenteActual->MontoDolar;
             }
+
+            $cajas->TotalSumaVueltosPagarOficinaDolarToDolar = $cajas->TotalSumaVueltosPagarOficinaDolarToDolar + $excedenteActual->MontoDolar;
+
         }elseif($excedenteActual->Estado == 'ExcedenteNuevo'){
             if ($excedenteActual->Divisa == 'Dolar') {
                 $cajas->SumaVueltosExcedenteNuevoDolarDivisa = $cajas->SumaVueltosExcedenteNuevoDolarDivisa  + $excedenteActual->MontoDivisa;
@@ -576,16 +603,16 @@ class CajaController extends Controller
             }
 
             if($excedenteActual->Tipo == 'Servicio'){
-                $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar = $excedenteActual->MontoDolar;
+                $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar = $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar + $excedenteActual->MontoDolar;
             }
             if($excedenteActual->Tipo == 'Consumo'){
-                $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar = $excedenteActual->MontoDolar;
+                $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar = $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar + $excedenteActual->MontoDolar;
             }
 
             if($excedenteActual->Tipo == 'Otros'){
-                $cajas->TotalSumaVueltosExcedenteNuevoOtrosDolarToDolar = $excedenteActual->MontoDolar;
+                $cajas->TotalSumaVueltosExcedenteNuevoOtrosDolarToDolar = $cajas->TotalSumaVueltosExcedenteNuevoOtrosDolarToDolar + $excedenteActual->MontoDolar;
             }
-            $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar = $excedenteActual->MontoDolar;
+            $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar = $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar + $excedenteActual->MontoDolar;
         }
     }
 
@@ -839,6 +866,8 @@ foreach ($detalle_creditos as $detalleCredito ) {
                 $cajas->SumaTotalTransferenciaVueltos = $cajas->SumaTotalTransferenciaVueltos + $pagoV->MontoDivisa;
             }
 
+            $cajas->totalSumaTotalDolarToDolarVueltos = $cajas->totalSumaTotalDolarToDolarVueltos + $pagoV->MontoDivisa;
+
         }
 
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -889,7 +918,11 @@ foreach ($detalle_creditos as $detalleCredito ) {
                         $cajas->SumaTotalTransferenciaServ = $cajas->SumaTotalTransferenciaServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
                     }
                 }
+
+                $cajas->TotalSumaTotalServDflotante = $cajas->TotalSumaTotalServDflotante + ($pagoS->Vueltos * -1);
             }
+
+
 
         }
 
@@ -1161,7 +1194,29 @@ foreach ($detalle_creditos as $detalleCredito ) {
 
 
 
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // TODO Guardamos en la tabla historial vueltos pendientes para que luego pueda ser consultada si alteracion en el registro
 
+                $vueltos_pendientes_Actuales = Excedentes_Recibidos_Caja_Actual::where('caja_id', $caja_id)->get();
+
+                if($vueltos_pendientes_Actuales){
+                    foreach ($vueltos_pendientes_Actuales as $vtosPtes) {
+                        $historialVueltosPendientes = new Historial_Vueltos_Pendiente();
+                        $historialVueltosPendientes->Tipo = $vtosPtes->Tipo;
+                        $historialVueltosPendientes->Estado = $vtosPtes->Estado;
+                        $historialVueltosPendientes->Divisa = $vtosPtes->Divisa;
+                        $historialVueltosPendientes->MontoDivisa = $vtosPtes->MontoDivisa;
+                        $historialVueltosPendientes->TasaTiket = $vtosPtes->TasaTiket;
+                        $historialVueltosPendientes->MontoDolar = $vtosPtes->MontoDolar;
+                        $historialVueltosPendientes->servicio_id = $vtosPtes->servicio_id;
+                        $historialVueltosPendientes->caja_id = $vtosPtes->caja_id;
+                        $historialVueltosPendientes->save();
+                    }
+                }
+
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 

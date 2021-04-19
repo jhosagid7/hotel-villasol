@@ -48,14 +48,91 @@
 
 
                                 <div class="row">
+                                    <div class="col-sm-2 col-xs-6">
+                                        <div class="description-block border-right">
+                                            <h5 class="description-header">Caja Chica:</h5>
+                                            <h5 class="description-header">Vtos/Pendientes:</h5>
+
+
+
+                                            <h5 class="description-header text-red">&nbsp;&nbsp;&nbsp;</h5>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2 col-xs-6">
+                                        <div class="description-block border-right">
+
+                                            <h5 class="description-header">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesDolarDivisa + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante) - $cajas->SumaTotalDolarVueltos) + ($cajas->SumaVueltosPagarOficinaDolarDivisa)) - ((($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar)) + ($cajas->SumaVueltosPagarOficinaDolarDivisa) + ($cajas->SumaVueltosPendientesDolarDivisa))),2,',','.') ?? ' 0,00' }}</h5>
+                                            <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPendientesDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">DOLAR</span>
+                                            {{-- <input type="hidden" name="dolar_sistema" id="dolar_sistema" value="{{ floatval((($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante + $cajas->SumaVueltosPagarOficinaDolarDivisa) - $cajas->SumaTotalDolarVueltos)) ?? ' 0,00' }}"> --}}
+                                        </div>
+                                        <!-- /.description-block -->
+                                    </div>
+                                    <!-- /.col -->
+                                    <div class="col-sm-2 col-xs-6">
+                                        <div class="description-block border-right">
+
+                                            <h5 class="description-header">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesPesoDivisa + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante) - $cajas->SumaTotalPesoVueltos) + ($cajas->SumaVueltosPagarOficinaPesoDivisa)) - ((($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso)) + ($cajas->SumaVueltosPagarOficinaPesoDivisa) + ($cajas->SumaVueltosPendientesPesoDivisa))),2,',','.') ?? ' 0,00' }}</h5>
+                                            <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">PESO</span>
+                                            {{-- <input type="hidden" name="peso_sistema" id="peso_sistema" value="{{(($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante + $cajas->SumaVueltosPagarOficinaPesoDivisa) - $cajas->SumaTotalPesoVueltos) ?? '00'}}"> --}}
+                                        </div>
+                                        <!-- /.description-block -->
+                                    </div>
+                                    <!-- /.col -->
+                                    <div class="col-sm-2 col-xs-6">
+                                        <div class="description-block border-right">
+
+                                            <h5 class="description-header">Bs. {{ number_format(floatval((($cajas->SumaVueltosPendientesPuntoDivisa + $cajas->monto_punto + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto) + ($cajas->SumaVueltosDevueltosPuntoDivisa + $cajas->SumaTotalPuntoServDflotante) - $cajas->SumaTotalPuntoVueltos) + ($cajas->SumaVueltosPagarOficinaPuntoDivisa)) - ((($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto)) + ($cajas->SumaVueltosPagarOficinaPuntoDivisa) + ($cajas->SumaVueltosPendientesPuntoDivisa))),2,',','.') ?? ' 0,00' }}</h5>
+                                            <h5 class="description-header">Bs. {{ number_format(floatval($cajas->SumaVueltosPendientesPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">PUNTO</span>
+                                            {{-- <input type="hidden" name="punto_sistema" id="punto_sistema" value="{{(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto) + ($cajas->SumaVueltosDevueltosPuntoDivisa + $cajas->SumaTotalPuntoServDflotante + $cajas->SumaVueltosPagarOficinaPuntoDivisa) - $cajas->SumaTotalPuntoVueltos) ?? '00'}}"> --}}
+                                        </div>
+                                        <!-- /.description-block -->
+                                    </div>
+                                    <!-- /.col -->
+
+                                    <div class="col-sm-2 col-xs-6">
+                                        <div class="description-block border-right">
+
+                                            <h5 class="description-header">Bs. {{ number_format(floatval((($cajas->SumaVueltosPendientesTransferenciaDivisa + $cajas->monto_trans + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante) - $cajas->SumaTotalTransferenciaVueltos) + ($cajas->SumaVueltosPagarOficinaTransferenciaDivisa)) - ((($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia)) + ($cajas->SumaVueltosPagarOficinaTransferenciaDivisa) + ($cajas->SumaVueltosPendientesTransferenciaDivisa))),2,',','.') ?? ' 0,00' }}</h5>
+                                            <h5 class="description-header">Bs. {{ number_format(floatval($cajas->SumaVueltosPendientesTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">TRANS</span>
+                                            {{-- <input type="hidden" name="trans_sistema" id="trans_sistema" value="{{(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante + $cajas->SumaVueltosPagarOficinaTransferenciaDivisa) - $cajas->SumaTotalTransferenciaVueltos) ?? '00'}}"> --}}
+                                        </div>
+                                        <!-- /.description-block -->
+                                    </div>
+                                    <!-- /.col -->
+
+                                    <div class="col-sm-2 col-xs-6">
+                                        <div class="description-block">
+
+                                            <h5 class="description-header">Bs. {{ number_format(floatval((($cajas->SumaVueltosPendientesBolivarDivisa + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante) - $cajas->SumaTotalBolivarVueltos) + ($cajas->SumaVueltosPagarOficinaBolivarDivisa)) - ((($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar)) + ($cajas->SumaVueltosPagarOficinaBolivarDivisa) + ($cajas->SumaVueltosPendientesBolivarDivisa))),2,',','.') ?? ' 0,00' }}</h5>
+                                            <h5 class="description-header">Bs. {{ number_format(floatval($cajas->SumaVueltosPendientesBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">EFECTIVO</span>
+                                            {{-- <input type="hidden" name="efectivo_sistema" id="efectivo_sistema" value="{{(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante + $cajas->SumaVueltosPagarOficinaBolivarDivisa) - $cajas->SumaTotalBolivarVueltos) ?? '00'}}"> --}}
+                                        </div>
+                                        <!-- /.description-block -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="box box-info">
+                        <div class="box-header with-border">
+                            <div class="box-header with-border">
+
+
+                                <div class="row">
 
                                     <div class="col-sm-2 col-xs-6">
                                         <div class="description-block border-right">
                                             <span class="description-percentage text-green"><i
                                                     class="fa fa-caret-up"></i>
                                                 {{ $tasaDolar->porcentaje_ganancia ?? ''}}%</span>
-                                            <h5 class="description-header">$. {{ number_format(floatval((($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalConsumoExcedenteNuevoDolar + $cajas->SumaTotalServiciosExcedenteNuevoDolar) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + $cajas->SumaTotalDolarServDflotante) - $cajas->SumaTotalDolarVueltos),2,',','.') ?? ' 0,00' }}</h5>
-                                            <span class="description-text">DOLAR</span><input type="hidden" name="dolar_sistema" id="dolar_sistema" value="{{ floatval((($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalConsumoExcedenteNuevoDolar + $cajas->SumaTotalServiciosExcedenteNuevoDolar) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + $cajas->SumaTotalDolarServDflotante) - $cajas->SumaTotalDolarVueltos) ?? ' 0,00' }}">
+                                            <h5 class="description-header">$. {{ number_format(floatval(($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaVueltosPagarOficinaDolarDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">DOLAR</span><input type="hidden" name="dolar_sistema" id="dolar_sistema" value="{{ floatval((($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaVueltosPagarOficinaDolarDivisa))) ?? ' 0,00' }}">
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
@@ -65,8 +142,8 @@
                                             <span class="description-percentage text-yellow"><i
                                                     class="fa fa-caret-left"></i>
                                                 {{ $tasaPeso->porcentaje_ganancia  ?? ''}}%</span>
-                                            <h5 class="description-header">$. {{ number_format(floatval((($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalConsumoExcedenteNuevoPeso + $cajas->SumaTotalServiciosExcedenteNuevoPeso) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + $cajas->SumaTotalPesoServDflotante) - $cajas->SumaTotalPesoVueltos),2,',','.') ?? ' 0,00' }}</h5>
-                                            <span class="description-text">PESO</span><input type="hidden" name="peso_sistema" id="peso_sistema" value="{{($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalConsumoExcedenteNuevoPeso + $cajas->SumaTotalServiciosExcedenteNuevoPeso) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) ?? '00'}}">
+                                            <h5 class="description-header">$. {{ number_format(floatval(($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + $cajas->SumaVueltosPagarOficinaPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">PESO</span><input type="hidden" name="peso_sistema" id="peso_sistema" value="{{(($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + $cajas->SumaVueltosPagarOficinaPesoDivisa) ?? '00'}}">
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
@@ -76,8 +153,8 @@
                                             <span class="description-percentage text-green"><i
                                                     class="fa fa-caret-up"></i>
                                                 {{ $tasaTransferenciaPunto->porcentaje_ganancia  ?? ''}}%</span>
-                                            <h5 class="description-header">Bs. {{ number_format(floatval((($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalConsumoExcedenteNuevoPunto + $cajas->SumaTotalServiciosExcedenteNuevoPunto) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto) + $cajas->SumaTotalPuntoServDflotante) - $cajas->SumaTotalPuntoVueltos),2,',','.') ?? ' 0,00' }}</h5>
-                                            <span class="description-text">PUNTO</span><input type="hidden" name="punto_sistema" id="punto_sistema" value="{{($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalConsumoExcedenteNuevoPunto + $cajas->SumaTotalServiciosExcedenteNuevoPunto) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto) ?? '00'}}">
+                                            <h5 class="description-header">Bs. {{ number_format(floatval(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto) + $cajas->SumaVueltosPagarOficinaPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">PUNTO</span><input type="hidden" name="punto_sistema" id="punto_sistema" value="{{(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto) + $cajas->SumaVueltosPagarOficinaPuntoDivisa) ?? '00'}}">
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
@@ -88,8 +165,8 @@
                                             <span class="description-percentage text-green"><i
                                                     class="fa fa-caret-up"></i>
                                                 {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
-                                            <h5 class="description-header">Bs. {{ number_format(floatval((($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalConsumoExcedenteNuevoTransferencia + $cajas->SumaTotalServiciosExcedenteNuevoTransferencia) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia) + $cajas->SumaTotalTransferenciaServDflotante) - $cajas->SumaTotalTransferenciaVueltos),2,',','.') ?? ' 0,00' }}</h5>
-                                            <span class="description-text">TRANS</span><input type="hidden" name="trans_sistema" id="trans_sistema" value="{{($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalConsumoExcedenteNuevoTransferencia + $cajas->SumaTotalServiciosExcedenteNuevoTransferencia) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia) ?? '00'}}">
+                                            <h5 class="description-header">Bs. {{ number_format(floatval(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia) + $cajas->SumaVueltosPagarOficinaTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">TRANS</span><input type="hidden" name="trans_sistema" id="trans_sistema" value="{{(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia) + $cajas->SumaVueltosPagarOficinaTransferenciaDivisa) ?? '00'}}">
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
@@ -100,14 +177,14 @@
                                             <span class="description-percentage text-red"><i
                                                     class="fa fa-caret-down"></i>
                                                 {{ $tasaEfectivo->porcentaje_ganancia }}%</span>
-                                            <h5 class="description-header">Bs. {{ number_format(floatval((($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalConsumoExcedenteNuevoBolivar + $cajas->SumaTotalServiciosExcedenteNuevoBolivar) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + $cajas->SumaTotalBolivarServDflotante) - $cajas->SumaTotalBolivarVueltos),2,',','.') ?? ' 0,00' }}</h5>
-                                            <span class="description-text">EFECTIVO</span><input type="hidden" name="efectivo_sistema" id="efectivo_sistema" value="{{($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalConsumoExcedenteNuevoBolivar + $cajas->SumaTotalServiciosExcedenteNuevoBolivar) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) ?? '00'}}">
+                                            <h5 class="description-header">Bs. {{ number_format(floatval(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + $cajas->SumaVueltosPagarOficinaBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                                            <span class="description-text">EFECTIVO</span><input type="hidden" name="efectivo_sistema" id="efectivo_sistema" value="{{(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + $cajas->SumaVueltosPagarOficinaBolivarDivisa) ?? '00'}}">
                                         </div>
                                         <!-- /.description-block -->
                                     </div>
                                 </div>
                             </div>
-                    </div>
+                        </div>
                         <!-- /.box-header -->
                         <div class="box-body">
                           <div class="table-responsive">
@@ -162,9 +239,12 @@
                                         <td><h4><b id="total_operador_reg">0.00</b></h4><input type="hidden" name="total_operador_reg_input" id="total_operador_reg_input"></td>
 
                                     </tr>
+                                    {{-- @php
+                                        dd(($cajas->SumaTotalVentas + $cajas->SumaTotalServicios));
+                                    @endphp --}}
                                     <tr>
                                         <td colspan="3"><h4><strong class="text-blue">Registrado por Sistema</strong></h4></td>
-                                        <td><h4><b id="total_sistema_reg">0.00</b></h4><input type="hidden" name="total_sistema_reg_input" id="total_sistema_reg_input" value="{{($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalConsumoExcedenteNuevo + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServiciosExcedenteNuevo + $cajas->SumaTotalServicios) ?? '0.00'}}"></td>
+                                        <td><h4><b id="total_sistema_reg">0.00</b></h4><input type="hidden" name="total_sistema_reg_input" id="total_sistema_reg_input" value="{{(($cajas->SumaTotalCreditosPagadosTotalesPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar) + ($cajas->SumaTotalVentas + $cajas->SumaTotalServicios) + ($cajas->TotalSumaVueltosDevueltosDolarToDolar + $cajas->TotalSumaTotalServDflotante + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar) - $cajas->totalSumaTotalDolarToDolarVueltos) ?? '0.00'}}"></td>
 
 
                                     </tr>

@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Habitacione;
+
 
 class Habitacione extends Model
 {

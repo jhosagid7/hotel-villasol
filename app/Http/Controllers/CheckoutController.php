@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use App\Habitacione;
 use App\Sessioncaja;
 use App\Denominacion;
+use App\Excedentes_Recibidos_Caja_Actual;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -233,31 +234,32 @@ class CheckoutController extends Controller
                     // return $servicio->habitacion_id;
 
                     // TODO Revisamos si el usuario tiene vueltos pendientes
-
-
-                    foreach ($cajas->excedente_actual as $excedenteActual) {
-                        if ($excedenteActual->Estado == 'Pendiente' && $excedenteActual->servicio_id == $id) {
-                            if ($excedenteActual->Divisa == 'Dolar') {
-                                $cajas->SumaVueltosPendientesDolarDivisa = $cajas->SumaVueltosPendientesDolarDivisa  + $excedenteActual->MontoDivisa;
-                                $cajas->SumaVueltosPendientesDolarDolar = $cajas->SumaVueltosPendientesDolarDolar  + $excedenteActual->MontoDolar;
-                            }elseif ($excedenteActual->Divisa == 'Peso') {
-                                $cajas->SumaVueltosPendientesPesoDivisa = $cajas->SumaVueltosPendientesPesoDivisa  + $excedenteActual->MontoDivisa;
-                                $cajas->SumaVueltosPendientesPesoDolar = $cajas->SumaVueltosPendientesPesoDolar  + $excedenteActual->MontoDolar;
-                            }elseif ($excedenteActual->Divisa == 'Bolivar') {
-                                $cajas->SumaVueltosPendientesBolivarDivisa = $cajas->SumaVueltosPendientesBolivarDivisa  + $excedenteActual->MontoDivisa;
-                                $cajas->SumaVueltosPendientesBolivarDolar = $cajas->SumaVueltosPendientesBolivarDolar  + $excedenteActual->MontoDolar;
-                            }elseif ($excedenteActual->Divisa == 'Punto') {
-                                $cajas->SumaVueltosPendientesPuntoDivisa = $cajas->SumaVueltosPendientesPuntoDivisa  + $excedenteActual->MontoDivisa;
-                                $cajas->SumaVueltosPendientesPuntoDolar = $cajas->SumaVueltosPendientesPuntoDolar  + $excedenteActual->MontoDolar;
-                            }elseif ($excedenteActual->Divisa == 'Transferencia') {
-                                $cajas->SumaVueltosPendientesTransferenciaDivisa = $cajas->SumaVueltosPendientesTransferenciaDivisa  + $excedenteActual->MontoDivisa;
-                                $cajas->SumaVueltosPendientesTransferenciaDolar = $cajas->SumaVueltosPendientesTransferenciaDolar  + $excedenteActual->MontoDolar;
+                    // TODO pero tomando en cuenta que lo vamos a revisar por servicios no por la caja ?
+                    $excedentesPendientesCajas = Excedentes_Recibidos_Caja_Actual::where('Estado', 'Pendiente')->get();
+                    if($excedentesPendientesCajas){
+                        foreach ($excedentesPendientesCajas as $exctePentesCajas) {
+                            if ($exctePentesCajas->Estado == 'Pendiente' && $exctePentesCajas->servicio_id == $id) {
+                                if ($exctePentesCajas->Divisa == 'Dolar') {
+                                    $cajas->SumaVueltosPendientesDolarDivisa = $cajas->SumaVueltosPendientesDolarDivisa  + $exctePentesCajas->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesDolarDolar = $cajas->SumaVueltosPendientesDolarDolar  + $exctePentesCajas->MontoDolar;
+                                }elseif ($exctePentesCajas->Divisa == 'Peso') {
+                                    $cajas->SumaVueltosPendientesPesoDivisa = $cajas->SumaVueltosPendientesPesoDivisa  + $exctePentesCajas->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesPesoDolar = $cajas->SumaVueltosPendientesPesoDolar  + $exctePentesCajas->MontoDolar;
+                                }elseif ($exctePentesCajas->Divisa == 'Bolivar') {
+                                    $cajas->SumaVueltosPendientesBolivarDivisa = $cajas->SumaVueltosPendientesBolivarDivisa  + $exctePentesCajas->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesBolivarDolar = $cajas->SumaVueltosPendientesBolivarDolar  + $exctePentesCajas->MontoDolar;
+                                }elseif ($exctePentesCajas->Divisa == 'Punto') {
+                                    $cajas->SumaVueltosPendientesPuntoDivisa = $cajas->SumaVueltosPendientesPuntoDivisa  + $exctePentesCajas->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesPuntoDolar = $cajas->SumaVueltosPendientesPuntoDolar  + $exctePentesCajas->MontoDolar;
+                                }elseif ($exctePentesCajas->Divisa == 'Transferencia') {
+                                    $cajas->SumaVueltosPendientesTransferenciaDivisa = $cajas->SumaVueltosPendientesTransferenciaDivisa  + $exctePentesCajas->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesTransferenciaDolar = $cajas->SumaVueltosPendientesTransferenciaDolar  + $exctePentesCajas->MontoDolar;
+                                }
+                                $cajas->TotalSumaVueltosPendientesClienteDivisa = $cajas->TotalSumaVueltosPendientesClienteDivisa  + $exctePentesCajas->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesClienteDolar = $cajas->TotalSumaVueltosPendientesClienteDolar  + $exctePentesCajas->MontoDolar;
                             }
-                            $cajas->TotalSumaVueltosPendientesClienteDivisa = $cajas->TotalSumaVueltosPendientesClienteDivisa  + $excedenteActual->MontoDivisa;
-                            $cajas->TotalSumaVueltosPendientesClienteDolar = $cajas->TotalSumaVueltosPendientesClienteDolar  + $excedenteActual->MontoDolar;
                         }
                     }
-
                     $excedenteCliente = Excedente::where('persona_id',$cliente->id)->first();
 
                     // return $excedenteCliente;
@@ -301,7 +303,7 @@ class CheckoutController extends Controller
      */
     public function update(Request $request, $id)
     {
-return $request;
+// return $request;
 
         // $id = 2;
         $servicio_id = Servicio::where('habitacion_id',$id)->where('status_servicio', 'Iniciado')->first();
