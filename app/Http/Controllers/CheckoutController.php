@@ -295,6 +295,7 @@ class CheckoutController extends Controller
                         $precioHoraExtraData = Config_Sucursal::where('sucursal_id', $cajas->sucursal_id)->first();
                         $cajas->difHorasExtraReg = $second->diffInHours($first);
                         $cajas->precioHorasExtraSis = $precioHoraExtraData->precioHorasExtra;
+                        $cajas->tiempoMinutosExtraSis = $precioHoraExtraData->minutosMaximosCobrar;
                         $cajas->tiempoCalculado = 'Excedido por: '.$first->diffInDays($second).' Días '. $first->diffInHours($second) . ' Horas'. $first->diffInMinutes($second). ' Miuntos';
                         $cajas->criterio = 'Excedido por: ';
                         // return $precioHoraExtraData->precioHorasExtra * $second->diffInHours($first);

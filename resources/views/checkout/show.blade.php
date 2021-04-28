@@ -165,7 +165,7 @@ if(isset($servicio->id)){
                         $contar_minutos=$horaf->format('%i');
                         $contar_horas=$contar_hora+($contar_dias*24);
 
-                        if($contar_minutos > 30){
+                        if($contar_minutos > $cajas->tiempoMinutosExtraSis){
                             $t_minutos = 1;
                         }else{
                             $t_minutos = 0;
@@ -235,7 +235,7 @@ if(isset($servicio->id)){
                             <table class="table table-bordered">
                                 <tr style="background-color: #dcd6d6;">
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;"></th>
-                                    <th colspan="4" style="border-right:1px solid #a09e9e;">Costo del alojamiento</th>
+                                    <th colspan="5" style="border-right:1px solid #a09e9e;">Costo del alojamiento</th>
                                     <th style="width: 100px"></th>
                                 </tr>
                                 <tr>
@@ -244,8 +244,8 @@ if(isset($servicio->id)){
                                     <th>Costo calculado </th>
                                     <th>Dinero dejado</th>
                                     <th>Total horas extras</th>
-                                    <th style="border-right:1px solid #a09e9e;" colspan="2">Late check out</th>
-
+                                    <th>Otros</th>
+                                    <th style="border-right: 1px solid #a09e9e;">Detalle</th>
                                     <th style="width: 40px"></th>
                                 </tr>
                                 {{-- <form action="index.php?view=addsalida" method="post" name="sumar"> --}}
@@ -286,16 +286,17 @@ if(isset($servicio->id)){
 
 
 
-                                    <td ><b>$ {{$total_horas * $cajas->precioHorasExtraSis ?? ''}}</b></td>
-                                    <td style="border-right: 1px solid #a09e9e;" ><input type="text"  name="numero2" size="2"  onKeyUp="fncSumar()"></td>
+                                    <td><b>$ {{$total_horas * $cajas->precioHorasExtraSis ?? ''}}</b></td>
 
+                                    <td><input type="text"  name="numero2" size="2"  onKeyUp="fncSumar()"></td>
+
+                                    <td style="border-right: 1px solid #a09e9e;" ><textarea name="observacionOtros" id="" cols="40" rows="2"></textarea></td>
                                     <td><input type="text" value="<?php echo ($total_alojamiento-$servicio->dinero_dejado) + ($total_horas * $cajas->precioHorasExtraSis); ?>" style="border-color: red;" readonly="readonly" name="resultado"/></td>
-
                                 </tr>
 
                                 <tr style="background-color: #dcd6d6;">
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;"></th>
-                                    <th colspan="4" style="border-right: 1px solid #a09e9e;">Servicio al cuarto</th>
+                                    <th colspan="5" style="border-right: 1px solid #a09e9e;">Servicio al cuarto</th>
                                     <th style="width: 100px"></th>
                                 </tr>
 
@@ -303,7 +304,8 @@ if(isset($servicio->id)){
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;">#</th>
                                     <th>Descripción</th>
                                     <th>Precio unitario</th>
-                                    <th style="border-right:1px solid #a09e9e;">Cantidad</th>
+                                    <th>Cantidad</th>
+                                    <th>Total</th>
                                     <th style="border-right:1px solid #a09e9e;">Tipo pago</th>
                                     {{-- <th style="border-right:1px solid #a09e9e;">Estado</th> --}}
                                     <th style="width: 40px"></th>
@@ -319,7 +321,21 @@ if(isset($servicio->id)){
                                     <td>{{$producto->articulo->nombre}}</td>
                                     <td><b>$  {{number_format($producto->precio_venta_unidad,2,'.',',')}}</b></td>
                                     <td >{{$producto->cantidad}}</td>
-                                    <td >
+                                    <?php if($producto->estado_pago == 'Falta pagar'){ ?>
+                                        <?php
+                                        $sub_total=0;
+                                        $subProdc = $producto->precio_venta_unidad*$producto->cantidad;
+
+                                         //$sub_total=$producto->precio_venta_unidad*$producto->cantidad;
+
+                                         ?>
+                                        <?php }else{ ?>
+                                            <?php $sub_total=0;
+                                            $subProdc = $producto->precio_venta_unidad*$producto->cantidad;
+                                            ?>
+                                    <?php }; ?>
+                                    <td>{{$subProdc}}</td>
+                                    <td style="border-right:1px solid #a09e9e;">
                                         @if ($producto->estado_pago == 'Exonerado')
                                             Cortesía
                                         @elseif($producto->estado_pago == 'Falta pagar')
@@ -334,12 +350,10 @@ if(isset($servicio->id)){
                                         {{-- <td style="border-right: 1px solid #a09e9e;"><p class="text-green">{{$producto->estado_pago}}</p></td> --}}
                                 <?php }; ?>
 
-                                <?php if($producto->estado_pago == 'Falta pagar'){ ?>
-                                    <?php $sub_total=$producto->precio_venta_unidad*$producto->cantidad; ?>
-                                    <?php }else{ ?>
-                                        <?php $sub_total=0; ?>
-                                <?php }; ?>
-                                    <td><span class="badge"><b>$  <?php  echo number_format($sub_total,2,'.',','); ?></b></span></td>
+
+
+                                <td></td>
+                                    {{-- <td><span class="badge"><b>$  <?php  //echo number_format($sub_total,2,'.',','); ?></b></span></td> --}}
                                 </tr>
                                 <?php $total=$sub_total+$total; ?>
                                 <?php endforeach; ?>
@@ -354,7 +368,7 @@ if(isset($servicio->id)){
 
                                 <tr style="background-color: #dcd6d6;">
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;"></th>
-                                    <th colspan="4" style="border-right: 1px solid #a09e9e;"><p style="float: right;font-size: 18px;">Total $ </p></th>
+                                    <th colspan="5" style="border-right: 1px solid #a09e9e;"><p style="float: right;font-size: 18px;">Total $ </p></th>
                                     <input type="hidden" name="subtotal" value="<?php echo $total; ?>" onKeyUp="fncSumar()">
                                     <th style="width: 100px;"><b><input type="text" style="border-color: green;" readonly name="total" value="<?php echo ($total_alojamiento-$servicio->dinero_dejado)+ ($total_horas * $cajas->precioHorasExtraSis) +$total; ?>"></b></th>
                                 </tr>
@@ -362,7 +376,7 @@ if(isset($servicio->id)){
 
                                 <tr style="background-color: #dcd6d6;">
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;"></th>
-                                    <th colspan="4" style="border-right: 1px solid #a09e9e;"><p style="float: right;font-size: 14px;">Tipo de pago</p></th>
+                                    <th colspan="5" style="border-right: 1px solid #a09e9e;"><p style="float: right;font-size: 14px;">Tipo de pago</p></th>
 
                                     <th style="width: 100px;">
                                         <b>
