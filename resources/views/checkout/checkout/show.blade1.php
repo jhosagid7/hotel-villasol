@@ -82,9 +82,9 @@ date_default_timezone_set('America/Lima');
                           <div class="row">
                           <section class="content">
 
-                            @if (isset($habitacion->id))
+                            @if (isset($servicio->habitacion_id))
 
-                                          @if ($habitacion)
+                                          @if ($servicio->habitacion_id)
                                             {{-- si hay habitacion --}}
                                             <form class="form-horizontal" id="form1" role="form" action="{{ route('servicio.store')}}" method="POST">
                                             @csrf
@@ -101,16 +101,15 @@ date_default_timezone_set('America/Lima');
                                             <tbody style="padding: 0px;">
                                             <tr style="padding: 0px;">
                                               <td><h4 class="text-primary" style="margin-top: 0px !important;">Nombre:</h4></td>
-                                              <td>{{$habitacion->nombre}} <input type="hidden" name="nombreHabitacion" value="{{$habitacion->nombre ?? ''}}">
-                                                <input type="hidden" name="nombreHabitacionBarcode" id="nombreHabitacionBarcode" value="{{str_pad($habitacion->nombre,7,'0',STR_PAD_LEFT) ?? ''}}"></td>
+                                              <td>{{$servicio->nombre_habitacion}} <input type="hidden" name="nombreHabitacion" value="{{$servicio->nombre_habitacion ?? ''}}"></td>
                                               <td><h4 class="text-primary" style="margin-top: 0px !important;">Tipo:</h4></td>
                                               <td>
-                                                <div class="sparkbar" data-color="#00a65a" data-height="20">{{$habitacion->cat->nombre}}</div>
+                                                <div class="sparkbar" data-color="#00a65a" data-height="20">{{$servicio->tipo_habitacion}}</div>
                                               </td>
                                             </tr>
                                             <tr style="padding: 0px;">
                                               <td><h4 class="text-primary" style="margin-top: 0px !important;">Detalles:</h4></td>
-                                              <td>{{$habitacion->cat->descripcion}} <input type="hidden" name="detalle_habitacion" value="{{$habitacion->cat->descripcion ?? ''}}"></td>
+                                              <td>{{$servicio->detalle_habitacion}} <input type="hidden" name="detalle_habitacion" value="{{$servicio->detalle_habitacion ?? ''}}"></td>
                                               <td><h4 class="text-primary" style="margin-top: 0px !important;">Estado:</h4></td>
                                               <td>
                                                 <div class="sparkbar" data-color="#f39c12" data-height="20"><span class="label label-success">DISPONIBLE</span></div>
@@ -154,19 +153,13 @@ date_default_timezone_set('America/Lima');
                                             <div class="input-group-addon">
                                               <i class="fa fa-globe"></i>
                                             </div>
-                                            <select name="buscarCliente" id="buscarCliente" class="form-control selectpicker"
+                                            {{-- <select name="buscarCliente" id="buscarCliente" class="form-control selectpicker"
                                             data-live-search="true">
                                             <option value="0">Ingrese cliente para buscar</option>
-                                            @php
-                                                $i = 0;
-                                            @endphp
                                             @foreach ($clientes as $cliente)
-                                                <option value="{{ $cliente->id }}_{{ $cliente->nombre }}_{{ $cliente->num_documento }}_{{ $cliente->direccion }}_{{ $cliente->isCortesia }}_{{ $cliente->isCredito }}_{{ $cliente->telefono }}_{{ $cliente->limite_fecha }}_{{ $cliente->limite_monto }}_<?php $deuda_cliente = "App\Credito"::where('persona_id',$cliente->id)->select('total_deuda')->first(); ?>{{$deuda_cliente['total_deuda']}}_<?php $deuda_cliente = "App\Credito"::where('persona_id',$cliente->id)->select('estado_credito')->first(); ?>{{$deuda_cliente['estado_credito']}}_<?php $excedente_cliente = "App\Excedente"::where('persona_id',$cliente->id)->select('excedente')->first(); ?>{{$excedente_cliente['excedente']}}">{{ $cliente->nombre }}</option>
-                                                @php
-                                                $i++;
-                                            @endphp
+                                                <option value="{{ $cliente->id }}_{{ $cliente->nombre }}_{{ $cliente->num_documento }}_{{ $cliente->direccion }}_{{ $cliente->isCortesia }}_{{ $cliente->isCredito }}_{{ $cliente->telefono }}">{{ $cliente->nombre }}</option>
                                             @endforeach
-                                        </select>
+                                        </select> --}}
                                         <div class="input-group-addon">
                                             <i class="fa fa-search-plus"></i>
                                           </div>
@@ -196,12 +189,8 @@ date_default_timezone_set('America/Lima');
                                             <div class="input-group-addon">
                                               <i class="fa  fa-arrow-circle-o-right"></i>
                                             </div>
-                                            <input type="text" class="form-control" name="num_documento" id="num_documento" readonly required="required" placeholder="Ingrese número de documento">
-                                            <input type="hidden" name="cliente_id" value="" id="cliente_id">
-                                            <input type="hidden" name="limite_fecha" value="" id="limite_fecha">
-                                            <input type="hidden" name="limite_monto" value="" id="limite_monto">
-                                            <input type="hidden" name="total_credito_pendiente" value="" id="total_credito_pendiente">
-                                            <input type="hidden" name="estado_credito" value="" id="estado_credito">
+                                            <input type="text" class="form-control" name="num_documento" id="num_documento" required="required" placeholder="Ingrese número de documento">
+                                            <input type="hidden" name="cliente_id" value="{{$servicio->persona_id}}" id="cliente_id">
                                             {{-- <div class="input-group-addon">
                                                 <i class="fa fa-search-plus"></i>
                                               </div> --}}
@@ -216,7 +205,7 @@ date_default_timezone_set('America/Lima');
                                             <div class="input-group-addon">
                                               <i class="fa fa-user-secret"></i>
                                             </div>
-                                            <input type="text" class="form-control" name="nombre" id="nombre"  readonly required placeholder="Ingrese nombres" >
+                                            <input type="text" class="form-control" name="nombre" id="nombre" value="{{$servicio->nombre_cliente}}" required placeholder="Ingrese nombres" >
                                           </div>
                                           <!-- /.input group -->
                                         </div>
@@ -228,8 +217,8 @@ date_default_timezone_set('America/Lima');
                                             <div class="input-group-addon">
                                               <i class="fa fa-map-marker"></i>
                                             </div>
-                                            <input type="text" class="form-control" name="direccion" id="direccion" readonly  placeholder="Ingrese direccion (No es obligatorio)"  data-mask>
-                                            <input id="telefono" type="hidden" name="telefono" value="">
+                                            <input type="text" class="form-control" name="direccion" id="direccion" value="{{$servicio->direccion_cliente}}"  placeholder="Ingrese direccion (No es obligatorio)"  data-mask>
+                                            <input id="telefono" type="hidden" name="telefono" value="{{$servicio->telefono_cliente}}">
                                           </div>
                                           <!-- /.input group -->
                                         </div>
@@ -269,8 +258,8 @@ date_default_timezone_set('America/Lima');
                                             <div class="input-group-addon">
                                               <i class="fa fa-globe"></i>
                                             </div>
-                                        <input type="text" readonly class="form-control" name="horario" id="horario" placeholder="Ingrese Servicio" value="{{$horario->nombre}}">
-                                        <input type="hidden" class="form-control" name="horario_tipo" id="horario" placeholder="Ingrese Servicio" value="{{$horario->tipo}}">
+                                        <input type="text" class="form-control" name="horario" id="horario" placeholder="Ingrese Servicio" value="{{$servicio->horario}}">
+                                        <input type="hidden" class="form-control" name="horario_tipo" id="horario" placeholder="Ingrese Servicio" value="{{$servicio->tipo_habitacion}}">
                                           </div>
                                           <!-- /.input group -->
                                         </div>
@@ -279,17 +268,17 @@ date_default_timezone_set('America/Lima');
 
 
                                           <div class="form-group">
-                                              <label>Fecha y hora de entrada:</label>
+                                              <label>Fecha y hora de entrad:</label>
 
                                               <div class="input-group">
                                                   <div class="input-group-addon">
                                                       <i class="fa fa-calendar"></i>
                                             </div>
-                                            <input readonly type="date" class="form-control" id="fecha_entrada" name="fecha_entrada" value="<?php echo $hoy; ?>"  data-mask>
+                                            <input type="date" class="form-control" id="fecha_entrada" name="fecha_entrada" value="{{$servicio->fecha_entrada}}"  data-mask>
                                             <div class="input-group-addon">
                                                 <i class="fa fa-clock-o"></i>
                                             </div>
-                                            <input readonly type="time" class="form-control" name="hora_entrada" value="<?php echo $hora; ?>"  data-mask>
+                                            <input type="time" class="form-control" name="hora_entrada" value="{{$servicio->hora_entrada}}"  data-mask>
                                         </div>
                                         <!-- /.input group -->
                                     </div>
@@ -302,32 +291,32 @@ date_default_timezone_set('America/Lima');
                                                 <i class="fa fa-calendar"></i>
                                             </div>
                                             <?php
-                                              if($horario->is24Horas){
-                                                ?>
-                                                  <input id="is24" type="hidden" value="1">
-                                                  <?php
-                                                $dia = $dia24;
-                                                $hora = $hora24;
-                                              }else{
-                                                ?>
-                                                  <input id="is24" type="hidden" value="0">
-                                                  <?php
+                                            //   if($horario->is24Horas){
+                                            //     ?>
+                                            {{-- //       <input id="is24" type="hidden" value="1"> --}}
+                                            //       <?php
+                                            //     $dia = $dia24;
+                                            //     $hora = $hora24;
+                                            //   }else{
+                                            //     ?>
+                                            {{-- //       <input id="is24" type="hidden" value="0"> --}}
+                                            //       <?php
 
-                                              }
+                                            //   }
 
-                                              if ($horario->tipo == 'COMERCIAL') {
-                                                $dia = $diaComercial;
-                                                // echo $dia;
-                                                $hora = $horario->hasta;
-                                              }
+                                            //   if ($horario->tipo == 'COMERCIAL') {
+                                            //     $dia = $diaComercial;
+                                            //     // echo $dia;
+                                            //     $hora = $horario->hasta;
+                                            //   }
 
-                                              if ($horario->tipo == 'DIURNO') {
-                                                $dia = $hoy;
-                                                $hora = $horario->hasta;
-                                              }
+                                            //   if ($horario->tipo == 'DIURNO') {
+                                            //     $dia = $hoy;
+                                            //     $hora = $horario->hasta;
+                                            //   }
 
                                                ?>
-                                              <input type="date" class="form-control" id="fecha_salida" name="fecha_salida" value="{{$dia}}"  data-mask>
+                                              <input type="date" class="form-control" id="fecha_salida" name="fecha_salida" value="{{$hoy}}"  data-mask>
                                               <div class="input-group-addon">
                                                   <i class="fa fa-clock-o"></i>
                                                 </div>
@@ -344,52 +333,39 @@ date_default_timezone_set('America/Lima');
                                             <div class="col-sm-4 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-percentage text-primary"><i class="fa fa-caret-up"></i> Dolar</span>
-                                                    <h5 id="mostrarPrecioDolar" class="description-header">${{floatval($precio->precio)}}</h5>
+                                                    <h5 id="mostrarPrecioDolar" class="description-header">${{floatval($servicio->total_venta)}}</h5>
 
-                                                    <input type="hidden" id="precioDolarHabitacio" name="precioDolarHabitacion" value="{{floatval($precio->precio)}}">
+                                                    <input type="hidden" id="precioDolarHabitacio" name="precioDolarHabitacion" value="{{floatval($servicio->total_venta)}}">
                                                 </div>
                                             </div>
                                             <div class="col-sm-4 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-percentage text-primary"><i class="fa fa-caret-up"></i> Pesos</span>
-                                                    <h5 id="mostrarPrecioPeso" class="description-header">${{number_format($precio->precio*$tasaPesoHabitacion->tasa,2,',','.')}}</h5>
-                                                    <input type="hidden" id="precioPesoHabitacio" name="precioPesoHabitacion" value="{{$precio->precio*$tasaPesoHabitacion->tasa}}">
+                                                    <h5 id="mostrarPrecioPeso" class="description-header">${{number_format($servicio->total_venta*$tasaPesoHabitacion->tasa,2,',','.')}}</h5>
+                                                    <input type="hidden" id="precioPesoHabitacio" name="precioPesoHabitacion" value="{{$servicio->total_venta*$tasaPesoHabitacion->tasa}}">
                                                 </div>
                                             </div>
                                             <div class="col-sm-4 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-percentage text-primary"><i class="fa fa-caret-up"></i> Bolivares</span>
-                                                    <h5 id="mostrarPrecioBolivar" class="description-header">Bs.{{number_format($precio->precio*$tasaDolarHabitacion->tasa,2,',','.')}}</h5>
-                                                    <input type="hidden" id="precioBolivarHabitacion" name="precioBolivarHabitacion" value="{{$precio->precio*$tasaDolarHabitacion->tasa}}">
+                                                    <h5 id="mostrarPrecioBolivar" class="description-header">Bs.{{number_format($servicio->total_venta*$tasaDolarHabitacion->tasa,2,',','.')}}</h5>
+                                                    <input type="hidden" id="precioBolivarHabitacion" name="precioBolivarHabitacion" value="{{$servicio->total_venta*$tasaDolarHabitacion->tasa}}">
                                                 </div>
                                             </div>
                                             </div>
                                             <div id="contado"
                                                 class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                                <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
+                                                <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-xs btn-primary btn-block col-lg-pull-2 small">Contado</a>
 
                                             </div>
-                                            <div id="precortesia"
-                                                class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                                {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
-                                                <a href="#" data-toggle="modal" data-target="#precortesiamodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
-
-                                            </div>
-                                            {{-- <div id="cortesia"
+                                            <div id="cortesia"
                                                 class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
                                                 <a id="modalPago" href="#"   class="btn btn-xs btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
 
-                                            </div> --}}
-
-                                            {{-- <div id="creditoa"
+                                            </div>
+                                            <div id="credito"
                                                 class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
                                                 <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Crédito</a>
-
-                                            </div> --}}
-                                            <div id="precredito"
-                                                class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                                {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
-                                                <a href="#" data-toggle="modal" data-target="#precreditomodal"  class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crédito</a>
 
                                             </div>
                                             <!-- /.input group -->
@@ -397,7 +373,7 @@ date_default_timezone_set('America/Lima');
 
                                            <div class="box-footer">
                                           <a href="index.php?view=recepcion" class="btn btn-danger">Cancelar</a>
-                                          <input type="hidden" name="id_habitacion" value="<?php echo $habitacion->id; ?>">
+                                          <input type="hidden" name="id_habitacion" value="{{$servicio->habitacion_id}}">
                                           <button type="submit" class="btn btn-success pull-right hidden">Registrar ingreso</button>
                                           <button type="button" id="procesoH" class="btn btn-success pull-right hidden">Registrar ingreso</button>
                                         </div>
@@ -440,60 +416,7 @@ date_default_timezone_set('America/Lima');
 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 
 
-<div class="modal fade bs-example-modal-xm" id="precreditomodal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg modal-success">
-      <div class="modal-dialog">
-        <div class="modal-content">
 
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title"><span class="fa fa-warning"></span>CREDITO ACTIVADO... ¡Favor escanear el codigo QR!</h4>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cerrar</button>
-            <a id="credito" href="#" class="btn btn-outline">Procesar credito</a>
-
-          </div>
-
-        </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-  </div>
-
-{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
-
-{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
-
-
-<div class="modal fade bs-example-modal-xm" id="precortesiamodal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg modal-warning">
-      <div class="modal-dialog">
-        <div class="modal-content">
-
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title"><span class="fa fa-warning"></span>CORTESÍA ACTIVADA... ¡Favor escanear el codigo QR!</h4>
-          </div>
-
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cerrar</button>
-            <a id="cortesia" href="#" class="btn btn-outline">Procesar cortesía</a>
-
-          </div>
-
-        </div>
-        <!-- /.modal-content -->
-      </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-  </div>
 
 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 </section>
@@ -540,57 +463,46 @@ date_default_timezone_set('America/Lima');
 
                                 <div id="gestionpago_boton">
                                     <label>Forma de pago:</label>
-                                        {{-- <div class="input-group"> --}}
+                                        <div class="input-group">
 
-                                            <div class="container-fluit">
+                                            <div class="container-fluit small-box">
                                                 <div class="row">
+
                                                     <div
                                                         class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                         <button id='bt_addD' type='button'
-                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Dolar</button>
+                                                            class='btn btn-xs btn-primary btn-block col-lg-pull-2 small'>Dolar</button>
                                                     </div>
                                                     <div
                                                         class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                         <button id='bt_addP' type='button'
-                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Peso</button>
+                                                            class='btn btn-xs btn-primary btn-block col-lg-pull-2 small'>Peso</button>
                                                     </div>
                                                     <div
-                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                        class="panel-group col-lg-3 col-sm-3 col-md-3 col-xs-12 small">
                                                         <button id='bt_addTP' type='button'
-                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Punto/Trans</button>
+                                                            class='btn btn-xs btn-primary btn-block col-lg-pull-2 small'>Punto/Trans</button>
                                                     </div>
                                                     <div
-                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12 small">
                                                         <button id='bt_addM' type='button'
-                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Mixto</button>
+                                                            class='btn btn-xs btn-primary btn-block col-lg-pull-2 small'>Mixto</button>
                                                     </div>
                                                     <div
-                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                        class="panel-group col-lg-3 col-sm-3 col-md-3 col-xs-12 small">
                                                         <button id='bt_addE' type='button'
-                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Efectivo</button>
+                                                            class='btn btn-xs btn-primary btn-block col-lg-pull-2 small'>Efectivo</button>
                                                     </div>
                                                 </div>
                                             </div>
 
-                                        {{-- </div> --}}
+                                        </div>
                                         </div>
                                         <div id="gestionpago">
                                     <div class="panel panel-primary">
                                         <div class="panel-heading">
                                             <h2 id="gestionPago" class="panel-title">Gestion de pagos efectivo
                                             </h2>
-                                        </div>
-                                        <div class="row">
-                                            <div id="excedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
-                                                <label for="pagoConExcedente"><h2 class="text-blue">Exedente disponible: <b id="dispExcedenteShow">$.0.00</b></h2></label>
-                                                <input class="form-control" type="text" id="pagoConExcedente" name="pagoConExcedente" >
-                                                <input class="form-control" type="hidden" id="dispExcedente" name="dispExcedente" >
-                                            </div>
-                                            <div id="nocredito" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
-                                                {{-- <label for="pagoConCredito"><h2 class="text-blue">Crédito disponible: <b id="dispCreditoShow">$.0.00</b></h2></label> --}}
-                                                <input class="form-control" type="text" id="pagoConCredito" name="pagoConCredito" >
-                                                <input class="form-control" type="hidden" id="dispCredito" name="dispCredito" >
-                                            </div>
                                         </div>
                                         <div class="panel-body">
                                             <div class="table-responsive">
@@ -613,17 +525,17 @@ date_default_timezone_set('America/Lima');
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" size="10px" class="decimal"
                                                                     type="texto" id="DMontoDolar">
-                                                                    <button type="button" id="cargarDolar" class="btn btn-primary btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarDolar" class="btn btn-primary btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
 
-                                                            <td><input name="TasaTike[]"  size="10px" type="texto"
+                                                            <td><input name="TasaTike[]"  size="10px" type="texto" readonly
                                                                     id="TasaDolar"
                                                                     value="{{ $tasaDolar->tasa }}">
                                                             </td>
-                                                            <td><input name="MontoDolar[]"  size="10px" type="text"
+                                                            <td><input name="MontoDolar[]"  size="10px" type="text" readonly
                                                                     id="DolarToDolar" class="monto"
                                                                     onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]"  size="10px" type="text"
+                                                            <td><input name="Veltos[]"  size="10px" type="text" readonly
                                                                     id="RestaDolar"></td>
                                                             <td id="DsubTotal"></td>
                                                         </tr>
@@ -635,7 +547,7 @@ date_default_timezone_set('America/Lima');
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]"  size="10px" class="decimal"
                                                                     type="texto" id="DMontoPeso">
-                                                                    <button type="button" id="cargarPeso" class="btn btn-info btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarPeso" class="btn btn-info btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
                                                             <td><input name="TasaTike[]"  size="10px" type="texto" readonly
                                                                     id="TasaPeso" value="{{ $tasaPeso->tasa }}">
@@ -655,7 +567,7 @@ date_default_timezone_set('America/Lima');
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" class="decimal"
                                                                     type="texto"  size="10px" id="DMontoBolivar">
-                                                                    <button type="button" id="cargarBolivar" class="btn btn-warning btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarBolivar" class="btn btn-warning btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
                                                             <td><input name="TasaTike[]"  size="10px" type="texto" readonly
                                                                     id="TasaBolivar"
@@ -676,7 +588,7 @@ date_default_timezone_set('America/Lima');
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" class="decimal"
                                                                     type="texto"  size="10px" id="DMontoPunto">
-                                                                    <button type="button" id="cargarPunto" class="btn btn-danger btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarPunto" class="btn btn-danger btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                 </td>
                                                             <td>
                                                                 <input
@@ -701,7 +613,7 @@ date_default_timezone_set('America/Lima');
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" class="decimal"
                                                                     class="" type="texto"  size="10px" id="DMontoTrans">
-                                                                    <button type="button" id="cargarTrans" class="btn btn-success btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarTrans" class="btn btn-success btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                 </td>
                                                             <td>
                                                                 <input
@@ -726,13 +638,11 @@ date_default_timezone_set('America/Lima');
                                                         <th></th>
                                                         <th>
                                                             <h4 id="tp" class="text-bold">TOTAL PAGADO</h4>
-                                                            <h4 id="ex" class="text-bold">TOTAL EXCEDENTE</h4>
                                                             <h4 id="r" class="text-bold">RESTA</h4>
                                                             <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
-                                                            <input id="monto_dejado" name="monto_dejado" type="text" value="">
-                                                            <input id="isVueltos" name="isVueltos" type="hidden" value="0">
+                                                            <input id="monto_dejado" name="monto_dejado" type="hidden" value="">
                                                             <input id="cantidad" name="cantidad" type="hidden" value="">
-                                                            <input id="num_servicio" name="num_servicio" type="hidden" value="{{$num_servicio}}">
+                                                            <input id="num_servicio" name="num_servicio" type="hidden" value="{{$servicio->num_servicio}}">
                                                             <input id="operador" name="operador" type="hidden" value="{{$UserName}}">
                                                             <input id="total_costo" name="total_costo" type="hidden" value="">
                                                             <input id="precio_costo" name="precio_costo" type="hidden" value="">
@@ -742,7 +652,6 @@ date_default_timezone_set('America/Lima');
                                                             <input id="user_id" name="user_id" type="hidden" value="{{$UserId}}">
                                                         <th>
                                                             <h4 class="text-bold" id="spTotal">0.00</h4>
-                                                            <h4 class="text-bold" id="excdt">0.00</h4>
                                                             <h4 class="text-bold" id="RestaTtotal">0.00</h4>
                                                             <h4 class="text-bold" id="PagoTtotal">0.00</h4>
                                                         </th>
@@ -782,7 +691,7 @@ date_default_timezone_set('America/Lima');
                                                                             <td><h5 class="description-header text-bold">$. {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso,2,',','.') ?? ' 0,00' }}</h5></td>
                                                                         <td><input name="MontoDivisaV[]" size="10px" class="decimal"
                                                                                 type="texto" id="DMontoDolarV">
-                                                                                <button type="button" id="cargarDolarV" class="btn btn-primary btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                                <button type="button" id="cargarDolarV" class="btn btn-primary btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                         </td>
 
                                                                         <td><input name="TasaTikeV[]"  size="10px" type="texto" readonly
@@ -805,7 +714,7 @@ date_default_timezone_set('America/Lima');
                                                                             <td><h5 class="description-header text-bold">$. {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso,2,',','.') ?? ' 0,00' }}</h5></td>
                                                                         <td><input name="MontoDivisaV[]"  size="10px" class="decimal"
                                                                                 type="texto" id="DMontoPesoV">
-                                                                                <button type="button" id="cargarPesoV" class="btn btn-info btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                                <button type="button" id="cargarPesoV" class="btn btn-info btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                         </td>
                                                                         <td><input name="TasaTikeV[]"  size="10px" type="texto" readonly
                                                                                 id="TasaPesoV" value="{{ $tasaPeso->tasa }}">
@@ -826,7 +735,7 @@ date_default_timezone_set('America/Lima');
                                                                             <td><h5 class="description-header  text-bold">Bs. {{ number_format($cajas->SumaTotalPunto + $caja->monto_bolivar,2,',','.') ?? ' 0,00' }}</h5></td>
                                                                         <td><input name="MontoDivisaV[]" class="decimal"
                                                                                 type="texto"  size="10px" id="DMontoBolivarV">
-                                                                                <button type="button" id="cargarBolivarV" class="btn btn-warning btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                                <button type="button" id="cargarBolivarV" class="btn btn-warning btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                         </td>
                                                                         <td><input name="TasaTikeV[]"  size="10px" type="texto" readonly
                                                                                 id="TasaBolivarV"
@@ -956,7 +865,6 @@ date_default_timezone_set('America/Lima');
   <div class="clearfix"></div>
 @push('sciptsMain')
 <script src="{{asset('dist/js/moment.min.js')}}"></script>
-<script src="{{asset('dist/js/onscan.js')}}"></script>
 <script>
 
 
@@ -975,9 +883,7 @@ console.log(moment().format('MMMM Do YYYY, h:mm:ss a'));
 $("#buscarCliente").change(showValues);
 
 
-$("#excedente").hide();
-$("#ex").hide();
-$("#excdt").hide();
+
 function showValues() {
                 // alert('show');
                 datosArticulo = document.getElementById('buscarCliente').value.split('_');
@@ -989,69 +895,24 @@ function showValues() {
                 let isCortesia = datosArticulo[4];
                 let isCredito = datosArticulo[5];
                 $("#telefono").val(datosArticulo[6]);
-                $("#limite_fecha").val(datosArticulo[7]);
-                $("#limite_monto").val(datosArticulo[8]);
-                $("#total_credito_pendiente").val(datosArticulo[9]);
-                $("#estado_credito").val(datosArticulo[10]);
-
-                // alert(datosArticulo[9]);
-
-                let deuda_credito_pendiente = $("#total_credito_pendiente").val();
-                // alert(deuda_credito_pendiente);
-                let limite_fecha_credito = $("#limite_fecha").val();
-                let limite_monto_credito = $("#limite_monto").val();
-                let credito_disponible = 0;
-
-                if (deuda_credito_pendiente) {
-                    credito_disponible = limite_monto_credito - deuda_credito_pendiente;
-                }else{
-                    credito_disponible = limite_monto_credito;
-                }
-
-                $("#dispCredito").val(credito_disponible);
-
-                $("#dispExcedente").val(datosArticulo[11]);
-                var verCajaExcedente = datosArticulo[11];
-                if(verCajaExcedente > 0){
-                $("#excedente").show();
-                $("#ex").show();
-                $("#excdt").show();
-
-                }else{
-                    $("#excedente").hide();
-                    $("#ex").hide();
-                    $("#excdt").hide();
-                }
-
-
-                let dispCredito = credito_disponible;
-                let dispExcedente =datosArticulo[11];
-
-                $("#dispCreditoShow").html('$'+dispCredito);
-                $("#dispExcedenteShow").html('$'+dispExcedente);
-
 
                 if(isCortesia){
                     let precio = $("#precioDolarHabitacio").val();
                     $("#precio_costo").val(precio);
                     $('#cortesia').show();
-                    $('#precortesia').show();
                     // console.log('Este cliente puede tener credito');
                 }else{
                     $('#cortesia').hide();
-                    $('#precortesia').hide();
                 }
                 if(isCredito){
                     let precio = $("#precioDolarHabitacio").val();
                     $("#precio_costo").val(precio);
                     // console.log('Este cliente puede tener credito');
                     $('#credito').show();
-                    $('#precredito').show();
 
                 }else{
 
                     $('#credito').hide();
-                    $('#precredito').hide();
                 }
 
             }
@@ -1271,9 +1132,6 @@ console.log('Falta '+minutes);
     </script>
 
 <script>
-    var pagoExc = 0;
-    var pagoCred = 0;
-
     var cont            = 0;
     var total           = parseFloat(0.00);
     var porEspecial     = null;
@@ -1349,19 +1207,8 @@ console.log('Falta '+minutes);
     $("#procesarkilos").hide();
     $("#vueltos").hide();
 
-    $("#precortesia").hide();
     $("#cortesia").hide();
-    $("#precredito").hide();
     $("#credito").hide();
-
-    function is_negative_number(number=0){
-
-        if( (is_numeric(number)) && (number>0) ){
-            return true;
-        }else{
-            return false;
-        }
-    }
 
 
     $(document).ready(function() {
@@ -1370,22 +1217,7 @@ console.log('Falta '+minutes);
         });
 
         $("#contado").on('click', function() {
-            let cliente_id = $("#cliente_id").val();
-            if(cliente_id == 0 || cliente_id == null){
-                alert('No has seleccionado un cliente...!');
-                return false;
-            }
-            $("#bt_addD").click();
             $('#modo_pago').val('contado');
-        });
-        $("#precortesia").on('click', function() {
-            let cliente_id = $("#cliente_id").val();
-            if(cliente_id == 0 || cliente_id == null){
-                alert('No has seleccionado un cliente...!');
-                return false;
-            }
-            $('#modo_pago').val('cortesia');
-
         });
         $("#cortesia").on('click', function() {
             addHabitacion();
@@ -1393,74 +1225,12 @@ console.log('Falta '+minutes);
             $('#modo_pago').val('cortesia');
             $("#form1").submit();
         });
-        $("#precredito").on('click', function() {
-
-            let cliente_id = $("#cliente_id").val();
-            if(cliente_id == 0 || cliente_id == null){
-                alert('No has seleccionado un cliente...!');
-                return false;
-            }
-            $('#modo_pago').val('credito');
-
-        });
         $("#credito").on('click', function() {
-            let estado_credito = $("#estado_credito").val();
-            if (estado_credito == 'Moroso') {
-                alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
-            } else {
-
-
             addHabitacion();
             $("#monto_dejado").val(0);
             $('#modo_pago').val('credito');
-            let costo = $("#total_costo").val();
-            // alert('total costo '+costo);
-            let deuda_credito_pendiente = $("#total_credito_pendiente").val();
-            // alert(deuda_credito_pendiente);
-            let limite_fecha_credito = $("#limite_fecha").val();
-            let limite_monto_credito = $("#limite_monto").val();
+            $("#form1").submit();
 
-            if (deuda_credito_pendiente) {
-                let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
-                // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
-
-                if (credito_disponible > 0) {
-                    // alert('es mayor puede continuar costo '+ costo);
-                    let credito_disponible_total_operacion = credito_disponible - costo;
-
-                    if (credito_disponible_total_operacion >= 0) {
-                        // alert('puede seguir');
-                        $("#form1").submit();
-                    }else{
-                        alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
-                    }
-
-                }else{
-                    alert('El cliente no tiene Credito...');
-                }
-            } else {
-                // alert('no hay deuda pendiente');
-                let credito_disponible = limite_monto_credito;
-                // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
-
-                if (credito_disponible > 0) {
-                    // alert('es mayor puede continuar costo '+ costo);
-                    let credito_disponible_total_operacion = credito_disponible - costo;
-
-                    if (credito_disponible_total_operacion >= 0) {
-                        // alert('puede seguir');
-                        $("#form1").submit();
-                    }else{
-                        alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
-                    }
-
-                }else{
-                    alert('El cliente no tiene Credito...');
-                }
-            }
-
-
-            }
         });
 
         $("#cargarDolar").on('click', function() {
@@ -1470,7 +1240,6 @@ console.log('Falta '+minutes);
                 vcargarb = 0;
                 vcargarpto = 0;
                 vcargart = 0;
-                $("#isVueltos").val('');
                 $("#deuda").val('');
                 $("#deuda2").val('');
                 $("#deudaPeso").val('');
@@ -1500,7 +1269,6 @@ console.log('Falta '+minutes);
                 vcargarb = 0;
                 vcargarpto = 0;
                 vcargart = 0;
-                $("#isVueltos").val('');
                 $("#deuda").val('');
                 $("#deuda2").val('');
                 $("#deudaPeso").val('');
@@ -1530,7 +1298,6 @@ console.log('Falta '+minutes);
                 vcargarp = 0;
                 vcargarpto = 0;
                 vcargart = 0;
-                $("#isVueltos").val('');
                 $("#deuda").val('');
                 $("#deuda2").val('');
                 $("#deudaPeso").val('');
@@ -1560,7 +1327,6 @@ console.log('Falta '+minutes);
                 vcargarp = 0;
                 vcargarb = 0;
                 vcargart = 0;
-                $("#isVueltos").val('');
                 $("#deuda").val('');
                 $("#deuda2").val('');
                 $("#deudaPeso").val('');
@@ -1590,7 +1356,6 @@ console.log('Falta '+minutes);
                 vcargarp = 0;
                 vcargarb = 0;
                 vcargarpto = 0;
-                $("#isVueltos").val('');
                 $("#deuda").val('');
                 $("#deuda2").val('');
                 $("#deudaPeso").val('');
@@ -3063,7 +2828,6 @@ console.log('Falta '+minutes);
     function resta() {
         // alert('resta');
         const RestaTotal    = document.getElementById('RestaTtotal');
-        const Excdt    = document.getElementById('excdt');
         const PagoTtotal    = document.getElementById('PagoTtotal');
         const spTotal       = document.getElementById('spTotal');
         const tp            = document.getElementById('tp');
@@ -3078,147 +2842,16 @@ console.log('Falta '+minutes);
 
 
 
-        let Exc = $('#pagoConExcedente').val();
-
-
-        if(Exc > 0){
-            pagoExc = Exc;
-
-            pagoExced = Exc;
-
-            if(pagoExced > 0){
-
-                var dispExcedente = $("#dispExcedente").val();
-
-                var dispExced = dispExcedente - pagoExced;
-
-                // 0.1 <= (0.3 - 0.2)                              // false
-                dispExced = new Decimal(dispExced);
-                // dispExced.lessThanOrEqualTo(Decimal(0.3).minus(0.2))    // true
-                // new Decimal(-1).lte(x)
-                var validarDispExced = dispExced.isNeg();
-                // alert(validarDispExced);
-
-                $("#dispExcedenteShow").html('$'+dispExced.toFixed(2));
-            }
-            if (validarDispExced){
-                alert('El montoddd disponible no supera el monto a pagar... Credito disponible es de: $'+dispExcedente+ ' y el monto que decea pagar es de: $'+dispExced.toFixed(2));
-                pagoExc = 0;
-                excedenteDispSet = $("#dispExcedente").val();
-                $('#pagoConExcedente').val('');
-                $("#dispExcedenteShow").html('$'+excedenteDispSet);
-            }
-
-        }else{
-            pagoExc = 0;
-            excedenteDispSet = $("#dispExcedente").val();
-            $('#pagoConExcedente').val('');
-            $("#dispExcedenteShow").html('$'+excedenteDispSet);
-        }
-
-
-        // let Cred = $('#pagoConCredito').val();
-
-
-        // if(Cred > 0){
-
-        //     pagoCred = Cred;
-
-        //     if(pagoCred > 0){
-        //         let deuda_credito_pendiente = $("#total_credito_pendiente").val();
-        //         // alert(deuda_credito_pendiente);
-        //         let limite_fecha_credito = $("#limite_fecha").val();
-        //         let limite_monto_credito = $("#limite_monto").val();
-        //         let credito_disponible = 0;
-
-        //         if (deuda_credito_pendiente) {
-        //             credito_disponible = limite_monto_credito - deuda_credito_pendiente;
-        //         }else{
-        //             credito_disponible = limite_monto_credito;
-        //         }
-
-        //         $("#dispCredito").val(credito_disponible);
-
-
-        //         let dispCredito = credito_disponible - pagoCred;
-
-        //         $("#dispCreditoShow").html('$'+dispCredito);
-
-        //         // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
-
-        //         if (credito_disponible > 0) {
-        //             // alert('es mayor puede continuar costo '+ costo);
-        //             credito_disponible_total_operacion = credito_disponible - pagoCred;
-
-        //             if (credito_disponible_total_operacion >= 0) {
-        //                 // DMontoDolar();
-
-
-        //                 // $("#form1").submit();
-        //             }else{
-        //                 alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' y el monto que decea pagar es de: $'+pagoCred);
-        //                 pagoCred = 0;
-        //                 $('#pagoConCredito').val('');
-        //                 $("#dispCreditoShow").html('$'+credito_disponible);
-        //             }
-
-        //         }
-
-        //     }
-        // }else{
-        //     pagoCred = 0;
-        //     creditoDispSet = $("#dispCredito").val();
-        //     $('#pagoConCredito').val('');
-        //     $("#dispCreditoShow").html('$'+creditoDispSet);
-        // }
-
         var valor           = PagoTtotal.innerHTML;
-        var PagoTotal = PagoTtotal.innerHTML;
-
-        valor = valor - pagoExc - pagoCred;
         var valor_restar    = spTotal.innerHTML;
-        var resta           = valor - valor_restar;
-        if(Exc > 0){
-            x1 = new Decimal(pagoExc);
-            x2 = new Decimal(resta);
-            x3 = new Decimal(PagoTotal);
-            x4 = x1.plus(x2).equals(x3);
-            // alert(x1);
-            // alert(x2);
-            // alert(x3);
-            // alert(x4);
-            if(x2.isNegative()){
-
-
-
-                pagoExc = 0;
-                excedenteDispSet = $("#dispExcedente").val();
-                $('#pagoConExcedente').val('');
-                $("#dispExcedenteShow").html('$'+excedenteDispSet);
-                resta = x3 - valor_restar;
-                Exc = numDecimal(pagoExc);
-                alert('Error! Debe ingresar un valor menor o igual al monto que resta....');
-
-
-
-            // }else{
-            //     if(x4){
-            //         alert('puede ...');
-            //     }
-            }
-
-        }
+        var resta           = numDecimal(valor -valor_restar);
         // var valorV           = PagoTtotalV.innerHTML;
         // var valor_restarV    = spTotalV.innerHTML;
         // var restaV           = numDecimal(valorV -valor_restarV);
-        valor = parseFloat(valor);
-        valor_restar = parseFloat(valor_restar);
-        resta = parseFloat(resta);
 
-        Excdt.innerHTML = numDecimal(Exc); //se llena el campo resta
         RestaTotal.innerHTML = numDecimal(resta); //se llena el campo resta
 
-// alert('valor resta = '+ valor_restar + ' valor = ' + valor + 'resta = ' + resta);
+
 
             if (valor_restar > valor) {
                let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
@@ -3226,7 +2859,6 @@ console.log('Falta '+minutes);
 
             RestaTotalV.innerHTML = numDecimal(resta); //se llena el campo resta
         PagoTtotalV.innerHTML = numDecimal(resta); //se llena el campo resta
-
         DMontoDolarV();
 
             } else {
@@ -3256,10 +2888,7 @@ console.log('Falta '+minutes);
             $("#tap").html("MONTO COMPLETO...");
             $("#r").html("VUELTOS...");
             // verify();
-            // TODO  boton enviar lo escondemos para usar el lector qr
-            // $("#guardar").show("linear");
             $("#guardar").show("linear");
-
 
 
 
@@ -3327,16 +2956,14 @@ console.log('Falta '+minutes);
             }
         });
         // alert(total_suma);
-
-        let result = new Decimal(total_suma);
-        document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(2));
-        $('#monto_dejado').val(result.toFixed(2));
+        document.getElementById('spTotal').innerHTML = numDecimal(total_suma);
+        $('#monto_dejado').val(total_suma);
 
     }
 
     function DMontoDolar(){
              // alert('clic');
-            Mdolar      = $("#DMontoDolar").val();
+             Mdolar      = $("#DMontoDolar").val();
             Tdolar      = $("#TasaDolar").val();
             Tpeso       = $("#TasaPeso").val();
             Tbolivar    = $("#TasaBolivar").val();
@@ -3485,53 +3112,26 @@ console.log('Falta '+minutes);
 
     $(document).ready(function() {
 
-        var aprovMontoDolar = 0;
+
         $("#DMontoDolar").keyup(function() {
-            aprovMontoDolar = 1;
-            $("#isVueltos").val('');
             DMontoDolar();
         });
 
         $("#DMontoPeso").keyup(function() {
-            aprovMontoDolar = 1;
-            $("#isVueltos").val('');
             DMontoPeso();
         });
 
         $("#DMontoBolivar").keyup(function() {
-            aprovMontoDolar = 1;
-            $("#isVueltos").val('');
             DMontoBolivar();
         });
 
         $("#DMontoPunto").keyup(function() {
-            aprovMontoDolar = 1;
-            $("#isVueltos").val('');
             DMontoPunto();
         });
 
         $("#DMontoTrans").keyup(function() {
-            aprovMontoDolar = 1;
-            $("#isVueltos").val('');
             DMontoTrans();
         });
-
-        $("#pagoConExcedente").keyup(function() {
-            DMontoDolar();
-
-        });
-        $("#pagoConCredito").keyup(function() {
-
-
-            DMontoDolar();
-
-
-
-
-
-        });
-
-
 
 
 
@@ -3628,7 +3228,6 @@ console.log('Falta '+minutes);
                 if(tsV > 0){
                 let md = $('#monto_dejado').val();
                 rmd =  md - tsV;
-                $('#isVueltos').val(tsV);
                 $('#monto_dejado').val(rmd);
                 }
                document.getElementById('spTotalV').innerHTML = numDecimal(total_sumaV);
@@ -3724,17 +3323,14 @@ console.log('Falta '+minutes);
 
 
                 $("#DMontoDolarV").keyup(function() {
-                    $("#isVueltos").val('');
                     DMontoDolarV();
                 });
 
                 $("#DMontoPesoV").keyup(function() {
-                    $("#isVueltos").val('');
                     DMontoPesoV();
                 });
 
                 $("#DMontoBolivarV").keyup(function() {
-                    $("#isVueltos").val('');
                     DMontoBolivarV();
                 });
 
@@ -3756,7 +3352,7 @@ console.log('Falta '+minutes);
                 vcargarpV = 0;
                 vcargarbV = 0;
 
-                $("#isVueltos").val('');
+
 
                 $("#DMontoPesoV").val('');
                 DMontoPesoV();
@@ -3773,7 +3369,6 @@ console.log('Falta '+minutes);
                 // alert('1');
                 vcargarV = 0;
                 $("#DMontoDolarV").val('');
-                $("#isVueltos").val('');
                 DMontoDolarV();
             }
         });
@@ -3787,7 +3382,7 @@ console.log('Falta '+minutes);
 
 
 
-                $("#isVueltos").val('');
+
                 $("#DMontoDolarV").val('');
                 DMontoDolarV();
                 $("#DMontoBolivarV").val('');
@@ -3799,7 +3394,6 @@ console.log('Falta '+minutes);
                 DMontoPesoV();
             }else{
                 vcargarpV = 0;
-                $("#isVueltos").val('');
                 $("#DMontoPesoV").val('');
                 DMontoPesoV();
             }
@@ -3812,7 +3406,7 @@ console.log('Falta '+minutes);
                 vcargarpV = 0;
 
 
-                $("#isVueltos").val('');
+
 
                 $("#DMontoPesoV").val('');
                 DMontoPesoV();
@@ -3825,179 +3419,12 @@ console.log('Falta '+minutes);
                 DMontoBolivarV();
             }else{
                 vcargarbV = 0;
-                $("#isVueltos").val('');
                 $("#DMontoBolivarV").val('');
                 DMontoBolivarV();
             }
         });
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        try {
-
-
-            onScan.attachTo(document, {
-                //configuración del sufijo/ tecla esperada al finalizar la lectura del scan, esto indica a onScan la finalización del evento
-                suffixKeyCodes: [13],
-                minLength: 2,
-                onScan: function(barcode) { //función callback que se dispara después de una lectura
-                    console.log(barcode)
-                        // alert(barcode);
-                        // window.livewire.emit('doCheckOut', barcode, 2) //emitimos el evento para consultar la info y cobrar el ticket
-                        let nombreHabitacionBarcode = $("#nombreHabitacionBarcode").val();
-                        // alert(nombreHabitacionBarcode);
-                        var n = barcode;
-                        // alert(n);
-                        // return false;
-                        // $('#btnImprimir').focusout();
-                        // let cliente_id = $("#cliente_id").val();
-
-                        // if(cliente_id == 0 || cliente_id == null){
-                        //     alert('No has seleccionado un cliente...!');
-                        //     return false;
-                        // }
-
-                        if (barcode == nombreHabitacionBarcode) {
-                            // alert('es igual barcode');
-                            // return false;
-                            modoPagoOn = $('#modo_pago').val();
-                            tipoPago = $('#tipo_pago').val();
-                            monto_dejadoR = $('#monto_dejado').val();
-                            // alert(monto_dejadoR);
-
-                            if (modoPagoOn == 'contado') {
-                                if(cliente_id == 0 || cliente_id == null){
-                                    alert('No has seleccionado un cliente...!');
-                                    return false;
-                                }
-                                if(tipoPago == 0 || tipoPago == null){
-                                    alert('No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...');
-                                    return false;
-                                }
-
-                                if(monto_dejadoR == 0 || monto_dejadoR == null){
-                                    alert('No has ingresado el monto a pagar...!');
-                                    return false;
-                                }
-
-                                // alert('contado');
-                                $("#form1").submit();
-                            }else if (modoPagoOn == 'cortesia'){
-                                let cliente_id = $("#cliente_id").val();
-
-                                if(cliente_id == 0 || cliente_id == null){
-                                    alert('No has seleccionado un cliente...!');
-                                    return false;
-                                }
-                                $("#form1").submit();
-                            }else if (modoPagoOn == 'credito') {
-                                let cliente_id = $("#cliente_id").val();
-
-                                if(cliente_id == 0 || cliente_id == null){
-                                    alert('No has seleccionado un cliente...!');
-                                    return false;
-                                }
-                                let estado_credito = $("#estado_credito").val();
-                                if (estado_credito == 'Moroso') {
-                                    alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
-                                } else {
-
-
-                                    addHabitacion();
-                                    $("#monto_dejado").val(0);
-                                    $('#modo_pago').val('credito');
-                                    let costo = $("#total_costo").val();
-                                    // alert('total costo '+costo);
-                                    let deuda_credito_pendiente = $("#total_credito_pendiente").val();
-                                    // alert(deuda_credito_pendiente);
-                                    let limite_fecha_credito = $("#limite_fecha").val();
-                                    let limite_monto_credito = $("#limite_monto").val();
-
-                                    if (deuda_credito_pendiente) {
-                                        let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
-                                        // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
-
-                                        if (credito_disponible > 0) {
-                                            // alert('es mayor puede continuar costo '+ costo);
-                                            let credito_disponible_total_operacion = credito_disponible - costo;
-
-                                            if (credito_disponible_total_operacion >= 0) {
-                                                // alert('puede seguir');
-                                                $("#form1").submit();
-                                            }else{
-                                                alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
-                                            }
-
-                                        }else{
-                                            alert('El cliente no tiene Credito...');
-                                        }
-                                    } else {
-                                        // alert('no hay deuda pendiente');
-                                        let credito_disponible = limite_monto_credito;
-                                        // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
-
-                                        if (credito_disponible > 0) {
-                                            // alert('es mayor puede continuar costo '+ costo);
-                                            let credito_disponible_total_operacion = credito_disponible - costo;
-
-                                            if (credito_disponible_total_operacion >= 0) {
-                                                // alert('puede seguir');
-                                                $("#form1").submit();
-                                            }else{
-                                                alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
-                                            }
-
-                                        }else{
-                                        alert('El cliente no tiene Credito...');
-                                        }
-                                    }
-
-
-                                }
-                            }else{
-                                let cliente_id = $("#cliente_id").val();
-
-                                if(cliente_id == 0 || cliente_id == null){
-                                    alert('No has seleccionado un cliente...!');
-                                    return false;
-                                }
-                                alert('No has seleccionado un modo de pago! ... (Contado, Crédito o Cortesía.)');
-                            }
-                        }else{
-                            alert('¡Error al Ingresar el QR!... Por favor Ingrese el QR correcto. (llave incorrecta)');
-                            return false;
-                        }
-                },
-
-                // onScanError: function(e) { //función callback para captura de errores de lectura
-                //     console.log('Error de lectura' + e[0]);
-                //     // toastr.error('', 'Error de lectura' + e)
-                // },
-                onScanError: function(err) {
-                    var sFormatedErrorString = "Error Details: {\n";
-                    for (var i in err) {
-                        sFormatedErrorString += '    ' + i + ': ' + err[i] + ",\n";
-                    }
-                    sFormatedErrorString = sFormatedErrorString.trim().replace(/,$/, '') + "\n}";
-                    console.log("[onScanError]: " + sFormatedErrorString);
-                }
-
-            })
-            // alert('OnScan ready!');
-            // toastr.success('', 'OnScan ready!')
-
-        } catch (e) { //captura de errores generales de inicialización de onscan.js
-            alert('Error OnScan' + e);
-            // toastr.error('', 'Error OnScan' + e)
-        }
-
-    })
-
-
 </script>
 @endpush
 @endsection

@@ -462,7 +462,7 @@ $('.ocular').hide();
             let valor = this.value;
             let catid = $(this).attr('data-id');
             let texto = this.options[this.selectedIndex].text;
-
+            console.log(valor + ' '+catid + ' '+texto);
             // console.log('valor = '+valor+' catid= '+catid);
 
             $('.horario').val(valor);

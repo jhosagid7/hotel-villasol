@@ -116,6 +116,11 @@ class Servicio extends Model
         'caja_id '
     ];
 
+    protected $dates = [
+        'fecha_hora',
+
+    ];
+
 
     protected $guarded = [];
 }

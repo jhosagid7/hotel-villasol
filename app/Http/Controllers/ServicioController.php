@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Excedentes_Recibidos_Caja_Actual;
+use App\Horario;
 use App\Http\Controllers\PrinterController;
 
 class ServicioController extends Controller
@@ -860,7 +861,14 @@ class ServicioController extends Controller
             $numeroServisio = $request->get('num_servicio');
             $operador = $request->get('operador');
             $detalleHabitacion = $request->get('categoria_dest_nueva2');
-            $tipo =  $request->get('horario');
+
+            $horarios = Horario::findOrFail($request->get('horario_id'));
+
+            if($horarios){
+                $tipo =  $horarios->tipo;
+                $horario = $horarios->nombre;
+            }
+
 
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1466,8 +1474,8 @@ class ServicioController extends Controller
             $servicio->habitacion_id = $id_habitaicon;
             $servicio->nombre_habitacion = $request->get('nombre_nueva2').'/'.$request->get('nombre_vieja');
             $servicio->detalle_habitacion = $request->get('categoria_dest_nueva2');
-            $servicio->tipo_habitacion = $request->get('horario_tipo');
-            $servicio->horario = $request->get('horario');
+            $servicio->tipo_habitacion = $tipo;
+            $servicio->horario = $horario;
             $servicio->fecha_entrada = $request->get('fecha_entrada');
             $servicio->hora_entrada = $request->get('hora_entrada');
             $servicio->fecha_salida = $request->get('fecha_salida');
@@ -1664,7 +1672,7 @@ class ServicioController extends Controller
                 if(count($MontoDivisaR) > 0){
 
 
-                    return count($MontoDivisaR);
+                    // return count($MontoDivisaR);
 
                     foreach($MontoDivisaR as $key => $val) {
 

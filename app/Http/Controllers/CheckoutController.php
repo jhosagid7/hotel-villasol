@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Caja;
+use App\Config_Sucursal;
 use App\Tasa;
 use App\User;
 use App\Level;
@@ -84,6 +85,8 @@ class CheckoutController extends Controller
         $title = 'Salida';
         $servicio = Servicio::where('id', $id)->where('status_servicio', 'Iniciado')->first();
         // return $servicio;
+
+        $horarios = Horario::get();
         $cliente = Persona::where('id',$servicio->persona_id)->first();
         $servicio;
         $servicio->servicios_ventas;
@@ -119,19 +122,19 @@ class CheckoutController extends Controller
         $cont = 0;
 
         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-        while ($cont < count($habitacionese)) {
-            $precio_habitacion_cambio[$cont] = Precio::where('cat_id',$habitacionese[$cont]->cat->id)->where('horario_id',$horarios_id->id)->first();
-            // return $precio_habitacion_cambio->precio;
-            $habitacionese[$cont]->habitacion_id = $habitacionese[$cont]->id;
-            $habitacionese[$cont]->nombre = $habitacionese[$cont]->nombre;
-            $habitacionese[$cont]->categoria_id = $habitacionese[$cont]->cat->id;
-            $habitacionese[$cont]->categoria = $habitacionese[$cont]->cat->nombre;
-            $habitacionese[$cont]->categoria_desc = $habitacionese[$cont]->cat->descripcion;
-            $habitacionese[$cont]->precio_id = $precio_habitacion_cambio[$cont]->id;
-            $habitacionese[$cont]->precio = $precio_habitacion_cambio[$cont]->precio;
+        // while ($cont < count($habitacionese)) {
+        //     // $precio_habitacion_cambio[$cont] = Precio::where('cat_id',$habitacionese[$cont]->cat->id)->first();
+        //     // return $precio_habitacion_cambio[$cont];
+        //     $habitacionese[$cont]->habitacion_id = $habitacionese[$cont]->id;
+        //     $habitacionese[$cont]->nombre = $habitacionese[$cont]->nombre;
+        //     $habitacionese[$cont]->categoria_id = $habitacionese[$cont]->cat->id;
+        //     $habitacionese[$cont]->categoria = $habitacionese[$cont]->cat->nombre;
+        //     $habitacionese[$cont]->categoria_desc = $habitacionese[$cont]->cat->descripcion;
+        //     // $habitacionese[$cont]->precio_id = $precio_habitacion_cambio[$cont]->id;
+        //     // $habitacionese[$cont]->precio = $precio_habitacion_cambio[$cont]->precio;
 
-            $cont = $cont+1;
-        }
+        //     $cont = $cont+1;
+        // }
         // foreach ($habitacionese as $habitaciones) {
 
         //     $precio_habitacion_cambio = Precio::where('cat_id',$habitaciones->cat->id)->where('horario_id',$horarios_id->id)->first();
@@ -268,9 +271,50 @@ class CheckoutController extends Controller
                         $cajas->excedenteCLiente = $excedenteCliente->excedente;
                     }
 
+                    // TODO Crear metodo para calcular pago de horas extras en la vista checkout show
+                    //capturamos la hora del sistema
+                    $first   = Carbon::now('America/Caracas');
+
+                    //asignamos a la variable $second los datos de fecha y hora de salida
+                    $second = $servicio->fecha_salida. ' '.$servicio->hora_salida;
+                    //damos formato y convertimos en objeto la variable $second
+                    $second = Carbon::createFromFormat('Y-m-d H:i:s', $second);
+                    // return $cajas;
+                    // TODO comprobamos si la fecha del sistema es mayor a la fecha de salida
+                    // si fecha de salida es mayor multiplicamos por valor de horas extras de la tabla config_sucursals
+                    if($first->gt($second)){
+
+
+
+                        // TODO consultamos la tabla config_sucursals para traer el precio de la hora extra.
+
+                        $precioHoraExtraData = Config_Sucursal::where('sucursal_id', $cajas->sucursal_id)->first();
+                        $cajas->difHorasExtraReg = $second->diffInHours($first);
+                        $cajas->precioHorasExtraSis = $precioHoraExtraData->precioHorasExtra;
+                        $cajas->tiempoCalculado = 'Excedido por: '.$first->diffInDays($second).' Días '. $first->diffInHours($second) . ' Horas'. $first->diffInMinutes($second). ' Miuntos';
+                        $cajas->criterio = 'Excedido por: ';
+                        // return $precioHoraExtraData->precioHorasExtra * $second->diffInHours($first);
+
+                        // return $first . 'es mayor ' . $second. ' diferencia ' . $second->diffInHours($first);
+                        // return $first . 'es mayor' . $second;
+                    }else{
+
+
+                        $cajas->difHorasExtraReg = 0;
+                        $cajas->precioHorasExtraSis = 0;
+                        $cajas->tiempoCalculado = 'Faltan: '.$first->diffInDays($second).' Días '. $first->diffInHours($second) . ' Horas'. $first->diffInMinutes($second). ' Miuntos';
+                        $cajas->criterio = 'Faltan: ';
+                        //  return $first . 'es menor ' . $second. ' diferencia ' . $second->diffInHours($first);
+                        //de lo contrario
+                        // return 'es menor';
+                        // return $second->diffInHours($first);
+                    }
+
+
+                    // return $cajas;
                 // return redirect()->route('proceso', array('title' => $title,'levels' => $levels,'habitacion' => $habitacion,'horarios' => $horarios, 'tasaDolarHabitacion' => $tasaDolarHabitacion, 'tasaPesoHabitacion' => $tasaPesoHabitacion, 'users' => $users));
 
-             return view('checkout.show', compact('cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
+             return view('checkout.show', compact('horarios','cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
             }else{
                 return redirect()
                 ->route('caja.index')

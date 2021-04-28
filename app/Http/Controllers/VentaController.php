@@ -76,16 +76,16 @@ class VentaController extends Controller
         if ($tasa->tasa <= 0 || $tasa->updated_at->diffInHours($fechaActual) >= 6 ) {
 
 
-            $date   = Carbon::now('America/Caracas');
-            $fecha_actual  = $date->format('d-m-Y');
-            $creditos_clientes = Credito::get();
+            // $date   = Carbon::now('America/Caracas');
+            // $fecha_actual  = $date->format('d-m-Y');
+            // $creditos_clientes = Credito::get();
 
 
-            return $creditos_clientes;
+            // return $creditos_clientes;
 
-            if($fecha_actual->gt($fechaVigencia)){
+            // if($fecha_actual->gt($fechaVigencia)){
 
-            }
+            // }
 
 
             return redirect()

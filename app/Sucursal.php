@@ -29,5 +29,9 @@ class Sucursal extends Model
         return $this->hasMany('App\Caja');
     }
 
+    public function config_sucursals(){
+        return $this->hasMany(Config_Sucursal::class);
+    }
+
 
 }

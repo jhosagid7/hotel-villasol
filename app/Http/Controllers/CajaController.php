@@ -1218,6 +1218,29 @@ foreach ($detalle_creditos as $detalleCredito ) {
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                // TODO Ahora que lla guardamos los datos en la tabla historial
+                //procedemos a borrar los registros donde el estado no sea pendiente
+                // y a su vez vamos a cambiar el id colocandole el nuevo ide  de la caja
+                //recien abierta.
+
+                // TODO Creamos consulta para buscar registros y filtrarlos
+                $filtrarReg = Excedentes_Recibidos_Caja_Actual::get();
+
+                if($filtrarReg){
+                    foreach ($filtrarReg as $fReg) {
+                        if($fReg->Estado == 'Pendiente'){
+                            $upReg = Excedentes_Recibidos_Caja_Actual::findOrFail($caja_id);
+                            $upReg->caja_id = $caja_id + 1;
+                            $upReg->update();
+                        }else{
+                            Excedentes_Recibidos_Caja_Actual::destroy($filtrarReg->id);
+                        }
+                    }
+                }
+
+
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
