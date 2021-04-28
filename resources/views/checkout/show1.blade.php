@@ -184,7 +184,7 @@ if(isset($servicio->id)){
 
                             <ul class="list-group list-group-unbordered">
                                 <li class="list-group-item" style="border-top: 2px solid black;">
-                                    <b>Fecha y Hora entradasssss</b> <b><a class="pull-right" style="color: #dd4b39;"><?php echo $servicio->fecha_entrada.' '.$servicio->hora_entrada; ?></a></b>
+                                    <b>Fecha y Hora entrada</b> <b><a class="pull-right" style="color: #dd4b39;"><?php echo $servicio->fecha_entrada.' '.$servicio->hora_entrada; ?></a></b>
                                 </li>
                                 <li class="list-group-item">
                                     <b>Fecha y Hora salida</b> <b><a class="pull-right" style="color: #dd4b39;"><?php echo $servicio->fecha_salida.' '.$servicio->hora_salida; ?></a></b>

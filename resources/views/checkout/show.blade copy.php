@@ -1141,14 +1141,7 @@ if(isset($servicio->id)){
 <script src="{{asset('dist/js/onscan.js')}}"></script>
 
 
-{{-- <script>
-  $(function () {
-    Initialize Select2 Elements
-    $(".select2").select2();
 
-
-  });
-</script> --}}
 
 
 {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
