@@ -24,6 +24,9 @@ use Illuminate\Support\Facades\Redirect;
 
 class CheckoutController extends Controller
 {
+
+    // TODO nuevo comentario
+
     /**
      * Display a listing of the resource.
      *
@@ -31,6 +34,7 @@ class CheckoutController extends Controller
      */
     public function index()
     {
+        $hola = 0;
 
         $title = 'Check Out';
 
