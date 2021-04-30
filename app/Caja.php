@@ -54,6 +54,10 @@ class Caja extends Model
         return $this->hasMany(Pago_Vuelto::class);
     }
 
+    public function horas_extras(){
+        return $this->hasMany(Horas_extra::class);
+    }
+
     public function excedente_anterior(){
         return $this->hasMany(Excedentes_Pendientes_Caja_Anterior::class);
     }
