@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Horas_extras;
+use App\Horas_extra;
 use Illuminate\Http\Request;
 
-class HorasExtrasController extends Controller
+class HorasExtraController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -41,10 +41,10 @@ class HorasExtrasController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Horas_extras  $horas_extras
+     * @param  \App\Horas_extra  $horas_extra
      * @return \Illuminate\Http\Response
      */
-    public function show(Horas_extras $horas_extras)
+    public function show(Horas_extra $horas_extra)
     {
         //
     }
@@ -52,10 +52,10 @@ class HorasExtrasController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Horas_extras  $horas_extras
+     * @param  \App\Horas_extra  $horas_extra
      * @return \Illuminate\Http\Response
      */
-    public function edit(Horas_extras $horas_extras)
+    public function edit(Horas_extra $horas_extra)
     {
         //
     }
@@ -64,10 +64,10 @@ class HorasExtrasController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Horas_extras  $horas_extras
+     * @param  \App\Horas_extra  $horas_extra
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Horas_extras $horas_extras)
+    public function update(Request $request, Horas_extra $horas_extra)
     {
         //
     }
@@ -75,10 +75,10 @@ class HorasExtrasController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Horas_extras  $horas_extras
+     * @param  \App\Horas_extra  $horas_extra
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Horas_extras $horas_extras)
+    public function destroy(Horas_extra $horas_extra)
     {
         //
     }

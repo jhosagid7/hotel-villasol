@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Horas_extras extends Model
+class Pago_Extra extends Model
 {
     //
 }
