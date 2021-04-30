@@ -2527,8 +2527,11 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
             }
         });
         // alert(total_suma);
-        document.getElementById('spTotal').innerHTML = numDecimal(total_suma);
-        $('#monto_dejado').val(total_suma);
+        let result = new Decimal(total_suma);
+        document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(2));
+        $('#monto_dejado').val(result.toFixed(2));
+
+
 
     }
 
@@ -2799,9 +2802,16 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 if(tsV > 0){
                 let md = $('#monto_dejado').val();
                 rmd =  md - tsV;
-                $('#monto_dejado').val(rmd);
+                let rmdresult = new Decimal(rmd);
+                $('#monto_dejado').val(rmdresult.toFixed(2));
+
                 }
-               document.getElementById('spTotalV').innerHTML = numDecimal(total_sumaV);
+
+                let result = new Decimal(total_sumaV);
+                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
+
+
+
 
             }
 

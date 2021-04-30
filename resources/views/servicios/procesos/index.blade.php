@@ -3629,9 +3629,14 @@ console.log('Falta '+minutes);
                 let md = $('#monto_dejado').val();
                 rmd =  md - tsV;
                 $('#isVueltos').val(tsV);
-                $('#monto_dejado').val(rmd);
+                let rmdresult = new Decimal(rmd);
+                $('#monto_dejado').val(rmdresult.toFixed(2));
+
                 }
-               document.getElementById('spTotalV').innerHTML = numDecimal(total_sumaV);
+
+                let result = new Decimal(total_sumaV);
+                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
+
 
             }
 

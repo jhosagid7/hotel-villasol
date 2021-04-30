@@ -74,7 +74,7 @@ class CheckoutController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $request;
     }
 
     /**
@@ -352,7 +352,7 @@ class CheckoutController extends Controller
      */
     public function update(Request $request, $id)
     {
-// return $request;
+return $request;
 
         // $id = 2;
         $servicio_id = Servicio::where('habitacion_id',$id)->where('status_servicio', 'Iniciado')->first();

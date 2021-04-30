@@ -249,9 +249,10 @@ if(isset($servicio->id)){
                                     <th style="width: 40px"></th>
                                 </tr>
                                 {{-- <form action="index.php?view=addsalida" method="post" name="sumar"> --}}
-                                <form action="{{ route('checkout.update', $servicio->habitacion_id)}}" id="form1" method="POST" autocomplete="off" role="buscar" name="sumar">
+                                {{-- <form action="{{ route('checkout.update', $servicio->habitacion_id)}}" id="form2" method="POST" autocomplete="off" role="buscar" name="sumar"> --}}
+                                <form class="form-horizontal" id="form2" role="form" action="{{ route('checkout.store')}}" method="POST" name="sumar">
                                 @csrf
-                                @method('PUT')
+
                                 <tr>
                                     <td style="border-right: 1px solid #a09e9e;">1.</td>
 
@@ -284,13 +285,16 @@ if(isset($servicio->id)){
                                     <input type="hidden" name="numero1" size="2" value="<?php echo $servicio->dinero_dejado; ?>" onKeyUp="fncSumar()">
                                     <input type="hidden" name="numero3" size="2" value="<?php echo $total_horas * $cajas->precioHorasExtraSis; ?>" onKeyUp="fncSumar()">
 
+                                    <input type="hidden" name="dataCantHorasExtras" id="dataCantHorasExtras" value="{{$total_horas ?? ''}}">
+                                    <input type="hidden" name="dataPrecioHorasExtras" id="dataPrecioHorasExtras" value="{{$total_horas * $cajas->precioHorasExtraSis ?? ''}}">
+
 
 
                                     <td><b>$ {{$total_horas * $cajas->precioHorasExtraSis ?? ''}}</b></td>
 
-                                    <td><input type="text"  name="numero2" size="2"  onKeyUp="fncSumar()"></td>
+                                    <td><input type="text"  name="numero2" id="numero2" size="2"  onKeyUp="fncSumar()"></td>
 
-                                    <td style="border-right: 1px solid #a09e9e;" ><textarea name="observacionOtros" id="" cols="40" rows="2"></textarea></td>
+                                    <td style="border-right: 1px solid #a09e9e;" ><textarea name="observacionOtros" id="observacionOtros" cols="40" rows="2"></textarea></td>
                                     <td><input type="text" value="<?php echo ($total_alojamiento-$servicio->dinero_dejado) + ($total_horas * $cajas->precioHorasExtraSis); ?>" style="border-color: red;" readonly="readonly" name="resultado"/></td>
                                 </tr>
 
@@ -370,7 +374,7 @@ if(isset($servicio->id)){
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;"></th>
                                     <th colspan="5" style="border-right: 1px solid #a09e9e;"><p style="float: right;font-size: 18px;">Total $ </p></th>
                                     <input type="hidden" name="subtotal" value="<?php echo $total; ?>" onKeyUp="fncSumar()">
-                                    <th style="width: 100px;"><b><input type="text" style="border-color: green;" readonly name="total" value="<?php echo ($total_alojamiento-$servicio->dinero_dejado)+ ($total_horas * $cajas->precioHorasExtraSis) +$total; ?>"></b></th>
+                                    <th style="width: 100px;"><b><input type="text" style="border-color: green;" readonly id="total" name="total" value="<?php echo ($total_alojamiento-$servicio->dinero_dejado)+ ($total_horas * $cajas->precioHorasExtraSis) +$total; ?>"></b></th>
                                 </tr>
 
 
@@ -398,21 +402,113 @@ if(isset($servicio->id)){
 
                         <div class="box-footer clearfix">
 
-                            <a href="index.php?view=pre_salida" class="btn btn-danger"><i class='fa fa-sign-out'></i> Cancelar</a>
+                            {{-- <a href="index.php?view=pre_salida" class="btn btn-danger"><i class='fa fa-sign-out'></i> Cancelar</a> --}}
 
                             <input type="hidden" name="id_operacion" value="<?php echo $servicio->id; ?>">
                             <input type="hidden" name="fecha_salida" value="<?php echo $hoy.' '.$hora; ?>">
                             <input type="hidden" name="id_habitacion" value="{{$servicio->habitacion_id ?? ''}}">
 
-	                        <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
-                            <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button>
-
-
+	                        {{-- <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
+                            <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> --}}
+                            <a hidden id="pagoPendienteBtn" href="#" data-toggle="modal" data-target="#modalPagoPendiente"  class="btn btn-danger">Procesar pago pendiente</a>
+                            <button type="submit"  name="pagar"  id="pagar" class="btn btn-success pull-right"><i class='fa fa-print'></i> Procesar pago pendiente</button>
+                            <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
                         </div>
+                        </form>
+                        <form action="{{ route('checkout.update', $servicio->habitacion_id)}}" id="form1" method="POST" autocomplete="off" role="buscar" name="sumar">
+                            @csrf
+                            @method('PUT')
+                            {{-- <input type="hidden" name="quetal" value="{{$servicio->habitacion_id ?? ''}}"> --}}
+                            <input type="hidden" name="id_habitacion" value="{{$servicio->habitacion_id ?? ''}}">
+                            <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
+                            <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button>
                         </form>
 
                     </div>
                 </div>
+
+                {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+<div class="modal fade bs-example-modal-xm refrescar" id="modalPagoPendiente" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-danger">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                {{-- <form id="form2" action="{{route('proceso')}}" method="post">
+                    @csrf --}}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title"><span class="fa fa-spinner"></span>SELECCIONE HABITACION A CAMBIAR </h4>
+                </div>
+                <div class="modal-body" style="background-color:#fff !important;">
+
+                    <div class="row">
+                        <div class="col-md-offset-1 col-md-10">
+
+
+
+                            <div class="text-black detalle" id="detalle2">
+                            </div>
+
+
+                    </div>
+                    <div id="infoPago2">
+                        <div class="col-md-12">
+                            <div class="box box-danger">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Debe cancelar la diferencia de precio...! (<b class="text-danger" id="diferenciaPrecio2">$0.00</b>)</h3>
+                            </div><!-- /.box-header -->
+                            <div class="box-body">
+                                <div id="btnPago2">
+                                    <div id="contado2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                        <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
+                                    </div>
+
+                                    <div id="precortesia2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
+                                        <a href="#" data-toggle="modal" data-target="#precortesiamodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
+                                    </div>
+
+                                    {{-- <div id="cortesia"
+                                        class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                        <a id="modalPago" href="#"   class="btn btn-xs btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
+
+                                    </div> --}}
+
+                                    {{-- <div id="creditoa"
+                                        class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                        <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Crédito</a>
+
+                                    </div> --}}
+
+                                    <div id="precredito2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
+                                        <a href="#" data-toggle="modal" data-target="#precreditomodal"  class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crédito</a>
+                                    </div>
+
+                                </div>
+                            </div><!-- /.box-body -->
+                            </div><!-- /.box -->
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
+            <button name="procesarServicioPendiente" id="procesarServiciopendiente" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio Pendientes</button>
+            {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
+          </div>
+        {{-- </form> --}}
+        </div>
+        <!-- /.modal-content -->
+        </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+</div>
+{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 
 <!-- Large modal -->
 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
@@ -448,52 +544,52 @@ if(isset($servicio->id)){
                                 </div>
                             </div>
 
-                        <div class="form-group">
-                            <div class="input-group">
-                            <span class="input-group-addon"> HABITACIÓN </span>
-                            <input type="text" class="form-control col-md-8" name="nombre_nueva" id="nombre_nueva" readonly value=""  placeholder="Ingrese nombre">
-                            <input type="hidden" class="form-control col-md-8" name="habitacion_id_nueva"  value=""  placeholder="Ingrese nombre">
+                            <div class="form-group">
+                                <div class="input-group">
+                                <span class="input-group-addon"> HABITACIÓN </span>
+                                <input type="text" class="form-control col-md-8" name="nombre_nueva" id="nombre_nueva" readonly value=""  placeholder="Ingrese nombre">
+                                <input type="hidden" class="form-control col-md-8" name="habitacion_id_nueva"  value=""  placeholder="Ingrese nombre">
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="form-group">
-                            <div class="input-group">
-                            <span class="input-group-addon"> TIPO </span>
-                            <input type="text" class="form-control" name="categoria_nueva" id="categoria_nueva"  disabled value=""  placeholder="Ingrese nombre">
-                            <input type="hidden" class="form-control catid ver" name="categoria_id_nueva" id="categoria_id_nueva" data-id="" value=""  placeholder="Ingrese nombre">
-                            <input type="hidden" class="form-control catid ver" name="precio_id_nueva" id="precio_id_nueva" data-id="" value=""  placeholder="Ingrese nombre">
+                            <div class="form-group">
+                                <div class="input-group">
+                                <span class="input-group-addon"> TIPO </span>
+                                <input type="text" class="form-control" name="categoria_nueva" id="categoria_nueva"  disabled value=""  placeholder="Ingrese nombre">
+                                <input type="hidden" class="form-control catid ver" name="categoria_id_nueva" id="categoria_id_nueva" data-id="" value=""  placeholder="Ingrese nombre">
+                                <input type="hidden" class="form-control catid ver" name="precio_id_nueva" id="precio_id_nueva" data-id="" value=""  placeholder="Ingrese nombre">
 
+
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-group">
+                                <span class="input-group-addon"> DETALLES </span>
+                                <input type="text" class="form-control col-md-8" name="categoria_dest_nueva" id="categoria_dest_nueva" disabled value=""  placeholder="Ingrese nombre">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">SERVICIOS</span>
+                                    {{-- <select id="segr_name" name="segr_name" data-size="2" data-width="100%" class="selectpicker" multiple data-value="{{segr_name}}" title="Seleccione Grupo de Servicio"> --}}
+                                    {{-- <option id="0" value="0">0</option> --}}
+                                    <select   data-size="2" data-width="100%" palceholder="hola" data-id="{{$habitacion->cat->id}}" title="Seleccione Servicio" name="horario" id="horario" class="precio form-control select2">
+                                        <option value="0"></option>
+                                        @foreach($horarios as $horario)
+                                                <option value="{{$horario->id}}">{{$horario->nombre}}</option>
+                                            @endforeach
+                                        </select>
+                                    <input class="text-black" id="tasaDolar" name="tasaDolar" value="{{$tasaDolarHabitacion->tasa}}" type="hidden">
+                                    <input class="text-black" id="tasaPeso" name="tasaPeso" value="{{$tasaPesoHabitacion->tasa}}" type="hidden">
+                                </div>
+                            </div>
+
+
+                            <div class="text-black detalle" id="detalle">
 
                             </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="input-group">
-                              <span class="input-group-addon"> DETALLES </span>
-                              <input type="text" class="form-control col-md-8" name="categoria_dest_nueva" id="categoria_dest_nueva" disabled value=""  placeholder="Ingrese nombre">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="input-group">
-                                <span class="input-group-addon">SERVICIOS</span>
-                                {{-- <select id="segr_name" name="segr_name" data-size="2" data-width="100%" class="selectpicker" multiple data-value="{{segr_name}}" title="Seleccione Grupo de Servicio"> --}}
-                                  {{-- <option id="0" value="0">0</option> --}}
-                                <select   data-size="2" data-width="100%" palceholder="hola" data-id="{{$habitacion->cat->id}}" title="Seleccione Servicio" name="horario" id="horario" class="precio form-control select2">
-                                    <option value="0"></option>
-                                    @foreach($horarios as $horario)
-                                            <option value="{{$horario->id}}">{{$horario->nombre}}</option>
-                                        @endforeach
-                                    </select>
-                                <input class="text-black" id="tasaDolar" name="tasaDolar" value="{{$tasaDolarHabitacion->tasa}}" type="hidden">
-                                <input class="text-black" id="tasaPeso" name="tasaPeso" value="{{$tasaPesoHabitacion->tasa}}" type="hidden">
-                            </div>
-                        </div>
-
-
-                        <div class="text-black detalle" id="detalle">
-
-                        </div>
                         <div id="infoQR">
                             <div class="col-md-12">
                                 <div class="box box-danger">
@@ -782,6 +878,11 @@ if(isset($servicio->id)){
                                                         <h4 id="ex" class="text-bold">TOTAL EXCEDENTE</h4>
                                                         <h4 id="r" class="text-bold">RESTA</h4>
                                                         <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
+                                                        <input id="banderaHorasExtras" name="banderaHorasExtras" type="hidden" value="">
+                                                        <input id="cantHorasExtras" name="cantHorasExtras" type="hidden" value="">
+                                                        <input id="precioHorasExtras" name="precioHorasExtras" type="hidden" value="">
+                                                        <input id="otrosMontos" name="OtrosMontos" type="hidden" value="">
+                                                        <input id="observacionOtrosMontos" name="observacionOtrosMontos" type="hidden" value="">
                                                         <input id="monto_dejado" name="monto_dejado" type="hidden" value="">
                                                         <input id="cantidad" name="cantidad" type="hidden" value="">
                                                         <input id="operador" name="operador" type="hidden" value="{{$UserName}}">
@@ -949,44 +1050,7 @@ if(isset($servicio->id)){
                                                         </table>
                                                     </div>
 
-                                                {{-- <table class="table table-condensed">
-                                                    <tbody><tr>
-                                                        <th>Divisa</th>
-                                                        <th>Disponible</th>
-                                                        <th>Vuelto</th>
-                                                        <th >Monto a devitar</th>
-                                                        <th>Quedan</th>
-                                                    </tr>
-                                                    <tr>
-                                                    <td>Dolar</td>
-                                                    <td>
-                                                        <h5 class="description-header">$. {{ number_format($cajas->SumaTotalDolar + $caja->monto_dolar,3,',','.') ?? ' 0,00' }}</h5>
-                                                        <input type="hidden" value=""  id="deuda">
 
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" value=""  id="deuda2">
-                                                    </td>
-                                                    <td><input type="text" class="Can_Dolar"><br/></td>
-                                                    </tr>
-                                                    <tr>
-                                                    <td>Peso</td>
-                                                    <td><h5 class="description-header">$. {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso,2,',','.') ?? ' 0,00' }}</h5></td>
-                                                    <td>
-                                                        <input type="text" value=""  id="deuda2Peso">
-                                                    </td>
-                                                    <td><input type="text" class="Can_Peso"></td>
-                                                    </tr>
-                                                    <tr>
-                                                    <td>Bolivar</td>
-                                                    <td><h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalPunto + $caja->monto_bolivar,2,',','.') ?? ' 0,00' }}</h5></td>
-                                                    <td>
-                                                        <input type="text" value=""  id="deuda2Bolivar">
-                                                    </td>
-                                                    <td><input type="text" class="Can_Bolivar"><br/></td>
-                                                    </tr>
-
-                                                </tbody></table> --}}
                                                 </div>
                                                 <!-- /.box-body -->
                                             </div>
@@ -1010,14 +1074,9 @@ if(isset($servicio->id)){
                                             <input name="porPesoHabitacion" value="{{ $tasaPesoHabitacion->porcentaje_ganancia }}" type="hidden">
                                             <input id="vtosPendientes" name="vtosPendientes" value="{{ $cajas->excedenteCLiente ?? '' }}" type="text">
                                             <input id="VueltosvtosPendientes" name="VueltosvtosPendientes" value="{{ $cajas->TotalSumaVueltosPendientesClienteDolar ?? '' }}" type="text">
-                                            {{-- <button id="enviar" class="btn btn-primary btn-block"
-                                                type="button">Guardar</button> --}}
+
                                         </div>
-                                        {{-- <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
-                                            id="guardar1">
-                                            <button class="btn btn-danger btn-block"
-                                                type="reset">Cancelar</button>
-                                        </div> --}}
+
                                     </div>
                                 </div>
                                 </div>
@@ -1043,6 +1102,7 @@ if(isset($servicio->id)){
     <!-- /.modal -->
 </div>
   {{-- fin Modal pago cambiao habitacion --}}
+
   {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
   {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 
@@ -1195,14 +1255,197 @@ const sentence = nombreVieja;
 const word = '/';
 var btnCambio = 0;
 var procesoCambioSalida = 0;
+var procesoPagoPendientealida = 0;
 // sentence.includes(word) ? btnCambio == 1 : btnCambio == 2;
 // ${sentence.includes(word) ? btnCambio = 1 : btnCambio = 0} ;
 
-$("#cambiarHabitacionBtn").on('click', function() {
+// alert('total '+$total);
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Inicio de metodos para gestionar los pagos extras
+
+
+        // alert('total pendiente '+$totalPendietne);
+
+        // if ($totalPendiente > 0) {
+        //     pagoExtraPendiente();
+        // }
+
+
+
+        function pagoExtraPendiente(){
+            totalPendiente = $('#total').val();
+            alert('total pendiente '+totalPendiente);
+
+            let totalPendt = new Decimal(totalPendiente);
+
+
+            let dataCantHorasExtras = $("#dataCantHorasExtras").val();
+            let dataPrecioHorasExtras = $("#dataPrecioHorasExtras").val();
+            let numero2 = $("#numero2").val();
+            let observacionOtros = $("#observacionOtros").val();
+
+            $("#banderaHorasExtras").val('PagoHorasExtras');
+            $("#cantHorasExtras").val(dataCantHorasExtras);
+            $("#precioHorasExtras").val(dataPrecioHorasExtras);
+            $("#otrosMontos").val(numero2);
+            $("#observacionOtrosMontos").val(observacionOtros);
+
+
+            $("#total_costo").val('');
+            $("#total_costo").val(totalPendt.toFixed(2));
+            $('#diferenciaPrecio2').html(totalPendt.toFixed(2));
+            // $("#pagoPendienteBtn").click();
+
+            let isCortesia = $("#isCortesia").val();
+            let isCredito = $("#isCredito").val();
+            if(isCortesia){
+                // console.log('tiene Cortesia '+isCortesia);
+                let precio = totalPendt.toFixed(2);
+                $("#precio_costo").val(precio);
+                $('#cortesia2').show();
+                // $('#cortesia').show();
+                $('#precortesia2').show();
+                // console.log('Este cliente puede tener Cortesia');
+            }else{
+                $('#cortesia2').hide();
+                $('#precortesia2').hide();
+            }
+            if(isCredito){
+                // console.log('tiene credito '+isCredito);
+                let precio = totalPendt.toFixed(2);
+                $("#precio_costo").val(precio);
+                // console.log('Este cliente puede tener credito');
+                $('#credito2').show();
+                // $('#credito').show();
+                $('#precredito2').show();
+
+            }else{
+
+                $('#credito2').hide();
+                $('#precredito2').hide();
+            }
+        }
+
+        $("#pagoPendienteBtn").on('click', function() {
+            fncSumar();
+            pagoExtraPendiente();
+            procesoCambioSalida = 3;
+            // alert('boton '+procesoCambioSalida);
+
+        });
+
+        // $("#procesarServicio").on('click', function() {
+        //     addHabitacion();
+        //     $("#monto_dejado").val(0);
+        //     $('#modo_pago').val('cambio');
+        //     $("#form3").submit();
+        // });
+
+        $("#contado2").on('click', function() {
+            let cliente_id = $("#cliente_id").val();
+            if(cliente_id == 0 || cliente_id == null){
+                alert('No has seleccionado un cliente...!');
+                return false;
+            }
+            $("#bt_addD").click();
+
+            $('#modo_pago').val('contado');
+        });
+        $("#precortesia2").on('click', function() {
+            let cliente_id = $("#cliente_id").val();
+            if(cliente_id == 0 || cliente_id == null){
+                alert('No has seleccionado un cliente...!');
+                return false;
+            }
+            $('#modo_pago').val('cortesia');
+
+        });
+        $("#cortesia2").on('click', function() {
+            // addHabitacion();
+            $("#monto_dejado").val(0);
+            $('#modo_pago').val('cortesia');
+            $("#form3").submit();
+        });
+        $("#precredito2").on('click', function() {
+
+            let cliente_id = $("#cliente_id").val();
+            if(cliente_id == 0 || cliente_id == null){
+                alert('No has seleccionado un cliente...!');
+                return false;
+            }
+            $('#modo_pago').val('credito');
+
+        });
+        $("#credito2").on('click', function() {
+            let estado_credito = $("#estado_credito").val();
+            if (estado_credito == 'Moroso') {
+                alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
+            } else {
+
+
+            // addHabitacion();
+            $("#monto_dejado").val(0);
+            $('#modo_pago').val('credito');
+            let costo = $("#total_costo").val();
+            // alert('total costo '+costo);
+            let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+            // alert(deuda_credito_pendiente);
+            let limite_fecha_credito = $("#limite_fecha").val();
+            let limite_monto_credito = $("#limite_monto").val();
+
+            if (deuda_credito_pendiente) {
+                let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+                // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+                if (credito_disponible > 0) {
+                    // alert('es mayor puede continuar costo '+ costo);
+                    let credito_disponible_total_operacion = credito_disponible - costo;
+
+                    if (credito_disponible_total_operacion >= 0) {
+                        // alert('puede seguir');
+                        $("#form3").submit();
+                    }else{
+                        alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+                    }
+
+                }else{
+                    alert('El cliente no tiene Credito...');
+                }
+            } else {
+                // alert('no hay deuda pendiente');
+                let credito_disponible = limite_monto_credito;
+                // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+                if (credito_disponible > 0) {
+                    // alert('es mayor puede continuar costo '+ costo);
+                    let credito_disponible_total_operacion = credito_disponible - costo;
+
+                    if (credito_disponible_total_operacion >= 0) {
+                        // alert('puede seguir');
+                        $("#form3").submit();
+                    }else{
+                        alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+                    }
+
+                }else{
+                    alert('El cliente no tiene Credito...');
+                }
+            }
+
+
+            }
+        });
+
+    //Fin de metodos para gestionar los pagos extras
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    $("#cambiarHabitacionBtn").on('click', function() {
     procesoCambioSalida = 1;
     // alert('boton '+procesoCambioSalida);
 
-        });
+    });
 
 if (sentence.includes(word)) {
     btnCambio = 1;
@@ -2213,7 +2456,7 @@ if (btnCambio == 1) {
 
     }
 
-function fijaLargoIzquierda(T) {
+    function fijaLargoIzquierda(T) {
 
         var numero = T;
         var caracteres = 3;
@@ -2486,461 +2729,460 @@ function fijaLargoIzquierda(T) {
 
     function verify() {
 
-if (total > 0) {
-    $('#gestionpago').show("linear");
-} else {
-    $('#gestionpago').hide("linear");
-}
-}
-
-function mostrarBonotesPago() {
-        // alert('Mostrar botones '+total);
         if (total > 0) {
-            $('#bt_addD').show("linear");
-            $('#bt_addP').show("linear");
-            $('#bt_addTP').show("linear");
-            $('#bt_addM').show("linear");
-            $('#bt_addE').show("linear");
+            $('#gestionpago').show("linear");
         } else {
-            $('#bt_addD').hide("linear");
-            $('#bt_addP').hide("linear");
-            $('#bt_addTP').hide("linear");
-            $('#bt_addM').hide("linear");
-            $('#bt_addE').hide("linear");
+            $('#gestionpago').hide("linear");
         }
     }
+
+    function mostrarBonotesPago() {
+            // alert('Mostrar botones '+total);
+            if (total > 0) {
+                $('#bt_addD').show("linear");
+                $('#bt_addP').show("linear");
+                $('#bt_addTP').show("linear");
+                $('#bt_addM').show("linear");
+                $('#bt_addE').show("linear");
+            } else {
+                $('#bt_addD').hide("linear");
+                $('#bt_addP').hide("linear");
+                $('#bt_addTP').hide("linear");
+                $('#bt_addM').hide("linear");
+                $('#bt_addE').hide("linear");
+            }
+        }
 
     function eliminar(index) {
 
-// $("#gestionpago").hide("linear");
-total_costo = total_costo - subtotalPC[index];
-total       = total - subtotal[index];
-//  alert('total '+total);
-total_d     = total_d - subtotald[index];
-//  alert('total d '+total_d);
-total_p     = total_p - subtotalp[index];
-// alert('total p '+total_p);
-total_tp    = total_tp - subtotaltp[index];
-// alert('total tp '+total_tp);
-total_m     = total_m - subtotalm[index];
-// alert('total m '+total_m);
-total_e     = total_e -subtotale[index];
-// alert('total e '+total_e);
-//precosto =  $("#precio_costo").val();
-//total_costo = precosto - subtotalc[index];
-// alert(total_costo.toFixed(2));
-//alert(total_costo);
-$("#precio_costo").val(numDecimal(total_costo));
+        // $("#gestionpago").hide("linear");
+        total_costo = total_costo - subtotalPC[index];
+        total       = total - subtotal[index];
+        //  alert('total '+total);
+        total_d     = total_d - subtotald[index];
+        //  alert('total d '+total_d);
+        total_p     = total_p - subtotalp[index];
+        // alert('total p '+total_p);
+        total_tp    = total_tp - subtotaltp[index];
+        // alert('total tp '+total_tp);
+        total_m     = total_m - subtotalm[index];
+        // alert('total m '+total_m);
+        total_e     = total_e -subtotale[index];
+        // alert('total e '+total_e);
+        //precosto =  $("#precio_costo").val();
+        //total_costo = precosto - subtotalc[index];
+        // alert(total_costo.toFixed(2));
+        //alert(total_costo);
+        $("#precio_costo").val(numDecimal(total_costo));
 
-// formatMoney(total_d*tasaD,2,',','.')
+        // formatMoney(total_d*tasaD,2,',','.')
 
-$("#total").html("$/. " + numDecimal(total));
-$("#PagoTtotal").html(numDecimal(total));
-//$("#precio_costo").html(total.toFixed(2));
-// $("#total_venta").val(total.toFixed(2));
-// ddç
-
-
-$("#bt_addP").click();
-$("#bt_addTP").click();
-$("#bt_addM").click();
-$("#bt_addE").click();
-$("#bt_addD").click();
+        $("#total").html("$/. " + numDecimal(total));
+        $("#PagoTtotal").html(numDecimal(total));
+        //$("#precio_costo").html(total.toFixed(2));
+        // $("#total_venta").val(total.toFixed(2));
+        // ddç
 
 
-$("#total_ventad").val(numDecimal(total_d));
-$("#total_ventap").val(numDecimal(total_p));
-$("#total_ventatp").val(numDecimal(total_tp));
-$("#total_ventam").val(numDecimal(total_m));
-$("#total_ventae").val(numDecimal(total_e));
-
-$("#totald").html("<h4 class='text-bold text-primary'>$. " + numDecimal(total_d *tasaD) + "</h4>");
-$("#totalp").html("<h4 class='text-bold text-primary'>$. " + formatMoney(numDecimal(total_p) * tasaP, 2, ',', '.') + "</h4>");
-$("#totaltp").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_tp) * tasaTP, 2, ',', '.') + "</h4>");
-$("#totalm").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_m) * tasaM, 2, ',', '.') + "</h4>");
-$("#totale").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_e) * tasaE, 2, ',', '.') + "</h4>");
-
-$("#fila" + index).remove();
-mostrarBonotesPago();
-// verify();
-resta();
-$('#gestionpago').hide("linear");
+        $("#bt_addP").click();
+        $("#bt_addTP").click();
+        $("#bt_addM").click();
+        $("#bt_addE").click();
+        $("#bt_addD").click();
 
 
-};
+        $("#total_ventad").val(numDecimal(total_d));
+        $("#total_ventap").val(numDecimal(total_p));
+        $("#total_ventatp").val(numDecimal(total_tp));
+        $("#total_ventam").val(numDecimal(total_m));
+        $("#total_ventae").val(numDecimal(total_e));
 
-function multiplicar(decimal) {
-return decimal*1000;
-}
+        $("#totald").html("<h4 class='text-bold text-primary'>$. " + numDecimal(total_d *tasaD) + "</h4>");
+        $("#totalp").html("<h4 class='text-bold text-primary'>$. " + formatMoney(numDecimal(total_p) * tasaP, 2, ',', '.') + "</h4>");
+        $("#totaltp").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_tp) * tasaTP, 2, ',', '.') + "</h4>");
+        $("#totalm").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_m) * tasaM, 2, ',', '.') + "</h4>");
+        $("#totale").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_e) * tasaE, 2, ',', '.') + "</h4>");
 
-function dividir(decimal) {
-return decimal/1000;
-}
+        $("#fila" + index).remove();
+        mostrarBonotesPago();
+        // verify();
+        resta();
+        $('#gestionpago').hide("linear");
 
-// Gestion de pagos
+    };
 
-$('.Can_Dolar').keyup(function() {
-
-var limite = parseInt($("#deuda").val());
-var nuevo_valor =  $(this).val();
-var importe_total = 0;
-
-$(".Can_Dolar").each(
-    function(index, value) {
-        if ( $.isNumeric($(this).val()) ){
-            importe_total += parseInt($(this).val());
-        }
+    function multiplicar(decimal) {
+        return decimal*1000;
     }
-    );
 
-    let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
-    let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
-
-    let precioDolarReal = limite + importe_total;
-
-
-    $("#deuda2").val(precioDolarReal);
-    $("#deuda2Peso").val(precioDolarReal * tasaPesoHabitacion);
-    $("#deuda2Bolivar").val(precioDolarReal * tasaDolarHabitacion);
-});
-
-$('.Can_Peso').keyup(function() {
-
-var limite = parseInt($("#deuda").val());
-var nuevo_valor =  $(this).val();
-var importe_total = 0;
-
-$(".Can_Peso").each(
-    function(index, value) {
-        if ( $.isNumeric($(this).val()) ){
-        importe_total += parseInt($(this).val());
+    function dividir(decimal) {
+        return decimal/1000;
     }
-    }
-);
 
-let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
-let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
+    // Gestion de pagos
 
-    let montoBase = importe_total;
-    let montoBaseA = importe_total / tasaPesoHabitacion;
-    let precioDolarReal = limite + (importe_total / tasaPesoHabitacion);
+    $('.Can_Dolar').keyup(function() {
 
+        var limite = parseInt($("#deuda").val());
+        var nuevo_valor =  $(this).val();
+        var importe_total = 0;
 
-
-$("#deuda2").val(precioDolarReal);
-$("#deuda2Peso").val(precioDolarReal * tasaPesoHabitacion);
-$("#deuda2Bolivar").val(precioDolarReal * tasaDolarHabitacion);
-});
-
-$('.Can_Bolivar').keyup(function() {
-
-var limite = parseInt($("#deuda").val());
-var nuevo_valor =  $(this).val();
-var importe_total = 0;
-
-$(".Can_Bolivar").each(
-    function(index, value) {
-        if ( $.isNumeric($(this).val()) ){
-        importe_total += parseInt($(this).val());
-    }
-    }
-);
-
-let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
-let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
-
-    let precioDolarReal = limite + importe_total;
-
-
-$("#deuda2").val(precioDolarReal);
-$("#deuda2Peso").val(precioDolarReal * tasaPesoHabitacion);
-$("#deuda2Bolivar").val(precioDolarReal * tasaDolarHabitacion);
-});
-
-
-$("#excedente").hide();
-$("#ex").hide();
-$("#excdt").hide();
-
-var vtosPendientes = $('#vtosPendientes').val();
-
-alert(vtosPendientes);
-$("#dispExcedente").val(vtosPendientes);
-                // var verCajaExcedente = vtosPendientes;
-                if(vtosPendientes > 0){
-                    alert(vtosPendientes);
-                $("#excedente").show();
-                $("#ex").show();
-                $("#excdt").show();
-
-                }else{
-                    $("#excedente").hide();
-                    $("#ex").hide();
-                    $("#excdt").hide();
+        $(".Can_Dolar").each(
+            function(index, value) {
+                if ( $.isNumeric($(this).val()) ){
+                    importe_total += parseInt($(this).val());
                 }
-
-
-$("#Vueltosexcedente").hide();
-$("#Vueltosex").hide();
-$("#Vueltosexcdt").hide();
-
-var VueltosvtosPendientes = $('#VueltosvtosPendientes').val();
-
-alert(VueltosvtosPendientes);
-$("#VueltosdispExcedente").val(VueltosvtosPendientes);
-                // var verCajaExcedente = vtosPendientes;
-                if(VueltosvtosPendientes > 0){
-                    alert(VueltosvtosPendientes);
-                $("#Vueltosexcedente").show();
-                $("#Vueltosex").show();
-                $("#Vueltosexcdt").show();
-
-                }else{
-                    $("#Vueltosexcedente").hide();
-                    $("#Vueltosex").hide();
-                    $("#Vueltosexcdt").hide();
-                }
-
-function resta() {
-        // alert('resta');
-        const RestaTotal    = document.getElementById('RestaTtotal');
-        const Excdt    = document.getElementById('excdt');
-        const VueltosExcdt    = document.getElementById('Vueltosexcdt');
-        const PagoTtotal    = document.getElementById('PagoTtotal');
-        const spTotal       = document.getElementById('spTotal');
-        const tp            = document.getElementById('tp');
-        const r             = document.getElementById('r');
-        const tap           = document.getElementById('tap');
-        const RestaTotalV    = document.getElementById('RestaTtotalV');
-        // const PagoTtotalV    = document.getElementById('PagoTtotalV');
-        // const spTotalV       = document.getElementById('spTotalV');
-        // const tpV            = document.getElementById('tp');
-        // const rV             = document.getElementById('r');
-        // const tapV           = document.getElementById('tap');
-
-
-
-        let Exc = $('#pagoConExcedente').val();
-
-
-        if(Exc > 0){
-            pagoExc = Exc;
-
-            pagoExced = Exc;
-
-            if(pagoExced > 0){
-
-                var dispExcedente = $("#dispExcedente").val();
-
-                var dispExced = dispExcedente - pagoExced;
-
-                // 0.1 <= (0.3 - 0.2)                              // false
-                dispExced = new Decimal(dispExced);
-                // dispExced.lessThanOrEqualTo(Decimal(0.3).minus(0.2))    // true
-                // new Decimal(-1).lte(x)
-                var validarDispExced = dispExced.isNeg();
-                // alert(validarDispExced);
-
-                $("#dispExcedenteShow").html('$'+dispExced.toFixed(2));
             }
-            if (validarDispExced){
-                alert('El montoddd disponible no supera el monto a pagar... Credito disponible es de: $'+dispExcedente+ ' y el monto que decea pagar es de: $'+dispExced.toFixed(2));
+            );
+
+            let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
+            let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
+
+            let precioDolarReal = limite + importe_total;
+
+
+            $("#deuda2").val(precioDolarReal);
+            $("#deuda2Peso").val(precioDolarReal * tasaPesoHabitacion);
+        $("#deuda2Bolivar").val(precioDolarReal * tasaDolarHabitacion);
+    });
+
+    $('.Can_Peso').keyup(function() {
+
+        var limite = parseInt($("#deuda").val());
+        var nuevo_valor =  $(this).val();
+        var importe_total = 0;
+
+        $(".Can_Peso").each(
+            function(index, value) {
+                if ( $.isNumeric($(this).val()) ){
+                importe_total += parseInt($(this).val());
+            }
+            }
+        );
+
+        let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
+        let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
+
+            let montoBase = importe_total;
+            let montoBaseA = importe_total / tasaPesoHabitacion;
+            let precioDolarReal = limite + (importe_total / tasaPesoHabitacion);
+
+
+
+        $("#deuda2").val(precioDolarReal);
+        $("#deuda2Peso").val(precioDolarReal * tasaPesoHabitacion);
+        $("#deuda2Bolivar").val(precioDolarReal * tasaDolarHabitacion);
+    });
+
+    $('.Can_Bolivar').keyup(function() {
+
+        var limite = parseInt($("#deuda").val());
+        var nuevo_valor =  $(this).val();
+        var importe_total = 0;
+
+        $(".Can_Bolivar").each(
+            function(index, value) {
+                if ( $.isNumeric($(this).val()) ){
+                importe_total += parseInt($(this).val());
+            }
+            }
+        );
+
+        let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
+        let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
+
+            let precioDolarReal = limite + importe_total;
+
+
+        $("#deuda2").val(precioDolarReal);
+        $("#deuda2Peso").val(precioDolarReal * tasaPesoHabitacion);
+        $("#deuda2Bolivar").val(precioDolarReal * tasaDolarHabitacion);
+    });
+
+
+    $("#excedente").hide();
+    $("#ex").hide();
+    $("#excdt").hide();
+
+    var vtosPendientes = $('#vtosPendientes').val();
+
+    alert(vtosPendientes);
+    $("#dispExcedente").val(vtosPendientes);
+    // var verCajaExcedente = vtosPendientes;
+    if(vtosPendientes > 0){
+        alert(vtosPendientes);
+    $("#excedente").show();
+    $("#ex").show();
+    $("#excdt").show();
+
+    }else{
+        $("#excedente").hide();
+        $("#ex").hide();
+        $("#excdt").hide();
+    }
+
+
+    $("#Vueltosexcedente").hide();
+    $("#Vueltosex").hide();
+    $("#Vueltosexcdt").hide();
+
+    var VueltosvtosPendientes = $('#VueltosvtosPendientes').val();
+
+    alert(VueltosvtosPendientes);
+    $("#VueltosdispExcedente").val(VueltosvtosPendientes);
+        // var verCajaExcedente = vtosPendientes;
+        if(VueltosvtosPendientes > 0){
+            alert(VueltosvtosPendientes);
+        $("#Vueltosexcedente").show();
+        $("#Vueltosex").show();
+        $("#Vueltosexcdt").show();
+
+        }else{
+            $("#Vueltosexcedente").hide();
+            $("#Vueltosex").hide();
+            $("#Vueltosexcdt").hide();
+        }
+
+        function resta() {
+            // alert('resta');
+            const RestaTotal    = document.getElementById('RestaTtotal');
+            const Excdt    = document.getElementById('excdt');
+            const VueltosExcdt    = document.getElementById('Vueltosexcdt');
+            const PagoTtotal    = document.getElementById('PagoTtotal');
+            const spTotal       = document.getElementById('spTotal');
+            const tp            = document.getElementById('tp');
+            const r             = document.getElementById('r');
+            const tap           = document.getElementById('tap');
+            const RestaTotalV    = document.getElementById('RestaTtotalV');
+            // const PagoTtotalV    = document.getElementById('PagoTtotalV');
+            // const spTotalV       = document.getElementById('spTotalV');
+            // const tpV            = document.getElementById('tp');
+            // const rV             = document.getElementById('r');
+            // const tapV           = document.getElementById('tap');
+
+
+
+            let Exc = $('#pagoConExcedente').val();
+
+
+            if(Exc > 0){
+                pagoExc = Exc;
+
+                pagoExced = Exc;
+
+                if(pagoExced > 0){
+
+                    var dispExcedente = $("#dispExcedente").val();
+
+                    var dispExced = dispExcedente - pagoExced;
+
+                    // 0.1 <= (0.3 - 0.2)                              // false
+                    dispExced = new Decimal(dispExced);
+                    // dispExced.lessThanOrEqualTo(Decimal(0.3).minus(0.2))    // true
+                    // new Decimal(-1).lte(x)
+                    var validarDispExced = dispExced.isNeg();
+                    // alert(validarDispExced);
+
+                    $("#dispExcedenteShow").html('$'+dispExced.toFixed(2));
+                }
+                if (validarDispExced){
+                    alert('El montoddd disponible no supera el monto a pagar... Credito disponible es de: $'+dispExcedente+ ' y el monto que decea pagar es de: $'+dispExced.toFixed(2));
+                    pagoExc = 0;
+                    excedenteDispSet = $("#dispExcedente").val();
+                    $('#pagoConExcedente').val('');
+                    $("#dispExcedenteShow").html('$'+excedenteDispSet);
+                }
+
+            }else{
                 pagoExc = 0;
                 excedenteDispSet = $("#dispExcedente").val();
                 $('#pagoConExcedente').val('');
                 $("#dispExcedenteShow").html('$'+excedenteDispSet);
             }
 
-        }else{
-            pagoExc = 0;
-            excedenteDispSet = $("#dispExcedente").val();
-            $('#pagoConExcedente').val('');
-            $("#dispExcedenteShow").html('$'+excedenteDispSet);
-        }
+
+            let VueltosExc = $('#VueltospagoConExcedente').val();
 
 
-        let VueltosExc = $('#VueltospagoConExcedente').val();
+            if(VueltosExc > 0){
+                VueltospagoExc = VueltosExc;
 
+                VueltospagoExced = VueltosExc;
 
-        if(VueltosExc > 0){
-            VueltospagoExc = VueltosExc;
+                if(VueltospagoExced > 0){
 
-            VueltospagoExced = VueltosExc;
+                    var VueltosdispExcedente = $("#VueltosdispExcedente").val();
 
-            if(VueltospagoExced > 0){
+                    var VueltosdispExced = VueltosdispExcedente - VueltospagoExced;
 
-                var VueltosdispExcedente = $("#VueltosdispExcedente").val();
+                    // 0.1 <= (0.3 - 0.2)                              // false
+                    VueltosdispExced = new Decimal(VueltosdispExced);
+                    // dispExced.lessThanOrEqualTo(Decimal(0.3).minus(0.2))    // true
+                    // new Decimal(-1).lte(x)
+                    var VueltosvalidarDispExced = VueltosdispExced.isNeg();
+                    // alert(validarDispExced);
 
-                var VueltosdispExced = VueltosdispExcedente - VueltospagoExced;
+                    $("#VueltosdispExcedenteShow").html('$'+VueltosdispExced.toFixed(2));
+                }
+                if (VueltosvalidarDispExced){
+                    alert('El montoddd disponible no supera el monto a pagar... Credito disponible es de: $'+VueltosdispExcedente+ ' y el monto que decea pagar es de: $'+VueltosdispExced.toFixed(2));
+                    VueltospagoExc = 0;
+                    VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
+                    $('#VueltospagoConExcedente').val('');
+                    $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
+                }
 
-                // 0.1 <= (0.3 - 0.2)                              // false
-                VueltosdispExced = new Decimal(VueltosdispExced);
-                // dispExced.lessThanOrEqualTo(Decimal(0.3).minus(0.2))    // true
-                // new Decimal(-1).lte(x)
-                var VueltosvalidarDispExced = VueltosdispExced.isNeg();
-                // alert(validarDispExced);
-
-                $("#VueltosdispExcedenteShow").html('$'+VueltosdispExced.toFixed(2));
-            }
-            if (VueltosvalidarDispExced){
-                alert('El montoddd disponible no supera el monto a pagar... Credito disponible es de: $'+VueltosdispExcedente+ ' y el monto que decea pagar es de: $'+VueltosdispExced.toFixed(2));
+            }else{
                 VueltospagoExc = 0;
                 VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
                 $('#VueltospagoConExcedente').val('');
                 $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
             }
 
-        }else{
-            VueltospagoExc = 0;
-            VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
-            $('#VueltospagoConExcedente').val('');
-            $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
-        }
+
+            // let Cred = $('#pagoConCredito').val();
 
 
-        // let Cred = $('#pagoConCredito').val();
+            // if(Cred > 0){
+
+            //     pagoCred = Cred;
+
+            //     if(pagoCred > 0){
+            //         let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+            //         // alert(deuda_credito_pendiente);
+            //         let limite_fecha_credito = $("#limite_fecha").val();
+            //         let limite_monto_credito = $("#limite_monto").val();
+            //         let credito_disponible = 0;
+
+            //         if (deuda_credito_pendiente) {
+            //             credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+            //         }else{
+            //             credito_disponible = limite_monto_credito;
+            //         }
+
+            //         $("#dispCredito").val(credito_disponible);
 
 
-        // if(Cred > 0){
+            //         let dispCredito = credito_disponible - pagoCred;
 
-        //     pagoCred = Cred;
+            //         $("#dispCreditoShow").html('$'+dispCredito);
 
-        //     if(pagoCred > 0){
-        //         let deuda_credito_pendiente = $("#total_credito_pendiente").val();
-        //         // alert(deuda_credito_pendiente);
-        //         let limite_fecha_credito = $("#limite_fecha").val();
-        //         let limite_monto_credito = $("#limite_monto").val();
-        //         let credito_disponible = 0;
+            //         // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
 
-        //         if (deuda_credito_pendiente) {
-        //             credito_disponible = limite_monto_credito - deuda_credito_pendiente;
-        //         }else{
-        //             credito_disponible = limite_monto_credito;
-        //         }
+            //         if (credito_disponible > 0) {
+            //             // alert('es mayor puede continuar costo '+ costo);
+            //             credito_disponible_total_operacion = credito_disponible - pagoCred;
 
-        //         $("#dispCredito").val(credito_disponible);
+            //             if (credito_disponible_total_operacion >= 0) {
+            //                 // DMontoDolar();
 
 
-        //         let dispCredito = credito_disponible - pagoCred;
+            //                 // $("#form1").submit();
+            //             }else{
+            //                 alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' y el monto que decea pagar es de: $'+pagoCred);
+            //                 pagoCred = 0;
+            //                 $('#pagoConCredito').val('');
+            //                 $("#dispCreditoShow").html('$'+credito_disponible);
+            //             }
 
-        //         $("#dispCreditoShow").html('$'+dispCredito);
+            //         }
 
-        //         // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
-
-        //         if (credito_disponible > 0) {
-        //             // alert('es mayor puede continuar costo '+ costo);
-        //             credito_disponible_total_operacion = credito_disponible - pagoCred;
-
-        //             if (credito_disponible_total_operacion >= 0) {
-        //                 // DMontoDolar();
-
-
-        //                 // $("#form1").submit();
-        //             }else{
-        //                 alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' y el monto que decea pagar es de: $'+pagoCred);
-        //                 pagoCred = 0;
-        //                 $('#pagoConCredito').val('');
-        //                 $("#dispCreditoShow").html('$'+credito_disponible);
-        //             }
-
-        //         }
-
-        //     }
-        // }else{
-        //     pagoCred = 0;
-        //     creditoDispSet = $("#dispCredito").val();
-        //     $('#pagoConCredito').val('');
-        //     $("#dispCreditoShow").html('$'+creditoDispSet);
-        // }
-
-        var valor           = PagoTtotal.innerHTML;
-        var PagoTotal = PagoTtotal.innerHTML;
-
-        valor = valor - pagoExc - VueltospagoExc;
-        var valor_restar    = spTotal.innerHTML;
-        var resta           = valor - valor_restar;
-        if(Exc > 0){
-            x1 = new Decimal(pagoExc);
-            x2 = new Decimal(resta);
-            x3 = new Decimal(PagoTotal);
-            x4 = x1.plus(x2).equals(x3);
-            // alert(x1);
-            // alert(x2);
-            // alert(x3);
-            // alert(x4);
-            if(x2.isNegative()){
-
-
-
-                pagoExc = 0;
-                excedenteDispSet = $("#dispExcedente").val();
-                $('#pagoConExcedente').val('');
-                $("#dispExcedenteShow").html('$'+excedenteDispSet);
-                resta = x3 - valor_restar;
-                Exc = numDecimal(pagoExc);
-                alert('Error! Debe ingresar un valor menor o igual al monto que resta....');
-
-
-
-            // }else{
-            //     if(x4){
-            //         alert('puede ...');
             //     }
+            // }else{
+            //     pagoCred = 0;
+            //     creditoDispSet = $("#dispCredito").val();
+            //     $('#pagoConCredito').val('');
+            //     $("#dispCreditoShow").html('$'+creditoDispSet);
+            // }
+
+            var valor           = PagoTtotal.innerHTML;
+            var PagoTotal = PagoTtotal.innerHTML;
+
+            valor = valor - pagoExc - VueltospagoExc;
+            var valor_restar    = spTotal.innerHTML;
+            var resta           = valor - valor_restar;
+            if(Exc > 0){
+                x1 = new Decimal(pagoExc);
+                x2 = new Decimal(resta);
+                x3 = new Decimal(PagoTotal);
+                x4 = x1.plus(x2).equals(x3);
+                // alert(x1);
+                // alert(x2);
+                // alert(x3);
+                // alert(x4);
+                if(x2.isNegative()){
+
+
+
+                    pagoExc = 0;
+                    excedenteDispSet = $("#dispExcedente").val();
+                    $('#pagoConExcedente').val('');
+                    $("#dispExcedenteShow").html('$'+excedenteDispSet);
+                    resta = x3 - valor_restar;
+                    Exc = numDecimal(pagoExc);
+                    alert('Error! Debe ingresar un valor menor o igual al monto que resta....');
+
+
+
+                // }else{
+                //     if(x4){
+                //         alert('puede ...');
+                //     }
+                }
+
             }
 
-        }
-
-        if(VueltosExc > 0){
-            x1 = new Decimal(VueltospagoExc);
-            x2 = new Decimal(resta);
-            x3 = new Decimal(PagoTotal);
-            x4 = x1.plus(x2).equals(x3);
-            // alert(x1);
-            // alert(x2);
-            // alert(x3);
-            // alert(x4);
-            if(x2.isNegative()){
+            if(VueltosExc > 0){
+                x1 = new Decimal(VueltospagoExc);
+                x2 = new Decimal(resta);
+                x3 = new Decimal(PagoTotal);
+                x4 = x1.plus(x2).equals(x3);
+                // alert(x1);
+                // alert(x2);
+                // alert(x3);
+                // alert(x4);
+                if(x2.isNegative()){
 
 
 
-                VueltospagoExc = 0;
-                VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
-                $('#VueltospagoConExcedente').val('');
-                $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
-                resta = x3 - valor_restar;
-                VueltosExc = numDecimal(VueltospagoExc);
-                alert('Error! Debe ingresar un valor menor o igual al monto que resta....');
+                    VueltospagoExc = 0;
+                    VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
+                    $('#VueltospagoConExcedente').val('');
+                    $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
+                    resta = x3 - valor_restar;
+                    VueltosExc = numDecimal(VueltospagoExc);
+                    alert('Error! Debe ingresar un valor menor o igual al monto que resta....');
 
 
 
-            // }else{
-            //     if(x4){
-            //         alert('puede ...');
-            //     }
+                // }else{
+                //     if(x4){
+                //         alert('puede ...');
+                //     }
+                }
+
             }
+            // var valorV           = PagoTtotalV.innerHTML;
+            // var valor_restarV    = spTotalV.innerHTML;
+            // var restaV           = numDecimal(valorV -valor_restarV);
+            valor = parseFloat(valor);
+            valor_restar = parseFloat(valor_restar);
+            resta = parseFloat(resta);
 
-        }
-        // var valorV           = PagoTtotalV.innerHTML;
-        // var valor_restarV    = spTotalV.innerHTML;
-        // var restaV           = numDecimal(valorV -valor_restarV);
-        valor = parseFloat(valor);
-        valor_restar = parseFloat(valor_restar);
-        resta = parseFloat(resta);
+            VueltosExcdt.innerHTML = numDecimal(VueltosExc); //se llena el campo resta
+            Excdt.innerHTML = numDecimal(Exc); //se llena el campo resta
+            RestaTotal.innerHTML = numDecimal(resta); //se llena el campo resta
 
-        VueltosExcdt.innerHTML = numDecimal(VueltosExc); //se llena el campo resta
-        Excdt.innerHTML = numDecimal(Exc); //se llena el campo resta
-        RestaTotal.innerHTML = numDecimal(resta); //se llena el campo resta
-
-// alert('valor resta = '+ valor_restar + ' valor = ' + valor + 'resta = ' + resta);
+            // alert('valor resta = '+ valor_restar + ' valor = ' + valor + 'resta = ' + resta);
 
             if (valor_restar > valor) {
                let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
                let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
 
-            RestaTotalV.innerHTML = numDecimal(resta); //se llena el campo resta
-        PagoTtotalV.innerHTML = numDecimal(resta); //se llena el campo resta
+                RestaTotalV.innerHTML = numDecimal(resta); //se llena el campo resta
+                PagoTtotalV.innerHTML = numDecimal(resta); //se llena el campo resta
 
-        DMontoDolarV();
+                DMontoDolarV();
 
             } else {
                 $("#vueltos").hide();
@@ -2956,114 +3198,119 @@ function resta() {
             }
 
 
-        if (RestaTotal.innerHTML <= 0) {
-            // alert('soy menor');
-            RestaTotal.classList.remove('text-primary');
-            RestaTotal.classList.add('text-danger');
-            r.classList.remove('text-primary');
-            r.classList.add('text-danger');
+            if (RestaTotal.innerHTML <= 0) {
+                // alert('soy menor');
+                RestaTotal.classList.remove('text-primary');
+                RestaTotal.classList.add('text-danger');
+                r.classList.remove('text-primary');
+                r.classList.add('text-danger');
 
-            PagoTtotal.classList.add('text-success');
-            tap.classList.add('text-success');
+                PagoTtotal.classList.add('text-success');
+                tap.classList.add('text-success');
 
-            $("#tap").html("MONTO COMPLETO...");
-            $("#r").html("VUELTOS...");
-            // verify();
-            // TODO  boton enviar lo escondemos para usar el lector qr
-            // $("#guardar").show("linear");
-            $("#guardar").show("linear");
-
-
-
-
-
-        }
-
-        // if (RestaTotal.innerHTML < 0) {
-        //     // alert('soy menor');
-        //     RestaTotal.classList.remove('text-primary');
-        //     RestaTotal.classList.add('text-danger');
-        //     r.classList.remove('text-primary');
-        //     r.classList.add('text-danger');
-
-        //     PagoTtotal.classList.add('text-success');
-        //     tap.classList.add('text-success');
-
-        //     $("#tap").html("MONTO COMPLETO...");
-        //     $("#r").html("VUELTOS...");
-        //     // verify();
-        //     $("#guardar").show("linear");;
+                $("#tap").html("MONTO COMPLETO...");
+                $("#r").html("VUELTOS...");
+                // verify();
+                // TODO  boton enviar lo escondemos para usar el lector qr
+                // $("#guardar").show("linear");
+                $("#guardar").show("linear");
 
 
 
 
-        // }
-        if (RestaTotal.innerHTML > 0) {
 
-            // alert('soy mayor');
-            RestaTotal.classList.remove('text-danger');
-            RestaTotal.classList.add('text-primary');
-            r.classList.remove('text-danger');
-            r.classList.add('text-primary');
-
-            PagoTtotal.classList.remove('text-success');
-            tap.classList.remove('text-success');
-
-            $("#r").html("RESTA");
-            $("#tap").html("TOTAL A PAGAR");
-            $("#guardar").hide("linear");
-
-        }
-
-
-
-        // document.getElementById('RestaTtotal').addClass('btn btn-primary');
-    }
-
-/* Sumar dos números. */
-function sumar() {
-        var total_suma = 0;
-        $(".monto").each(function() {
-            if (isNaN(parseFloat($(this).val()))) {
-                total_suma += 0;
-            } else {
-                total_suma += parseFloat($(this).val());
             }
-        });
-        // alert(total_suma);
-        document.getElementById('spTotal').innerHTML = numDecimal(total_suma);
-        $('#monto_dejado').val(total_suma);
 
-    }
-    function DMontoDolar(){
-             // alert('clic');
-            Mdolar      = $("#DMontoDolar").val();
-            Tdolar      = $("#TasaDolar").val();
-            Tpeso       = $("#TasaPeso").val();
-            Tbolivar    = $("#TasaBolivar").val();
-            Tpunto      = $("#TasaPunto").val();
-            Ttrans      = $("#TasaTrans").val();
+            // if (RestaTotal.innerHTML < 0) {
+            //     // alert('soy menor');
+            //     RestaTotal.classList.remove('text-primary');
+            //     RestaTotal.classList.add('text-danger');
+            //     r.classList.remove('text-primary');
+            //     r.classList.add('text-danger');
 
-            DsupTotal = Mdolar * Tdolar;
-            $("#DolarToDolar").val(DsupTotal);
-            $("#DsubTotal").html(DsupTotal);
+            //     PagoTtotal.classList.add('text-success');
+            //     tap.classList.add('text-success');
 
-            sumar();
-            resta();
-            const Resta     = document.getElementById('RestaTtotal');
-            var valor       = Resta.innerHTML;
-            var RmultD      = valor * Tdolar;
-            $("#RestaDolar").val(RmultD);
-            var RmultP      = valor * Tpeso;
-            $("#RestaPeso").val(RmultP);
-            var RmultB      = valor * Tbolivar;
-            $("#RestaBolivar").val(RmultB);
-            var RmultPu     = valor * Tpunto;
-            $("#RestaPunto").val(RmultPu);
-            var RmultT      = valor * Ttrans;
-            $("#RestaTrans").val(RmultT);
+            //     $("#tap").html("MONTO COMPLETO...");
+            //     $("#r").html("VUELTOS...");
+            //     // verify();
+            //     $("#guardar").show("linear");;
+
+
+
+
+            // }
+            if (RestaTotal.innerHTML > 0) {
+
+                // alert('soy mayor');
+                RestaTotal.classList.remove('text-danger');
+                RestaTotal.classList.add('text-primary');
+                r.classList.remove('text-danger');
+                r.classList.add('text-primary');
+
+                PagoTtotal.classList.remove('text-success');
+                tap.classList.remove('text-success');
+
+                $("#r").html("RESTA");
+                $("#tap").html("TOTAL A PAGAR");
+                $("#guardar").hide("linear");
+
+            }
+
+
+
+            // document.getElementById('RestaTtotal').addClass('btn btn-primary');
+        }
+
+        /* Sumar dos números. */
+        function sumar() {
+                var total_suma = 0;
+                $(".monto").each(function() {
+                    if (isNaN(parseFloat($(this).val()))) {
+                        total_suma += 0;
+                    } else {
+                        total_suma += parseFloat($(this).val());
+                    }
+                });
+                // alert(total_suma);
+
+                let result = new Decimal(total_suma);
+                document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(2));
+                $('#monto_dejado').val(result.toFixed(2));
+
+
 
         }
+
+        function DMontoDolar(){
+                // alert('clic');
+                Mdolar      = $("#DMontoDolar").val();
+                Tdolar      = $("#TasaDolar").val();
+                Tpeso       = $("#TasaPeso").val();
+                Tbolivar    = $("#TasaBolivar").val();
+                Tpunto      = $("#TasaPunto").val();
+                Ttrans      = $("#TasaTrans").val();
+
+                DsupTotal = Mdolar * Tdolar;
+                $("#DolarToDolar").val(DsupTotal);
+                $("#DsubTotal").html(DsupTotal);
+
+                sumar();
+                resta();
+                const Resta     = document.getElementById('RestaTtotal');
+                var valor       = Resta.innerHTML;
+                var RmultD      = valor * Tdolar;
+                $("#RestaDolar").val(RmultD);
+                var RmultP      = valor * Tpeso;
+                $("#RestaPeso").val(RmultP);
+                var RmultB      = valor * Tbolivar;
+                $("#RestaBolivar").val(RmultB);
+                var RmultPu     = valor * Tpunto;
+                $("#RestaPunto").val(RmultPu);
+                var RmultT      = valor * Ttrans;
+                $("#RestaTrans").val(RmultT);
+
+            }
 
         function DMontoPeso(){
             Mpeso       = $("#DMontoPeso").val();
@@ -3184,265 +3431,269 @@ function sumar() {
 
         }
 
-    $(document).ready(function() {
+        $(document).ready(function() {
 
-        var aprovMontoDolar = 0;
-        $("#DMontoDolar").keyup(function() {
-            aprovMontoDolar = 1;
-            DMontoDolar();
-        });
+            var aprovMontoDolar = 0;
+            $("#DMontoDolar").keyup(function() {
+                aprovMontoDolar = 1;
+                DMontoDolar();
+            });
 
-        $("#DMontoPeso").keyup(function() {
-            aprovMontoDolar = 1;
-            DMontoPeso();
-        });
+            $("#DMontoPeso").keyup(function() {
+                aprovMontoDolar = 1;
+                DMontoPeso();
+            });
 
-        $("#DMontoBolivar").keyup(function() {
-            aprovMontoDolar = 1;
-            DMontoBolivar();
-        });
+            $("#DMontoBolivar").keyup(function() {
+                aprovMontoDolar = 1;
+                DMontoBolivar();
+            });
 
-        $("#DMontoPunto").keyup(function() {
-            aprovMontoDolar = 1;
-            DMontoPunto();
-        });
+            $("#DMontoPunto").keyup(function() {
+                aprovMontoDolar = 1;
+                DMontoPunto();
+            });
 
-        $("#DMontoTrans").keyup(function() {
-            aprovMontoDolar = 1;
-            DMontoTrans();
-        });
+            $("#DMontoTrans").keyup(function() {
+                aprovMontoDolar = 1;
+                DMontoTrans();
+            });
 
-        $("#pagoConExcedente").keyup(function() {
-            DMontoDolar();
+            $("#pagoConExcedente").keyup(function() {
+                DMontoDolar();
 
-        });
-        $("#pagoConCredito").keyup(function() {
+            });
+            $("#pagoConCredito").keyup(function() {
 
 
-            DMontoDolar();
-
-
-
-
-
-        });
-        $("#VueltospagoConExcedente").keyup(function() {
-            DMontoDolar();
-
-        });
-
-
-    });
-
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /* Restar dos números. */
-    function restaV() {
-                // alert('resta');
-                const RestaTotalV    = document.getElementById('RestaTtotalV');
-                const PagoTtotalV    = document.getElementById('PagoTtotalV');
-                const spTotalV       = document.getElementById('spTotalV');
-                const tpV            = document.getElementById('tpV');
-                const rV             = document.getElementById('rV');
-                const tapV           = document.getElementById('tapV');
-
-
-
-                var valorV           = PagoTtotalV.innerHTML;
-                var valor_restarV    = spTotalV.innerHTML;
-                var restaV           = numDecimal(valorV - valor_restarV);
-
-                RestaTotalV.innerHTML = numDecimal(restaV); //se llena el campo resta
-
-
-
-                if (RestaTotalV.innerHTML >= 0) {
-                    // alert('soy menor');
-                    RestaTotalV.classList.remove('text-primary');
-                    RestaTotalV.classList.add('text-danger');
-                    rV.classList.remove('text-primary');
-                    rV.classList.add('text-danger');
-
-                    PagoTtotalV.classList.add('text-success');
-                    tapV.classList.add('text-success');
-
-                    $("#tapV").html("MONTO COMPLETO...");
-                    $("#rV").html("VUELTOS...");
-                    // verify();
-                    $("#guardar").show("linear");;
-
-
-
-
-                }
-                if (RestaTotalV.innerHTML < 0) {
-
-                    // alert('soy mayor');
-                    RestaTotalV.classList.remove('text-danger');
-                    RestaTotalV.classList.add('text-primary');
-                    rV.classList.remove('text-danger');
-                    rV.classList.add('text-primary');
-
-                    PagoTtotalV.classList.remove('text-success');
-                    tapV.classList.remove('text-success');
-
-                    $("#rV").html("RESTA");
-                    $("#tapV").html("TOTAL A PAGAR");
-                    $("#guardar").hide("linear");
-                }
-
-
-
-                // document.getElementById('RestaTtotal').addClass('btn btn-primary');
-            }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-            /* Sumar dos números. */
-            function sumarV() {
-                var total_sumaV = 0;
-                var tsV = 0;
-                $(".montoV").each(function() {
-                    if (isNaN(parseFloat($(this).val()))) {
-                        total_sumaV -= 0;
-                        tsV += 0;
-                    } else {
-                        total_sumaV -= parseFloat($(this).val());
-                        tsV += parseFloat($(this).val());
-                    }
-                });
-                // alert(total_suma);
-                // let md = $('#monto_dejado').val();
-                // rmd = total_sumaV - md;
-                // $('#monto_dejado').val(rmd);
-
-                if(tsV > 0){
-                let md = $('#monto_dejado').val();
-                rmd =  md - tsV;
-                $('#monto_dejado').val(rmd);
-                }
-               document.getElementById('spTotalV').innerHTML = numDecimal(total_sumaV);
-
-            }
-
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    function DMontoDolarV(){
-                     // alert('clic');
-                     MdolarV      = $("#DMontoDolarV").val();
-                    TdolarV      = $("#TasaDolarV").val();
-                    TpesoV       = $("#TasaPesoV").val();
-                    TbolivarV    = $("#TasaBolivarV").val();
-
-
-                    DsupTotalV = MdolarV * TdolarV;
-                    $("#DolarToDolarV").val(DsupTotalV);
-                    $("#DsubTotalV").html(DsupTotalV);
-
-                    sumarV();
-                    restaV();
-                    const RestaV     = document.getElementById('RestaTtotalV');
-                    var valorV       = RestaV.innerHTML;
-                    var RmultDV      = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV);
-                    var RmultPV      = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV);
-                    var RmultBV      = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV);
-
-
-                }
-
-                function DMontoPesoV(){
-                    MpesoV       = $("#DMontoPesoV").val();
-                    TdolarV      = $("#TasaDolarV").val();
-                    TpesoV      = $("#TasaPesoV").val();
-                    TbolivarV   = $("#TasaBolivarV").val();
-
-
-                    PsupTotalV = MpesoV / TpesoV;
-                    $("#PesoToDolarV").val(PsupTotalV);
-                    $("#PeSubTotalV").html(PsupTotalV);
-                    $("#RestaPesoV").val();
-                    sumarV();
-                    restaV();
-                    const RestaV = document.getElementById('RestaTtotalV');
-                    var valorV   = RestaV.innerHTML;
-                    var RmultDV  = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV);
-                    var RmultPV  = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV);
-                    var RmultBV  = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV);
-
-
-                }
-
-                function DMontoBolivarV(){
-                    MbolivarV = $("#DMontoBolivarV").val();
-                    TdolarV   = $("#TasaDolarV").val();
-                    TpesoV    = $("#TasaPesoV").val();
-                    TbolivarV = $("#TasaBolivarV").val();
-
-
-                    pesoV = $("#RestaPesoV").val();
-                    // 10767280  alert(Mpeso);
-                    BsupTotalV = MbolivarV / TbolivarV;
-                    $("#BolivarToDolarV").val(BsupTotalV);
-                    $("#BoSubTotalV").html(BsupTotalV);
-                    $("#RestaBolivarV").val();
-                    sumarV();
-                    restaV();
-                    const RestaV = document.getElementById('RestaTtotalV');
-                    var valorV = RestaV.innerHTML;
-                    var RmultDV = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV);
-                    var RmultPV = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV);
-                    var RmultBV = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV);
-
-
-                }
-
-
-
-
-
-            $(document).ready(function() {
-
-
-                $("#DMontoDolarV").keyup(function() {
-                    DMontoDolarV();
-                });
-
-                $("#DMontoPesoV").keyup(function() {
-                    DMontoPesoV();
-                });
-
-                $("#DMontoBolivarV").keyup(function() {
-                    DMontoBolivarV();
-                });
+                DMontoDolar();
 
 
 
 
 
             });
+            $("#VueltospagoConExcedente").keyup(function() {
+                DMontoDolar();
+
+            });
+
+
+        });
+
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        /* Restar dos números. */
+        function restaV() {
+            // alert('resta');
+            const RestaTotalV    = document.getElementById('RestaTtotalV');
+            const PagoTtotalV    = document.getElementById('PagoTtotalV');
+            const spTotalV       = document.getElementById('spTotalV');
+            const tpV            = document.getElementById('tpV');
+            const rV             = document.getElementById('rV');
+            const tapV           = document.getElementById('tapV');
+
+
+
+            var valorV           = PagoTtotalV.innerHTML;
+            var valor_restarV    = spTotalV.innerHTML;
+            var restaV           = numDecimal(valorV - valor_restarV);
+
+            RestaTotalV.innerHTML = numDecimal(restaV); //se llena el campo resta
+
+
+
+            if (RestaTotalV.innerHTML >= 0) {
+                // alert('soy menor');
+                RestaTotalV.classList.remove('text-primary');
+                RestaTotalV.classList.add('text-danger');
+                rV.classList.remove('text-primary');
+                rV.classList.add('text-danger');
+
+                PagoTtotalV.classList.add('text-success');
+                tapV.classList.add('text-success');
+
+                $("#tapV").html("MONTO COMPLETO...");
+                $("#rV").html("VUELTOS...");
+                // verify();
+                $("#guardar").show("linear");;
+
+
+
+
+            }
+            if (RestaTotalV.innerHTML < 0) {
+
+                // alert('soy mayor');
+                RestaTotalV.classList.remove('text-danger');
+                RestaTotalV.classList.add('text-primary');
+                rV.classList.remove('text-danger');
+                rV.classList.add('text-primary');
+
+                PagoTtotalV.classList.remove('text-success');
+                tapV.classList.remove('text-success');
+
+                $("#rV").html("RESTA");
+                $("#tapV").html("TOTAL A PAGAR");
+                $("#guardar").hide("linear");
+            }
+
+
+
+                // document.getElementById('RestaTtotal').addClass('btn btn-primary');
+        }
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    $("#cargarDolarV").on('click', function() {
-        // alert('2');
+
+        /* Sumar dos números. */
+        function sumarV() {
+            var total_sumaV = 0;
+            var tsV = 0;
+            $(".montoV").each(function() {
+                if (isNaN(parseFloat($(this).val()))) {
+                    total_sumaV -= 0;
+                    tsV += 0;
+                } else {
+                    total_sumaV -= parseFloat($(this).val());
+                    tsV += parseFloat($(this).val());
+                }
+            });
+            // alert(total_suma);
+            // let md = $('#monto_dejado').val();
+            // rmd = total_sumaV - md;
+            // $('#monto_dejado').val(rmd);
+
+            if(tsV > 0){
+            let md = $('#monto_dejado').val();
+            rmd =  md - tsV;
+            let rmdresult = new Decimal(rmd);
+            $('#monto_dejado').val(rmdresult.toFixed(2));
+            }
+
+            let result = new Decimal(total_sumaV);
+            document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
+
+
+        }
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        function DMontoDolarV(){
+            // alert('clic');
+            MdolarV      = $("#DMontoDolarV").val();
+            TdolarV      = $("#TasaDolarV").val();
+            TpesoV       = $("#TasaPesoV").val();
+            TbolivarV    = $("#TasaBolivarV").val();
+
+
+            DsupTotalV = MdolarV * TdolarV;
+            $("#DolarToDolarV").val(DsupTotalV);
+            $("#DsubTotalV").html(DsupTotalV);
+
+            sumarV();
+            restaV();
+            const RestaV     = document.getElementById('RestaTtotalV');
+            var valorV       = RestaV.innerHTML;
+            var RmultDV      = valorV * TdolarV;
+            $("#RestaDolarV").val(RmultDV);
+            var RmultPV      = valorV * TpesoV;
+            $("#RestaPesoV").val(RmultPV);
+            var RmultBV      = valorV * TbolivarV;
+            $("#RestaBolivarV").val(RmultBV);
+
+
+        }
+
+        function DMontoPesoV(){
+            MpesoV       = $("#DMontoPesoV").val();
+            TdolarV      = $("#TasaDolarV").val();
+            TpesoV      = $("#TasaPesoV").val();
+            TbolivarV   = $("#TasaBolivarV").val();
+
+
+            PsupTotalV = MpesoV / TpesoV;
+            $("#PesoToDolarV").val(PsupTotalV);
+            $("#PeSubTotalV").html(PsupTotalV);
+            $("#RestaPesoV").val();
+            sumarV();
+            restaV();
+            const RestaV = document.getElementById('RestaTtotalV');
+            var valorV   = RestaV.innerHTML;
+            var RmultDV  = valorV * TdolarV;
+            $("#RestaDolarV").val(RmultDV);
+            var RmultPV  = valorV * TpesoV;
+            $("#RestaPesoV").val(RmultPV);
+            var RmultBV  = valorV * TbolivarV;
+            $("#RestaBolivarV").val(RmultBV);
+
+
+        }
+
+        function DMontoBolivarV(){
+            MbolivarV = $("#DMontoBolivarV").val();
+            TdolarV   = $("#TasaDolarV").val();
+            TpesoV    = $("#TasaPesoV").val();
+            TbolivarV = $("#TasaBolivarV").val();
+
+
+            pesoV = $("#RestaPesoV").val();
+            // 10767280  alert(Mpeso);
+            BsupTotalV = MbolivarV / TbolivarV;
+            $("#BolivarToDolarV").val(BsupTotalV);
+            $("#BoSubTotalV").html(BsupTotalV);
+            $("#RestaBolivarV").val();
+            sumarV();
+            restaV();
+            const RestaV = document.getElementById('RestaTtotalV');
+            var valorV = RestaV.innerHTML;
+            var RmultDV = valorV * TdolarV;
+            $("#RestaDolarV").val(RmultDV);
+            var RmultPV = valorV * TpesoV;
+            $("#RestaPesoV").val(RmultPV);
+            var RmultBV = valorV * TbolivarV;
+            $("#RestaBolivarV").val(RmultBV);
+
+
+        }
+
+
+
+
+
+        $(document).ready(function() {
+
+
+            $("#DMontoDolarV").keyup(function() {
+                DMontoDolarV();
+            });
+
+            $("#DMontoPesoV").keyup(function() {
+                DMontoPesoV();
+            });
+
+            $("#DMontoBolivarV").keyup(function() {
+                DMontoBolivarV();
+            });
+
+
+
+
+
+        });
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        $("#cargarDolarV").on('click', function() {
+            // alert('2');
             if(vcargarV == 0){
                 // alert('0');
                 vcargarV = 1;
@@ -3521,48 +3772,28 @@ function sumar() {
             }
         });
 
-
+    //FORMATO LISTO HASTA AQUÍ
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 </script>
 
 <script>
 
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-        $('#imprimirFactura').show();
-        $('#imprimirBoleta').show();
+            $('#imprimirFactura').show();
+            $('#imprimirBoleta').show();
 
+            try {
 
-            // alert('crear '+ procesoCambioSalida);
-
-        try {
-
-
-            onScan.attachTo(document, {
-                //configuración del sufijo/ tecla esperada al finalizar la lectura del scan, esto indica a onScan la finalización del evento
-                suffixKeyCodes: [13],
-                minLength: 7,
-                onScan: function(barcode) { //función callback que se dispara después de una lectura
-                    console.log(barcode)
-                        // alert(barcode);
-                        // window.livewire.emit('doCheckOut', barcode, 2) //emitimos el evento para consultar la info y cobrar el ticket
-                        // let nombreHabitacionBarcodeNueva = $("#nombreHabitacionBarcodeNueva").val();
-                        // let nombreHabitacionBarcode = $("#nombreHabitacionBarcode").val();
-                        // alert(nombreHabitacionBarcode);
-                        // var n = barcode;
-                        // alert(procesoCambioSalida);
-                        // return false;
-                        // $('#btnImprimir').focusout();
-                        // let cliente_id = $("#cliente_id").val();
-
-                        // if(cliente_id == 0 || cliente_id == null){
-                        //     alert('No has seleccionado un cliente...!');
-                        //     return false;
-                        // }
+                onScan.attachTo(document, {
+                    //configuración del sufijo/ tecla esperada al finalizar la lectura del scan, esto indica a onScan la finalización del evento
+                    suffixKeyCodes: [13],
+                    minLength: 7,
+                    onScan: function(barcode) { //función callback que se dispara después de una lectura
+                        console.log(barcode)
 
                         if (procesoCambioSalida == 0) {
-
 
                             // alert('cerrar '+ procesoCambioSalida);
                             $('#imprimirFactura').hide();
@@ -3570,9 +3801,6 @@ function sumar() {
 
                             let nombreVieja = $('#nombre_vieja').val();
                                 // alert(nombreVieja);
-
-
-
 
                             let nombreHabitacionBarcode = $("#nombreHabitacionBarcode").val();
                             // alert('leer '+nombreHabitacionBarcode);
@@ -3598,7 +3826,16 @@ function sumar() {
                             if (barcode == nombreHabitacionBarcode) {
 
                                 // alert('Todo va bien');
-                                $("#form1").submit();
+                                let $valorDeuda = $('#total').val();
+
+                                if($valorDeuda){
+                                    console.log($valorDeuda);
+                                    return false;
+                                }else{
+                                    // console.log('todo bien');
+                                    $("#form1").submit();
+                                    // return false;
+                                }
 
                             }else{
                                 alert('¡Error al Ingresar el QR!... Por favor Ingrese el QR correcto. (llave incorrecta)');
@@ -3606,6 +3843,7 @@ function sumar() {
                             }
 
                         }
+
                         // alert(procesoCambioSalida);
                         if (procesoCambioSalida == 1) {
 
@@ -3629,15 +3867,15 @@ function sumar() {
                                         alert('No has seleccionado un cliente...!');
                                         return false;
                                     }
-                                if(tipoPago == 0 || tipoPago == null){
-                                    alert('No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...');
-                                    return false;
-                                }
+                                    if(tipoPago == 0 || tipoPago == null){
+                                        alert('No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...)');
+                                        return false;
+                                    }
 
-                                if(monto_dejadoR == 0 || monto_dejadoR == null){
-                                    alert('No has ingresado el monto a pagar...!');
-                                    return false;
-                                }
+                                    if(monto_dejadoR == 0 || monto_dejadoR == null){
+                                        alert('No has ingresado el monto a pagar...!');
+                                        return false;
+                                    }
                                     // alert('contado');
                                     $("#form3").submit();
                                 }else if (modoPagoOn == 'cambio'){
@@ -3667,7 +3905,6 @@ function sumar() {
                                     if (estado_credito == 'Moroso') {
                                         alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
                                     } else {
-
 
                                         addHabitacion();
                                         $("#monto_dejado").val(0);
@@ -3714,10 +3951,9 @@ function sumar() {
                                                 }
 
                                             }else{
-                                            alert('El cliente no tiene Credito...');
+                                                alert('El cliente no tiene Credito...');
                                             }
                                         }
-
 
                                     }
                                 }else{
@@ -3735,686 +3971,645 @@ function sumar() {
                             }
                         }
 
-                },
+                    },
 
-                // onScanError: function(e) { //función callback para captura de errores de lectura
-                //     console.log('Error de lectura' + e[0]);
-                //     // toastr.error('', 'Error de lectura' + e)
-                // },
-                onScanError: function(err) {
-                    var sFormatedErrorString = "Error Details: {\n";
-                    for (var i in err) {
-                        sFormatedErrorString += '    ' + i + ': ' + err[i] + ",\n";
+                    onScanError: function(err) {
+                        var sFormatedErrorString = "Error Details: {\n";
+                        for (var i in err) {
+                            sFormatedErrorString += '    ' + i + ': ' + err[i] + ",\n";
+                        }
+                        sFormatedErrorString = sFormatedErrorString.trim().replace(/,$/, '') + "\n}";
+                        console.log("[onScanError]: " + sFormatedErrorString);
                     }
-                    sFormatedErrorString = sFormatedErrorString.trim().replace(/,$/, '') + "\n}";
-                    console.log("[onScanError]: " + sFormatedErrorString);
-                }
 
-            })
-            // alert('OnScan ready!');
-            // toastr.success('', 'OnScan ready!')
+                })
 
-        } catch (e) { //captura de errores generales de inicialización de onscan.js
-            alert('Error OnScan' + e);
-            // toastr.error('', 'Error OnScan' + e)
-        }
-
-
-
-
-
-
-
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-    })
-
-
-</script>
-<script>
-
-function numDecimal(valor){
-                let result = Number(valor).toFixed(2);
-
-                return result;
+            } catch (e) { //captura de errores generales de inicialización de onscan.js
+                alert('Error OnScan' + e);
+                // toastr.error('', 'Error OnScan' + e)
             }
 
-// focusMethod = function getFocus() {
-//                 document.getElementById(".selval").focus();
-//                 $(".selval").val('default');
-//                 $(".selval").selectpicker("refresh");
-//             }
-
-    $(function() {
-        $('.refrescar').on('click', function() {
-            $(".selval").val('default');
-                $(".selval").selectpicker("refresh");
-            $('.detalle').hide('swing');
-            $('#procesarServicio').hide("swing");
-            $('#btnPago').hide("swing");
-            $('#infoPago').hide("swing");
-            $('#infoQR').hide("swing");
-
         });
-    });
-
-    $(function() {
-        $('.precio').on('change', function() {
-            // alert('limpiesa');
-            let catID = $("#categoria_id_nueva").val();
-
-            let valor = this.value;
-            let catid = catID;
-            let texto = this.options[this.selectedIndex].text;
-            console.log(valor + ' '+catid + ' '+texto+ ' - _-' +catID);
 
 
-            $('.horario').val(valor);
+    </script>
+    <script>
+
+        function numDecimal(valor){
+            let result = Number(valor).toFixed(2);
+
+            return result;
+        }
+
+        // focusMethod = function getFocus() {
+            //document.getElementById(".selval").focus();
+            //$(".selval").val('default');
+            //$(".selval").selectpicker("refresh");
+        //}
+
+        $(function() {
+            $('.refrescar').on('click', function() {
+                $(".selval").val('default');
+                    $(".selval").selectpicker("refresh");
+                $('.detalle').hide('swing');
+                $('#procesarServicio').hide("swing");
+                $('#btnPago').hide("swing");
+                $('#infoPago').hide("swing");
+                $('#infoQR').hide("swing");
+
+            });
+        });
+
+        $(function() {
+            $('.precio').on('change', function() {
+                // alert('limpiesa');
+                let catID = $("#categoria_id_nueva").val();
+
+                let valor = this.value;
+                let catid = catID;
+                let texto = this.options[this.selectedIndex].text;
+                console.log(valor + ' '+catid + ' '+texto+ ' - _-' +catID);
 
 
-            if ($.trim(valor != '')) {
-                let tasaDolar = $('#tasaDolar').val();
-                let tasaPeso = $('#tasaPeso').val();
-                $.ajax({
-                    type: 'get',
-                    url: '{{ url ("precio") }}',
-                    data: "cat_id=" + catid+"&horario_id=" + valor,
-                    success: function (precioData) {
-alert(precioData[0].precio);
-                    if (precioData.length) {
-                        $('.precio').val(precioData[0].id);
-                        console.log(precioData);
-                        // console.log('precio = '+precio[0].precio+' precioBolivar = '+precio[0].precio*tasaDolar+' precioPeso = '+precio[0].precio*tasaPeso+''+'');
-                        $("#horario_id").val(valor);
-                        $("#precio_id").val(precioData[0].id);
-                        $("#precio_id_nueva").val(precioData[0].precio);
-                        $("#precio_id_nueva2").val(precioData[0].precio);
-                        // $("#horario_tipo").val(precioData[0].precio);
-                        // $("#horario").val(precioData[0].precio);
-
-                        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        let precio = precioData[0].precio;
-
-                let isCortesia = $("#isCortesia").val();
-                let isCredito = $("#isCredito").val();
-
-                precio = numDecimal(precio);
-                $("#precio_nueva").val(precio);
+                $('.horario').val(valor);
 
 
-                let precioVieja = $("#precio_vieja").val();
+                if ($.trim(valor != '')) {
+                    let tasaDolar = $('#tasaDolar').val();
+                    let tasaPeso = $('#tasaPeso').val();
+                    $.ajax({
+                        type: 'get',
+                        url: '{{ url ("precio") }}',
+                        data: "cat_id=" + catid+"&horario_id=" + valor,
+                        success: function (precioData) {
+                            alert(precioData[0].precio);
+                            if (precioData.length) {
+                                $('.precio').val(precioData[0].id);
+                                console.log(precioData);
+                                // console.log('precio = '+precio[0].precio+' precioBolivar = '+precio[0].precio*tasaDolar+' precioPeso = '+precio[0].precio*tasaPeso+''+'');
+                                $("#horario_id").val(valor);
+                                $("#precio_id").val(precioData[0].id);
+                                $("#precio_id_nueva").val(precioData[0].precio);
+                                $("#precio_id_nueva2").val(precioData[0].precio);
+                                // $("#horario_tipo").val(precioData[0].precio);
+                                // $("#horario").val(precioData[0].precio);
 
-                precioVieja = numDecimal(precioVieja);
-                let diferencia = precio - precioVieja;
+                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                let precio = precioData[0].precio;
 
-                $("#precioDolarHabitacio").val(diferencia);
-                $("#diferenciaPrecio").html('($'+diferencia+')');
-                $("#total_costo").val(diferencia);
-                $("#precio_costo").val(diferencia);
+                                let isCortesia = $("#isCortesia").val();
+                                let isCredito = $("#isCredito").val();
 
-                if( (is_numeric(diferencia)) && (diferencia>0) ){
-                    // return true;
-                }else{
-                    $('#modo_pago').val('cambio');
-                    $("#precioDolarHabitacio").val(diferencia);
-                    $("#diferenciaPrecio").html('($0.00)');
-                    $("#total_costo").val(0.00);
-                    $("#precio_costo").val(0.00);
-                }
-
-                // if(){
-                //     $('#modo_pago').val('cambio');
-                // }
-
-                // let str = datosHabitacionNueva[1].padStart(8,'0');
-                // alert(str);
-
-                // $("#nombreHabitacionBarcodeNueva").val(datosHabitacionNueva[7]);
-
-
-                // $('#modo_pago').val('cambio');
+                                precio = numDecimal(precio);
+                                $("#precio_nueva").val(precio);
 
 
-                // procesoCambioSalida = 1;
+                                let precioVieja = $("#precio_vieja").val();
 
-                // alert('precio = ' + precio + ' precio vieja = ' + precioVieja);
+                                precioVieja = numDecimal(precioVieja);
+                                let diferencia = precio - precioVieja;
 
-                if(isCortesia){
-                    let precio = $("#precioDolarHabitacio").val();
-                    $("#precio_costo").val(precio);
-                    $('#cortesia').show();
-                    $('#precortesia').show();
-                    // console.log('Este cliente puede tener credito');
-                }else{
-                    $('#cortesia').hide();
-                    $('#precortesia').hide();
-                }
-                if(isCredito){
-                    let precio = $("#precioDolarHabitacio").val();
-                    $("#precio_costo").val(precio);
-                    // console.log('Este cliente puede tener credito');
-                    $('#credito').show();
-                    $('#precredito').show();
+                                $("#precioDolarHabitacio").val(diferencia);
+                                $("#diferenciaPrecio").html('($'+diferencia+')');
+                                $("#total_costo").val(diferencia);
+                                $("#precio_costo").val(diferencia);
 
-                }else{
+                                if( (is_numeric(diferencia)) && (diferencia>0) ){
+                                    // return true;
+                                }else{
+                                    $('#modo_pago').val('cambio');
+                                    $("#precioDolarHabitacio").val(diferencia);
+                                    $("#diferenciaPrecio").html('($0.00)');
+                                    $("#total_costo").val(0.00);
+                                    $("#precio_costo").val(0.00);
+                                }
 
-                    $('#credito').hide();
-                    $('#precredito').hide();
-                }
-
-            // let valor = this.value;
-            // let catid = $(this).attr('data-id');
-            // let texto = this.options[this.selectedIndex].text;
-
-            // console.log('valor = '+valor+' catid= '+catid);
-
-            // $('.horario').val(valor);
-
-
-
-                let tasaDolar = $('#tasaDolar').val();
-                let tasaPeso = $('#tasaPeso').val();
-
-
-
-                if (precio) {
-                    $('.precio').val(precio);
-                    // console.log(precio);
-                    // console.log('precio = '+precio[0].precio+' precioBolivar = '+precio[0].precio*tasaDolar+' precioPeso = '+precio[0].precio*tasaPeso+''+'');
-
-                    // $('.detalle').html('<div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Dolar</span><h5 class="description-header">$'+formatMoney(precio)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Pesos</span><h5 class="description-header">$'+formatMoney(precio*tasaPeso)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Bolivares</span><h5 class="description-header">Bs.'+formatMoney(precio*tasaDolar)+'</h5></div></div>');
-
-
-
-
-
-                // TODO utilizamos la libreria decimal.js para realizar operaciones de comparacion en el precio de las habitaciones
-
-
-                    $('.detalle').show("swing");
-
-                    x1 = new Decimal(precio);
-
-                    y1 = new Decimal(precioVieja);
-
-
-                    if (x1.greaterThan(y1)) {
-                        // alert('mayor');
-                        $('#btnPago').show("swing");
-                        $('#infoQR').hide("swing");
-                        $('#infoPago').show("swing");
-                    }
-                    if (x1.lessThanOrEqualTo(y1)) {
-                        // alert('menor o igual');
-                        $('#btnPago').hide("swing");
-                        $('#infoQR').show("swing");
-                        $('#infoPago').hide("swing");
-
-                    }
-
-                    $('#procesarServicio').show();
-                    // $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
-                            // // alert(origens[0].nombre);
-                            // for(var i = 0; i < origens.length; i++){
-                            // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
-                            // }
-                }else{
-                    // alert('no precio');
-                    $('.detalle').hide("swing");
-                    $('#procesarServicio').hide("swing");
-                    $('#btnPago').hide("swing");
-                    $('#infoQR').hide("swing");
-                    $('#infoPago').hide("swing");
-
-                }
-                        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        $('.detalle').html('<div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Dolar</span><h5 class="description-header">$'+formatMoney(precioData[0].precio)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Pesos</span><h5 class="description-header">$'+formatMoney(precioData[0].precio*tasaPeso)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Bolivares</span><h5 class="description-header">Bs.'+formatMoney(precioData[0].precio*tasaDolar)+'</h5></div></div>');
-
-
-
-
-
-
-
-                        $('.detalle').show("swing");
-                        // $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
-                                // // alert(origens[0].nombre);
-                                // for(var i = 0; i < origens.length; i++){
-                                // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
+                                // if(){
+                                //     $('#modo_pago').val('cambio');
                                 // }
+
+                                // let str = datosHabitacionNueva[1].padStart(8,'0');
+                                // alert(str);
+
+                                // $("#nombreHabitacionBarcodeNueva").val(datosHabitacionNueva[7]);
+
+
+                                // $('#modo_pago').val('cambio');
+
+
+                                // procesoCambioSalida = 1;
+
+                                // alert('precio = ' + precio + ' precio vieja = ' + precioVieja);
+
+                                if(isCortesia){
+                                    let precio = $("#precioDolarHabitacio").val();
+                                    $("#precio_costo").val(precio);
+                                    $('#cortesia').show();
+                                    $('#precortesia').show();
+                                    // console.log('Este cliente puede tener credito');
+                                }else{
+                                    $('#cortesia').hide();
+                                    $('#precortesia').hide();
+                                }
+                                if(isCredito){
+                                    let precio = $("#precioDolarHabitacio").val();
+                                    $("#precio_costo").val(precio);
+                                    // console.log('Este cliente puede tener credito');
+                                    $('#credito').show();
+                                    $('#precredito').show();
+
+                                }else{
+
+                                    $('#credito').hide();
+                                    $('#precredito').hide();
+                                }
+
+                                // let valor = this.value;
+                                // let catid = $(this).attr('data-id');
+                                // let texto = this.options[this.selectedIndex].text;
+
+                                // console.log('valor = '+valor+' catid= '+catid);
+
+                                // $('.horario').val(valor);
+
+
+
+                                let tasaDolar = $('#tasaDolar').val();
+                                let tasaPeso = $('#tasaPeso').val();
+
+
+
+                                if (precio) {
+                                    $('.precio').val(precio);
+                                    // console.log(precio);
+                                    // console.log('precio = '+precio[0].precio+' precioBolivar = '+precio[0].precio*tasaDolar+' precioPeso = '+precio[0].precio*tasaPeso+''+'');
+
+                                    // $('.detalle').html('<div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Dolar</span><h5 class="description-header">$'+formatMoney(precio)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Pesos</span><h5 class="description-header">$'+formatMoney(precio*tasaPeso)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Bolivares</span><h5 class="description-header">Bs.'+formatMoney(precio*tasaDolar)+'</h5></div></div>');
+
+
+
+
+
+                                    // TODO utilizamos la libreria decimal.js para realizar operaciones de comparacion en el precio de las habitaciones
+
+
+                                    $('.detalle').show("swing");
+
+                                    x1 = new Decimal(precio);
+
+                                    y1 = new Decimal(precioVieja);
+
+
+                                    if (x1.greaterThan(y1)) {
+                                        // alert('mayor');
+                                        $('#btnPago').show("swing");
+                                        $('#infoQR').hide("swing");
+                                        $('#infoPago').show("swing");
+                                    }
+                                    if (x1.lessThanOrEqualTo(y1)) {
+                                        // alert('menor o igual');
+                                        $('#btnPago').hide("swing");
+                                        $('#infoQR').show("swing");
+                                        $('#infoPago').hide("swing");
+
+                                    }
+
+                                    $('#procesarServicio').show();
+                                    // $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
+                                            // // alert(origens[0].nombre);
+                                            // for(var i = 0; i < origens.length; i++){
+                                            // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
+                                            // }
+                                }else{
+                                    // alert('no precio');
+                                    $('.detalle').hide("swing");
+                                    $('#procesarServicio').hide("swing");
+                                    $('#btnPago').hide("swing");
+                                    $('#infoQR').hide("swing");
+                                    $('#infoPago').hide("swing");
+
+                                }
+                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                $('.detalle').html('<div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Dolar</span><h5 class="description-header">$'+formatMoney(precioData[0].precio)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Pesos</span><h5 class="description-header">$'+formatMoney(precioData[0].precio*tasaPeso)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Bolivares</span><h5 class="description-header">Bs.'+formatMoney(precioData[0].precio*tasaDolar)+'</h5></div></div>');
+
+                                $('.detalle').show("swing");
+                                    // $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
+                                    // // alert(origens[0].nombre);
+                                    // for(var i = 0; i < origens.length; i++){
+                                    // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
+                                    // }
 
                                 $('.ocular').show('swing');
                             }else{
                                 $('.ocular').hide('swing');
                             }
-                    }
-                });
+                        }
+                    });
 
-            }
+                }
+
+            });
+        });
+
+        $('.detalle').hide();
+        $('#procesarServicio').hide();
+        $('#btnPago').hide();
+        $('#infoQR').hide();
+        $('#infoPago').hide();
+
+        $(function() {
+            $('.selval').on('change', function() {
+                $('.detalle').hide("swing");
+                $('#procesarServicio').hide("swing");
+                $('#btnPago').hide("swing");
+                $('#infoQR').hide("swing");
+                $('#infoPago').hide("swing");
+
+                // procesoCamb = 0;
+
+                datosHabitacionNueva = document.getElementById('buscarHabitacion').value.split('_');
+                    // alert(datosHabitacionNueva[3]);
+                    // return false;
+                    // $("#jprecio_venta").val(datosArticulo[2]);
+                    $("#habitacion_id_nueva").val(datosHabitacionNueva[0]);
+                    $("#habitacion_id_nueva2").val(datosHabitacionNueva[0]);
+                    $("#nombre_nueva").val(datosHabitacionNueva[1]);
+                    $("#nombre_nueva2").val(datosHabitacionNueva[1]);
+                    $("#categoria_id_nueva").val(datosHabitacionNueva[2]);
+                    $("#categoria_id_nueva2").val(datosHabitacionNueva[2]);
+                    $("#categoria_nueva").val(datosHabitacionNueva[3]);
+                    $("#categoria_nueva2").val(datosHabitacionNueva[3]);
+                    $("#categoria_dest_nueva").val(datosHabitacionNueva[4]);
+                    $("#categoria_dest_nueva2").val(datosHabitacionNueva[4]);
+
+                    $("#nombreHabitacionBarcodeNueva").val(datosHabitacionNueva[5]);
+                    // $("#precio_id_nueva").val(datosHabitacionNueva[5]);
+                    // $("#precio_id_nueva2").val(datosHabitacionNueva[5]);
+
+
+                //     let precio = $("#precio_id_nueva").val();
+
+                //     let isCortesia = $("#isCortesia").val();
+                //     let isCredito = $("#isCredito").val();
+
+                //     precio = numDecimal(precio);
+                //     $("#precio_nueva").val(precio);
+
+
+                //     let precioVieja = $("#precio_vieja").val();
+
+                //     precioVieja = numDecimal(precioVieja);
+                //     let diferencia = precio - precioVieja;
+
+                //     $("#precioDolarHabitacio").val(diferencia);
+                //     $("#diferenciaPrecio").html('($'+diferencia+')');
+                //     $("#total_costo").val(diferencia);
+                //     $("#precio_costo").val(diferencia);
+
+                //     if( (is_numeric(diferencia)) && (diferencia>0) ){
+                //         // return true;
+                //     }else{
+                //         $('#modo_pago').val('cambio');
+                //         $("#precioDolarHabitacio").val(diferencia);
+                //         $("#diferenciaPrecio").html('($0.00)');
+                //         $("#total_costo").val(0.00);
+                //         $("#precio_costo").val(0.00);
+                //     }
+
+                //     // if(){
+                //     //     $('#modo_pago').val('cambio');
+                //     // }
+
+                //     // let str = datosHabitacionNueva[1].padStart(8,'0');
+                //     // alert(str);
+
+                //     $("#nombreHabitacionBarcodeNueva").val(datosHabitacionNueva[5]);
+
+
+                //     // $('#modo_pago').val('cambio');
+
+
+                //     // procesoCambioSalida = 1;
+
+                //     // alert('precio = ' + precio + ' precio vieja = ' + precioVieja);
+
+                //     if(isCortesia){
+                //         let precio = $("#precioDolarHabitacio").val();
+                //         $("#precio_costo").val(precio);
+                //         $('#cortesia').show();
+                //         $('#precortesia').show();
+                //         // console.log('Este cliente puede tener credito');
+                //     }else{
+                //         $('#cortesia').hide();
+                //         $('#precortesia').hide();
+                //     }
+                //     if(isCredito){
+                //         let precio = $("#precioDolarHabitacio").val();
+                //         $("#precio_costo").val(precio);
+                //         // console.log('Este cliente puede tener credito');
+                //         $('#credito').show();
+                //         $('#precredito').show();
+
+                //     }else{
+
+                //         $('#credito').hide();
+                //         $('#precredito').hide();
+                //     }
+
+                // // let valor = this.value;
+                // // let catid = $(this).attr('data-id');
+                // // let texto = this.options[this.selectedIndex].text;
+
+                // // console.log('valor = '+valor+' catid= '+catid);
+
+                // // $('.horario').val(valor);
+
+                //     let tasaDolar = $('#tasaDolar').val();
+                //     let tasaPeso = $('#tasaPeso').val();
+
+                //     if (precio) {
+                //         $('.precio').val(precio);
+                //         // console.log(precio);
+                //         // console.log('precio = '+precio[0].precio+' precioBolivar = '+precio[0].precio*tasaDolar+' precioPeso = '+precio[0].precio*tasaPeso+''+'');
+
+                //         $('.detalle').html('<div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Dolar</span><h5 class="description-header">$'+formatMoney(precio)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Pesos</span><h5 class="description-header">$'+formatMoney(precio*tasaPeso)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Bolivares</span><h5 class="description-header">Bs.'+formatMoney(precio*tasaDolar)+'</h5></div></div>');
+
+
+                //     // TODO utilizamos la libreria decimal.js para realizar operaciones de comparacion en el precio de las habitaciones
+
+
+                //         $('.detalle').show("swing");
+
+                //         x1 = new Decimal(precio);
+
+                //         y1 = new Decimal(precioVieja);
+
+
+                //         if (x1.greaterThan(y1)) {
+                //             // alert('mayor');
+                //             $('#btnPago').show("swing");
+                //             $('#infoQR').hide("swing");
+                //             $('#infoPago').show("swing");
+                //         }
+                //         if (x1.lessThanOrEqualTo(y1)) {
+                //             // alert('menor o igual');
+                //             $('#btnPago').hide("swing");
+                //             $('#infoQR').show("swing");
+                //             $('#infoPago').hide("swing");
+
+                //         }
+
+                //         $('#procesarServicio').show();
+                //         // $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
+                //                 // // alert(origens[0].nombre);
+                //                 // for(var i = 0; i < origens.length; i++){
+                //                 // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
+                //                 // }
+                //     }else{
+                //         // alert('no precio');
+                //         $('.detalle').hide("swing");
+                //         $('#procesarServicio').hide("swing");
+                //         $('#btnPago').hide("swing");
+                //         $('#infoQR').hide("swing");
+                //         $('#infoPago').hide("swing");
+
+                //     }
+
+            });
+
+            //     $(function(){
+            //   $(".ver").click(function(){
+            //     var valor = $(this).attr('data-id')
+            //     alert(valor);
+            //     // $("#resultado").html(valor)
+            //   })
+            // })
+
 
         });
-    });
 
-$('.detalle').hide();
-$('#procesarServicio').hide();
-$('#btnPago').hide();
-$('#infoQR').hide();
-$('#infoPago').hide();
-    $(function() {
-        $('.selval').on('change', function() {
-            $('.detalle').hide("swing");
-            $('#procesarServicio').hide("swing");
-            $('#btnPago').hide("swing");
-            $('#infoQR').hide("swing");
-            $('#infoPago').hide("swing");
+        function is_numeric( mixed_var ) {
+            // Returns true if value is a number or a numeric string
 
+            return !isNaN(mixed_var * 1);
+        }
 
-            // procesoCamb = 0;
+        function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
+            try {
+                decimalCount = Math.abs(decimalCount);
+                decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
 
-            datosHabitacionNueva = document.getElementById('buscarHabitacion').value.split('_');
-                // alert(datosHabitacionNueva[3]);
-                // return false;
-                // $("#jprecio_venta").val(datosArticulo[2]);
-                $("#habitacion_id_nueva").val(datosHabitacionNueva[0]);
-                $("#habitacion_id_nueva2").val(datosHabitacionNueva[0]);
-                $("#nombre_nueva").val(datosHabitacionNueva[1]);
-                $("#nombre_nueva2").val(datosHabitacionNueva[1]);
-                $("#categoria_id_nueva").val(datosHabitacionNueva[2]);
-                $("#categoria_id_nueva2").val(datosHabitacionNueva[2]);
-                $("#categoria_nueva").val(datosHabitacionNueva[3]);
-                $("#categoria_nueva2").val(datosHabitacionNueva[3]);
-                $("#categoria_dest_nueva").val(datosHabitacionNueva[4]);
-                $("#categoria_dest_nueva2").val(datosHabitacionNueva[4]);
+                const negativeSign = amount < 0 ? "-" : "";
 
-                $("#nombreHabitacionBarcodeNueva").val(datosHabitacionNueva[5]);
-                // $("#precio_id_nueva").val(datosHabitacionNueva[5]);
-                // $("#precio_id_nueva2").val(datosHabitacionNueva[5]);
+                let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+                let j = (i.length > 3) ? i.length % 3 : 0;
 
+                return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g,
+                    "$1" +
+                    thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+            } catch (e) {
+                console.log(e)
+            }
+        };
 
-            //     let precio = $("#precio_id_nueva").val();
+        function addHabitacion(){
+            totalcosto = $("#total_costo").val();
+            var is24 = $('#is24').val();
+            if (totalcosto == '') {
+                total = $("#precioDolarHabitacio").val();
+                totalcosto = total;
+                $("#total_costo").val(total);
+                $('#cantidad').val(1);
 
-            //     let isCortesia = $("#isCortesia").val();
-            //     let isCredito = $("#isCredito").val();
+            } else {
+                // alert('no 24');
+                total = $("#total_costo").val();
+                totalr = $("#precioDolarHabitacio").val();
+                $("#precio_costo").val(totalr);
+            }
 
-            //     precio = numDecimal(precio);
-            //     $("#precio_nueva").val(precio);
+                    total_costo = total_costo + subtotalPC[cont];
+                    total_d     = total;
+                    total_p     = total;
+                    total_tp    = total;
+                    total_m     = total;
+                    total_e     = total;
 
+            $("#PagoTtotal").html(numDecimal(total));
 
-            //     let precioVieja = $("#precio_vieja").val();
-
-            //     precioVieja = numDecimal(precioVieja);
-            //     let diferencia = precio - precioVieja;
-
-            //     $("#precioDolarHabitacio").val(diferencia);
-            //     $("#diferenciaPrecio").html('($'+diferencia+')');
-            //     $("#total_costo").val(diferencia);
-            //     $("#precio_costo").val(diferencia);
-
-            //     if( (is_numeric(diferencia)) && (diferencia>0) ){
-            //         // return true;
-            //     }else{
-            //         $('#modo_pago').val('cambio');
-            //         $("#precioDolarHabitacio").val(diferencia);
-            //         $("#diferenciaPrecio").html('($0.00)');
-            //         $("#total_costo").val(0.00);
-            //         $("#precio_costo").val(0.00);
-            //     }
-
-            //     // if(){
-            //     //     $('#modo_pago').val('cambio');
-            //     // }
-
-            //     // let str = datosHabitacionNueva[1].padStart(8,'0');
-            //     // alert(str);
-
-            //     $("#nombreHabitacionBarcodeNueva").val(datosHabitacionNueva[5]);
-
-
-            //     // $('#modo_pago').val('cambio');
-
-
-            //     // procesoCambioSalida = 1;
-
-            //     // alert('precio = ' + precio + ' precio vieja = ' + precioVieja);
-
-            //     if(isCortesia){
-            //         let precio = $("#precioDolarHabitacio").val();
-            //         $("#precio_costo").val(precio);
-            //         $('#cortesia').show();
-            //         $('#precortesia').show();
-            //         // console.log('Este cliente puede tener credito');
-            //     }else{
-            //         $('#cortesia').hide();
-            //         $('#precortesia').hide();
-            //     }
-            //     if(isCredito){
-            //         let precio = $("#precioDolarHabitacio").val();
-            //         $("#precio_costo").val(precio);
-            //         // console.log('Este cliente puede tener credito');
-            //         $('#credito').show();
-            //         $('#precredito').show();
-
-            //     }else{
-
-            //         $('#credito').hide();
-            //         $('#precredito').hide();
-            //     }
-
-            // // let valor = this.value;
-            // // let catid = $(this).attr('data-id');
-            // // let texto = this.options[this.selectedIndex].text;
-
-            // // console.log('valor = '+valor+' catid= '+catid);
-
-            // // $('.horario').val(valor);
-
-
-
-            //     let tasaDolar = $('#tasaDolar').val();
-            //     let tasaPeso = $('#tasaPeso').val();
-
-
-
-            //     if (precio) {
-            //         $('.precio').val(precio);
-            //         // console.log(precio);
-            //         // console.log('precio = '+precio[0].precio+' precioBolivar = '+precio[0].precio*tasaDolar+' precioPeso = '+precio[0].precio*tasaPeso+''+'');
-
-            //         $('.detalle').html('<div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Dolar</span><h5 class="description-header">$'+formatMoney(precio)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Pesos</span><h5 class="description-header">$'+formatMoney(precio*tasaPeso)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Bolivares</span><h5 class="description-header">Bs.'+formatMoney(precio*tasaDolar)+'</h5></div></div>');
-
-
-
-
-
-            //     // TODO utilizamos la libreria decimal.js para realizar operaciones de comparacion en el precio de las habitaciones
-
-
-            //         $('.detalle').show("swing");
-
-            //         x1 = new Decimal(precio);
-
-            //         y1 = new Decimal(precioVieja);
-
-
-            //         if (x1.greaterThan(y1)) {
-            //             // alert('mayor');
-            //             $('#btnPago').show("swing");
-            //             $('#infoQR').hide("swing");
-            //             $('#infoPago').show("swing");
-            //         }
-            //         if (x1.lessThanOrEqualTo(y1)) {
-            //             // alert('menor o igual');
-            //             $('#btnPago').hide("swing");
-            //             $('#infoQR').show("swing");
-            //             $('#infoPago').hide("swing");
-
-            //         }
-
-            //         $('#procesarServicio').show();
-            //         // $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
-            //                 // // alert(origens[0].nombre);
-            //                 // for(var i = 0; i < origens.length; i++){
-            //                 // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
-            //                 // }
-            //     }else{
-            //         // alert('no precio');
-            //         $('.detalle').hide("swing");
-            //         $('#procesarServicio').hide("swing");
-            //         $('#btnPago').hide("swing");
-            //         $('#infoQR').hide("swing");
-            //         $('#infoPago').hide("swing");
-
-            //     }
-
-
-
-
-
-    });
-
-//     $(function(){
-//   $(".ver").click(function(){
-//     var valor = $(this).attr('data-id')
-//     alert(valor);
-//     // $("#resultado").html(valor)
-//   })
-// })
-
-
-});
-
-function is_numeric( mixed_var ) {
-    // Returns true if value is a number or a numeric string
-
-    return !isNaN(mixed_var * 1);
-}
-
-function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
-                try {
-                    decimalCount = Math.abs(decimalCount);
-                    decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
-
-                    const negativeSign = amount < 0 ? "-" : "";
-
-                    let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
-                    let j = (i.length > 3) ? i.length % 3 : 0;
-
-                    return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g,
-                        "$1" +
-                        thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
-                } catch (e) {
-                    console.log(e)
-                }
-            };
+        }
 </script>
 
 <script>
 
-    // document.addEventListener('DOMContentLoaded', function() {
-    //     $('#imprimirFactura').hide();
-    //     $('#imprimirBoleta').hide();
-    //     try {
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     $('#imprimirFactura').hide();
+        //     $('#imprimirBoleta').hide();
+        //     try {
 
 
-    //         onScan.attachTo(document, {
-    //             //configuración del sufijo/ tecla esperada al finalizar la lectura del scan, esto indica a onScan la finalización del evento
-    //             suffixKeyCodes: [13],
-    //             minLength: 2,
-    //             onScan: function(barcode) { //función callback que se dispara después de una lectura
-    //                 console.log(barcode)
+        //         onScan.attachTo(document, {
+        //             //configuración del sufijo/ tecla esperada al finalizar la lectura del scan, esto indica a onScan la finalización del evento
+        //             suffixKeyCodes: [13],
+        //             minLength: 2,
+        //             onScan: function(barcode) { //función callback que se dispara después de una lectura
+        //                 console.log(barcode)
 
-    //                     let nombreHabitacionBarcode = $("#nombreHabitacionBarcode").val();
-    //                     // alert(nombreHabitacionBarcode);
-    //                     var n = barcode;
-    //                     // alert(n);
+        //                     let nombreHabitacionBarcode = $("#nombreHabitacionBarcode").val();
+        //                     // alert(nombreHabitacionBarcode);
+        //                     var n = barcode;
+        //                     // alert(n);
 
-    //                     if (barcode == nombreHabitacionBarcode) {
+        //                     if (barcode == nombreHabitacionBarcode) {
 
-    //                         // alert('Todo va bien');
-    //                         $("#form1").submit();
+        //                         // alert('Todo va bien');
+        //                         $("#form1").submit();
 
-    //                     }else{
-    //                         alert('¡Error al Ingresar el QR!... Por favor Ingrese el QR correcto. (llave incorrecta)');
-    //                         return false;
-    //                     }
-    //             },
+        //                     }else{
+        //                         alert('¡Error al Ingresar el QR!... Por favor Ingrese el QR correcto. (llave incorrecta)');
+        //                         return false;
+        //                     }
+        //             },
 
-    //             // onScanError: function(e) { //función callback para captura de errores de lectura
-    //             //     console.log('Error de lectura' + e[0]);
-    //             //     // toastr.error('', 'Error de lectura' + e)
-    //             // },
-    //             onScanError: function(err) {
-    //                 var sFormatedErrorString = "Error Details: {\n";
-    //                 for (var i in err) {
-    //                     sFormatedErrorString += '    ' + i + ': ' + err[i] + ",\n";
-    //                 }
-    //                 sFormatedErrorString = sFormatedErrorString.trim().replace(/,$/, '') + "\n}";
-    //                 console.log("[onScanError]: " + sFormatedErrorString);
-    //             }
-
-    //         })
-    //         // alert('OnScan ready!');
-    //         // toastr.success('', 'OnScan ready!')
-
-    //     } catch (e) { //captura de errores generales de inicialización de onscan.js
-    //         alert('Error OnScan' + e);
-    //         // toastr.error('', 'Error OnScan' + e)
-    //     }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        // $("#enviar").on('click', function() {
-        //     $("#form1").submit();
-        // });
-
-
-        // $("#procesarServicio").on('click', function() {
-        //     addHabitacion();
-        //     $("#monto_dejado").val(0);
-        //     $('#modo_pago').val('cambio');
-        //     $("#form3").submit();
-        // });
-
-        // $("#contado").on('click', function() {
-        //     let cliente_id = $("#cliente_id").val();
-        //     if(cliente_id == 0 || cliente_id == null){
-        //         alert('No has seleccionado un cliente...!');
-        //         return false;
-        //     }
-
-        //     $('#modo_pago').val('contado');
-        // });
-        // $("#precortesia").on('click', function() {
-        //     let cliente_id = $("#cliente_id").val();
-        //     if(cliente_id == 0 || cliente_id == null){
-        //         alert('No has seleccionado un cliente...!');
-        //         return false;
-        //     }
-        //     $('#modo_pago').val('cortesia');
-
-        // });
-        // $("#cortesia").on('click', function() {
-        //     addHabitacion();
-        //     $("#monto_dejado").val(0);
-        //     $('#modo_pago').val('cortesia');
-        //     $("#form1").submit();
-        // });
-        // $("#precredito").on('click', function() {
-
-        //     let cliente_id = $("#cliente_id").val();
-        //     if(cliente_id == 0 || cliente_id == null){
-        //         alert('No has seleccionado un cliente...!');
-        //         return false;
-        //     }
-        //     $('#modo_pago').val('credito');
-
-        // });
-        // $("#credito").on('click', function() {
-        //     let estado_credito = $("#estado_credito").val();
-        //     if (estado_credito == 'Moroso') {
-        //         alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
-        //     } else {
-
-
-        //     addHabitacion();
-        //     $("#monto_dejado").val(0);
-        //     $('#modo_pago').val('credito');
-        //     let costo = $("#total_costo").val();
-        //     // alert('total costo '+costo);
-        //     let deuda_credito_pendiente = $("#total_credito_pendiente").val();
-        //     // alert(deuda_credito_pendiente);
-        //     let limite_fecha_credito = $("#limite_fecha").val();
-        //     let limite_monto_credito = $("#limite_monto").val();
-
-        //     if (deuda_credito_pendiente) {
-        //         let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
-        //         // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
-
-        //         if (credito_disponible > 0) {
-        //             // alert('es mayor puede continuar costo '+ costo);
-        //             let credito_disponible_total_operacion = credito_disponible - costo;
-
-        //             if (credito_disponible_total_operacion >= 0) {
-        //                 // alert('puede seguir');
-        //                 $("#form1").submit();
-        //             }else{
-        //                 alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+        //             // onScanError: function(e) { //función callback para captura de errores de lectura
+        //             //     console.log('Error de lectura' + e[0]);
+        //             //     // toastr.error('', 'Error de lectura' + e)
+        //             // },
+        //             onScanError: function(err) {
+        //                 var sFormatedErrorString = "Error Details: {\n";
+        //                 for (var i in err) {
+        //                     sFormatedErrorString += '    ' + i + ': ' + err[i] + ",\n";
+        //                 }
+        //                 sFormatedErrorString = sFormatedErrorString.trim().replace(/,$/, '') + "\n}";
+        //                 console.log("[onScanError]: " + sFormatedErrorString);
         //             }
 
-        //         }else{
-        //             alert('El cliente no tiene Credito...');
-        //         }
-        //     } else {
-        //         // alert('no hay deuda pendiente');
-        //         let credito_disponible = limite_monto_credito;
-        //         // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+        //         })
+        //         // alert('OnScan ready!');
+        //         // toastr.success('', 'OnScan ready!')
 
-        //         if (credito_disponible > 0) {
-        //             // alert('es mayor puede continuar costo '+ costo);
-        //             let credito_disponible_total_operacion = credito_disponible - costo;
-
-        //             if (credito_disponible_total_operacion >= 0) {
-        //                 // alert('puede seguir');
-        //                 $("#form1").submit();
-        //             }else{
-        //                 alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
-        //             }
-
-        //         }else{
-        //             alert('El cliente no tiene Credito...');
-        //         }
+        //     } catch (e) { //captura de errores generales de inicialización de onscan.js
+        //         alert('Error OnScan' + e);
+        //         // toastr.error('', 'Error OnScan' + e)
         //     }
 
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        //     }
-        // });
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    // })
-
-
-    function addHabitacion(){
-        totalcosto = $("#total_costo").val();
-        var is24 = $('#is24').val();
-        if (totalcosto == '') {
-            total = $("#precioDolarHabitacio").val();
-            totalcosto = total;
-            $("#total_costo").val(total);
-            $('#cantidad').val(1);
+            // $("#enviar").on('click', function() {
+            //     $("#form1").submit();
+            // });
 
 
-        } else {
-            // alert('no 24');
-            total = $("#total_costo").val();
-            totalr = $("#precioDolarHabitacio").val();
-            $("#precio_costo").val(totalr);
-        }
+            // $("#procesarServicio").on('click', function() {
+            //     addHabitacion();
+            //     $("#monto_dejado").val(0);
+            //     $('#modo_pago').val('cambio');
+            //     $("#form3").submit();
+            // });
+
+            // $("#contado").on('click', function() {
+            //     let cliente_id = $("#cliente_id").val();
+            //     if(cliente_id == 0 || cliente_id == null){
+            //         alert('No has seleccionado un cliente...!');
+            //         return false;
+            //     }
+
+            //     $('#modo_pago').val('contado');
+            // });
+            // $("#precortesia").on('click', function() {
+            //     let cliente_id = $("#cliente_id").val();
+            //     if(cliente_id == 0 || cliente_id == null){
+            //         alert('No has seleccionado un cliente...!');
+            //         return false;
+            //     }
+            //     $('#modo_pago').val('cortesia');
+
+            // });
+            // $("#cortesia").on('click', function() {
+            //     addHabitacion();
+            //     $("#monto_dejado").val(0);
+            //     $('#modo_pago').val('cortesia');
+            //     $("#form1").submit();
+            // });
+            // $("#precredito").on('click', function() {
+
+            //     let cliente_id = $("#cliente_id").val();
+            //     if(cliente_id == 0 || cliente_id == null){
+            //         alert('No has seleccionado un cliente...!');
+            //         return false;
+            //     }
+            //     $('#modo_pago').val('credito');
+
+            // });
+            // $("#credito").on('click', function() {
+            //     let estado_credito = $("#estado_credito").val();
+            //     if (estado_credito == 'Moroso') {
+            //         alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
+            //     } else {
 
 
-                total_costo = total_costo + subtotalPC[cont];
-                total_d     = total;
-                total_p     = total;
-                total_tp    = total;
-                total_m     = total;
-                total_e     = total;
+            //     addHabitacion();
+            //     $("#monto_dejado").val(0);
+            //     $('#modo_pago').val('credito');
+            //     let costo = $("#total_costo").val();
+            //     // alert('total costo '+costo);
+            //     let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+            //     // alert(deuda_credito_pendiente);
+            //     let limite_fecha_credito = $("#limite_fecha").val();
+            //     let limite_monto_credito = $("#limite_monto").val();
+
+            //     if (deuda_credito_pendiente) {
+            //         let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+            //         // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+            //         if (credito_disponible > 0) {
+            //             // alert('es mayor puede continuar costo '+ costo);
+            //             let credito_disponible_total_operacion = credito_disponible - costo;
+
+            //             if (credito_disponible_total_operacion >= 0) {
+            //                 // alert('puede seguir');
+            //                 $("#form1").submit();
+            //             }else{
+            //                 alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+            //             }
+
+            //         }else{
+            //             alert('El cliente no tiene Credito...');
+            //         }
+            //     } else {
+            //         // alert('no hay deuda pendiente');
+            //         let credito_disponible = limite_monto_credito;
+            //         // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+            //         if (credito_disponible > 0) {
+            //             // alert('es mayor puede continuar costo '+ costo);
+            //             let credito_disponible_total_operacion = credito_disponible - costo;
+
+            //             if (credito_disponible_total_operacion >= 0) {
+            //                 // alert('puede seguir');
+            //                 $("#form1").submit();
+            //             }else{
+            //                 alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+            //             }
+
+            //         }else{
+            //             alert('El cliente no tiene Credito...');
+            //         }
+            //     }
+
+
+            //     }
+            // });
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        // })
 
 
 
-
-        $("#PagoTtotal").html(numDecimal(total));
-
-
-
-
-    }
 
 
 </script>

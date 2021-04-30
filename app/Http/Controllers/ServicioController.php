@@ -828,7 +828,7 @@ class ServicioController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // return $request;
+        return $request;
 
         // TODO Este metodo maneja el cambio de habitacion
 
