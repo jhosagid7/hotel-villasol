@@ -316,10 +316,10 @@ class CheckoutController extends Controller
                     }
 
 
-                    // return $cajas;
+                    // return $precio;
                 // return redirect()->route('proceso', array('title' => $title,'levels' => $levels,'habitacion' => $habitacion,'horarios' => $horarios, 'tasaDolarHabitacion' => $tasaDolarHabitacion, 'tasaPesoHabitacion' => $tasaPesoHabitacion, 'users' => $users));
 
-             return view('checkout.show', compact('horarios','cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
+             return view('checkout.show', compact('cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
             }else{
                 return redirect()
                 ->route('caja.index')
