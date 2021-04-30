@@ -27,6 +27,7 @@ class CreateHorasExtrasTable extends Migration
             $table->decimal('monto_total_hora_extra', 25, 2)->nullable();
             $table->decimal('otros_montos', 25, 2)->nullable();
             $table->decimal('detalle_otros_montos', 25, 2)->nullable();
+            $table->decimal('total_horas_extras_otros_montos', 25, 2)->nullable();
             $table->enum('modo_pago', ['Contado', 'Credito', 'Cortesia', 'Excedente', 'Contado-Excedente']);
             $table->string('tipo_pago', 20)->nullable();
             $table->foreignId('servicio_id')->references('id')->on('servicios');

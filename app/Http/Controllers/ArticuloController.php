@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
-use App\Http\Requests;
-
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\Input;
-use App\Http\Requests\ArticuloFormRequest;
-use App\Articulo;
-use Illuminate\support;
 use DB;
+
+use App\Tasa;
+
+use App\Articulo;
+use App\Categoria;
+use App\Http\Requests;
+use Illuminate\support;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\ArticuloFormRequest;
 
 class ArticuloController extends Controller
 {
@@ -32,11 +34,11 @@ class ArticuloController extends Controller
             $fecha = $request->get('fecha');
 
 
-            $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
-            $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
-            $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
-            $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
-            $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
+            $tasaDolar = Tasa::where('nombre', '=', 'Dolar')->first();
+            $tasaPeso = Tasa::where('nombre', '=', 'Peso')->first();
+            $tasaTransferenciaPunto = Tasa::where('nombre', '=', 'Transferencia_Punto')->first();
+            $tasaMixto = Tasa::where('nombre', '=', 'Mixto')->first();
+            $tasaEfectivo = Tasa::where('nombre', '=', 'Efectivo')->first();
 
 
             $articulos = Articulo::select('articulos.id', 'articulos.codigo', 'articulos.nombre', 'articulos.stock', 'articulos.precio_costo', 'articulos.unidades', 'articulos.descripcion', 'articulos.imagen', 'articulos.estado', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo', 'categorias.nombre as categoria')
@@ -56,7 +58,7 @@ class ArticuloController extends Controller
     }
     public function create()
     {
-        $categorias = DB::table('categorias')->where('condicion', '=', 'Activa')->get();
+        $categorias = Categoria::where('condicion', '=', 'Activa')->get();
         return view('almacen.articulo.create', ['categorias'=>$categorias]);
     }
     public function store(Request $request)
@@ -105,7 +107,7 @@ class ArticuloController extends Controller
     public function edit($id)
     {
         $articulo = Articulo::findOrFail($id);
-        $categorias = DB::table('categorias')->where('condicion', '=', 'Activa')->get();
+        $categorias = Categoria::where('condicion', '=', 'Activa')->get();
         return view("almacen.articulo.edit", ["articulo" => $articulo, 'categorias'=> $categorias]);
     }
     public function update(Request $request, $id)

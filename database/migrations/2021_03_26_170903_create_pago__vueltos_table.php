@@ -15,11 +15,13 @@ class CreatePagoVueltosTable extends Migration
     {
         Schema::create('pago__vueltos', function (Blueprint $table) {
             $table->id();
+            $table->enum('Tipo', ['Servicio', 'Consumo','Creditos','Horas_Extras'])->nullable();
             $table->string('Divisa', 20)->nullable();
             $table->decimal('MontoDivisa', 25, 3)->nullable();
             $table->decimal('TasaTiket', 25, 2)->nullable();
             $table->decimal('MontoDolar', 25, 3)->nullable();
             $table->foreignId('servicio_id')->references('id')->on('servicios');
+            $table->foreignId('caja_id')->references('id')->on('cajas');
             $table->timestamps();
         });
     }

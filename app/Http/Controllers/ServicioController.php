@@ -1789,12 +1789,14 @@ class ServicioController extends Controller
 
 
                                 $Pago_Servicio = new Pago_Servicio();
+                                $Pago_Servicio->Tipo = 'Servicio';
                                 $Pago_Servicio->Divisa = $pagoVueltos->Divisa;
                                 $Pago_Servicio->MontoDivisa = $pagoVueltos->MontoDivisa;
                                 $Pago_Servicio->TasaTiket = $pagoVueltos->TasaTiket;
                                 $Pago_Servicio->MontoDolar = $pagoVueltos->MontoDolar;
                                 $Pago_Servicio->Vueltos = 0;
                                 $Pago_Servicio->servicio_id = $servicio->id;
+                                $Pago_Servicio->caja_id = $request->get('caja_id');
                                 $Pago_Servicio->save();
 
 
