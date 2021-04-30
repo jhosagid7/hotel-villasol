@@ -25,7 +25,7 @@ class CreateCreditoPagadosTable extends Migration
             $table->date('fecha_pago')->nullable();
             $table->enum('estado_credito_al_pagar', ['Vigente', 'Vencido','Pagado']);
             $table->foreignId('persona_id')->references('id')->on('personas');
-            $table->foreignId('user_id')->references('id')->on('users')->default(1);
+            $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('detalle_credito_id')->references('id')->on('detalle_creditos');
             $table->foreignId('credito_id')->references('id')->on('creditos');
             $table->foreignId('caja_id')->references('id')->on('cajas');

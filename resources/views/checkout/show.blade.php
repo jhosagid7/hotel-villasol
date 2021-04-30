@@ -286,7 +286,8 @@ if(isset($servicio->id)){
                                     <input type="hidden" name="numero3" size="2" value="<?php echo $total_horas * $cajas->precioHorasExtraSis; ?>" onKeyUp="fncSumar()">
 
                                     <input type="hidden" name="dataCantHorasExtras" id="dataCantHorasExtras" value="{{$total_horas ?? ''}}">
-                                    <input type="hidden" name="dataPrecioHorasExtras" id="dataPrecioHorasExtras" value="{{$total_horas * $cajas->precioHorasExtraSis ?? ''}}">
+                                    <input type="hidden" name="dataPrecioHorasExtras" id="dataPrecioHorasExtras" value="{{$cajas->precioHorasExtraSis ?? ''}}">
+                                    <input type="hidden" name="dataMontoTotalHorasExtras" id="dataMontoTotalHorasExtras" value="{{$total_horas * $cajas->precioHorasExtraSis ?? ''}}">
 
 
 
@@ -881,6 +882,7 @@ if(isset($servicio->id)){
                                                         <input id="banderaHorasExtras" name="banderaHorasExtras" type="hidden" value="">
                                                         <input id="cantHorasExtras" name="cantHorasExtras" type="hidden" value="">
                                                         <input id="precioHorasExtras" name="precioHorasExtras" type="hidden" value="">
+                                                        <input id="montoTotalHorasExtras" name="montoTotalHorasExtras" type="hidden" value="">
                                                         <input id="otrosMontos" name="OtrosMontos" type="hidden" value="">
                                                         <input id="observacionOtrosMontos" name="observacionOtrosMontos" type="hidden" value="">
                                                         <input id="monto_dejado" name="monto_dejado" type="hidden" value="">
@@ -1282,12 +1284,14 @@ var procesoPagoPendientealida = 0;
 
             let dataCantHorasExtras = $("#dataCantHorasExtras").val();
             let dataPrecioHorasExtras = $("#dataPrecioHorasExtras").val();
+            let dataMontoTotalHorasExtras = $("#dataMontoTotalHorasExtras").val();
             let numero2 = $("#numero2").val();
             let observacionOtros = $("#observacionOtros").val();
 
             $("#banderaHorasExtras").val('PagoHorasExtras');
             $("#cantHorasExtras").val(dataCantHorasExtras);
             $("#precioHorasExtras").val(dataPrecioHorasExtras);
+            $("#montoTotalHorasExtras").val(dataMontoTotalHorasExtras);
             $("#otrosMontos").val(numero2);
             $("#observacionOtrosMontos").val(observacionOtros);
 
@@ -1443,6 +1447,7 @@ var procesoPagoPendientealida = 0;
 
     $("#cambiarHabitacionBtn").on('click', function() {
     procesoCambioSalida = 1;
+    $("#banderaHorasExtras").val('');
     // alert('boton '+procesoCambioSalida);
 
     });
