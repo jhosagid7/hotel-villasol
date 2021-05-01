@@ -90,13 +90,13 @@ class CheckoutController extends Controller
         $servicio = Servicio::where('id', $id)->where('status_servicio', 'Iniciado')->first();
         // return $servicio;
 
-        $horarios = Horario::get();
+        $horarios = Horario::where('tipo',$servicio->tipo_habitacion)->orwhere('tipo','24 HORAS')->get();
         $cliente = Persona::where('id',$servicio->persona_id)->first();
         $servicio;
         $servicio->servicios_ventas;
         // $servicio->horario;
         // $servicio->servicios_ventas[0]->articulo;
-// return $servicio;
+        // return $servicio;
         Sessioncaja::crearsession();
         $tasa = Tasa::find(1);
         $tasa->updated_at;
@@ -315,11 +315,13 @@ class CheckoutController extends Controller
                         // return $second->diffInHours($first);
                     }
 
+                    $mismaHabitacion = Habitacione::findOrfail($servicio->habitacion_id);
+                    // return $mismaHabitacion;
 
-                    // return $precio;
+                    // return $servicio;
                 // return redirect()->route('proceso', array('title' => $title,'levels' => $levels,'habitacion' => $habitacion,'horarios' => $horarios, 'tasaDolarHabitacion' => $tasaDolarHabitacion, 'tasaPesoHabitacion' => $tasaPesoHabitacion, 'users' => $users));
 
-             return view('checkout.show', compact('cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
+             return view('checkout.show', compact('mismaHabitacion','cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
             }else{
                 return redirect()
                 ->route('caja.index')
@@ -352,7 +354,7 @@ class CheckoutController extends Controller
      */
     public function update(Request $request, $id)
     {
-return $request;
+// return $request;
 
         // $id = 2;
         $servicio_id = Servicio::where('habitacion_id',$id)->where('status_servicio', 'Iniciado')->first();

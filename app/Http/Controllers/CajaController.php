@@ -332,6 +332,34 @@ class CajaController extends Controller
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                // TODO Ahora que lla guardamos los datos en la tabla historial
+                //procedemos a borrar los registros donde el estado no sea pendiente
+                // y a su vez vamos a cambiar el id colocandole el nuevo ide  de la caja
+                //recien abierta.
+
+                // TODO Creamos consulta para buscar registros y filtrarlos
+                $filtrarReg = Excedentes_Recibidos_Caja_Actual::get();
+                // return $filtrarReg;
+
+                if($filtrarReg){
+                    foreach ($filtrarReg as $fReg) {
+                        if($fReg->Estado == 'Pendiente'){
+                            $upReg = Excedentes_Recibidos_Caja_Actual::findOrFail($fReg->id);
+                            $upReg->caja_id = $Caja->id;
+                            $upReg->update();
+                        }else{
+                            Excedentes_Recibidos_Caja_Actual::destroy($fReg->id);
+                        }
+                    }
+                }
+
+
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
             DB::commit();
 
         }catch(\Exception $e)
@@ -345,6 +373,9 @@ class CajaController extends Controller
         $verificar_caja =  Caja::where('sessioncaja_id',$caja->id )->orderBy('id', 'desc')->first();
         $mensaje = $UserName->name.'  La Caja fué Abierta exitosamente. ¡Que tengas una hermosa jornada!';
         // $mostrar = self::show($verificar_caja->id,$mensaje);
+
+
+
         // return $mostrar;
         return redirect()
         ->route('caja.show',$verificar_caja->id)
@@ -456,10 +487,12 @@ class CajaController extends Controller
     //TODO Traer los vueltos pendientes de las cajas ateriores
 // return $cajas->id;
         if ($cajas->estado == 'Cerrada') {
-            $vueltosPendientesCajaAnterior = Historial_Vueltos_Pendiente::where('caja_id','<>', $cajas->id)->get();
+            $vueltosPendientesCajaAnterior = Historial_Vueltos_Pendiente::where('caja_id', $cajas->id)->get();
+            // return $cajas->id;
         }
         if ($cajas->estado == 'Abierta'){
-            $vueltosPendientesCajaAnterior = Historial_Vueltos_Pendiente::where('caja_id', '<>', $cajas->id)->get();
+            $vueltosPendientesCajaAnterior = Historial_Vueltos_Pendiente::where('caja_id', $cajas->id - 1)->get();
+            // return $vueltosPendientesCajaAnterior;
         }
 
 
@@ -1218,25 +1251,28 @@ foreach ($detalle_creditos as $detalleCredito ) {
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                // REVIEW ESTE METODO FUE MOVIDO AL METODO STOR CUANDO SE VA A CREAR LA CAJA PARA PODER CAMBIAR EL ID
+
                 // TODO Ahora que lla guardamos los datos en la tabla historial
                 //procedemos a borrar los registros donde el estado no sea pendiente
                 // y a su vez vamos a cambiar el id colocandole el nuevo ide  de la caja
                 //recien abierta.
 
                 // TODO Creamos consulta para buscar registros y filtrarlos
-                $filtrarReg = Excedentes_Recibidos_Caja_Actual::get();
+                // $filtrarReg = Excedentes_Recibidos_Caja_Actual::get();
+                // // return $filtrarReg;
 
-                if($filtrarReg){
-                    foreach ($filtrarReg as $fReg) {
-                        if($fReg->Estado == 'Pendiente'){
-                            $upReg = Excedentes_Recibidos_Caja_Actual::findOrFail($caja_id);
-                            $upReg->caja_id = $caja_id + 1;
-                            $upReg->update();
-                        }else{
-                            Excedentes_Recibidos_Caja_Actual::destroy($filtrarReg->id);
-                        }
-                    }
-                }
+                // if($filtrarReg){
+                //     foreach ($filtrarReg as $fReg) {
+                //         if($fReg->Estado == 'Pendiente'){
+                //             $upReg = Excedentes_Recibidos_Caja_Actual::findOrFail($caja_id);
+                //             $upReg->caja_id = $caja_id + 1;
+                //             $upReg->update();
+                //         }else{
+                //             Excedentes_Recibidos_Caja_Actual::destroy($filtrarReg->id);
+                //         }
+                //     }
+                // }
 
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -282,7 +282,7 @@ if(isset($servicio->id)){
 
                                     <input type="hidden" name="numero" size="2" value="<?php echo $total_alojamiento; ?>" onKeyUp="fncSumar()">
 
-                                    <input type="hidden" name="numero1" size="2" value="<?php echo $servicio->dinero_dejado; ?>" onKeyUp="fncSumar()">
+                                    <input type="hidden" name="numero1" size="2" value="<?php echo $servicio->total_venta; ?>" onKeyUp="fncSumar()">
                                     <input type="hidden" name="numero3" size="2" value="<?php echo $total_horas * $cajas->precioHorasExtraSis; ?>" onKeyUp="fncSumar()">
 
                                     <input type="hidden" name="dataCantHorasExtras" id="dataCantHorasExtras" value="{{$total_horas ?? ''}}">
@@ -296,7 +296,7 @@ if(isset($servicio->id)){
                                     <td><input type="text"  name="numero2" id="numero2" size="2"  onKeyUp="fncSumar()"></td>
 
                                     <td style="border-right: 1px solid #a09e9e;" ><textarea name="observacionOtros" id="observacionOtros" cols="40" rows="2"></textarea></td>
-                                    <td><input type="text" value="<?php echo ($total_alojamiento-$servicio->dinero_dejado) + ($total_horas * $cajas->precioHorasExtraSis); ?>" style="border-color: red;" readonly="readonly" name="resultado"/></td>
+                                    <td><input type="text" value="<?php echo ($total_alojamiento-$servicio->total_venta) + ($total_horas * $cajas->precioHorasExtraSis); ?>" style="border-color: red;" readonly="readonly" name="resultado"/></td>
                                 </tr>
 
                                 <tr style="background-color: #dcd6d6;">
@@ -375,7 +375,7 @@ if(isset($servicio->id)){
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;"></th>
                                     <th colspan="5" style="border-right: 1px solid #a09e9e;"><p style="float: right;font-size: 18px;">Total $ </p></th>
                                     <input type="hidden" name="subtotal" value="<?php echo $total; ?>" onKeyUp="fncSumar()">
-                                    <th style="width: 100px;"><b><input type="text" style="border-color: green;" readonly id="total" name="total" value="<?php echo ($total_alojamiento-$servicio->dinero_dejado)+ ($total_horas * $cajas->precioHorasExtraSis) +$total; ?>"></b></th>
+                                    <th style="width: 100px;"><b><input type="text" style="border-color: green;" readonly id="total" name="total" value="<?php echo ($total_alojamiento-$servicio->total_venta)+ ($total_horas * $cajas->precioHorasExtraSis) +$total; ?>"></b></th>
                                 </tr>
 
 
@@ -536,6 +536,7 @@ if(isset($servicio->id)){
                                       {{-- <option id="0" value="0">0</option> --}}
                                     <select   data-size="2" data-width="100%" palceholder="hola" data-id="" title="Seleccione Servicio" name="buscarHabitacion" id="buscarHabitacion" class="selval form-control select2">
                                         <option value="0"></option>
+                                        <option value="{{$mismaHabitacion->id}}_{{$mismaHabitacion->nombre}}_{{$mismaHabitacion->cat_id}}_{{$mismaHabitacion->cat->nombre}}_{{$mismaHabitacion->cat->descripcion}}_{{str_pad($mismaHabitacion->nombre,7,'0',STR_PAD_LEFT) ?? ''}}">{{$mismaHabitacion->nombre}} - {{$mismaHabitacion->cat->nombre}} - {{$mismaHabitacion->cat->descripcion}}</option>
                                         @foreach($habitacionese as $habitacion)
                                                 <option value="{{$habitacion->id}}_{{$habitacion->nombre}}_{{$habitacion->cat_id}}_{{$habitacion->cat->nombre}}_{{$habitacion->cat->descripcion}}_{{str_pad($habitacion->nombre,7,'0',STR_PAD_LEFT) ?? ''}}">{{$habitacion->nombre}} - {{$habitacion->cat->nombre}} - {{$habitacion->cat->descripcion}}</option>
                                             @endforeach

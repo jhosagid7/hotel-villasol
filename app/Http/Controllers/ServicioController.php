@@ -831,11 +831,16 @@ class ServicioController extends Controller
     public function update(Request $request, $id)
     {
 
-        return $request;
+        // return $request;
         // TODO Este metodo maneja el cambio de habitacion
 
 
-
+        // $bandera = $request->get('banderaHorasExtras');
+        // if ($bandera == 'PagoHorasExtras') {
+        //     return 'si';
+        // } else {
+        //     return 'no';
+        // }
 
         $validarServicio = Servicio::findOrfail($id);
         // return count($validarServicio);
@@ -867,11 +872,18 @@ class ServicioController extends Controller
                 $detalleHabitacion = $request->get('categoria_dest_nueva2');
 
                 $horarios = Horario::findOrFail($request->get('horario_id'));
-
+// return $horarios;
                 if($horarios){
                     $tipo =  $horarios->tipo;
                     $horario = $horarios->nombre;
                 }
+
+                // $first   = Carbon::now('America/Caracas');
+
+                //     //asignamos a la variable $second los datos de fecha y hora de salida
+                //     $second = $servicio->fecha_salida. ' '.$servicio->hora_salida;
+                //     // //damos formato y convertimos en objeto la variable $second
+                //     $second = Carbon::createFromFormat('Y-m-d H:i:s', $second);
 
 
 
@@ -1507,7 +1519,7 @@ class ServicioController extends Controller
                 $servicio->modo_pago = $modo_pago;
                 $servicio->tipo_pago = $tipo_pago;
                 $servicio->status = $status;
-                $servicio->precio_costo = $request->get('precio_costo');
+                $servicio->precio_costo = $request->get('precio_nueva');
                 $servicio->cantidad = $request->get('cantidad');
                 $servicio->dinero_dejado = $monto_dejado;
                 $servicio->total_venta = $request->get('total_costo');
@@ -1720,6 +1732,7 @@ class ServicioController extends Controller
 
                         // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
                         // de lo contrario solo registra el dinero dejado de contado.
+                        // REVIEW  resuelto
 
                         if($VueltospagoConExcedente > 0){
 
@@ -1879,27 +1892,32 @@ class ServicioController extends Controller
                     // }
 
                 }
-                //ahora actualizamos la tabla Habitaico con un estatus de ocupada
-                $habitacion = Habitacione::findOrFail($id_habitaicon);
-                $habitacion->status = 'Ocupada';
-                $habitacion->update();
+
+                // TODO Este codigo se ejecuta solo si escogieron la misma habitacion que esta en uso en otras palabras
+                //si solo estan cambiando de servicio y no de habitacion
 
 
 
+                    //ahora actualizamos la tabla Habitaico con un estatus de ocupada
+                    $habitacion = Habitacione::findOrFail($id_habitaicon);
+                    $habitacion->status = 'Ocupada';
+                    $habitacion->update();
 
-                $servicio_id = Servicio::where('habitacion_id',$habitacion_id_vieja)->where('status_servicio', 'Iniciado')->first();
-                //    return $servicio_id;
-                if($servicio_id){
-                    // return 'todo bien';
-                    $servicio = Servicio::findOrFail($servicio_id->id);
-                    $servicio->status_servicio = 'Finalizado';
-                    $servicio->update();
+                    $servicio_id = Servicio::where('habitacion_id',$habitacion_id_vieja)->where('status_servicio', 'Iniciado')->where('id', $id)->first();
+                    //    return $servicio_id;
+                    if($servicio_id){
+                        // return 'todo bien';
+                        $servicio = Servicio::findOrFail($servicio_id->id);
+                        $servicio->status_servicio = 'Finalizado';
+                        $servicio->update();
 
-                    $habitacionCambio = Habitacione::findOrFail($habitacion_id_vieja);
-                    $habitacionCambio->status = 'Limpieza';
-                    $habitacionCambio->update();
+                        if($request->get('habitacion_id_nueva2') <> $request->get('habitacion_id_vieja')){
 
-                }
+                            $habitacionCambio = Habitacione::findOrFail($habitacion_id_vieja);
+                            $habitacionCambio->status = 'Limpieza';
+                            $habitacionCambio->update();
+                        }
+                    }
 
                 DB::commit();
 

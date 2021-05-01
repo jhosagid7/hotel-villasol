@@ -1031,7 +1031,11 @@
                     @else
                         <tr style="background-color: rgba(174, 221, 236, 0.555);" class="text-black detalleAzul">
                     @endif
-                    <td>{{ $serv->id ?? '' }}</td>
+                    <td
+                    @if ($serv->status_servicio == 'Iniciado')
+                    style="background-color: red;"
+                    @endif
+                    >{{ $serv->id ?? '' }}</td>
                     <td>{{ $serv->fecha_entrada.' '.$serv->hora_entrada ?? '' }}</td>
                     <td>{{ $serv->num_servicio ?? '' }}</td>
                     <td>{{ $serv->tasaTransPunto ?? '' }}</td>
