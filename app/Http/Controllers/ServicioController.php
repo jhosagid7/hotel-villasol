@@ -836,7 +836,7 @@ class ServicioController extends Controller
         // TODO Este metodo maneja el cambio de habitacion
 
 
-
+//ver
 
         $validarServicio = Servicio::findOrfail($id);
         // return count($validarServicio);

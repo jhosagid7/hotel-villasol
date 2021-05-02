@@ -243,8 +243,8 @@
                                         dd(($cajas->SumaTotalVentas + $cajas->SumaTotalServicios));
                                     @endphp --}}
                                     <tr>
-                                        <td colspan="3"><h4><strong class="text-blue">Registrado por Sistema</strong></h4></td>
-                                        <td><h4><b id="total_sistema_reg">0.00</b></h4><input type="hidden" name="total_sistema_reg_input" id="total_sistema_reg_input" value="{{(($cajas->SumaTotalCreditosPagadosTotalesPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar) + ($cajas->SumaTotalVentas + $cajas->SumaTotalServicios) + ($cajas->TotalSumaVueltosDevueltosDolarToDolar + $cajas->TotalSumaTotalServDflotante + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar) - $cajas->totalSumaTotalDolarToDolarVueltos) ?? '0.00'}}"></td>
+                                        <td colspan="3"><h4><strong class="text-blue">Registrado por Sistema </strong></h4></td>
+                                        <td><h4><b id="total_sistema_reg">0.00</b></h4><input type="hidden" name="total_sistema_reg_input" id="total_sistema_reg_input" value="{{(($cajas->SumaTotalCreditosPagadosTotalesPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar) + ($cajas->SumaTotalVentas + $cajas->SumaTotalServicios)) ?? '0.00'}}"></td>
 
 
                                     </tr>
