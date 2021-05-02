@@ -880,6 +880,9 @@ class ServicioController extends Controller
                     $servicio_idData = $request->get('');
                     $caja_idData = $request->get('');
 
+                    // REVIEW CREAR CAMPOS EXTRAS EN LA BASE DE DATOS Y REVIZAR LA MIGRACION Y EL MODELO DE LA TABLA HORAS_EXTRAS
+                    //SE MODIFICARON ALGUNOS CAMPOS
+
 
                     DB::commit();
 
@@ -2235,12 +2238,12 @@ class ServicioController extends Controller
                                 }
 
                             }
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                             // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
                             // de lo contrario solo registra el dinero dejado de contado.
-                            // REVIEW  resuelto
+                            // REVIEW  resuelto (revizar si esta resuelto)
 
                             if($VueltospagoConExcedente > 0){
 
