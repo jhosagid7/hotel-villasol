@@ -282,7 +282,7 @@ if(isset($servicio->id)){
 
                                     <input type="hidden" name="numero" size="2" value="<?php echo $total_alojamiento; ?>" onKeyUp="fncSumar()">
 
-                                    <input type="hidden" name="numero1" size="2" value="<?php echo $servicio->total_venta; ?>" onKeyUp="fncSumar()">
+                                    <input type="hidden" name="numero1" size="2" value="<?php echo $servicio->precio_costo; ?>" onKeyUp="fncSumar()">
                                     <input type="hidden" name="numero3" size="2" value="<?php echo $total_horas * $cajas->precioHorasExtraSis; ?>" onKeyUp="fncSumar()">
 
                                     <input type="hidden" name="dataCantHorasExtras" id="dataCantHorasExtras" value="{{$total_horas ?? ''}}">
@@ -296,7 +296,7 @@ if(isset($servicio->id)){
                                     <td><input type="text"  name="numero2" id="numero2" size="2"  onKeyUp="fncSumar()"></td>
 
                                     <td style="border-right: 1px solid #a09e9e;" ><textarea name="observacionOtros" id="observacionOtros" cols="40" rows="2"></textarea></td>
-                                    <td><input type="text" value="<?php echo ($total_alojamiento-$servicio->total_venta) + ($total_horas * $cajas->precioHorasExtraSis); ?>" style="border-color: red;" readonly="readonly" name="resultado"/></td>
+                                    <td><input type="text" value="<?php echo ($total_alojamiento-$servicio->precio_costo) + ($total_horas * $cajas->precioHorasExtraSis); ?>" style="border-color: red;" readonly="readonly" name="resultado"/></td>
                                 </tr>
 
                                 <tr style="background-color: #dcd6d6;">
@@ -375,7 +375,7 @@ if(isset($servicio->id)){
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;"></th>
                                     <th colspan="5" style="border-right: 1px solid #a09e9e;"><p style="float: right;font-size: 18px;">Total $ </p></th>
                                     <input type="hidden" name="subtotal" value="<?php echo $total; ?>" onKeyUp="fncSumar()">
-                                    <th style="width: 100px;"><b><input type="text" style="border-color: green;" readonly id="total" name="total" value="<?php echo ($total_alojamiento-$servicio->total_venta)+ ($total_horas * $cajas->precioHorasExtraSis) +$total; ?>"></b></th>
+                                    <th style="width: 100px;"><b><input type="text" style="border-color: green;" readonly id="total" name="total" value="<?php echo ($total_alojamiento-$servicio->precio_costo)+ ($total_horas * $cajas->precioHorasExtraSis) +$total; ?>"></b></th>
                                 </tr>
 
 
@@ -880,6 +880,7 @@ if(isset($servicio->id)){
                                                         <h4 id="ex" class="text-bold">TOTAL EXCEDENTE</h4>
                                                         <h4 id="r" class="text-bold">RESTA</h4>
                                                         <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
+                                                        <input id="isVueltos" name="isVueltos" type="hidden" value="0">
                                                         <input id="banderaHorasExtras" name="banderaHorasExtras" type="hidden" value="">
                                                         <input id="cantHorasExtras" name="cantHorasExtras" type="hidden" value="">
                                                         <input id="precioHorasExtras" name="precioHorasExtras" type="hidden" value="">
@@ -1670,6 +1671,7 @@ if (btnCambio == 1) {
                 vcargarb = 0;
                 vcargarpto = 0;
                 vcargart = 0;
+                $("#isVueltos").val('');
                 $("#deuda").val('');
                 $("#deuda2").val('');
                 $("#deudaPeso").val('');
@@ -1699,6 +1701,7 @@ if (btnCambio == 1) {
                 vcargarb = 0;
                 vcargarpto = 0;
                 vcargart = 0;
+                $("#isVueltos").val('');
                 $("#deuda").val('');
                 $("#deuda2").val('');
                 $("#deudaPeso").val('');
@@ -1728,6 +1731,7 @@ if (btnCambio == 1) {
                 vcargarp = 0;
                 vcargarpto = 0;
                 vcargart = 0;
+                $("#isVueltos").val('');
                 $("#deuda").val('');
                 $("#deuda2").val('');
                 $("#deudaPeso").val('');
@@ -1757,6 +1761,7 @@ if (btnCambio == 1) {
                 vcargarp = 0;
                 vcargarb = 0;
                 vcargart = 0;
+                $("#isVueltos").val('');
                 $("#deuda").val('');
                 $("#deuda2").val('');
                 $("#deudaPeso").val('');
@@ -1786,6 +1791,7 @@ if (btnCambio == 1) {
                 vcargarp = 0;
                 vcargarb = 0;
                 vcargarpto = 0;
+                $("#isVueltos").val('');
                 $("#deuda").val('');
                 $("#deuda2").val('');
                 $("#deudaPeso").val('');
@@ -3031,7 +3037,7 @@ if (btnCambio == 1) {
                     $("#VueltosdispExcedenteShow").html('$'+VueltosdispExced.toFixed(2));
                 }
                 if (VueltosvalidarDispExced){
-                    alert('El montoddd disponible no supera el monto a pagar... Credito disponible es de: $'+VueltosdispExcedente+ ' y el monto que decea pagar es de: $'+VueltosdispExced.toFixed(2));
+                    alert('El monto disponible no supera el monto a pagar... Credito disponible es de: $'+VueltosdispExcedente+ ' y el monto que decea pagar es de: $'+VueltosdispExced.toFixed(2));
                     VueltospagoExc = 0;
                     VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
                     $('#VueltospagoConExcedente').val('');
@@ -3147,25 +3153,25 @@ if (btnCambio == 1) {
                 // alert(x2);
                 // alert(x3);
                 // alert(x4);
-                if(x2.isNegative()){
+                // if(x2.isNegative()){
 
 
 
-                    VueltospagoExc = 0;
-                    VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
-                    $('#VueltospagoConExcedente').val('');
-                    $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
-                    resta = x3 - valor_restar;
-                    VueltosExc = numDecimal(VueltospagoExc);
-                    alert('Error! Debe ingresar un valor menor o igual al monto que resta....');
+                //     VueltospagoExc = 0;
+                //     VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
+                //     $('#VueltospagoConExcedente').val('');
+                //     $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
+                //     resta = x3 - valor_restar;
+                //     VueltosExc = numDecimal(VueltospagoExc);
+                //     alert('Error! Debe ingresar un valor menor o igual al monto que resta....');
 
 
 
-                // }else{
-                //     if(x4){
-                //         alert('puede ...');
-                //     }
-                }
+                // // }else{
+                // //     if(x4){
+                // //         alert('puede ...');
+                // //     }
+                // }
 
             }
             // var valorV           = PagoTtotalV.innerHTML;
@@ -3442,26 +3448,31 @@ if (btnCambio == 1) {
             var aprovMontoDolar = 0;
             $("#DMontoDolar").keyup(function() {
                 aprovMontoDolar = 1;
+                $("#isVueltos").val('');
                 DMontoDolar();
             });
 
             $("#DMontoPeso").keyup(function() {
                 aprovMontoDolar = 1;
+                $("#isVueltos").val('');
                 DMontoPeso();
             });
 
             $("#DMontoBolivar").keyup(function() {
                 aprovMontoDolar = 1;
+                $("#isVueltos").val('');
                 DMontoBolivar();
             });
 
             $("#DMontoPunto").keyup(function() {
                 aprovMontoDolar = 1;
+                $("#isVueltos").val('');
                 DMontoPunto();
             });
 
             $("#DMontoTrans").keyup(function() {
                 aprovMontoDolar = 1;
+                $("#isVueltos").val('');
                 DMontoTrans();
             });
 
@@ -3575,9 +3586,11 @@ if (btnCambio == 1) {
             // rmd = total_sumaV - md;
             // $('#monto_dejado').val(rmd);
 
+
             if(tsV > 0){
             let md = $('#monto_dejado').val();
             rmd =  md - tsV;
+            $('#isVueltos').val(tsV);
             let rmdresult = new Decimal(rmd);
             $('#monto_dejado').val(rmdresult.toFixed(2));
             }
@@ -3677,14 +3690,17 @@ if (btnCambio == 1) {
 
 
             $("#DMontoDolarV").keyup(function() {
+                $("#isVueltos").val('');
                 DMontoDolarV();
             });
 
             $("#DMontoPesoV").keyup(function() {
+                $("#isVueltos").val('');
                 DMontoPesoV();
             });
 
             $("#DMontoBolivarV").keyup(function() {
+                $("#isVueltos").val('');
                 DMontoBolivarV();
             });
 
@@ -3707,7 +3723,7 @@ if (btnCambio == 1) {
                 vcargarbV = 0;
 
 
-
+                $("#isVueltos").val('');
                 $("#DMontoPesoV").val('');
                 DMontoPesoV();
                 $("#DMontoBolivarV").val('');
@@ -3723,6 +3739,7 @@ if (btnCambio == 1) {
                 // alert('1');
                 vcargarV = 0;
                 $("#DMontoDolarV").val('');
+                $("#isVueltos").val('');
                 DMontoDolarV();
             }
         });
@@ -3734,7 +3751,7 @@ if (btnCambio == 1) {
                 vcargarV = 0;
                 vcargarbV = 0;
 
-
+                $("#isVueltos").val('');
 
 
                 $("#DMontoDolarV").val('');
@@ -3749,6 +3766,7 @@ if (btnCambio == 1) {
             }else{
                 vcargarpV = 0;
                 $("#DMontoPesoV").val('');
+                $("#isVueltos").val('');
                 DMontoPesoV();
             }
         });
@@ -3759,7 +3777,7 @@ if (btnCambio == 1) {
                 vcargarV = 0;
                 vcargarpV = 0;
 
-
+                $("#isVueltos").val('');
 
 
                 $("#DMontoPesoV").val('');
@@ -3774,6 +3792,7 @@ if (btnCambio == 1) {
             }else{
                 vcargarbV = 0;
                 $("#DMontoBolivarV").val('');
+                $("#isVueltos").val('');
                 DMontoBolivarV();
             }
         });
