@@ -174,7 +174,12 @@ if(isset($servicio->id)){
                         if($cajas->criterio == 'Faltan: '){
                             $total_horas = 0;
                         }else{
+
+                            if($cajas->difHorasExtraRegPagadas){
+                                $total_horas = (($contar_dias * 24) + $contar_hora + $t_minutos - $cajas->difHorasExtraRegPagadas);
+                            }else{
                             $total_horas = (($contar_dias * 24) + $contar_hora + $t_minutos);
+                        }
                         }
 
 
@@ -206,20 +211,20 @@ if(isset($servicio->id)){
                 <?php
 
                     $total_alojamiento=0;
-                    if($contar_horas<=24 and $contar_dias==0 ){
+                    // if($contar_horas<=24 and $contar_dias==0 ){
 
-                        $total_alojamiento=$servicio->precio_costo * 1;
+                    //     $total_alojamiento=$servicio->precio_costo * 1;
 
-                    }else if($contar_dias!=0 and $contar_hora<=12){
+                    // }else if($contar_dias!=0 and $contar_hora<=12){
 
-                        $total_alojamiento=$servicio->precio_costo * $contar_dias;
+                    //     $total_alojamiento=$servicio->precio_costo * $contar_dias;
 
 
-                    }else if($contar_dias!=0 and $contar_hora>12 ){
+                    // }else if($contar_dias!=0 and $contar_hora>12 ){
 
-                        $total_alojamiento=$servicio->precio_costo * ($contar_dias + 1);
+                    //     $total_alojamiento=$servicio->precio_costo * ($contar_dias + 1);
 
-                    };
+                    // };
 
 
                 ?>
@@ -241,7 +246,7 @@ if(isset($servicio->id)){
                                 <tr>
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;">#</th>
 
-                                    <th>Costo calculado </th>
+                                    <th>Precio Servicio </th>
                                     <th>Dinero dejado</th>
                                     <th>Total horas extras</th>
                                     <th>Otros</th>
@@ -256,7 +261,7 @@ if(isset($servicio->id)){
                                 <tr>
                                     <td style="border-right: 1px solid #a09e9e;">1.</td>
 
-                                    <td >$  <?php echo number_format($total_alojamiento,2,'.',','); ?></td>
+                                    <td >$  <?php echo number_format($servicio->precio_costo,2,'.',','); ?></td>
                                     <td ><b>$  <?php echo number_format($servicio->dinero_dejado,2,'.',','); ?></b></td>
                                     <script>
                                     function fncSumar(){
@@ -280,9 +285,9 @@ if(isset($servicio->id)){
                                     </script>
 
 
-                                    <input type="hidden" name="numero" size="2" value="<?php echo $total_alojamiento; ?>" onKeyUp="fncSumar()">
+                                    <input type="hidden" name="numero" size="2" value="0" onKeyUp="fncSumar()">
 
-                                    <input type="hidden" name="numero1" size="2" value="<?php echo $servicio->precio_costo; ?>" onKeyUp="fncSumar()">
+                                    <input type="hidden" name="numero1" size="2" value="0" onKeyUp="fncSumar()">
                                     <input type="hidden" name="numero3" size="2" value="<?php echo $total_horas * $cajas->precioHorasExtraSis; ?>" onKeyUp="fncSumar()">
 
                                     <input type="hidden" name="dataCantHorasExtras" id="dataCantHorasExtras" value="{{$total_horas ?? ''}}">
@@ -296,7 +301,7 @@ if(isset($servicio->id)){
                                     <td><input type="text"  name="numero2" id="numero2" size="2"  onKeyUp="fncSumar()"></td>
 
                                     <td style="border-right: 1px solid #a09e9e;" ><textarea name="observacionOtros" id="observacionOtros" cols="40" rows="2"></textarea></td>
-                                    <td><input type="text" value="<?php echo ($total_alojamiento-$servicio->precio_costo) + ($total_horas * $cajas->precioHorasExtraSis); ?>" style="border-color: red;" readonly="readonly" name="resultado"/></td>
+                                    <td><input type="text" value="<?php echo ($total_horas * $cajas->precioHorasExtraSis); ?>" style="border-color: red;" readonly="readonly" name="resultado"/></td>
                                 </tr>
 
                                 <tr style="background-color: #dcd6d6;">
@@ -315,6 +320,43 @@ if(isset($servicio->id)){
                                     {{-- <th style="border-right:1px solid #a09e9e;">Estado</th> --}}
                                     <th style="width: 40px"></th>
                                 </tr>
+                                @if (isset($verificarHorasExtras))
+
+                                    @foreach ($verificarHorasExtras as $verifica)
+                                        @if ($verifica->monto_total_hora_extra > 0)
+                                            <tr>
+                                                <td style="width: 10px;border-right: 1px solid #a09e9e;">#</th>
+                                                <td>Horas Extras</td>
+                                                <td>{{$verifica->precio_hora_extra ?? '0'}}</td>
+                                                <td>{{$verifica->cantidad_hora_extra ?? '0'}}</td>
+                                                <td>{{$verifica->monto_total_hora_extra}}</td>
+                                                <td style="border-right:1px solid #a09e9e;">{{$verifica->modo_pago}}</td>
+                                                {{-- <td style="border-right:1px solid #a09e9e;">Estado</td> --}}
+                                                <td style="widtd: 40px"></td>
+                                            </tr>
+                                         @endif
+                                    @endforeach
+                                @endif
+
+                                @if (isset($verificarHorasExtras))
+
+                                    @foreach ($verificarHorasExtras as $verifica)
+                                        @if ($verifica->otros_montos > 0)
+                                        <tr>
+                                            <td style="width: 10px;border-right: 1px solid #a09e9e;">#</th>
+                                            <td>{{$verifica->detalle_otros_montos}}</td>
+                                            <td>{{$verifica->otros_montos ?? '0'}}</td>
+                                            <td>-</td>
+                                            <td>{{$verifica->otros_montos ?? '0'}}</td>
+                                            <td style="border-right:1px solid #a09e9e;">{{$verifica->modo_pago}}</td>
+                                            {{-- <td style="border-right:1px solid #a09e9e;">Estado</td> --}}
+                                            <td style="widtd: 40px"></td>
+                                        </tr>
+                                        @endif
+
+                                    @endforeach
+                                @endif
+
 
                                 <?php $total=0;?>
 
@@ -375,7 +417,7 @@ if(isset($servicio->id)){
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;"></th>
                                     <th colspan="5" style="border-right: 1px solid #a09e9e;"><p style="float: right;font-size: 18px;">Total $ </p></th>
                                     <input type="hidden" name="subtotal" value="<?php echo $total; ?>" onKeyUp="fncSumar()">
-                                    <th style="width: 100px;"><b><input type="text" style="border-color: green;" readonly id="total" name="total" value="<?php echo ($total_alojamiento-$servicio->precio_costo)+ ($total_horas * $cajas->precioHorasExtraSis) +$total; ?>"></b></th>
+                                    <th style="width: 100px;"><b><input type="text" style="border-color: green;" readonly id="total" name="total" value="<?php echo ($total_horas * $cajas->precioHorasExtraSis) +$total; ?>"></b></th>
                                 </tr>
 
 
@@ -888,6 +930,8 @@ if(isset($servicio->id)){
                                                         <input id="otrosMontos" name="OtrosMontos" type="hidden" value="">
                                                         <input id="observacionOtrosMontos" name="observacionOtrosMontos" type="hidden" value="">
                                                         <input id="monto_dejado" name="monto_dejado" type="hidden" value="">
+                                                        <input id="base_vuelto_monto_dejado" name="base_vuelto_monto_dejado" type="text" value="">
+                                                        <input id="monto_dejadoResta" name="monto_dejadoResta" type="text" value="">
                                                         <input id="cantidad" name="cantidad" type="hidden" value="">
                                                         <input id="operador" name="operador" type="hidden" value="{{$UserName}}">
                                                         <input id="total_costo" name="total_costo" type="hidden" value="">
@@ -1370,6 +1414,7 @@ var procesoPagoPendientealida = 0;
         $("#cortesia2").on('click', function() {
             // addHabitacion();
             $("#monto_dejado").val(0);
+            $("#base_vuelto_monto_dejado").val(0);
             $('#modo_pago').val('cortesia');
             $("#form3").submit();
         });
@@ -1392,6 +1437,7 @@ var procesoPagoPendientealida = 0;
 
             // addHabitacion();
             $("#monto_dejado").val(0);
+            $("#base_vuelto_monto_dejado").val(0);
             $('#modo_pago').val('credito');
             let costo = $("#total_costo").val();
             // alert('total costo '+costo);
@@ -1565,6 +1611,7 @@ if (btnCambio == 1) {
         $("#procesarServicio").on('click', function() {
             addHabitacion();
             $("#monto_dejado").val(0);
+            $("#base_vuelto_monto_dejado").val(0);
             $('#modo_pago').val('cambio');
             $("#form3").submit();
         });
@@ -1591,6 +1638,7 @@ if (btnCambio == 1) {
         $("#cortesia").on('click', function() {
             addHabitacion();
             $("#monto_dejado").val(0);
+            $("#base_vuelto_monto_dejado").val(0);
             $('#modo_pago').val('cortesia');
             $("#form3").submit();
         });
@@ -1613,6 +1661,7 @@ if (btnCambio == 1) {
 
             addHabitacion();
             $("#monto_dejado").val(0);
+            $("#base_vuelto_monto_dejado").val(0);
             $('#modo_pago').val('credito');
             let costo = $("#total_costo").val();
             // alert('total costo '+costo);
@@ -1951,6 +2000,8 @@ if (btnCambio == 1) {
             $("#tipo_pago").val('Dolar');
             $("#spTotal").html('0.00'); //aqui
             $('#monto_dejado').val(0.00);
+            $('#base_vuelto_monto_dejado').val(0.00);
+            $('#monto_dejadoResta').val(0.00);
 
 
             prepara();
@@ -1983,6 +2034,8 @@ if (btnCambio == 1) {
             $("#tipo_pago").val('Peso');
             $("#spTotal").html('0.00'); //aqui
             $('#monto_dejado').val(0.00);
+            $('#base_vuelto_monto_dejado').val(0.00);
+            $('#monto_dejadoResta').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -2079,6 +2132,8 @@ if (btnCambio == 1) {
             $("#tipo_pago").val('Trans/Punto');
             $("#spTotal").html('0.00'); //aqui
             $('#monto_dejado').val(0.00);
+            $('#base_vuelto_monto_dejado').val(0.00);
+            $('#monto_dejadoResta').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -2176,6 +2231,8 @@ if (btnCambio == 1) {
             $("#tipo_pago").val('Mixto');
             $("#spTotal").html('0.00'); //aqui
             $('#monto_dejado').val(0.00);
+            $('#base_vuelto_monto_dejado').val(0.00);
+            $('#monto_dejadoResta').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -2272,6 +2329,8 @@ if (btnCambio == 1) {
             $("#tipo_pago").val('Efectivo');
             $("#spTotal").html('0.00'); //aqui
             $('#monto_dejado').val(0.00);
+            $('#base_vuelto_monto_dejado').val(0.00);
+            $('#monto_dejadoResta').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -3289,6 +3348,7 @@ if (btnCambio == 1) {
                 let result = new Decimal(total_suma);
                 document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(2));
                 $('#monto_dejado').val(result.toFixed(2));
+                $('#base_vuelto_monto_dejado').val(result.toFixed(2));
 
 
 
@@ -3568,42 +3628,99 @@ if (btnCambio == 1) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-        /* Sumar dos números. */
-        function sumarV() {
-            var total_sumaV = 0;
-            var tsV = 0;
-            $(".montoV").each(function() {
-                if (isNaN(parseFloat($(this).val()))) {
-                    total_sumaV -= 0;
-                    tsV += 0;
-                } else {
-                    total_sumaV -= parseFloat($(this).val());
-                    tsV += parseFloat($(this).val());
+        // /* Sumar dos números. */
+        // function sumarV() {
+        //     var total_sumaV = 0;
+        //     var tsV = 0;
+        //     $(".montoV").each(function() {
+        //         if (isNaN(parseFloat($(this).val()))) {
+        //             total_sumaV -= 0;
+        //             tsV += 0;
+        //         } else {
+        //             total_sumaV -= parseFloat($(this).val());
+        //             tsV += parseFloat($(this).val());
+        //         }
+        //     });
+        //     // alert(total_suma);
+        //     // let md = $('#monto_dejado').val();
+        //     // rmd = total_sumaV - md;
+        //     // $('#monto_dejado').val(rmd);
+
+
+        //     if(tsV > 0){
+        //     let md = $('#monto_dejado').val();
+        //     rmd =  md - tsV;
+        //     $('#isVueltos').val(tsV);
+        //     let rmdresult = new Decimal(rmd);
+        //     $('#monto_dejado').val(rmdresult.toFixed(2));
+        //     }
+
+        //     let result = new Decimal(total_sumaV);
+        //     document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
+
+
+        // }
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            /* Sumar dos números. */
+            function sumarV() {
+                var total_sumaV = 0;
+                var tsV = 0;
+                $(".montoV").each(function() {
+                    if (isNaN(parseFloat($(this).val()))) {
+                        total_sumaV -= 0;
+                        tsV += 0;
+                    } else {
+                        total_sumaV -= parseFloat($(this).val());
+                        tsV += parseFloat($(this).val());
+                    }
+                });
+                // alert(total_suma);
+                // let md = $('#monto_dejado').val();
+                // rmd = total_sumaV - md;
+                // $('#monto_dejado').val(rmd);
+
+                if(tsV > 0){
+                // let md = $('#monto_dejado').val();
+                // rmd =  md - tsV;
+                $('#isVueltos').val(tsV);
+                // let rmdresult = new Decimal(rmd);
+                let rmdresult = new Decimal(tsV);
+                // $('#monto_dejado').val(rmdresult.toFixed(2));
+                $('#monto_dejadoResta').val(rmdresult.toFixed(2));
+
                 }
-            });
-            // alert(total_suma);
-            // let md = $('#monto_dejado').val();
-            // rmd = total_sumaV - md;
-            // $('#monto_dejado').val(rmd);
+                let montoBase = $('#base_vuelto_monto_dejado').val();
+                let restaMontoDejadoBase = $('#monto_dejadoResta').val();
+
+                // console.log(montoBase);
+                // console.log(restaMontoDejadoBase);
+                x = new Decimal(montoBase)
+                y = new Decimal(restaMontoDejadoBase)
+                let r = x.sub(y)                  // '0.2'
+                // console.log(r.toFixed(2));
+
+                $('#monto_dejado').val(r.toFixed(2));
 
 
-            if(tsV > 0){
-            let md = $('#monto_dejado').val();
-            rmd =  md - tsV;
-            $('#isVueltos').val(tsV);
-            let rmdresult = new Decimal(rmd);
-            $('#monto_dejado').val(rmdresult.toFixed(2));
+                // $('#monto_dejado').val(rmdresult.toFixed(2));
+                let result = new Decimal(total_sumaV);
+                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
+
+
             }
 
-            let result = new Decimal(total_sumaV);
-            document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
 
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        }
-
-
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         function DMontoDolarV(){
             // alert('clic');
             MdolarV      = $("#DMontoDolarV").val();
@@ -3691,16 +3808,19 @@ if (btnCambio == 1) {
 
             $("#DMontoDolarV").keyup(function() {
                 $("#isVueltos").val('');
+                $("#monto_dejadoResta").val(0.00);
                 DMontoDolarV();
             });
 
             $("#DMontoPesoV").keyup(function() {
                 $("#isVueltos").val('');
+                $("#monto_dejadoResta").val(0.00);
                 DMontoPesoV();
             });
 
             $("#DMontoBolivarV").keyup(function() {
                 $("#isVueltos").val('');
+                $("#monto_dejadoResta").val(0.00);
                 DMontoBolivarV();
             });
 
@@ -3933,6 +4053,7 @@ if (btnCambio == 1) {
 
                                         addHabitacion();
                                         $("#monto_dejado").val(0);
+                                        $("#base_vuelto_monto_dejado").val(0);
                                         $('#modo_pago').val('credito');
                                         let costo = $("#total_costo").val();
                                         // alert('total costo '+costo);

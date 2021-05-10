@@ -15,7 +15,7 @@ class CreateHistorialVueltosPendientesTable extends Migration
     {
         Schema::create('historial__vueltos__pendientes', function (Blueprint $table) {
             $table->id();
-            $table->enum('Tipo', ['Servicio', 'Consumo','Otros']);
+            $table->enum('Tipo', ['Servicio', 'Consumo','Credito','Horas_Extras']);
             $table->enum('Estado', ['Pendiente', 'Devueltos','PagarOficina','ExcedenteNuevo']);
             $table->string('Divisa', 20)->nullable();
             $table->decimal('MontoDivisa', 25, 3)->nullable();

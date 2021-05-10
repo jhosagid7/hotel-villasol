@@ -376,6 +376,9 @@
                                                         <h4 id="r" class="text-bold">RESTA</h4>
                                                         <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
                                                         <input id="monto_dejado" name="monto_dejado" type="hidden" value="">
+                                                        <input id="base_vuelto_monto_dejado" name="base_vuelto_monto_dejado" type="text" value="">
+                                                        <input id="monto_dejadoResta" name="monto_dejadoResta" type="text" value="">
+                                                        <input id="isVueltos" name="isVueltos" type="hidden" value="0">
                                                         <input id="cantidad" name="cantidad" type="hidden" value="">
                                                         {{-- <input id="num_servicio" name="num_servicio" type="hidden" value="{{$num_servicio}}"> --}}
                                                         <input id="operador" name="operador" type="hidden" value="{{$UserName}}">
@@ -740,6 +743,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
         $("#cortesia").on('click', function() {
             addHabitacion();
             $("#monto_dejado").val(0);
+            $("#base_vuelto_monto_dejado").val(0);
             $('#modo_pago').val('cortesia');
             $("#form1").submit();
         });
@@ -752,6 +756,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
             addHabitacion();
             $("#monto_dejado").val(0);
+            $("#base_vuelto_monto_dejado").val(0);
             $('#modo_pago').val('credito');
             let costo = $("#total_costo").val();
             // alert('total costo '+costo);
@@ -1087,6 +1092,8 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
             $("#tipo_pago").val('Dolar');
             $("#spTotal").html('0.00'); //aqui
             $('#monto_dejado').val(0.00);
+            $('#base_vuelto_monto_dejado').val(0.00);
+            $('#monto_dejadoResta').val(0.00);
 
 
             prepara();
@@ -1119,6 +1126,8 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
             $("#tipo_pago").val('Peso');
             $("#spTotal").html('0.00'); //aqui
             $('#monto_dejado').val(0.00);
+            $('#base_vuelto_monto_dejado').val(0.00);
+            $('#monto_dejadoResta').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -1215,6 +1224,8 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
             $("#tipo_pago").val('Trans/Punto');
             $("#spTotal").html('0.00'); //aqui
             $('#monto_dejado').val(0.00);
+            $('#base_vuelto_monto_dejado').val(0.00);
+            $('#monto_dejadoResta').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -1312,6 +1323,8 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
             $("#tipo_pago").val('Mixto');
             $("#spTotal").html('0.00'); //aqui
             $('#monto_dejado').val(0.00);
+            $('#base_vuelto_monto_dejado').val(0.00);
+            $('#monto_dejadoResta').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -1408,6 +1421,8 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
             $("#tipo_pago").val('Efectivo');
             $("#spTotal").html('0.00'); //aqui
             $('#monto_dejado').val(0.00);
+            $('#base_vuelto_monto_dejado').val(0.00);
+            $('#monto_dejadoResta').val(0.00);
 
             $("#DMontoDolar").val('');
             $("#DMontoPeso").val('');
@@ -2530,6 +2545,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
         let result = new Decimal(total_suma);
         document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(2));
         $('#monto_dejado').val(result.toFixed(2));
+        $('#base_vuelto_monto_dejado').val(result.toFixed(2));
 
 
 
@@ -2782,6 +2798,48 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
 
             /* Sumar dos números. */
+            // function sumarV() {
+            //     var total_sumaV = 0;
+            //     var tsV = 0;
+            //     $(".montoV").each(function() {
+            //         if (isNaN(parseFloat($(this).val()))) {
+            //             total_sumaV -= 0;
+            //             tsV += 0;
+            //         } else {
+            //             total_sumaV -= parseFloat($(this).val());
+            //             tsV += parseFloat($(this).val());
+            //         }
+            //     });
+            //     // alert(total_suma);
+            //     // let md = $('#monto_dejado').val();
+            //     // rmd = total_sumaV - md;
+            //     // $('#monto_dejado').val(rmd);
+
+            //     if(tsV > 0){
+            //     let md = $('#monto_dejado').val();
+            //     rmd =  md - tsV;
+            //     let rmdresult = new Decimal(rmd);
+            //     $('#monto_dejado').val(rmdresult.toFixed(2));
+
+            //     }
+
+            //     let result = new Decimal(total_sumaV);
+            //     document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
+
+
+
+
+            // }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            /* Sumar dos números. */
             function sumarV() {
                 var total_sumaV = 0;
                 var tsV = 0;
@@ -2800,17 +2858,31 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 // $('#monto_dejado').val(rmd);
 
                 if(tsV > 0){
-                let md = $('#monto_dejado').val();
-                rmd =  md - tsV;
-                let rmdresult = new Decimal(rmd);
-                $('#monto_dejado').val(rmdresult.toFixed(2));
+                // let md = $('#monto_dejado').val();
+                // rmd =  md - tsV;
+                $('#isVueltos').val(tsV);
+                // let rmdresult = new Decimal(rmd);
+                let rmdresult = new Decimal(tsV);
+                // $('#monto_dejado').val(rmdresult.toFixed(2));
+                $('#monto_dejadoResta').val(rmdresult.toFixed(2));
 
                 }
+                let montoBase = $('#base_vuelto_monto_dejado').val();
+                let restaMontoDejadoBase = $('#monto_dejadoResta').val();
 
+                // console.log(montoBase);
+                // console.log(restaMontoDejadoBase);
+                x = new Decimal(montoBase)
+                y = new Decimal(restaMontoDejadoBase)
+                let r = x.sub(y)                  // '0.2'
+                / console.log(r.toFixed(2));
+
+                $('#monto_dejado').val(r.toFixed(2));
+
+
+                // $('#monto_dejado').val(rmdresult.toFixed(2));
                 let result = new Decimal(total_sumaV);
                 document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
-
-
 
 
             }
@@ -2818,6 +2890,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     function DMontoDolarV(){
                      // alert('clic');
                      MdolarV      = $("#DMontoDolarV").val();
@@ -2904,14 +2977,20 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
 
                 $("#DMontoDolarV").keyup(function() {
+                    $("#isVueltos").val('');
+                    $("#monto_dejadoResta").val(0.00);
                     DMontoDolarV();
                 });
 
                 $("#DMontoPesoV").keyup(function() {
+                    $("#isVueltos").val('');
+                    $("#monto_dejadoResta").val(0.00);
                     DMontoPesoV();
                 });
 
                 $("#DMontoBolivarV").keyup(function() {
+                    $("#isVueltos").val('');
+                    $("#monto_dejadoResta").val(0.00);
                     DMontoBolivarV();
                 });
 

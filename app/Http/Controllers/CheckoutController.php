@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Caja;
-use App\Config_Sucursal;
 use App\Tasa;
 use App\User;
 use App\Level;
@@ -14,13 +13,15 @@ use App\Servicio;
 use App\Excedente;
 use Carbon\Carbon;
 use App\Habitacione;
+use App\Horas_extra;
 use App\Sessioncaja;
 use App\Denominacion;
-use App\Excedentes_Recibidos_Caja_Actual;
+use App\Config_Sucursal;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use App\Excedentes_Recibidos_Caja_Actual;
 
 class CheckoutController extends Controller
 {
@@ -286,6 +287,7 @@ class CheckoutController extends Controller
                     // return $cajas;
                     // TODO comprobamos si la fecha del sistema es mayor a la fecha de salida
                     // si fecha de salida es mayor multiplicamos por valor de horas extras de la tabla config_sucursals
+
                     if($first->gt($second)){
 
 
@@ -293,6 +295,26 @@ class CheckoutController extends Controller
                         // TODO consultamos la tabla config_sucursals para traer el precio de la hora extra.
 
                         $precioHoraExtraData = Config_Sucursal::where('sucursal_id', $cajas->sucursal_id)->first();
+
+                        // TODO consultamos la tabla pagos extras para ver si ya hay un pago extra registrado por ese servicio
+                        //si lo hay comprobamos que sea un pago por horas extras y no por otros montos para luego comparar las
+                        //horas pagadas con las horas que tiene el sistema en este momento
+
+
+                        $verificarHorasExtras = Horas_extra::where('servicio_id',$id)->get();
+
+
+
+                        if($verificarHorasExtras){
+
+                            foreach ($verificarHorasExtras as $verificarHoras) {
+                                $cajas->difHorasExtraRegPagadas = $cajas->difHorasExtraRegPagadas + $verificarHoras->cantidad_hora_extra;
+                            }
+
+                        }else{
+                            $verificarHorasExtras = 0;
+                            $cajas->difHorasExtraRegPagadas = 0;
+                        }
                         $cajas->difHorasExtraReg = $second->diffInHours($first);
                         $cajas->precioHorasExtraSis = $precioHoraExtraData->precioHorasExtra;
                         $cajas->tiempoMinutosExtraSis = $precioHoraExtraData->minutosMaximosCobrar;
@@ -321,7 +343,7 @@ class CheckoutController extends Controller
                     // return $servicio;
                 // return redirect()->route('proceso', array('title' => $title,'levels' => $levels,'habitacion' => $habitacion,'horarios' => $horarios, 'tasaDolarHabitacion' => $tasaDolarHabitacion, 'tasaPesoHabitacion' => $tasaPesoHabitacion, 'users' => $users));
 
-             return view('checkout.show', compact('mismaHabitacion','cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
+             return view('checkout.show', compact('verificarHorasExtras','mismaHabitacion','cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
             }else{
                 return redirect()
                 ->route('caja.index')

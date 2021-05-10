@@ -41,6 +41,11 @@ class Caja extends Model
         return $this->belongsTo(Sucursal::class);
     }
 
+    public function pago_extras()
+    {
+        return $this->hasMany(Pago_Extra::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

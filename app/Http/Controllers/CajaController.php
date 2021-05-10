@@ -18,6 +18,7 @@ use App\Detalle_credito;
 use App\Excedentes_Pendientes_Caja_Anterior;
 use App\Excedentes_Recibidos_Caja_Actual;
 use App\Historial_Vueltos_Pendiente;
+use App\Horas_extra;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -418,6 +419,10 @@ class CajaController extends Controller
         $cajas->pago_creditos;
         $cajas->creditos_pagados;
         $cajas->excedente_actual;
+        $cajas->horas_extras;
+        $cajas->pagos_vueltos_extra;
+        $cajas->pago_extras;
+        // return $cajas->pago_extras;
 
 
         // $cajas->excedente_actual;
@@ -883,7 +888,7 @@ foreach ($detalle_creditos as $detalleCredito ) {
         }
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        foreach ($cajas->pago_vueltos as $pagoV ) {
+        foreach ($cajas->pagos_vueltos_extra as $pagoV ) {
 
             if ($pagoV->Divisa == 'Dolar') {
 
@@ -902,7 +907,7 @@ foreach ($detalle_creditos as $detalleCredito ) {
             $cajas->totalSumaTotalDolarToDolarVueltos = $cajas->totalSumaTotalDolarToDolarVueltos + $pagoV->MontoDivisa;
 
         }
-
+        // return $cajas->SumaTotalDolarVueltos;
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -911,7 +916,9 @@ foreach ($detalle_creditos as $detalleCredito ) {
         // $tasaTransferenciaPunto
         // $tasaMixto
         // $tasaEfectivo
+        // return $cajas->pago_servicios;
         foreach ($cajas->pago_servicios as $pagoS ) {
+
 
             $validarPagosServicios = Servicio::where('id',$pagoS->servicio_id)->first();
             if ($validarPagosServicios) {
@@ -959,6 +966,60 @@ foreach ($detalle_creditos as $detalleCredito ) {
 
         }
 
+        foreach ($cajas->pago_extras as $pagoVeX ) {
+            // return $cajas->pago_extras;
+            $validarPagosHorasExtras = Horas_extra::where('id',$pagoVeX->horas_extra_id)->first();
+            // return $validarPagosHorasExtras;
+            if ($validarPagosHorasExtras) {
+
+                if ($pagoVeX->Divisa == 'Dolar') {
+                    if($pagoVeX->Vueltos > 0){
+
+                        $cajas->SumaTotalDolarExtra = $cajas->SumaTotalDolarExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - $validarPagosHorasExtras->excedente_nuevo;
+                    // return $cajas->SumaTotalDolarExtra;
+                    }else{
+                        $cajas->SumaTotalDolarExtraDflotante = $cajas->SumaTotalDolarExtraDflotante + ($pagoVeX->Vueltos * -1);
+                        $cajas->SumaTotalDolarExtra = $cajas->SumaTotalDolarExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - $validarPagosHorasExtras->excedente_nuevo;
+                    }
+                }elseif ($pagoVeX->Divisa == 'Peso') {
+                    if($pagoVeX->Vueltos > 0){
+                        $cajas->SumaTotalPesoExtra = $cajas->SumaTotalPesoExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - ($validarPagosHorasExtras->excedente_nuevo * $tasaPeso->tasa);
+                    }else{
+                        $cajas->SumaTotalPesoExtraDflotante = $cajas->SumaTotalPesoExtraDflotante + ( $pagoVeX->Vueltos * -1);
+                        $cajas->SumaTotalPesoExtra = $cajas->SumaTotalPesoExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - ($validarPagosHorasExtras->excedente_nuevo * $tasaPeso->tasa);
+                    }
+                }elseif ($pagoVeX->Divisa == 'Bolivar') {
+                    if($pagoVeX->Vueltos > 0){
+                        $cajas->SumaTotalBolivarExtra = $cajas->SumaTotalBolivarExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - ($validarPagosHorasExtras->excedente_nuevo * $tasaEfectivo->tasa);
+                    }else{
+                        $cajas->SumaTotalBolivarExtraDflotante = $cajas->SumaTotalBolivarExtraDflotante + ($pagoVeX->Vueltos * -1) * $tasaEfectivo->tasa;
+                        $cajas->SumaTotalBolivarExtra = $cajas->SumaTotalBolivarExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - ($validarPagosHorasExtras->excedente_nuevo * $tasaEfectivo->tasa);
+                    }
+                }elseif ($pagoVeX->Divisa == 'Punto') {
+                    if($pagoVeX->Vueltos > 0){
+                        $cajas->SumaTotalPuntoExtra = $cajas->SumaTotalPuntoExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - ($validarPagosHorasExtras->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                    }else{
+                        $cajas->SumaTotalPuntoExtraDflotante = $cajas->SumaTotalPuntoExtraDflotante + ($pagoVeX->Vueltos * -1) * $tasaTransferenciaPunto->tasa;
+                        $cajas->SumaTotalPuntoExtra = $cajas->SumaTotalPuntoExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - ($validarPagosHorasExtras->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                    }
+                }elseif ($pagoVeX->Divisa == 'Transferencia') {
+                    if($pagoVeX->Vueltos > 0){
+                        $cajas->SumaTotalTransferenciaExtra = $cajas->SumaTotalTransferenciaExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - ($validarPagosHorasExtras->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                    }else{
+                        $cajas->SumaTotalTransferenciaExtraDflotante = $cajas->SumaTotalTransferenciaExtraDflotante + ($pagoVeX->Vueltos * -1) * $tasaTransferenciaPunto->tasa;
+                        $cajas->SumaTotalTransferenciaExtra = $cajas->SumaTotalTransferenciaExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - ($validarPagosHorasExtras->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                    }
+                }
+
+                $cajas->TotalSumaTotalExtraDflotante = $cajas->TotalSumaTotalExtraDflotante + ($pagoVeX->Vueltos * -1);
+            }
+
+
+
+        }
+
+        // return $cajas->TotalSumaTotalExtraDflotante;
+// return $cajas;
         foreach ($cajas->servicios as $serv ) {
             if ($serv->estado == 'Aceptada') {
                 if($serv->status == 'Pagado'){
@@ -1235,6 +1296,7 @@ foreach ($detalle_creditos as $detalleCredito ) {
 
                 if($vueltos_pendientes_Actuales){
                     foreach ($vueltos_pendientes_Actuales as $vtosPtes) {
+                        // return $vueltos_pendientes_Actuales;
                         $historialVueltosPendientes = new Historial_Vueltos_Pendiente();
                         $historialVueltosPendientes->Tipo = $vtosPtes->Tipo;
                         $historialVueltosPendientes->Estado = $vtosPtes->Estado;

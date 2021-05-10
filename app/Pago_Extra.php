@@ -11,6 +11,7 @@ class Pago_Extra extends Model
         'MontoDivisa',
         'TasaTiket',
         'MontoDolar',
+        'Vueltos',
         'horas_extra_id',
         'servicio_id',
         'caja_id'

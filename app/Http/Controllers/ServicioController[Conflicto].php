@@ -866,7 +866,7 @@ class ServicioController extends Controller
     public function update(Request $request, $id)
     {
 
-        // return $request;
+        return $request;
         // TODO Este metodo maneja el cambio de habitacion
 
 
@@ -879,7 +879,7 @@ class ServicioController extends Controller
 
             $bandera = $request->get('banderaHorasExtras');
             if ($bandera == 'PagoHorasExtras') {
-                // return 'si PagoHorasExtras';
+                return 'si PagoHorasExtras';
                 try{
 
                     $myTime = Carbon::now('America/Caracas');
@@ -915,7 +915,7 @@ class ServicioController extends Controller
                     $excedente_nuevoData = $request->get('');
                     $pago_con_excedenteData = $request->get('');
                     $modo_pagoData = $request->get('');
-                    $tipo_pago = $request->get('tipo_pago');
+                    $tipo_pagoData = $request->get('');
                     $servicio_idData = $request->get('');
                     $caja_idData = $request->get('');
                     $servicio_id = $id;
@@ -1333,7 +1333,7 @@ class ServicioController extends Controller
 
 
                         // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
-                        $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->first();
+                        $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('Tipo','Horas_Extras')->first();
 
 
                         if ($RestarVtossPtesToVtosPtes) {
@@ -1354,8 +1354,6 @@ class ServicioController extends Controller
                             $AgregarVtossPtesToVtosPtes->servicio_id = $id;
                             $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
                             $AgregarVtossPtesToVtosPtes->save();
-
-                            // return $AgregarVtossPtesToVtosPtes->id;
 
                             // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
                             if($RestarVtossPtesToVtosPtes->MontoDolar == 0){
@@ -2264,16 +2262,16 @@ class ServicioController extends Controller
                                 if ($pagoVueltos) {
                                     $isVuelos = $request->get('isVueltos');
 
-                                    $Pago_Extra = new Pago_Extra();
-                                    $Pago_Extra->Divisa = $pagoVueltos->Divisa;
-                                    $Pago_Extra->MontoDivisa = $pagoVueltos->MontoDivisa;
-                                    $Pago_Extra->TasaTiket = $pagoVueltos->TasaTiket;
-                                    $Pago_Extra->MontoDolar = $pagoVueltos->MontoDolar;
-                                    $Pago_Extra->Vueltos = -$isVuelos;
+                                    $Pago_Servicio = new Pago_Extra();
+                                    $Pago_Servicio->Divisa = $pagoVueltos->Divisa;
+                                    $Pago_Servicio->MontoDivisa = $pagoVueltos->MontoDivisa;
+                                    $Pago_Servicio->TasaTiket = $pagoVueltos->TasaTiket;
+                                    $Pago_Servicio->MontoDolar = $pagoVueltos->MontoDolar;
+                                    $Pago_Servicio->Vueltos = -$isVuelos;
                                     $Pago_Extra->horas_extra_id = $horasExtras->id;
-                                    $Pago_Extra->servicio_id = $id;
+                                    $Pago_Servicio->servicio_id = $id;
                                     $Pago_Extra->caja_id = $request->get('caja_id');
-                                    $Pago_Extra->save();
+                                    $Pago_Servicio->save();
 
 
 
@@ -2325,15 +2323,15 @@ class ServicioController extends Controller
                                     while ($cont < count($VMontoDolar)) {
 
 
-                                        $Pago_Extras_Vueltos = new Pago_Vuelto();
-                                        $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
-                                        $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
-                                        $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
-                                        $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
-                                        $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
-                                        $Pago_Extras_Vueltos->servicio_id = $id;
-                                        $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
-                                        $Pago_Extras_Vueltos->save();
+                                        $Pago_Servicio = new Pago_Vuelto();
+                                        $Pago_Servicio->Tipo = 'Servicio';
+                                        $Pago_Servicio->Divisa = $Vdivisa[$cont];
+                                        $Pago_Servicio->MontoDivisa = $VMontoDivisa[$cont];
+                                        $Pago_Servicio->TasaTiket = $VTasaTiket[$cont];
+                                        $Pago_Servicio->MontoDolar = $VMontoDolar[$cont];
+                                        $Pago_Servicio->servicio_id = $id;
+                                        $Pago_Servicio->caja_id = $request->get('caja_id');
+                                        $Pago_Servicio->save();
 
                                         $cont = $cont+1;
                                     }
@@ -2361,26 +2359,26 @@ class ServicioController extends Controller
 
 
 
-                        //ahora actualizamos la tabla Habitacion con un estatus de ocupada
-                        // $habitacion = Habitacione::findOrFail($id_habitaicon);
-                        // $habitacion->status = 'Ocupada';
-                        // $habitacion->update();
+                        //ahora actualizamos la tabla Habitaico con un estatus de ocupada
+                        $habitacion = Habitacione::findOrFail($id_habitaicon);
+                        $habitacion->status = 'Ocupada';
+                        $habitacion->update();
 
-                        // $servicio_id = Servicio::where('habitacion_id',$habitacion_id_vieja)->where('status_servicio', 'Iniciado')->where('id', $id)->first();
-                        // //    return $servicio_id;
-                        // if($servicio_id){
-                        //     // return 'todo bien';
-                        //     $servicio = Servicio::findOrFail($servicio_id->id);
-                        //     $servicio->status_servicio = 'Finalizado';
-                        //     $servicio->update();
+                        $servicio_id = Servicio::where('habitacion_id',$habitacion_id_vieja)->where('status_servicio', 'Iniciado')->where('id', $id)->first();
+                        //    return $servicio_id;
+                        if($servicio_id){
+                            // return 'todo bien';
+                            $servicio = Servicio::findOrFail($servicio_id->id);
+                            $servicio->status_servicio = 'Finalizado';
+                            $servicio->update();
 
-                        //     if($request->get('habitacion_id_nueva2') <> $request->get('habitacion_id_vieja')){
+                            if($request->get('habitacion_id_nueva2') <> $request->get('habitacion_id_vieja')){
 
-                        //         $habitacionCambio = Habitacione::findOrFail($habitacion_id_vieja);
-                        //         $habitacionCambio->status = 'Limpieza';
-                        //         $habitacionCambio->update();
-                        //     }
-                        // }
+                                $habitacionCambio = Habitacione::findOrFail($habitacion_id_vieja);
+                                $habitacionCambio->status = 'Limpieza';
+                                $habitacionCambio->update();
+                            }
+                        }
 
                     DB::commit();
 
@@ -2402,7 +2400,7 @@ class ServicioController extends Controller
 
                 // $printer->ticketServicioCambio('Cambio de Habitación','Servicio', $numeroServisio,$nombreHabitacionCambio, $nombreHabitacion, $detalleHabitacion, $modo_pago, $tipo_pago, $total_costo, $operador,$tipo);
                 // return view('checkin.checkin.index', compact('title','tasas'));
-                return Redirect::to('checkout/'.$id)->with('success', 'El servicio fué registrado exitosamente');
+                return Redirect::to('checkout')->with('success', 'El servicio fué registrado exitosamente');
 
 
             } else {

@@ -19,6 +19,7 @@ class CreatePagoExtrasTable extends Migration
             $table->decimal('MontoDivisa', 25, 3)->nullable();
             $table->decimal('TasaTiket', 25, 2)->nullable();
             $table->decimal('MontoDolar', 25, 3)->nullable();
+            $table->decimal('Vueltos', 25, 3)->nullable();
             $table->foreignId('horas_extra_id')->references('id')->on('horas_extras');
             $table->foreignId('servicio_id')->references('id')->on('servicios');
             $table->foreignId('caja_id')->references('id')->on('cajas');
