@@ -994,6 +994,7 @@
                     //es cuando el tipo de pago es exonerado.
 
                     $restarAcortesia = 0;
+                    $count = 1;
                 @endphp
 
                 @foreach ($cajas->servicios as $serv)
@@ -1041,7 +1042,7 @@
                     @if ($serv->status_servicio == 'Iniciado')
                     style="background-color: red;"
                     @endif
-                    >{{ $serv->id ?? '' }}</td>
+                    >{{ $count ?? '' }}</td>
                     <td>{{ $serv->fecha_entrada.' '.$serv->hora_entrada ?? '' }}</td>
                     <td>{{ $serv->num_servicio ?? '' }}</td>
                     <td>{{ $serv->tasaTransPunto ?? '' }}</td>
@@ -1168,6 +1169,9 @@
                         @endif
                     </td>
                 </tr>
+                    @php
+                        $count ++;
+                    @endphp
                 @endforeach
             </tbody>
         </table>

@@ -1010,7 +1010,7 @@ foreach ($detalle_creditos as $detalleCredito ) {
                         $cajas->SumaTotalTransferenciaExtra = $cajas->SumaTotalTransferenciaExtra + ($pagoVeX->MontoDivisa - $pagoVeX->Vueltos * -1) - ($validarPagosHorasExtras->excedente_nuevo * $tasaTransferenciaPunto->tasa);
                     }
                 }
-
+                $cajas->SumaTotalExtra = $cajas->SumaTotalExtra + ($validarPagosHorasExtras->total_horas_extras_otros_montos - $validarPagosHorasExtras->pago_con_excedente);
                 $cajas->TotalSumaTotalExtraDflotante = $cajas->TotalSumaTotalExtraDflotante + ($pagoVeX->Vueltos * -1);
             }
 
@@ -1018,7 +1018,7 @@ foreach ($detalle_creditos as $detalleCredito ) {
 
         }
 
-        // return $cajas->TotalSumaTotalExtraDflotante;
+        // return $cajas->SumaTotalExtra;
 // return $cajas;
         foreach ($cajas->servicios as $serv ) {
             if ($serv->estado == 'Aceptada') {
