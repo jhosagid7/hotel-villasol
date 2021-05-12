@@ -17,7 +17,7 @@ class CreateHorasExtrasTable extends Migration
             $table->id();
             $table->string('num_servicio', 20);
             $table->string('nombre_habitacion', 20);
-            $table->string('nombre_cliente', 20);
+            $table->string('nombre_cliente', 256);
             $table->string('cedula_cliente', 20);
             $table->string('fecha_hora_entrada', 20)->nullable();
             $table->string('fecha_hora_salida_sugerida', 20)->nullable();

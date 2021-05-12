@@ -454,8 +454,8 @@ if(isset($servicio->id)){
 	                        {{-- <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
                             <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> --}}
                             <a hidden id="pagoPendienteBtn" href="#" data-toggle="modal" data-target="#modalPagoPendiente"  class="btn btn-danger">Procesar pago pendiente</a>
-                            <button type="submit"  name="pagar"  id="pagar" class="btn btn-success pull-right"><i class='fa fa-print'></i> Procesar pago pendiente</button>
-                            <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
+                            {{-- <button type="submit"  name="pagar"  id="pagar" class="btn btn-success pull-right"><i class='fa fa-print'></i> Procesar pago pendiente</button> --}}
+                            {{-- <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a> --}}
                         </div>
                         </form>
                         <form action="{{ route('checkout.update', $servicio->habitacion_id)}}" id="form1" method="POST" autocomplete="off" role="buscar" name="sumar">
@@ -1354,7 +1354,7 @@ var procesoPagoPendientealida = 0;
                 let precio = totalPendt.toFixed(2);
                 $("#precio_costo").val(precio);
                 $('#cortesia2').show();
-                // $('#cortesia').show();
+                $('#cortesia').show();//habilitar boton coretesia
                 $('#precortesia2').show();
                 // console.log('Este cliente puede tener Cortesia');
             }else{
@@ -1367,7 +1367,7 @@ var procesoPagoPendientealida = 0;
                 $("#precio_costo").val(precio);
                 // console.log('Este cliente puede tener credito');
                 $('#credito2').show();
-                // $('#credito').show();
+                $('#credito').show();//habilitar boton credito
                 $('#precredito2').show();
 
             }else{

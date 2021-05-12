@@ -303,7 +303,7 @@ class CheckoutController extends Controller
 
                         $verificarHorasExtras = Horas_extra::where('servicio_id',$id)->get();
 
-
+                        // return $verificarHorasExtras;
 
                         if($verificarHorasExtras){
 
@@ -326,7 +326,20 @@ class CheckoutController extends Controller
                         // return $first . 'es mayor' . $second;
                     }else{
 
+                        $verificarHorasExtras = Horas_extra::where('servicio_id',$id)->get();
 
+                        // return $verificarHorasExtras;
+
+                        if($verificarHorasExtras){
+
+                            foreach ($verificarHorasExtras as $verificarHoras) {
+                                $cajas->difHorasExtraRegPagadas = $cajas->difHorasExtraRegPagadas + $verificarHoras->cantidad_hora_extra;
+                            }
+
+                        }else{
+                            $verificarHorasExtras = 0;
+                            $cajas->difHorasExtraRegPagadas = 0;
+                        }
                         $cajas->difHorasExtraReg = 0;
                         $cajas->precioHorasExtraSis = 0;
                         $cajas->tiempoCalculado = 'Faltan: '.$first->diffInDays($second).' Días '. $first->diffInHours($second) . ' Horas'. $first->diffInMinutes($second). ' Miuntos';
@@ -376,7 +389,7 @@ class CheckoutController extends Controller
      */
     public function update(Request $request, $id)
     {
-// return $request;
+// return 'listo';
 
         // $id = 2;
         $servicio_id = Servicio::where('habitacion_id',$id)->where('status_servicio', 'Iniciado')->first();

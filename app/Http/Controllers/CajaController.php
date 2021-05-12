@@ -966,6 +966,9 @@ foreach ($detalle_creditos as $detalleCredito ) {
 
         }
 
+        // TODO captuaramos en variables los montos pagados en el proseso de pagos extras de la tabla horas extras
+
+
         foreach ($cajas->pago_extras as $pagoVeX ) {
             // return $cajas->pago_extras;
             $validarPagosHorasExtras = Horas_extra::where('id',$pagoVeX->horas_extra_id)->first();
@@ -1018,6 +1021,18 @@ foreach ($detalle_creditos as $detalleCredito ) {
 
         }
 
+        foreach ($cajas->horas_extras as $creditosHorasExtras) {
+            if($creditosHorasExtras->modo_pago == 'Credito' && $creditosHorasExtras->status == 'Falta pagar'){
+                $cajas->SumaTotalHorasExtrasPorPagar = $cajas->SumaTotalHorasExtrasPorPagar + $creditosHorasExtras->total_horas_extras_otros_montos;
+                $cajas->SumaTotalCantidadHorasExtrasPorPagar = $cajas->SumaTotalCantidadHorasExtrasPorPagar + 1;
+            }
+
+            if($creditosHorasExtras->modo_pago == 'Cortesia' && $creditosHorasExtras->status == 'Exonerado'){
+                $cajas->SumaTotalHorasExtrasCortesia = $cajas->SumaTotalHorasExtrasCortesia + $creditosHorasExtras->total_horas_extras_otros_montos;
+                $cajas->SumaTotalCantidadHorasExtrasCortesia = $cajas->SumaTotalCantidadHorasExtrasCortesia + 1;
+            }
+        }
+        // return $cajas->SumaTotalHorasExtrasCortesia;
         // return $cajas->SumaTotalExtra;
 // return $cajas;
         foreach ($cajas->servicios as $serv ) {
