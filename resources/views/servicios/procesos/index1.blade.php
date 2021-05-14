@@ -6,24 +6,11 @@ date_default_timezone_set('America/Caracas');
      $hoy = date("Y-m-d");
    $hora = date("H:i:s");
 
-   
-
    $dia24 = strtotime('+1 day', strtotime($hoy));
    $dia24 = date('Y-m-d', $dia24);
 
-   $horaCalculoComercial = date("H"); 
-   $valorOtro = $horaCalculoComercial;
-   if($valorOtro >= 17 && $valorOtro <= 23){
-        // $valorOtrodata = 'si sumar dìas '.$valorOtro;
-        $diaComercial = strtotime('+1 day', strtotime($hoy));
-        $diaComercial = date('Y-m-d', $diaComercial);
-    }else{
-        // $valorOtrodata = 'no sumar dìas '.$valorOtro;
-        $diaComercial = strtotime($hoy);
-        $diaComercial = date('Y-m-d', $diaComercial);
-   }
-
-   
+   $diaComercial = strtotime('+1 day', strtotime($hoy));
+   $diaComercial = date('Y-m-d', $diaComercial);
 //    $hora24 = $dia24->format('H:i:s A');
 
    $hora24 = strtotime('+24 hour', strtotime($hora));
@@ -81,7 +68,7 @@ date_default_timezone_set('America/Caracas');
                             <div class="row">
                             {{-- <section class="content-header">
                                 <h1 >
-                                  <span class="fa fa-hotel"></span> PROCESAR HABITACIÓN 
+                                  <span class="fa fa-hotel"></span> PROCESAR HABITACIÓN
                                   <small>Avance</small>
                                 </h1>
                                 <ol class="breadcrumb">
@@ -3285,7 +3272,7 @@ console.log('Falta '+minutes);
             // verify();
             // TODO  boton enviar lo escondemos para usar el lector qr
             // $("#guardar").show("linear");
-            $("#guardar").hide("linear");
+            $("#guardar").show("linear");
 
 
 
