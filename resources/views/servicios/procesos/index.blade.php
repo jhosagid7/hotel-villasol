@@ -6,13 +6,15 @@ date_default_timezone_set('America/Caracas');
      $hoy = date("Y-m-d");
    $hora = date("H:i:s");
 
-   
+
 
    $dia24 = strtotime('+1 day', strtotime($hoy));
    $dia24 = date('Y-m-d', $dia24);
 
-   $horaCalculoComercial = date("H"); 
+   $horaCalculoComercial = date("H");
    $valorOtro = $horaCalculoComercial;
+
+   //este proceso controla las horas extras comencial
    if($valorOtro >= 17 && $valorOtro <= 23){
         // $valorOtrodata = 'si sumar dìas '.$valorOtro;
         $diaComercial = strtotime('+1 day', strtotime($hoy));
@@ -23,7 +25,7 @@ date_default_timezone_set('America/Caracas');
         $diaComercial = date('Y-m-d', $diaComercial);
    }
 
-   
+
 //    $hora24 = $dia24->format('H:i:s A');
 
    $hora24 = strtotime('+24 hour', strtotime($hora));
@@ -81,7 +83,7 @@ date_default_timezone_set('America/Caracas');
                             <div class="row">
                             {{-- <section class="content-header">
                                 <h1 >
-                                  <span class="fa fa-hotel"></span> PROCESAR HABITACIÓN 
+                                  <span class="fa fa-hotel"></span> PROCESAR HABITACIÓN
                                   <small>Avance</small>
                                 </h1>
                                 <ol class="breadcrumb">
