@@ -454,8 +454,8 @@ if(isset($servicio->id)){
 	                        {{-- <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
                             <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> --}}
                             <a hidden id="pagoPendienteBtn" href="#" data-toggle="modal" data-target="#modalPagoPendiente"  class="btn btn-danger">Procesar pago pendiente</a>
-                            <!-- <button type="submit"  name="pagar"  id="pagar" class="btn btn-success pull-right"><i class='fa fa-print'></i> Procesar pago pendiente</button> -->
-                            <!-- <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a> -->
+                            {{-- <button type="submit"  name="pagar"  id="pagar" class="btn btn-success pull-right"><i class='fa fa-print'></i> Procesar pago pendiente</button> --}}
+                            {{-- <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a> --}}
                         </div>
                         </form>
                         <form action="{{ route('checkout.update', $servicio->habitacion_id)}}" id="form1" method="POST" autocomplete="off" role="buscar" name="sumar">
@@ -463,8 +463,8 @@ if(isset($servicio->id)){
                             @method('PUT')
                             {{-- <input type="hidden" name="quetal" value="{{$servicio->habitacion_id ?? ''}}"> --}}
                             <input type="hidden" name="id_habitacion" value="{{$servicio->habitacion_id ?? ''}}">
-                            <!-- <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button> -->
-                            <!-- <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> -->
+                            <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
+                            <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button>
                         </form>
 
                     </div>
@@ -499,7 +499,7 @@ if(isset($servicio->id)){
                         <div class="col-md-12">
                             <div class="box box-danger">
                             <div class="box-header with-border">
-                                <h3 class="box-title">Debe cancelar la deuda pendiente...! (<b class="text-danger" id="diferenciaPrecio2">$0.00</b>)</h3>
+                                <h3 class="box-title">Debe cancelar la diferencia de precio...! (<b class="text-danger" id="diferenciaPrecio2">$0.00</b>)</h3>
                             </div><!-- /.box-header -->
                             <div class="box-body">
                                 <div id="btnPago2">
@@ -1323,7 +1323,7 @@ var procesoPagoPendientealida = 0;
 
         function pagoExtraPendiente(){
             totalPendiente = $('#total').val();
-            // alert('total pendiente '+totalPendiente);
+            alert('total pendiente '+totalPendiente);
 
             let totalPendt = new Decimal(totalPendiente);
 
@@ -1354,7 +1354,7 @@ var procesoPagoPendientealida = 0;
                 let precio = totalPendt.toFixed(2);
                 $("#precio_costo").val(precio);
                 $('#cortesia2').show();
-                // $('#cortesia').show();
+                $('#cortesia').show();//habilitar boton coretesia
                 $('#precortesia2').show();
                 // console.log('Este cliente puede tener Cortesia');
             }else{
@@ -1367,7 +1367,7 @@ var procesoPagoPendientealida = 0;
                 $("#precio_costo").val(precio);
                 // console.log('Este cliente puede tener credito');
                 $('#credito2').show();
-                // $('#credito').show();
+                $('#credito').show();//habilitar boton credito
                 $('#precredito2').show();
 
             }else{
@@ -2855,7 +2855,6 @@ if (btnCambio == 1) {
         // ddç
 
 
-        
         $("#bt_addP").click();
         $("#bt_addTP").click();
         $("#bt_addM").click();
@@ -2978,11 +2977,11 @@ if (btnCambio == 1) {
 
     var vtosPendientes = $('#vtosPendientes').val();
 
-    // alert(vtosPendientes);
+    alert(vtosPendientes);
     $("#dispExcedente").val(vtosPendientes);
     // var verCajaExcedente = vtosPendientes;
     if(vtosPendientes > 0){
-        // alert(vtosPendientes);
+        alert(vtosPendientes);
     $("#excedente").show();
     $("#ex").show();
     $("#excdt").show();
@@ -3000,11 +2999,11 @@ if (btnCambio == 1) {
 
     var VueltosvtosPendientes = $('#VueltosvtosPendientes').val();
 
-    // alert(VueltosvtosPendientes);
+    alert(VueltosvtosPendientes);
     $("#VueltosdispExcedente").val(VueltosvtosPendientes);
         // var verCajaExcedente = vtosPendientes;
         if(VueltosvtosPendientes > 0){
-            // alert(VueltosvtosPendientes);
+            alert(VueltosvtosPendientes);
         $("#Vueltosexcedente").show();
         $("#Vueltosex").show();
         $("#Vueltosexcdt").show();
@@ -3923,7 +3922,7 @@ if (btnCambio == 1) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 </script>
 
-<!-- <script>
+<script>
 
         document.addEventListener('DOMContentLoaded', function() {
 
@@ -4190,673 +4189,6 @@ if (btnCambio == 1) {
                         data: "cat_id=" + catid+"&horario_id=" + valor,
                         success: function (precioData) {
                             alert(precioData[0].precio);
-                            if (precioData.length) {
-                                $('.precio').val(precioData[0].id);
-                                console.log(precioData);
-                                // console.log('precio = '+precio[0].precio+' precioBolivar = '+precio[0].precio*tasaDolar+' precioPeso = '+precio[0].precio*tasaPeso+''+'');
-                                $("#horario_id").val(valor);
-                                $("#precio_id").val(precioData[0].id);
-                                $("#precio_id_nueva").val(precioData[0].precio);
-                                $("#precio_id_nueva2").val(precioData[0].precio);
-                                // $("#horario_tipo").val(precioData[0].precio);
-                                // $("#horario").val(precioData[0].precio);
-
-                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                let precio = precioData[0].precio;
-
-                                let isCortesia = $("#isCortesia").val();
-                                let isCredito = $("#isCredito").val();
-
-                                precio = numDecimal(precio);
-                                $("#precio_nueva").val(precio);
-
-
-                                let precioVieja = $("#precio_vieja").val();
-
-                                precioVieja = numDecimal(precioVieja);
-                                let diferencia = precio - precioVieja;
-
-                                $("#precioDolarHabitacio").val(diferencia);
-                                $("#diferenciaPrecio").html('($'+diferencia+')');
-                                $("#total_costo").val(diferencia);
-                                $("#precio_costo").val(diferencia);
-
-                                if( (is_numeric(diferencia)) && (diferencia>0) ){
-                                    // return true;
-                                }else{
-                                    $('#modo_pago').val('cambio');
-                                    $("#precioDolarHabitacio").val(diferencia);
-                                    $("#diferenciaPrecio").html('($0.00)');
-                                    $("#total_costo").val(0.00);
-                                    $("#precio_costo").val(0.00);
-                                }
-
-                                // if(){
-                                //     $('#modo_pago').val('cambio');
-                                // }
-
-                                // let str = datosHabitacionNueva[1].padStart(8,'0');
-                                // alert(str);
-
-                                // $("#nombreHabitacionBarcodeNueva").val(datosHabitacionNueva[7]);
-
-
-                                // $('#modo_pago').val('cambio');
-
-
-                                // procesoCambioSalida = 1;
-
-                                // alert('precio = ' + precio + ' precio vieja = ' + precioVieja);
-
-                                if(isCortesia){
-                                    let precio = $("#precioDolarHabitacio").val();
-                                    $("#precio_costo").val(precio);
-                                    $('#cortesia').show();
-                                    $('#precortesia').show();
-                                    // console.log('Este cliente puede tener credito');
-                                }else{
-                                    $('#cortesia').hide();
-                                    $('#precortesia').hide();
-                                }
-                                if(isCredito){
-                                    let precio = $("#precioDolarHabitacio").val();
-                                    $("#precio_costo").val(precio);
-                                    // console.log('Este cliente puede tener credito');
-                                    $('#credito').show();
-                                    $('#precredito').show();
-
-                                }else{
-
-                                    $('#credito').hide();
-                                    $('#precredito').hide();
-                                }
-
-                                // let valor = this.value;
-                                // let catid = $(this).attr('data-id');
-                                // let texto = this.options[this.selectedIndex].text;
-
-                                // console.log('valor = '+valor+' catid= '+catid);
-
-                                // $('.horario').val(valor);
-
-
-
-                                let tasaDolar = $('#tasaDolar').val();
-                                let tasaPeso = $('#tasaPeso').val();
-
-
-
-                                if (precio) {
-                                    $('.precio').val(precio);
-                                    // console.log(precio);
-                                    // console.log('precio = '+precio[0].precio+' precioBolivar = '+precio[0].precio*tasaDolar+' precioPeso = '+precio[0].precio*tasaPeso+''+'');
-
-                                    // $('.detalle').html('<div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Dolar</span><h5 class="description-header">$'+formatMoney(precio)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Pesos</span><h5 class="description-header">$'+formatMoney(precio*tasaPeso)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Bolivares</span><h5 class="description-header">Bs.'+formatMoney(precio*tasaDolar)+'</h5></div></div>');
-
-
-
-
-
-                                    // TODO utilizamos la libreria decimal.js para realizar operaciones de comparacion en el precio de las habitaciones
-
-
-                                    $('.detalle').show("swing");
-
-                                    x1 = new Decimal(precio);
-
-                                    y1 = new Decimal(precioVieja);
-
-
-                                    if (x1.greaterThan(y1)) {
-                                        // alert('mayor');
-                                        $('#btnPago').show("swing");
-                                        $('#infoQR').hide("swing");
-                                        $('#infoPago').show("swing");
-                                    }
-                                    if (x1.lessThanOrEqualTo(y1)) {
-                                        // alert('menor o igual');
-                                        $('#btnPago').hide("swing");
-                                        $('#infoQR').show("swing");
-                                        $('#infoPago').hide("swing");
-
-                                    }
-
-                                    $('#procesarServicio').show();
-                                    // $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
-                                            // // alert(origens[0].nombre);
-                                            // for(var i = 0; i < origens.length; i++){
-                                            // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
-                                            // }
-                                }else{
-                                    // alert('no precio');
-                                    $('.detalle').hide("swing");
-                                    $('#procesarServicio').hide("swing");
-                                    $('#btnPago').hide("swing");
-                                    $('#infoQR').hide("swing");
-                                    $('#infoPago').hide("swing");
-
-                                }
-                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                $('.detalle').html('<div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Dolar</span><h5 class="description-header">$'+formatMoney(precioData[0].precio)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Pesos</span><h5 class="description-header">$'+formatMoney(precioData[0].precio*tasaPeso)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Bolivares</span><h5 class="description-header">Bs.'+formatMoney(precioData[0].precio*tasaDolar)+'</h5></div></div>');
-
-                                $('.detalle').show("swing");
-                                    // $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
-                                    // // alert(origens[0].nombre);
-                                    // for(var i = 0; i < origens.length; i++){
-                                    // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
-                                    // }
-
-                                $('.ocular').show('swing');
-                            }else{
-                                $('.ocular').hide('swing');
-                            }
-                        }
-                    });
-
-                }
-
-            });
-        });
-
-        $('.detalle').hide();
-        $('#procesarServicio').hide();
-        $('#btnPago').hide();
-        $('#infoQR').hide();
-        $('#infoPago').hide();
-
-        $(function() {
-            $('.selval').on('change', function() {
-                $('.detalle').hide("swing");
-                $('#procesarServicio').hide("swing");
-                $('#btnPago').hide("swing");
-                $('#infoQR').hide("swing");
-                $('#infoPago').hide("swing");
-
-                // procesoCamb = 0;
-
-                datosHabitacionNueva = document.getElementById('buscarHabitacion').value.split('_');
-                    // alert(datosHabitacionNueva[3]);
-                    // return false;
-                    // $("#jprecio_venta").val(datosArticulo[2]);
-                    $("#habitacion_id_nueva").val(datosHabitacionNueva[0]);
-                    $("#habitacion_id_nueva2").val(datosHabitacionNueva[0]);
-                    $("#nombre_nueva").val(datosHabitacionNueva[1]);
-                    $("#nombre_nueva2").val(datosHabitacionNueva[1]);
-                    $("#categoria_id_nueva").val(datosHabitacionNueva[2]);
-                    $("#categoria_id_nueva2").val(datosHabitacionNueva[2]);
-                    $("#categoria_nueva").val(datosHabitacionNueva[3]);
-                    $("#categoria_nueva2").val(datosHabitacionNueva[3]);
-                    $("#categoria_dest_nueva").val(datosHabitacionNueva[4]);
-                    $("#categoria_dest_nueva2").val(datosHabitacionNueva[4]);
-
-                    $("#nombreHabitacionBarcodeNueva").val(datosHabitacionNueva[5]);
-                    // $("#precio_id_nueva").val(datosHabitacionNueva[5]);
-                    // $("#precio_id_nueva2").val(datosHabitacionNueva[5]);
-
-
-                //     let precio = $("#precio_id_nueva").val();
-
-                //     let isCortesia = $("#isCortesia").val();
-                //     let isCredito = $("#isCredito").val();
-
-                //     precio = numDecimal(precio);
-                //     $("#precio_nueva").val(precio);
-
-
-                //     let precioVieja = $("#precio_vieja").val();
-
-                //     precioVieja = numDecimal(precioVieja);
-                //     let diferencia = precio - precioVieja;
-
-                //     $("#precioDolarHabitacio").val(diferencia);
-                //     $("#diferenciaPrecio").html('($'+diferencia+')');
-                //     $("#total_costo").val(diferencia);
-                //     $("#precio_costo").val(diferencia);
-
-                //     if( (is_numeric(diferencia)) && (diferencia>0) ){
-                //         // return true;
-                //     }else{
-                //         $('#modo_pago').val('cambio');
-                //         $("#precioDolarHabitacio").val(diferencia);
-                //         $("#diferenciaPrecio").html('($0.00)');
-                //         $("#total_costo").val(0.00);
-                //         $("#precio_costo").val(0.00);
-                //     }
-
-                //     // if(){
-                //     //     $('#modo_pago').val('cambio');
-                //     // }
-
-                //     // let str = datosHabitacionNueva[1].padStart(8,'0');
-                //     // alert(str);
-
-                //     $("#nombreHabitacionBarcodeNueva").val(datosHabitacionNueva[5]);
-
-
-                //     // $('#modo_pago').val('cambio');
-
-
-                //     // procesoCambioSalida = 1;
-
-                //     // alert('precio = ' + precio + ' precio vieja = ' + precioVieja);
-
-                //     if(isCortesia){
-                //         let precio = $("#precioDolarHabitacio").val();
-                //         $("#precio_costo").val(precio);
-                //         $('#cortesia').show();
-                //         $('#precortesia').show();
-                //         // console.log('Este cliente puede tener credito');
-                //     }else{
-                //         $('#cortesia').hide();
-                //         $('#precortesia').hide();
-                //     }
-                //     if(isCredito){
-                //         let precio = $("#precioDolarHabitacio").val();
-                //         $("#precio_costo").val(precio);
-                //         // console.log('Este cliente puede tener credito');
-                //         $('#credito').show();
-                //         $('#precredito').show();
-
-                //     }else{
-
-                //         $('#credito').hide();
-                //         $('#precredito').hide();
-                //     }
-
-                // // let valor = this.value;
-                // // let catid = $(this).attr('data-id');
-                // // let texto = this.options[this.selectedIndex].text;
-
-                // // console.log('valor = '+valor+' catid= '+catid);
-
-                // // $('.horario').val(valor);
-
-                //     let tasaDolar = $('#tasaDolar').val();
-                //     let tasaPeso = $('#tasaPeso').val();
-
-                //     if (precio) {
-                //         $('.precio').val(precio);
-                //         // console.log(precio);
-                //         // console.log('precio = '+precio[0].precio+' precioBolivar = '+precio[0].precio*tasaDolar+' precioPeso = '+precio[0].precio*tasaPeso+''+'');
-
-                //         $('.detalle').html('<div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Dolar</span><h5 class="description-header">$'+formatMoney(precio)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Pesos</span><h5 class="description-header">$'+formatMoney(precio*tasaPeso)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Bolivares</span><h5 class="description-header">Bs.'+formatMoney(precio*tasaDolar)+'</h5></div></div>');
-
-
-                //     // TODO utilizamos la libreria decimal.js para realizar operaciones de comparacion en el precio de las habitaciones
-
-
-                //         $('.detalle').show("swing");
-
-                //         x1 = new Decimal(precio);
-
-                //         y1 = new Decimal(precioVieja);
-
-
-                //         if (x1.greaterThan(y1)) {
-                //             // alert('mayor');
-                //             $('#btnPago').show("swing");
-                //             $('#infoQR').hide("swing");
-                //             $('#infoPago').show("swing");
-                //         }
-                //         if (x1.lessThanOrEqualTo(y1)) {
-                //             // alert('menor o igual');
-                //             $('#btnPago').hide("swing");
-                //             $('#infoQR').show("swing");
-                //             $('#infoPago').hide("swing");
-
-                //         }
-
-                //         $('#procesarServicio').show();
-                //         // $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
-                //                 // // alert(origens[0].nombre);
-                //                 // for(var i = 0; i < origens.length; i++){
-                //                 // $('#origen').append('<option value="'+ origens[i].nombre +'_'+origens[i].stock+'_'+origens[i].unidades+'_'+origens[i].vender_al+'_'+origens[i].id+'">'+ origens[i].nombre +'-'+ origens[i].codigo +'</option>');
-                //                 // }
-                //     }else{
-                //         // alert('no precio');
-                //         $('.detalle').hide("swing");
-                //         $('#procesarServicio').hide("swing");
-                //         $('#btnPago').hide("swing");
-                //         $('#infoQR').hide("swing");
-                //         $('#infoPago').hide("swing");
-
-                //     }
-
-            });
-
-            //     $(function(){
-            //   $(".ver").click(function(){
-            //     var valor = $(this).attr('data-id')
-            //     alert(valor);
-            //     // $("#resultado").html(valor)
-            //   })
-            // })
-
-
-        });
-
-        function is_numeric( mixed_var ) {
-            // Returns true if value is a number or a numeric string
-
-            return !isNaN(mixed_var * 1);
-        }
-
-        function formatMoney(amount, decimalCount = 2, decimal = ".", thousands = ",") {
-            try {
-                decimalCount = Math.abs(decimalCount);
-                decimalCount = isNaN(decimalCount) ? 2 : decimalCount;
-
-                const negativeSign = amount < 0 ? "-" : "";
-
-                let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
-                let j = (i.length > 3) ? i.length % 3 : 0;
-
-                return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g,
-                    "$1" +
-                    thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
-            } catch (e) {
-                console.log(e)
-            }
-        };
-
-        function addHabitacion(){
-            totalcosto = $("#total_costo").val();
-            var is24 = $('#is24').val();
-            if (totalcosto == '') {
-                total = $("#precioDolarHabitacio").val();
-                totalcosto = total;
-                $("#total_costo").val(total);
-                $('#cantidad').val(1);
-
-            } else {
-                // alert('no 24');
-                total = $("#total_costo").val();
-                totalr = $("#precioDolarHabitacio").val();
-                $("#precio_costo").val(totalr);
-            }
-
-                    total_costo = total_costo + subtotalPC[cont];
-                    total_d     = total;
-                    total_p     = total;
-                    total_tp    = total;
-                    total_m     = total;
-                    total_e     = total;
-
-            $("#PagoTtotal").html(numDecimal(total));
-
-        }
-</script> -->
-<script>
-
-        document.addEventListener('DOMContentLoaded', function() {
-
-            $('#imprimirFactura').show();
-            $('#imprimirBoleta').show();
-
-            try {
-
-                onScan.attachTo(document, {
-                    //configuración del sufijo/ tecla esperada al finalizar la lectura del scan, esto indica a onScan la finalización del evento
-                    suffixKeyCodes: [13],
-                    minLength: 7,
-                    onScan: function(barcode) { //función callback que se dispara después de una lectura
-                        console.log(barcode)
-
-                        if (procesoCambioSalida == 0) {
-
-                            // alert('cerrar '+ procesoCambioSalida);
-                            $('#imprimirFactura').hide();
-                            $('#imprimirBoleta').hide();
-
-                            let nombreVieja = $('#nombre_vieja').val();
-                                // alert(nombreVieja);
-
-                            let nombreHabitacionBarcode = $("#nombreHabitacionBarcode").val();
-                            // alert('leer '+nombreHabitacionBarcode);
-                            let sentence1 = nombreHabitacionBarcode;
-
-                            let word1 = '/';
-                            if (sentence1.includes(word)) {
-                                datosHabitacionNueva1 = document.getElementById('nombreHabitacionBarcode').value.split('/');
-                                // alert(datosHabitacionNueva1[0]);
-
-                                // nombreHabitacionBarcode = datosHabitacionNueva1[0];
-                                nombreHabitacionBarcode = fijaLargoIzquierdaBarcode(datosHabitacionNueva1[0]);
-
-                                // alert(nombreHabitacionBarcode);
-                                // return false;
-                            } else {
-                                nombreHabitacionBarcode = $("#nombreHabitacionBarcode").val();
-                            }
-                            // alert(nombreHabitacionBarcode);
-                            var n = barcode;
-                            // alert(n);
-
-                            if (barcode == nombreHabitacionBarcode) {
-
-                                // alert('Todo va bien');
-                                // $("#form1").submit();
-                                let $valorDeuda = $('#total').val();
-
-                                if($valorDeuda > 0){
-                                    $("#pagoPendienteBtn").click();
-                                    // console.log('tienes deuda pendiente'+$valorDeuda);
-                                    return false;
-                                }else{
-                                    // console.log('todo bien');
-                                    $("#form1").submit();
-                                    // return false;
-                                }
-
-                            }else{
-                                alert('¡Error al Ingresar el QR!... Por favor Ingrese el QR correcto. (llave incorrecta)');
-                                return false;
-                            }
-
-                        }
-
-                        // alert(procesoCambioSalida);
-                        if (procesoCambioSalida == 1) {
-
-                            $('#imprimirFactura').hide();
-                            $('#imprimirBoleta').hide();
-
-                            let nombreHabitacionBarcodeNueva = $("#nombreHabitacionBarcodeNueva").val();
-                            // alert(nombreHabitacionBarcode);
-                            var n = barcode;
-
-                            if (barcode == nombreHabitacionBarcodeNueva) {
-                                // alert('es igual barcode');
-                                // return false;
-                                modoPagoOn = $('#modo_pago').val();
-                                tipoPago = $('#tipo_pago').val();
-                                monto_dejadoR = $('#monto_dejado').val();
-                                // alert(monto_dejadoR);
-
-                                if (modoPagoOn == 'contado') {
-                                    if(cliente_id == 0 || cliente_id == null){
-                                        alert('No has seleccionado un cliente...!');
-                                        return false;
-                                    }
-                                    if(tipoPago == 0 || tipoPago == null){
-                                        alert('No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...)');
-                                        return false;
-                                    }
-
-                                    if(monto_dejadoR == 0 || monto_dejadoR == null){
-                                        alert('No has ingresado el monto a pagar...!');
-                                        return false;
-                                    }
-                                    // alert('contado');
-                                    $("#form3").submit();
-                                }else if (modoPagoOn == 'cambio'){
-                                    let cliente_id = $("#cliente_id").val();
-
-                                    if(cliente_id == 0 || cliente_id == null){
-                                        alert('No has seleccionado un cliente...!');
-                                        return false;
-                                    }
-                                    $("#form3").submit();
-                                }else if (modoPagoOn == 'cortesia'){
-                                    let cliente_id = $("#cliente_id").val();
-
-                                    if(cliente_id == 0 || cliente_id == null){
-                                        alert('No has seleccionado un cliente...!');
-                                        return false;
-                                    }
-                                    $("#form3").submit();
-                                }else if (modoPagoOn == 'credito') {
-                                    let cliente_id = $("#cliente_id").val();
-
-                                    if(cliente_id == 0 || cliente_id == null){
-                                        alert('No has seleccionado un cliente...!');
-                                        return false;
-                                    }
-                                    let estado_credito = $("#estado_credito").val();
-                                    if (estado_credito == 'Moroso') {
-                                        alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
-                                    } else {
-
-                                        addHabitacion();
-                                        $("#monto_dejado").val(0);
-                                        $("#base_vuelto_monto_dejado").val(0);
-                                        $('#modo_pago').val('credito');
-                                        let costo = $("#total_costo").val();
-                                        // alert('total costo '+costo);
-                                        let deuda_credito_pendiente = $("#total_credito_pendiente").val();
-                                        // alert(deuda_credito_pendiente);
-                                        let limite_fecha_credito = $("#limite_fecha").val();
-                                        let limite_monto_credito = $("#limite_monto").val();
-
-                                        if (deuda_credito_pendiente) {
-                                            let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
-                                            // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
-
-                                            if (credito_disponible > 0) {
-                                                // alert('es mayor puede continuar costo '+ costo);
-                                                let credito_disponible_total_operacion = credito_disponible - costo;
-
-                                                if (credito_disponible_total_operacion >= 0) {
-                                                    // alert('puede seguir');
-                                                    $("#form3").submit();
-                                                }else{
-                                                    alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
-                                                }
-
-                                            }else{
-                                                alert('El cliente no tiene Credito...');
-                                            }
-                                        } else {
-                                            // alert('no hay deuda pendiente');
-                                            let credito_disponible = limite_monto_credito;
-                                            // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
-
-                                            if (credito_disponible > 0) {
-                                                // alert('es mayor puede continuar costo '+ costo);
-                                                let credito_disponible_total_operacion = credito_disponible - costo;
-
-                                                if (credito_disponible_total_operacion >= 0) {
-                                                    // alert('puede seguir');
-                                                    $("#form3").submit();
-                                                }else{
-                                                    alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
-                                                }
-
-                                            }else{
-                                                alert('El cliente no tiene Credito...');
-                                            }
-                                        }
-
-                                    }
-                                }else{
-                                    let cliente_id = $("#cliente_id").val();
-
-                                    if(cliente_id == 0 || cliente_id == null){
-                                        alert('No has seleccionado un cliente...!');
-                                        return false;
-                                    }
-                                    alert('No has seleccionado un modo de pago! ... (Contado, Crédito o Cortesía.)');
-                                }
-                            }else{
-                                alert('¡Error al Ingresar el QR!... Por favor Ingrese el QR correcto. (llave incorrecta)');
-                                return false;
-                            }
-                        }
-
-                    },
-
-                    onScanError: function(err) {
-                        var sFormatedErrorString = "Error Details: {\n";
-                        for (var i in err) {
-                            sFormatedErrorString += '    ' + i + ': ' + err[i] + ",\n";
-                        }
-                        sFormatedErrorString = sFormatedErrorString.trim().replace(/,$/, '') + "\n}";
-                        console.log("[onScanError]: " + sFormatedErrorString);
-                    }
-
-                })
-
-            } catch (e) { //captura de errores generales de inicialización de onscan.js
-                alert('Error OnScan' + e);
-                // toastr.error('', 'Error OnScan' + e)
-            }
-
-        });
-
-
-    </script>
-    <script>
-
-        function numDecimal(valor){
-            let result = Number(valor).toFixed(2);
-
-            return result;
-        }
-
-        // focusMethod = function getFocus() {
-            //document.getElementById(".selval").focus();
-            //$(".selval").val('default');
-            //$(".selval").selectpicker("refresh");
-        //}
-
-        $(function() {
-            $('.refrescar').on('click', function() {
-                $(".selval").val('default');
-                    $(".selval").selectpicker("refresh");
-                $('.detalle').hide('swing');
-                $('#procesarServicio').hide("swing");
-                $('#btnPago').hide("swing");
-                $('#infoPago').hide("swing");
-                $('#infoQR').hide("swing");
-
-            });
-        });
-
-        $(function() {
-            $('.precio').on('change', function() {
-                // alert('limpiesa');
-                let catID = $("#categoria_id_nueva").val();
-
-                let valor = this.value;
-                let catid = catID;
-                let texto = this.options[this.selectedIndex].text;
-                console.log(valor + ' '+catid + ' '+texto+ ' - _-' +catID);
-
-
-                $('.horario').val(valor);
-
-
-                if ($.trim(valor != '')) {
-                    let tasaDolar = $('#tasaDolar').val();
-                    let tasaPeso = $('#tasaPeso').val();
-                    $.ajax({
-                        type: 'get',
-                        url: '{{ url ("precio") }}',
-                        data: "cat_id=" + catid+"&horario_id=" + valor,
-                        success: function (precioData) {
-                            // alert('jj'+precioData[0].precio);
                             if (precioData.length) {
                                 $('.precio').val(precioData[0].id);
                                 console.log(precioData);
