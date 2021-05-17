@@ -952,7 +952,7 @@ class ServicioController extends Controller
                     // TODO Method to pay with pending returns
 
                     $VueltospagoConExcedente = $request->get('VueltospagoConExcedente');
-
+// return $VueltospagoConExcedente;
                     if($VueltospagoConExcedente > 0){
 
                         // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
@@ -1297,6 +1297,51 @@ class ServicioController extends Controller
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        foreach ($cajas->pago_extras as $pagoext ) {
+
+                            if ($pagoext->Divisa == 'Dolar') {
+                                $cajas->SumaTotalDolarPagoExtra = $cajas->SumaTotalDolarPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Peso') {
+                                $cajas->SumaTotalPesoPagoExtra = $cajas->SumaTotalPesoPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Bolivar') {
+                                $cajas->SumaTotalBolivarPagoExtra = $cajas->SumaTotalBolivarPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Punto') {
+                                $cajas->SumaTotalPuntoPagoExtra = $cajas->SumaTotalPuntoPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Transferencia') {
+                                $cajas->SumaTotalTransferenciaPagoExtra = $cajas->SumaTotalTransferenciaPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }
+
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        $excedentesPendientes = Excedentes_Recibidos_Caja_Actual::where('Estado','Pendiente')->get();
+                        if ($excedentesPendientes) {
+
+
+                            foreach ($excedentesPendientes as $excdPendientes ) {
+                                // return $excdPendientes->Divisa;
+                                if ($excdPendientes->Divisa == 'Dolar') {
+                                    $cajas->SumaTotalDolarExcedentesPendientes = $cajas->SumaTotalDolarExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                    // return $cajas->SumaTotalDolarExcedentesPendientes;
+                                }elseif ($excdPendientes->Divisa == 'Peso') {
+                                    $cajas->SumaTotalPesoExcedentesPendientes = $cajas->SumaTotalPesoExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Bolivar') {
+                                    $cajas->SumaTotalBolivarExcedentesPendientes = $cajas->SumaTotalBolivarExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Punto') {
+                                    $cajas->SumaTotalPuntoExcedentesPendientes = $cajas->SumaTotalPuntoExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Transferencia') {
+                                    $cajas->SumaTotalTransferenciaExcedentesPendientes = $cajas->SumaTotalTransferenciaExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }
+
+                            }
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         foreach ($cajas->pago_vueltos as $pagoV ) {
@@ -1317,15 +1362,19 @@ class ServicioController extends Controller
 
                         }
 
+                        // return $cajas->SumaTotalDolarExcedentesPendientes;
+
+
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // TODO Ahora le agregamos caja chica
 
                         // return 'algo';
-                        $dolarDisponible = (($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante) - $cajas->SumaTotalDolarVueltos);
+                        $dolarDisponible = ($cajas->SumaTotalDolarExcedentesPendientes + $cajas->SumaTotalDolarPagoExtra + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante) - $cajas->SumaTotalDolarVueltos);
                         // return $dolarDisponible;
-                        $pesoDisponible = (($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante) - $cajas->SumaTotalPesoVueltos);
+                        $pesoDisponible = ($cajas->SumaTotalPesoExcedentesPendientes + $cajas->SumaTotalPesoPagoExtra + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante) - $cajas->SumaTotalPesoVueltos);
                         // return $pesoDisponible;
-                        $bolivarDisponible = (($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante) - $cajas->SumaTotalBolivarVueltos);
+                        $bolivarDisponible = ($cajas->SumaTotalBolivarExcedentesPendientes + $cajas->SumaTotalBolivarPagoExtra + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante) - $cajas->SumaTotalBolivarVueltos);
                         // return $bolivarDisponible;
 
 
@@ -1334,7 +1383,7 @@ class ServicioController extends Controller
 
                         // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
                         $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->first();
-
+                        // return $RestarVtossPtesToVtosPtes;
 
                         if ($RestarVtossPtesToVtosPtes) {
                             $RestarVtossPtesToVtosPtes->MontoDivisa = $RestarVtossPtesToVtosPtes->MontoDivisa - ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
@@ -1378,8 +1427,9 @@ class ServicioController extends Controller
                         // return $RestarVtossPtesToVtosPtesDevueltos;
 
                         if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
-
+                            // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
                             if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                                // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
                                 if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
                                     $Restardivisa = 'Dolar';
                                     $RestarMontoDivisa = $VueltospagoConExcedente * 1;
@@ -1396,7 +1446,7 @@ class ServicioController extends Controller
                                     $RestarTasaTiket = $tasaEfectivo->tasa;
                                     $RestarMontoDolar = $VueltospagoConExcedente;
                                 }
-
+                                // return $RestarMontoDivisa;
 
 
                             }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
@@ -1439,6 +1489,7 @@ class ServicioController extends Controller
 
 
                             }
+                            // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
                                 $Pago_Extras_Vueltos = new Pago_Vuelto();
                                 $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
                                 $Pago_Extras_Vueltos->Divisa = $Restardivisa;
@@ -1448,7 +1499,7 @@ class ServicioController extends Controller
                                 $Pago_Extras_Vueltos->servicio_id = $id;
                                 $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                 $Pago_Extras_Vueltos->save();
-
+                         // REVIEW REVISAR
                         }
 
 
@@ -1780,7 +1831,7 @@ class ServicioController extends Controller
                             $excdtsRecibidosCaja->MontoDivisa = $exced;
                             $excdtsRecibidosCaja->MontoDolar = $excedMontoDolar;
                             $excdtsRecibidosCaja->servicio_id = $id;
-                            $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
+                            $excdtsRecibidosCaja->caja_id = $request->get('caja_id');
                             $excdtsRecibidosCaja->save();
 
                             $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
@@ -2061,11 +2112,11 @@ class ServicioController extends Controller
                         $TasaTikeR = $request->get('TasaTike');
                         $MontoDolarR = $request->get('MontoDolar');
                         $VeltosR = $request->get('Veltos');
-
+                        // return 'estoy en contado';
                         $MontoDivisaR = array_filter($MontoDivisaR);
 
                         if(count($MontoDivisaR) > 0){
-
+                            // return 'estoy en MontoDivisaR';
 
                             // return count($MontoDivisaR);
 
@@ -2098,7 +2149,7 @@ class ServicioController extends Controller
 
                             //realizamos el pago en la tabla Pagos Extras
                             while ($cont < count($MontoDolar)) {
-
+                                // return 'estoy en MontoDolar '.$divisa[$cont];
                                 $Pago_Extra = new Pago_Extra();
                                 $Pago_Extra->Divisa = $divisa[$cont];
                                 $Pago_Extra->MontoDivisa = $MontoDivisa[$cont];
@@ -2113,7 +2164,7 @@ class ServicioController extends Controller
                                 $cont = $cont+1;
                             }
 
-
+                            // return 'estoy en contado';
 
                             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2162,15 +2213,15 @@ class ServicioController extends Controller
                                 while ($cont < count($VMontoDolar)) {
 
 
-                                    $Pago_Extras = new Pago_Vuelto();
-                                    $Pago_Extras->Tipo = 'Horas_Extras';
-                                    $Pago_Extras->Divisa = $Vdivisa[$cont];
-                                    $Pago_Extras->MontoDivisa = $VMontoDivisa[$cont];
-                                    $Pago_Extras->TasaTiket = $VTasaTiket[$cont];
-                                    $Pago_Extras->MontoDolar = $VMontoDolar[$cont];
-                                    $Pago_Extras->servicio_id = $id;
-                                    $Pago_Extras->caja_id = $request->get('caja_id');
-                                    $Pago_Extras->save();
+                                    $Pago_Extras_Vueltos = new Pago_Vuelto();
+                                    $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
+                                    $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
+                                    $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
+                                    $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
+                                    $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
+                                    $Pago_Extras_Vueltos->servicio_id = $id;
+                                    $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
+                                    $Pago_Extras_Vueltos->save();
 
                                     $cont = $cont+1;
                                 }
@@ -2184,11 +2235,11 @@ class ServicioController extends Controller
                             // REVIEW  resuelto (revizar si esta resuelto)
 
                             if($VueltospagoConExcedente > 0){
-
-                                $Restardivisa = '';
-                                $RestarMontoDivisa = 0;
-                                $RestarTasaTiket = 0;
-                                $RestarMontoDolar = 0;
+                                // return 'estoy en '.$VueltospagoConExcedente;
+                                // $Restardivisa = '';
+                                // $RestarMontoDivisa = 0;
+                                // $RestarTasaTiket = 0;
+                                // $RestarMontoDolar = 0;
 
                                 // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
                                 //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
@@ -2196,15 +2247,17 @@ class ServicioController extends Controller
                                 //con dos divisas
 
                                 $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Extras_Vueltos->id);
-                                // return $RestarVtossPtesToVtosPtesDevueltos;
+                                // return $pagoVueltos;
 
                                 if ($pagoVueltos) {
 
-                                    $UdatePagoServiciosConVtosPendientes = Pago_Extra::findOrFail($Pago_Extras->id);
-
+                                    // return $Pago_Extra->id;
+                                    $UdatePagoServiciosConVtosPendientes = Pago_Extra::findOrFail($Pago_Extra->id);
+                                    // return $UdatePagoServiciosConVtosPendientes;
                                     if ($UdatePagoServiciosConVtosPendientes->Divisa == $pagoVueltos->Divisa) {
                                         $UdatePagoServiciosConVtosPendientes->MontoDivisa = $UdatePagoServiciosConVtosPendientes->MontoDivisa + $pagoVueltos->MontoDivisa;
                                         $UdatePagoServiciosConVtosPendientes->MontoDolar = $UdatePagoServiciosConVtosPendientes->MontoDolar + $pagoVueltos->MontoDolar;
+                                        // return $UdatePagoServiciosConVtosPendientes->MontoDivisa;
                                         $UdatePagoServiciosConVtosPendientes->update();
                                     }else{
                                         $Pago_Extra = new Pago_Extra();
@@ -2243,13 +2296,13 @@ class ServicioController extends Controller
                         }else{
                             // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
                             // de lo contrario solo registra el dinero dejado de contado.
-
+                            // return 'estoy en else';
                             if($VueltospagoConExcedente > 0){
 
-                                $Restardivisa = '';
-                                $RestarMontoDivisa = 0;
-                                $RestarTasaTiket = 0;
-                                $RestarMontoDolar = 0;
+                                // $Restardivisa = '';
+                                // $RestarMontoDivisa = 0;
+                                // $RestarTasaTiket = 0;
+                                // $RestarMontoDolar = 0;
 
                                 // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
                                 //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se

@@ -35,7 +35,7 @@ class Horas_extra extends Model
     }
 
     public function pagos_extras(){
-        return $this->hasMany(Horas_extra::class);
+        return $this->hasMany(Pago_extra::class);
     }
 
     public function cajas(){

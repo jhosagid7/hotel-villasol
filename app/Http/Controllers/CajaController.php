@@ -332,7 +332,7 @@ class CajaController extends Controller
             $UserName = $request->user();
 
             //hola
-            
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1230,7 +1230,9 @@ foreach ($detalle_creditos as $detalleCredito ) {
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                 //  return $cajas;
-        return view('cajas.caja.show', compact('tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar', 'tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar'))->with($mensaje);
+                $verificarHorasExtras = Horas_extra::where('caja_id',$cajas->id)->get();
+                // return $verificarHorasExtras;
+        return view('cajas.caja.show', compact('verificarHorasExtras','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar', 'tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar'))->with($mensaje);
     }
 
     /**

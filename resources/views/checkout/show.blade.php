@@ -1016,7 +1016,7 @@ if(isset($servicio->id)){
                                                                         <h4 class="text-bold text-primary">Dolar</h4>
                                                                     </td><input name="divisaV[]" value="Dolar"
                                                                         type="hidden">
-                                                                        <td><h5 class="description-header text-bold">$. {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso,2,',','.') ?? ' 0,00' }}</h5></td>
+                                                                        <td><h5 class="description-header text-bold">$. {{ number_format($dolarDisponible,2,',','.') ?? ' 0,00' }}</h5></td>
                                                                     <td><input name="MontoDivisaV[]" size="10px" class="decimal"
                                                                             type="texto" id="DMontoDolarV">
                                                                             <button type="button" id="cargarDolarV" class="btn btn-primary btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
@@ -1039,7 +1039,7 @@ if(isset($servicio->id)){
                                                                     </td>
                                                                     </th><input name="divisaV[]" value="Peso"
                                                                         type="hidden">
-                                                                        <td><h5 class="description-header text-bold">$. {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso,2,',','.') ?? ' 0,00' }}</h5></td>
+                                                                        <td><h5 class="description-header text-bold">$. {{ number_format($pesoDisponible,2,',','.') ?? ' 0,00' }}</h5></td>
                                                                     <td><input name="MontoDivisaV[]"  size="10px" class="decimal"
                                                                             type="texto" id="DMontoPesoV">
                                                                             <button type="button" id="cargarPesoV" class="btn btn-info btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
@@ -1060,7 +1060,7 @@ if(isset($servicio->id)){
                                                                     </td>
                                                                     </th><input name="divisaV[]" value="Bolivar"
                                                                         type="hidden">
-                                                                        <td><h5 class="description-header  text-bold">Bs. {{ number_format($cajas->SumaTotalPunto + $caja->monto_bolivar,2,',','.') ?? ' 0,00' }}</h5></td>
+                                                                        <td><h5 class="description-header  text-bold">Bs. {{ number_format($bolivarDisponible,2,',','.') ?? ' 0,00' }}</h5></td>
                                                                     <td><input name="MontoDivisaV[]" class="decimal"
                                                                             type="texto"  size="10px" id="DMontoBolivarV">
                                                                             <button type="button" id="cargarBolivarV" class="btn btn-warning btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
@@ -1294,7 +1294,7 @@ if(isset($servicio->id)){
   <div class="clearfix"></div>
 @push('sciptsMain')
 <script>
-
+// alert('hola');
 $('#cambiarHabitacionBtn').hide();
     var nombreVieja = $('#nombre_vieja').val();
     // alert(nombreVieja);
@@ -2855,7 +2855,7 @@ if (btnCambio == 1) {
         // ddç
 
 
-        
+
         $("#bt_addP").click();
         $("#bt_addTP").click();
         $("#bt_addM").click();

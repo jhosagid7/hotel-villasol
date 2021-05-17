@@ -1536,6 +1536,297 @@
     <!-- /.row -->
     @endif
     @endcan
+    {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+    {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+<br>
+    @can('haveaccess', 'cajadatosventas.show')
+    @if (count($cajas->pago_extras) > 0)
+    <!-- Table row -->
+    <div class="row">
+        <div class="panel panel-primary">
+      <div class="col-xs-12 table-responsive">
+
+
+            <h4><strong>Datos de Pagos Extras</strong></h4>
+
+
+        <table class="table table-striped table-bordered table-condensed table-hover">
+
+                @php
+                    //creamos esta variable para ir contando los valores donde el tipo de pago sea cambio
+                    //para luego restarselo a las cortesias ya que el valor que cuenta en las cortesias
+                    //es cuando el tipo de pago es exonerado.
+
+                    $restarAcortesia = 0;
+                    $count = 1;
+                @endphp
+
+                @foreach ($cajas->horas_extras as $horasEx)
+
+                @if ($horasEx->tipo_pago == 'cambio')
+                @php
+                    $restarAcortesia ++;
+
+                @endphp
+                @endif
+                @if ($horasEx->modo_pago == 'Cortesía')
+                <tr   style="background-color: #ff0000;" class="text-black tituloRojo">
+                @elseif($horasEx->modo_pago == 'Crédito')
+                    <tr style="background-color: rgb(36, 238, 10);" class="text-black tituloVerde">
+                @else
+                    <tr style="background-color: rgb(35, 192, 245);" class="text-black tituloAzul">
+                @endif
+
+
+                    <td>ID</td>
+                    <td>Fecha Registro</td>
+                    <td>Comprobante</td>
+                    <td>Tasa</td>
+                    <td>Modo Pago</td>
+                    <td>Tipo Pago</td>
+                    <td>N° punto/trans</td>
+                    @can('haveaccess', 'cajacosto.show')
+                    <td>Precio</td>
+                    <td>M/Dejado</td>
+                    <td>D/Pago</td>
+                    <td>D/Vueltos - <b class="text-red">Vtos/Devueltos</b></td>
+                    @endcan
+
+
+                    </tr>
+                <tbody>
+                    @if ($horasEx->modo_pago == 'Cortesía')
+                        <tr style="background-color: rgb(247, 191, 191);" class="text-black detalleRojo">
+                    @elseif($horasEx->modo_pago == 'Crédito')
+                        <tr style="background-color: rgba(198, 250, 191, 0.692);" class="text-black detalleVerde">
+                    @else
+                        <tr style="background-color: rgba(174, 221, 236, 0.555);" class="text-black detalleAzul">
+                    @endif
+                    <td
+                    @if ($horasEx->status_servicio == 'Iniciado')
+                    style="background-color: red;"
+                    @endif
+                    >{{ $count ?? '' }}</td>
+                    <td>{{ $horasEx->created_at ?? '' }}</td>
+                    <td>{{ $horasEx->num_servicio ?? '' }}</td>
+                    <td>{{ $horasEx->tasaTransPunto ?? '' }}</td>
+                    <td>{{ $horasEx->modo_pago ?? '' }}</td>
+                    <td>{{ $horasEx->tipo_pago ?? '' }}</td>
+                    <td>&nbsp;{{ $horasEx->num_Punto ?? '' }} &nbsp;{{ $horasEx->num_Trans ?? '' }}</td>
+                    @can('haveaccess', 'cajacosto.show')
+                    <td>{{ '$. '.floatval($horasEx->total_horas_extras_otros_montos) ?? '' }}</td>
+                    <td>{{ '$. '.floatval($horasEx->dinero_dejado) ?? '' }}</td>
+                    <td>
+                        @if ($horasEx->modo_pago)
+                            @foreach ($horasEx->pagos_extras as $pagoExtr)
+                            {{ ' '.$pagoExtr->Divisa.': '.floatval($pagoExtr->MontoDivisa) ?? '' }}
+                            @endforeach
+                        @endif
+                        @if ($horasEx->pago_con_excedente)
+                            <b class="text-red">{{' Excedente: '. floatval($horasEx->pago_con_excedente) ?? '' }}</b>
+                        @endif
+                        {{-- {{ $serv->pago_servicios ?? '' }} --}}
+                    </td>
+                    <td>
+                        {{-- @if ($serv->modo_pago)
+                            @php
+                                $vueltos_pagados = "App\Pago_Vuelto"::where('servicio_id', $serv->id)->get();
+                            @endphp
+                            @if (count($pago_creditos))
+                            @foreach ($pago_creditos as $pagoCrt)
+                            {{ ' '.$pagoCrt->Divisa.': '.floatval($pagoCrt->MontoDivisa) ?? '' }}
+                            @endforeach
+                            @endif
+
+                        @endif --}}
+
+                        @if ($horasEx->modo_pago)
+                            @foreach ($cajas->pago_vueltos as $pagovuts)
+                            @if ($pagovuts->servicio_id == $horasEx->servicio_id && $pagovuts->Tipo == 'Horas_Extras')
+                            {{ ' '.$pagovuts->Divisa.': '.floatval($pagovuts->MontoDivisa) ?? '0.00' }}
+                            @endif
+                            @endforeach
+                        @endif
+                        @if ($cajas->excedente_actual)
+                            @foreach ($cajas->excedente_actual as $vtosDevueltos)
+                            @if ($vtosDevueltos->servicio_id == $horasEx->servicio_id && $vtosDevueltos->Estado == 'Devueltos' && $vtosDevueltos->Tipo == 'Horas_Extras')
+                            <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.floatval($vtosDevueltos->MontoDivisa) ?? '' }}</b>
+                            @endif
+
+                            @endforeach
+                        @endif
+
+                        {{-- {{ $serv->pago_servicios ?? '' }} --}}
+                    </td>
+                    @endcan
+
+
+
+                </tr>
+
+
+                @if ($horasEx->modo_pago == 'Cortesía')
+                        <tr style="background-color: rgb(247, 139, 139);" class="text-black subTituloRojo">
+                    @elseif($horasEx->modo_pago == 'Crédito')
+                        <tr style="background-color: rgba(154, 247, 141, 0.692);" class="text-black subTituloVerde">
+                    @else
+                        <tr style="background-color: rgba(126, 211, 240, 0.555);" class="text-black subTituloAzul">
+                    @endif
+
+
+                    <td>N° Hab</td>
+
+                    <td>Tipo Operacion</td>
+                    <td>Fecha Inicio</td>
+                    <td>Fecha Cierre Sugerido</td>
+                    <td>Fecha Cierre Real</td>
+                    <td>Detalle</td>
+                    <td>Cant.</td>
+                    <td>Precio</td>
+                    <td>Total</td>
+
+
+
+                    <td>Nvo/Excedete</td>
+                    <td>D/Vtos/Pendtes - <b class="text-red">Pagar/Oficina</b></td>
+                </tr>
+
+                @if ($horasEx->monto_total_hora_extra > 0)
+                @if ($horasEx->modo_pago == 'Cortesía')
+                        <tr style="background-color: rgb(247, 191, 191);" class="text-black detalleRojo">
+                    @elseif($horasEx->modo_pago == 'Crédito')
+                        <tr style="background-color: rgba(198, 250, 191, 0.692);" class="text-black detalleVerde">
+                    @else
+                        <tr style="background-color: rgba(174, 221, 236, 0.555);" class="text-black detalleAzul">
+                    @endif
+                    <td>{{ $horasEx->nombre_habitacion ?? '' }}</td>
+
+                    <td>Horas Extras</td>
+                    <td>{{ $horasEx->fecha_hora_entrada ?? '' }}</td>
+                    <td>{{ $horasEx->fecha_hora_salida_sugerida ?? '' }}</td>
+                    <td>{{ $horasEx->fecha_hora_salida_real ?? '' }}
+                    <td>Excedido por: {{ $horasEx->cantidad_hora_extra ?? '' }} horas extras.</td>
+                    <td >{{ $horasEx->cantidad_hora_extra ?? '' }}</td>
+                    <td>{{ $horasEx->precio_hora_extra ?? '' }}</td>
+                    <td>{{ $horasEx->monto_total_hora_extra ?? '' }}</td>
+                    <td>
+                        @if ($cajas->excedente_actual)
+                            @foreach ($cajas->excedente_actual as $excdteNuevo)
+                            @if ($excdteNuevo->servicio_id == $horasEx->servicio_id && $excdteNuevo->Estado == 'ExcedenteNuevo')
+                            {{ ' '.$excdteNuevo->Divisa.': '.floatval($excdteNuevo->MontoDivisa) ?? '' }}
+                            @endif
+
+                            @endforeach
+                        @endif
+                    </td>
+                    <td>
+                        @if ($cajas->excedente_actual)
+                            @foreach ($cajas->excedente_actual as $vtosPendtes)
+                            @if ($vtosPendtes->servicio_id == $horasEx->servicio_id && $vtosPendtes->Estado == 'Pendiente' && $vtosPendtes->Tipo == 'Horas_Extras')
+                            {{ ' '.$vtosPendtes->Divisa.': '.floatval($vtosPendtes->MontoDivisa) ?? '' }}
+                            @endif
+
+                            @endforeach
+                        @endif
+
+                        @if ($cajas->excedente_actual)
+                            @foreach ($cajas->excedente_actual as $vtosPagarOfic)
+                            @if ($vtosPagarOfic->servicio_id == $horasEx->servicio_id && $vtosPagarOfic->Estado == 'PagarOficina')
+                            <b class="text-red">{{ ' '.$vtosPagarOfic->Divisa.': '.floatval($vtosPagarOfic->MontoDivisa) ?? '' }}</b>
+                            @endif
+
+                            @endforeach
+                        @endif
+                    </td>
+                </tr>
+                @endif
+                @if ($horasEx->otros_montos > 0)
+                @if ($horasEx->modo_pago == 'Cortesía')
+                        <tr style="background-color: rgb(247, 191, 191);" class="text-black detalleRojo">
+                    @elseif($horasEx->modo_pago == 'Crédito')
+                        <tr style="background-color: rgba(198, 250, 191, 0.692);" class="text-black detalleVerde">
+                    @else
+                        <tr style="background-color: rgba(174, 221, 236, 0.555);" class="text-black detalleAzul">
+                    @endif
+                    <td>{{ $horasEx->nombre_habitacion ?? '' }}</td>
+
+                    <td>Otros Montos</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td>{{ $horasEx->detalle_otros_montos ?? '' }}</td>
+                    <td ></td>
+                    <td>{{ $horasEx->otros_montos ?? '' }}</td>
+                    <td>{{ $horasEx->otros_montos ?? '' }}</td>
+                        @if ($horasEx->monto_total_hora_extra > 0)
+                    <td>
+
+                    </td>
+                    <td>
+                        @if ($cajas->excedente_actual)
+                            @foreach ($cajas->excedente_actual as $vtosPendtes)
+                            @if ($vtosPendtes->servicio_id == $horasEx->servicio_id && $vtosPendtes->Estado == 'Pendiente' && $vtosPendtes->Tipo == 'Horas_Extras')
+                            {{ ' '.$vtosPendtes->Divisa.': '.floatval($vtosPendtes->MontoDivisa) ?? '' }}
+                            @endif
+
+                            @endforeach
+                        @endif
+
+                        @if ($cajas->excedente_actual)
+                            @foreach ($cajas->excedente_actual as $vtosPagarOfic)
+                            @if ($vtosPagarOfic->servicio_id == $horasEx->servicio_id && $vtosPagarOfic->Estado == 'PagarOficina')
+                            <b class="text-red">{{ ' '.$vtosPagarOfic->Divisa.': '.floatval($vtosPagarOfic->MontoDivisa) ?? '' }}</b>
+                            @endif
+
+                            @endforeach
+                        @endif
+                    </td>
+                     @else
+                     <td>
+                        @if ($cajas->excedente_actual)
+                            @foreach ($cajas->excedente_actual as $excdteNuevo)
+                            @if ($excdteNuevo->servicio_id == $horasEx->servicio_id && $excdteNuevo->Estado == 'ExcedenteNuevo')
+                            {{ ' '.$excdteNuevo->Divisa.': '.floatval($excdteNuevo->MontoDivisa) ?? '' }}
+                            @endif
+
+                            @endforeach
+                        @endif
+                    </td>
+                    <td>
+                        @if ($cajas->excedente_actual)
+                            @foreach ($cajas->excedente_actual as $vtosPendtes)
+                            @if ($vtosPendtes->servicio_id == $horasEx->servicio_id && $vtosPendtes->Estado == 'Pendiente' && $vtosPendtes->Tipo == 'Horas_Extras')
+                            {{ ' '.$vtosPendtes->Divisa.': '.floatval($vtosPendtes->MontoDivisa) ?? '' }}
+                            @endif
+
+                            @endforeach
+                        @endif
+
+                        @if ($cajas->excedente_actual)
+                            @foreach ($cajas->excedente_actual as $vtosPagarOfic)
+                            @if ($vtosPagarOfic->servicio_id == $horasEx->servicio_id && $vtosPagarOfic->Estado == 'PagarOficina')
+                            <b class="text-red">{{ ' '.$vtosPagarOfic->Divisa.': '.floatval($vtosPagarOfic->MontoDivisa) ?? '' }}</b>
+                            @endif
+
+                            @endforeach
+                        @endif
+                    </td>
+                    @endif
+                </tr>
+                @endif
+                    @php
+                        $count ++;
+                    @endphp
+                @endforeach
+            </tbody>
+        </table>
+      </div>
+    </div>
+      <!-- /.col -->
+    </div>
+    @endif
+    <!-- /.row -->
+    @endcan
 
 </section></section>
   <!-- /.content -->

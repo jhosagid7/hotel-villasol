@@ -3286,8 +3286,8 @@ console.log('Falta '+minutes);
             $("#r").html("VUELTOS...");
             // verify();
             // TODO  boton enviar lo escondemos para usar el lector qr
-            // $("#guardar").show("linear");
-            $("#guardar").hide("linear");
+            $("#guardar").show("linear");
+            // $("#guardar").hide("linear");
 
 
 
