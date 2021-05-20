@@ -44,20 +44,7 @@
                                     {{-- @if ($habitacion->status == 'Disponible')
                                         <span class="info-box-icon bg-green"><i class="fa fa-hotel"></i></span>
                                     @elseif ($habitacion->status == 'Ocupada') --}}
-                                    @php
-
-                                        if($servicio->modo_pago == 'Contado'){
-                                                $color = '';
-                                        }
-                                        if($servicio->modo_pago == 'Cortesía'){
-                                            $color = 'bg-orange';
-                                        }
-
-                                        if($servicio->modo_pago == 'Crédito'){
-                                            $color = 'bg-green';
-                                        }
-                                    @endphp
-                                        <span id="bg_{{$i}}" class="info-box-icon bg-blue-gradient"><i class="fa fa-bed fa-circle {{$color}}"></i></span>
+                                        <span id="bg_{{$i}}" class="info-box-icon bg-blue-gradient"><i class="fa fa-bed"></i></span>
                                     {{-- @elseif ($habitacion->status == 'Limpieza')
                                         <span class="info-box-icon bg-aqua"><i class="fa fa-bed"></i></span>
                                     @elseif ($habitacion->status == 'Finalizando')
@@ -77,8 +64,8 @@
 
                                         <span id="bg_{{$i}}" class="info-box-text contador">{{$servicio->fecha_salida.' '.$servicio->hora_salida}}</span>
                                         @php
-                                            $i ++;
-                                        @endphp
+                                                             $i ++;
+                                                        @endphp
                                     </div>
 
                                     <!-- /.info-box-content -->

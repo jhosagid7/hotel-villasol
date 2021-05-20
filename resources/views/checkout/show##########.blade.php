@@ -1354,7 +1354,7 @@ var procesoPagoPendientealida = 0;
                 let precio = totalPendt.toFixed(2);
                 $("#precio_costo").val(precio);
                 $('#cortesia2').show();
-                $('#cortesia').show();
+                $('#cortesia').show(); // boton ocultar Qr
                 $('#precortesia2').show();
                 // console.log('Este cliente puede tener Cortesia');
             }else{
@@ -1367,7 +1367,7 @@ var procesoPagoPendientealida = 0;
                 $("#precio_costo").val(precio);
                 // console.log('Este cliente puede tener credito');
                 $('#credito2').show();
-                $('#credito').show();
+                $('#credito').show(); // boton ocultar Qr
                 $('#precredito2').show();
 
             }else{

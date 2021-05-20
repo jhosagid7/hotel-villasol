@@ -9,7 +9,6 @@ use App\Servicio;
 use App\Detalle_credito;
 use Mike42\Escpos\Printer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 use Mike42\Escpos\EscposImage;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
@@ -69,7 +68,7 @@ class PrinterController extends Controller
         $printer->text("Modo: ".$modo_pago ." Tipo: ".$tipo_pago. "\n");
         $printer->text($operador . "\n");
         #La fecha también
-        date_default_timezone_set("America/Caracas");
+        date_default_timezone_set("America/Mexico_City");
         $printer->text(date("Y-m-d H:i:s") . "\n");
         $printer->text("-----------------------------" . "\n");
         $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -152,7 +151,7 @@ class PrinterController extends Controller
         $printer->text("Modo: ".$modo_pago ." Tipo: ".$tipo_pago. "\n");
         $printer->text($operador . "\n");
 
-        date_default_timezone_set("America/Caracas");
+        date_default_timezone_set("America/Mexico_City");
         $printer->text(date("Y-m-d H:i:s") . "\n");
         $printer->text("-----------------------------" . "\n");
         $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -227,7 +226,7 @@ class PrinterController extends Controller
         $printer->text("Modo: ".$modo_pago ." Tipo: ".$tipo_pago. "\n");
         $printer->text($operador . "\n");
 
-        date_default_timezone_set("America/Caracas");
+        date_default_timezone_set("America/Mexico_City");
         $printer->text(date("Y-m-d H:i:s") . "\n");
         $printer->text("-----------------------------" . "\n");
         $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -346,7 +345,7 @@ class PrinterController extends Controller
         $printer->text("Modo: ".$modo_pago ." Tipo: ".$tipo_pago. "\n");
         $printer->text($operador . "\n");
         #La fecha también
-        date_default_timezone_set("America/Caracas");
+        date_default_timezone_set("America/Mexico_City");
         $printer->text(date("Y-m-d H:i:s") . "\n");
         $printer->text("-----------------------------" . "\n");
         $printer->setJustification(Printer::JUSTIFY_LEFT);
@@ -377,125 +376,6 @@ class PrinterController extends Controller
         */
         $printer->setJustification(Printer::JUSTIFY_CENTER);
         $printer->text($tipo."\n");
-
-
-
-        /*Alimentamos el papel 3 veces*/
-        $printer->feed(3);
-
-        /*
-            Cortamos el papel. Si nuestra impresora
-            no tiene soporte para ello, no generará
-            ningún error
-        */
-        $printer->cut();
-
-        /*
-            Por medio de la impresora mandamos un pulso.
-            Esto es útil cuando la tenemos conectada
-            por ejemplo a un cajón
-        */
-        $printer->pulse();
-
-        /*
-            Para imprimir realmente, tenemos que "cerrar"
-            la conexión con la impresora. Recuerda incluir esto al final de todos los archivos
-        */
-        $printer->close();
-
-    }
-
-
-    public function ticketPagoExtra($titulo,$tipoOperasion, $verificarHorasExtras){
-
-        //generamos el codigo de barra a 7 caracteres
-        // $folio = str_pad($request->id,7,'0',STR_PAD_LEFT);//Ej; 0000001
-
-        /*
-            Aquí, en lugar de "POS" (que es el nombre de mi impresora)
-            escribe el nombre de la tuya. Recuerda que debes compartirla
-            desde el panel de control
-        */
-        $operador = Auth::user()->name;
-
-        $nombre_impresora = "POS5890";
-
-
-        $connector = new WindowsPrintConnector($nombre_impresora);
-        $printer = new Printer($connector);
-        #Mando un numero de respuesta para saber que se conecto correctamente.
-        echo 1;
-        /*
-            Vamos a imprimir un logotipo
-            opcional. Recuerda que esto
-            no funcionará en todas las
-            impresoras
-
-            Pequeña nota: Es recomendable que la imagen no sea
-            transparente (aunque sea png hay que quitar el canal alfa)
-            y que tenga una resolución baja. En mi caso
-            la imagen que uso es de 250 x 250
-        */
-
-        # Vamos a alinear al centro lo próximo que imprimamos
-        $printer->setJustification(Printer::JUSTIFY_CENTER);
-
-        /*
-            Intentaremos cargar e imprimir
-            el logo
-        */
-        try{
-            $logo = EscposImage::load("geek.png", false);
-            $printer->bitImage($logo);
-        }catch(\Exception $e){/*No hacemos nada si hay error*/}
-
-        /*
-            Ahora vamos a imprimir un encabezado
-        */
-
-        $printer->text("\n".$titulo . " ".$verificarHorasExtras->nombre_habitacion . "\n");
-        $printer->text("".$tipoOperasion . " N°: ".$verificarHorasExtras->num_servicio . "\n");
-        $printer->text("Modo: ".$verificarHorasExtras->modo_pago ." Tipo: ".$verificarHorasExtras->tipo_pago. "\n");
-        $printer->text($operador . "\n");
-        #La fecha también
-        date_default_timezone_set("America/Caracas");
-        $printer->text(date("Y-m-d H:i:s") . "\n");
-        $printer->text("-----------------------------" . "\n");
-        $printer->setJustification(Printer::JUSTIFY_LEFT);
-        $printer->text("N° DESCRIPCION    P.U   .\n");
-        $printer->text("-----------------------------"."\n");
-        /*
-            Ahora vamos a imprimir los
-            productos
-        */
-        /*Alinear a la izquierda para la cantidad y el nombre*/
-        $printer->setJustification(Printer::JUSTIFY_LEFT);
-        if ($verificarHorasExtras->monto_total_hora_extra > 0) {
-            $printer->text("".$verificarHorasExtras->cantidad_hora_extra." Horas Extras a $".$verificarHorasExtras->precio_hora_extra." $.".number_format($verificarHorasExtras->monto_total_hora_extra,2)." \n");
-        }
-
-        if ($verificarHorasExtras->otros_montos > 0) {
-            $printer->text("".$verificarHorasExtras->detalle_otros_montos." $.".number_format($verificarHorasExtras->otros_montos,2)." \n");
-        }
-        //$printer->text("".$nombreHabitacion." ".$detalleHabitacion." $.".number_format($total_costo,2)." \n");
-        // $printer->text( "2  pieza    ".$total_costo."   \n");
-
-        /*
-            Terminamos de imprimir
-            los productos, ahora va el total
-        */
-        $printer->text("-----------------------------"."\n");
-        $printer->setJustification(Printer::JUSTIFY_RIGHT);
-        $printer->text("SUBTOTAL: $.".number_format($verificarHorasExtras->total_horas_extras_otros_montos,2)."\n");
-        // $printer->text("IVA: $16.00\n");
-        $printer->text("TOTAL: $.".number_format($verificarHorasExtras->total_horas_extras_otros_montos,2)."\n");
-
-
-        /*
-            Podemos poner también un pie de página
-        */
-        $printer->setJustification(Printer::JUSTIFY_CENTER);
-        // $printer->text($tipo."\n");
 
 
 

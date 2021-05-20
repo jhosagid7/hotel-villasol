@@ -2434,7 +2434,6 @@ class ServicioController extends Controller
                         //         $habitacionCambio->update();
                         //     }
                         // }
-                        
 
                     DB::commit();
 
@@ -2453,20 +2452,8 @@ class ServicioController extends Controller
                 }
 
                 $printer = new PrinterController;
-                $verificarHorasExtras = Horas_extra::findOrFail($horasExtras->id);
 
-                // $titulo
-                // $nombre_habitacion = $verificarHorasExtras->nombre_habitacion;
-                // $num_servicio = $verificarHorasExtras->num_servicio;
-                // $modo_pago = $verificarHorasExtras->modo_pago;
-                // $tipo_pago = $verificarHorasExtras->tipo_pago;
-                // $monto_total_hora_extra = $verificarHorasExtras->monto_total_hora_extra;
-                // $cantidad_hora_extra = $verificarHorasExtras->cantidad_hora_extra;
-                // $precio_hora_extra = $verificarHorasExtras->precio_hora_extra;
-                // $otros_montos = ;
-                // $total_horas_extras_otros_montos = ;
-                // return $verificarHorasExtras->monto_total_hora_extra;
-                $printer->ticketPagoExtra('Pagos Extras','Servicio', $verificarHorasExtras);
+                // $printer->ticketServicioCambio('Cambio de Habitación','Servicio', $numeroServisio,$nombreHabitacionCambio, $nombreHabitacion, $detalleHabitacion, $modo_pago, $tipo_pago, $total_costo, $operador,$tipo);
                 // return view('checkin.checkin.index', compact('title','tasas'));
                 return Redirect::to('checkout/'.$id)->with('success', 'El servicio fué registrado exitosamente');
 

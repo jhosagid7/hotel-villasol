@@ -481,120 +481,6 @@
     </div>
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
-    <div class="box-header with-border">
-        <h3 class="box-title text-bold text-blue">Resumen de Caja </h3>
-
-        <div class="row">
-            <div class="col-sm-2 col-xs-6">
-                <div class="description-block border-right">
-                    <span class="description-text">Servicios y Consumos</span>
-                    <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">Registrado por Sistema:</h5>
-                    <h5 class="box-title text-bold text-red">- Reportados por Operador:</h5>
-                    <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold text-red">Diferencia:</h5>
-                </div>
-            </div>
-            <div class="col-sm-2 col-xs-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-green"><i
-                            class="fa fa-caret-up"></i>
-                        {{ $tasaDolar->porcentaje_ganancia ?? ''}}%</span>
-                    <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra)),2,',','.') ?? ' 0,00' }}</h5>
-                    <br>
-                    <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_dolar_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_dolar_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
-                    <br>
-                    <span class="description-text">DOLAR</span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="col-sm-2 col-xs-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-yellow"><i
-                            class="fa fa-caret-left"></i>
-                        {{ $tasaPeso->porcentaje_ganancia  ?? ''}}%</span>
-                        <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra)),2,',','.') ?? ' 0,00' }}</h5>
-                        <br>
-                        <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_peso_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
-                        <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_peso_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
-                        <br>
-                        <span class="description-text">PESO</span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-            <div class="col-sm-2 col-xs-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-green"><i
-                            class="fa fa-caret-up"></i>
-                        {{ $tasaTransferenciaPunto->porcentaje_ganancia  ?? ''}}%</span>
-                        <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)),2,',','.') ?? ' 0,00' }}</h5>
-                        <br>
-                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_punto_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
-                        <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_punto_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
-                        <br>
-                        <span class="description-text">PUNTO</span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-
-            <div class="col-sm-2 col-xs-6">
-                <div class="description-block border-right">
-                    <span class="description-percentage text-green"><i
-                            class="fa fa-caret-up"></i>
-                        {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
-                        <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)),2,',','.') ?? ' 0,00' }}</h5>
-                        <br>
-                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_trans_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
-                        <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_trans_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
-                        <br>
-                        <span class="description-text">TRANS</span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-            <!-- /.col -->
-
-            <div class="col-sm-2 col-xs-6">
-                <div class="description-block">
-                    <span class="description-percentage text-red"><i
-                            class="fa fa-caret-down"></i>
-                        {{ $tasaEfectivo->porcentaje_ganancia }}%</span>
-                        <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)),2,',','.') ?? ' 0,00' }}</h5>
-                        <br>
-                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_bolivar_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
-                        <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_bolivar_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
-                        <br>
-                        <span class="description-text">EFECTIVO</span>
-                </div>
-                <!-- /.description-block -->
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-sm-6 col-xs-12">
-                <span class="description-text">OBSERVACIONES:</span>
-                <div>
-                    {{$cajas->Observaciones}}
-                </div>
-
-            </div>
-        </div>
-    </div>
-    </div></div>
-    {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
-    {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
     {{-- Montos de apertura de caja --}}
 
     <div class="box-header with-border">
@@ -830,7 +716,7 @@
                 <!-- /.description-block -->
             </div>
         </div>
-        <!-- {{-- <div class="row">
+        {{-- <div class="row">
             <div class="col-sm-6 col-xs-12">
                 <span class="description-text">OBSERVACIONES:</span>
                 <div>
@@ -838,7 +724,7 @@
                 </div>
 
             </div>
-        </div> --}} -->
+        </div> --}}
     </div>
 
 
@@ -1075,7 +961,7 @@
                 <!-- /.description-block -->
             </div>
         </div>
-        <!-- <div class="row">
+        <div class="row">
             <div class="col-sm-6 col-xs-12">
                 <span class="description-text">OBSERVACIONES:</span>
                 <div>
@@ -1083,10 +969,9 @@
                 </div>
 
             </div>
-        </div> -->
+        </div>
     </div>
     </div></div>
-
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 
