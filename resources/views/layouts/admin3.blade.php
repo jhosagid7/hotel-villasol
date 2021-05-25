@@ -523,7 +523,7 @@
 
   <footer class="main-footer no-print">
     <div class="pull-right hidden-xs">
-      <b>Version</b> 1.0 Beta
+      <b>Version</b> 3.5 Beta
     </div>
     <strong>Copyright &copy; 2020 <a href="https://jhosagid7@gmail.com">ING. Jhonny Pirela</a>.</strong> All rights
     reserved.<br>

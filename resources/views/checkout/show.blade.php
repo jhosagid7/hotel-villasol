@@ -453,7 +453,8 @@ if(isset($servicio->id)){
 
 	                        {{-- <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
                             <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> --}}
-                            <a hidden id="pagoPendienteBtn" href="#" data-toggle="modal" data-target="#modalPagoPendiente"  class="btn btn-danger">Procesar pago pendiente</a>
+                            <a id="pagoPendienteBtn" href="#" data-toggle="modal" data-target="#modalPagoPendiente"  class="btn btn-danger hidden">Procesar pago pendiente</a>
+                            <a id="modalPagoPendienteOpcionesBtn" href="#" data-toggle="modal" data-target="#modalPagoPendienteOpciones"  class="btn btn-danger hidden">Procesar pago pendiente</a>
                             <!-- <button type="submit"  name="pagar"  id="pagar" class="btn btn-success pull-right"><i class='fa fa-print'></i> Procesar pago pendiente</button> -->
                             <!-- <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a> -->
                         </div>
@@ -463,95 +464,180 @@ if(isset($servicio->id)){
                             @method('PUT')
                             {{-- <input type="hidden" name="quetal" value="{{$servicio->habitacion_id ?? ''}}"> --}}
                             <input type="hidden" name="id_habitacion" value="{{$servicio->habitacion_id ?? ''}}">
-                            <!-- <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button> -->
-                            <!-- <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> -->
+                            <button type="botton"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
+                            <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button>
                         </form>
 
                     </div>
                 </div>
 
                 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
-{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
-<div class="modal fade bs-example-modal-xm refrescar" id="modalPagoPendiente" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-danger">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                {{-- <form id="form2" action="{{route('proceso')}}" method="post">
-                    @csrf --}}
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><span class="fa fa-spinner"></span>SELECCIONE HABITACION A CAMBIAR </h4>
-                </div>
-                <div class="modal-body" style="background-color:#fff !important;">
-
-                    <div class="row">
-                        <div class="col-md-offset-1 col-md-10">
-
-
-
-                            <div class="text-black detalle" id="detalle2">
-                            </div>
-
-
-                    </div>
-                    <div id="infoPago2">
-                        <div class="col-md-12">
-                            <div class="box box-danger">
-                            <div class="box-header with-border">
-                                <h3 class="box-title">Debe cancelar la deuda pendiente...! (<b class="text-danger" id="diferenciaPrecio2">$0.00</b>)</h3>
-                            </div><!-- /.box-header -->
-                            <div class="box-body">
-                                <div id="btnPago2">
-                                    <div id="contado2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                        <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
-                                    </div>
-
-                                    <div id="precortesia2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
-                                        <a href="#" data-toggle="modal" data-target="#precortesiamodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
-                                    </div>
-
-                                    {{-- <div id="cortesia"
-                                        class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                        <a id="modalPago" href="#"   class="btn btn-xs btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
-
-                                    </div> --}}
-
-                                    {{-- <div id="creditoa"
-                                        class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                        <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Crédito</a>
-
-                                    </div> --}}
-
-                                    <div id="precredito2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
-                                        <a href="#" data-toggle="modal" data-target="#precreditomodal"  class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crédito</a>
-                                    </div>
-
+                {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+                <div class="modal fade bs-example-modal-xm refrescar" id="modalPagoPendiente" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog modal-danger">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                {{-- <form id="form2" action="{{route('proceso')}}" method="post">
+                                    @csrf --}}
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title"><span class="fa fa-spinner"></span>PROCESAR PAGO PENDIENTE </h4>
                                 </div>
-                            </div><!-- /.box-body -->
-                            </div><!-- /.box -->
-                        </div>
-                    </div>
-                </div>
+                                <div class="modal-body" style="background-color:#fff !important;">
 
-        </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-            <button name="procesarServicioPendiente" id="procesarServiciopendiente" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio Pendientes</button>
-            {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
-          </div>
-        {{-- </form> --}}
-        </div>
-        <!-- /.modal-content -->
-        </div>
-      <!-- /.modal-dialog -->
-    </div>
-    <!-- /.modal -->
-</div>
-{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
-{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+                                    <div class="row">
+                                        <div class="col-md-offset-1 col-md-10">
+
+
+
+                                            <div class="text-black detalle" id="detalle2">
+                                            </div>
+
+
+                                    </div>
+                                    <div id="infoPago2">
+                                        <div class="col-md-12">
+                                            <div class="box box-danger">
+                                            <div class="box-header with-border">
+                                                <h3 class="box-title">Debe cancelar la deuda pendiente...! (<b class="text-danger" id="diferenciaPrecio2">$0.00</b>)</h3>
+                                            </div><!-- /.box-header -->
+                                            <div class="box-body">
+                                                <div id="btnPago2">
+                                                    <div id="contado2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
+                                                        {{-- <button type="botton"  name="devolverVueltos"  id="devolverVueltos" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small"> Contado</button> --}}
+                                                    </div>
+
+                                                    <div id="precortesia2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
+                                                        <a href="#" data-toggle="modal" data-target="#precortesiamodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
+                                                    </div>
+
+                                                    {{-- <div id="cortesia"
+                                                        class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        <a id="modalPago" href="#"   class="btn btn-xs btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
+
+                                                    </div> --}}
+
+                                                    {{-- <div id="creditoa"
+                                                        class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Crédito</a>
+
+                                                    </div> --}}
+
+                                                    <div id="precredito2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
+                                                        <a href="#" data-toggle="modal" data-target="#precreditomodal"  class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crédito</a>
+                                                    </div>
+
+                                                </div>
+                                            </div><!-- /.box-body -->
+                                            </div><!-- /.box -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
+                            {{-- <button name="procesarServicioPendiente" id="procesarServiciopendiente" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio Pendientes</button> --}}
+                            {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
+                        </div>
+                        {{-- </form> --}}
+                        </div>
+                        <!-- /.modal-content -->
+                        </div>
+                    <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                </div>
+                {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+                {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+
+                {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+                {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+                <div class="modal fade bs-example-modal-xm refrescar" id="modalPagoPendienteOpciones" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog modal-danger">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                {{-- <form id="form2" action="{{route('proceso')}}" method="post">
+                                    @csrf --}}
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span></button>
+                                    <h4 class="modal-title"><span class="fa fa-spinner"></span>PROCESAR VUELTOS PENDIENTE </h4>
+                                </div>
+                                <div class="modal-body" style="background-color:#fff !important;">
+
+                                    <div class="row">
+                                        <div class="col-md-offset-1 col-md-10">
+
+
+
+                                            <div class="text-black detalle" id="detalle2">
+                                            </div>
+
+
+                                    </div>
+                                    <div id="infoPago2Opciones">
+                                        <div class="col-md-12">
+                                            <div class="box box-danger">
+                                            <div class="box-header with-border">
+                                                <h3 class="box-title">Debe devolver al cliente (<b class="text-danger" id="countVueltosPendientes">$0.00</b>). (De vueltos pendiente)...!</h3>
+                                            </div><!-- /.box-header -->
+                                            <div class="box-body">
+                                                <div id="btnPago2Opciones">
+                                                    <div id="contado2Opciones" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        {{-- <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a> --}}
+                                                        <button type="botton"  name="devolverVueltos"  id="devolverVueltos" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small"> Contado</button>
+                                                    </div>
+
+                                                    <div id="precortesia2Opciones" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
+                                                        <a href="#" data-toggle="modal" data-target="#precortesiamodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Pagar Por Oficina</a>
+                                                    </div>
+
+                                                    {{-- <div id="cortesia"
+                                                        class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        <a id="modalPago" href="#"   class="btn btn-xs btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
+
+                                                    </div> --}}
+
+                                                    {{-- <div id="creditoa"
+                                                        class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Crédito</a>
+
+                                                    </div> --}}
+
+                                                    <div id="precredito2Opciones" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
+                                                        <a href="#" data-toggle="modal" data-target="#precreditomodal"  class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crear Cuenta</a>
+                                                    </div>
+
+                                                </div>
+                                            </div><!-- /.box-body -->
+                                            </div><!-- /.box -->
+                                        </div>
+                                    </div>
+                                </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
+                            {{-- <button name="procesarServicioPendiente" id="procesarServiciopendiente" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio Pendientes</button> --}}
+                            {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
+                        </div>
+                        {{-- </form> --}}
+                        </div>
+                        <!-- /.modal-content -->
+                        </div>
+                    <!-- /.modal-dialog -->
+                    </div>
+                    <!-- /.modal -->
+                </div>
+                {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+                {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 
 <!-- Large modal -->
 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
@@ -1319,6 +1405,65 @@ var procesoPagoPendientealida = 0;
         //     pagoExtraPendiente();
         // }
 
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        function pagoVueltosPendiente(vt = 0){
+            totalPendiente = vt;
+            procesoCambioSalida = 7;
+
+
+            $("#banderaHorasExtras").val('pagarVueltosPendientes');
+            // alert('total pendiente '+totalPendiente);
+
+            const RestaTotalV    = document.getElementById('RestaTtotalV');
+
+            let totalPendt = new Decimal(totalPendiente);
+
+            RestaTotalV.innerHTML = numDecimal(totalPendt); //se llena el campo resta
+            PagoTtotalV.innerHTML = numDecimal(totalPendt);
+            // verify();
+
+            $("#modalPago").click();
+
+            $("#total_costo").val('');
+            // $("#total_costo").val(totalPendt.toFixed(2));
+            // $('#diferenciaPrecio2').html(totalPendt.toFixed(2));
+            // $("#pagoPendienteBtn").click();
+
+
+
+            let isCortesia = $("#isCortesia").val();
+            let isCredito = $("#isCredito").val();
+            if(isCortesia){
+                // console.log('tiene Cortesia '+isCortesia);
+                let precio = totalPendt.toFixed(2);
+                $("#precio_costo").val(precio);
+                $('#cortesia2').show();
+                $('#cortesia').show();
+                $('#precortesia2').show();
+                // console.log('Este cliente puede tener Cortesia');
+            }else{
+                $('#cortesia2').hide();
+                $('#precortesia2').hide();
+            }
+            if(isCredito){
+                // console.log('tiene credito '+isCredito);
+                let precio = totalPendt.toFixed(2);
+                $("#precio_costo").val(precio);
+                // console.log('Este cliente puede tener credito');
+                $('#credito2').show();
+                $('#credito').show();
+                $('#precredito2').show();
+
+            }else{
+
+                $('#credito2').hide();
+                $('#precredito2').hide();
+            }
+        }
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 
         function pagoExtraPendiente(){
@@ -1487,6 +1632,69 @@ var procesoPagoPendientealida = 0;
 
 
             }
+        });
+
+        // $("#imprimirBoleta").click(function() {
+        //     let $valorDeuda = $('#total').val();
+
+        //     if($valorDeuda > 0){
+        //         $("#pagoPendienteBtn").click();
+        //         // console.log('tienes deuda pendiente'+$valorDeuda);
+        //         return false;
+        //     }else{
+        //         // console.log('todo bien');
+        //         if (VueltosvtosPendientes > 0) {
+        //             pagoVueltosPendiente(VueltosvtosPendientes);
+        //         alert('VueltosvtosPendientes '+VueltosvtosPendientes);
+        //             return false;
+        //         } else {
+        //             $("#form1").submit();
+        //             // return false;
+        //         }
+
+        //     }
+        // });
+
+        $("#imprimirBoleta").click(function() {
+            let $valorDeuda = $('#total').val();
+
+            if($valorDeuda > 0){
+
+
+                $("#pagoPendienteBtn").click();
+                // console.log('tienes deuda pendiente'+$valorDeuda);
+                return false;
+            }else{
+                // console.log('todo bien');
+                if (VueltosvtosPendientes > 0) {
+                    $("#modalPagoPendienteOpcionesBtn").click();
+                    $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
+
+
+
+                    return false;
+                } else {
+                    $("#form1").submit();
+                    // return false;
+                }
+
+            }
+        });
+
+
+        $("#devolverVueltos").click(function() {
+
+            // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
+
+                // console.log('todo bien');
+                if (VueltosvtosPendientes > 0) {
+
+                    pagoVueltosPendiente(VueltosvtosPendientes);
+                    // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
+                    return false;
+                }
+
+
         });
 
     //Fin de metodos para gestionar los pagos extras
@@ -2018,6 +2226,7 @@ if (btnCambio == 1) {
             verify();
             resta();
         });
+
 
         $("#bt_addP").click(function() {
             addHabitacion();
@@ -2803,6 +3012,12 @@ if (btnCambio == 1) {
         if (total > 0) {
             $('#gestionpago').show("linear");
         } else {
+            let = banderaDarVueltos = $("#banderaHorasExtras").val();
+            if(banderaDarVueltos = 'pagarVueltosPendientes'){
+                $('#gestionpago').show("linear");
+                $('#vueltos').show("linear");
+                return false;
+            }
             $('#gestionpago').hide("linear");
         }
     }
@@ -2853,6 +3068,7 @@ if (btnCambio == 1) {
         //$("#precio_costo").html(total.toFixed(2));
         // $("#total_venta").val(total.toFixed(2));
         // ddç
+
 
 
 
@@ -2982,7 +3198,7 @@ if (btnCambio == 1) {
     $("#dispExcedente").val(vtosPendientes);
     // var verCajaExcedente = vtosPendientes;
     if(vtosPendientes > 0){
-        // alert(vtosPendientes);
+        alert('vtosPendientes '+vtosPendientes);
     $("#excedente").show();
     $("#ex").show();
     $("#excdt").show();
@@ -3004,7 +3220,7 @@ if (btnCambio == 1) {
     $("#VueltosdispExcedente").val(VueltosvtosPendientes);
         // var verCajaExcedente = vtosPendientes;
         if(VueltosvtosPendientes > 0){
-            // alert(VueltosvtosPendientes);
+            // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
         $("#Vueltosexcedente").show();
         $("#Vueltosex").show();
         $("#Vueltosexcdt").show();
@@ -3014,7 +3230,7 @@ if (btnCambio == 1) {
             $("#Vueltosex").hide();
             $("#Vueltosexcdt").hide();
         }
-
+        // $("#vueltos").show();
         function resta() {
             // alert('resta');
             const RestaTotal    = document.getElementById('RestaTtotal');
@@ -4638,17 +4854,25 @@ if (btnCambio == 1) {
 
                                 // alert('Todo va bien');
                                 // $("#form1").submit();
-                                let $valorDeuda = $('#total').val();
+                                //En la funcion click de imprimir Boleta contiene el codigo de abajo y otros para procesar si tiene deuda o vueltos pendientes
+                                $("#imprimirBoleta").click();
+                                // let $valorDeuda = $('#total').val();
 
-                                if($valorDeuda > 0){
-                                    $("#pagoPendienteBtn").click();
-                                    // console.log('tienes deuda pendiente'+$valorDeuda);
-                                    return false;
-                                }else{
-                                    // console.log('todo bien');
-                                    $("#form1").submit();
-                                    // return false;
-                                }
+                                // if($valorDeuda > 0){
+                                //     $("#pagoPendienteBtn").click();
+                                //     // console.log('tienes deuda pendiente'+$valorDeuda);
+                                //     return false;
+                                // }else{
+                                //     // console.log('todo bien');
+                                //     if (VueltosvtosPendientes) {
+                                //     alert('VueltosvtosPendientes '+VueltosvtosPendientes);
+
+                                //     } else {
+                                //         $("#form1").submit();
+                                //         // return false;
+                                //     }
+
+                                // }
 
                             }else{
                                 alert('¡Error al Ingresar el QR!... Por favor Ingrese el QR correcto. (llave incorrecta)');
@@ -4656,6 +4880,8 @@ if (btnCambio == 1) {
                             }
 
                         }
+
+
 
                         // alert(procesoCambioSalida);
                         if (procesoCambioSalida == 1) {
