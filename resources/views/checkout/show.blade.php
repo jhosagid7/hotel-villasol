@@ -620,6 +620,173 @@ if(isset($servicio->id)){
                                             </div><!-- /.box -->
                                         </div>
                                     </div>
+                                    <div id="contentPagarOficina">
+                                        <div class="col-md-12">
+                                            <div class="box box-warning">
+                                            <div class="box-header with-border">
+                                                <h3 class="box-title"><b class="text-warning" id="countVueltosPendientes">Pagar Por Oficina</b></h3><br>
+                                                Datos de cliente:
+                                            </div><!-- /.box-header -->
+                                            <div class="box-body">
+                                                <div id="formPagarOficina">
+
+                                                    <form action="{{ route('cliente.store')}}" enctype="multipart/form-data" method="POST" autocomplete="off">
+
+                                                        @csrf
+                                                        <div class="row">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <label class="text-black" for="nombre">Nombre del cliente</label>
+                                                                    <input required type="text" name="nombre" class="form-control titulo" value="{{old('nombre')}}" placeholder="Nombre...">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <label class="text-black" for="tipo_documento">Tipo Documento</label>
+                                                                    <select required class="form-control" name="tipo_documento">
+                                                                        <option value="CI">CI.V-</option>
+                                                                        <option value="CI">CI.E-</option>
+                                                                        <option value="RIF">RIF</option>
+                                                                        <option value="PAS">PAS</option>
+                                                                    </select>
+
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <label class="text-black" for="num_documento">Número de Documento</label>
+                                                                    <input required type="number" name="num_documento" class="form-control enteros" value="{{old('num_documento')}}" placeholder="Número de Documento...">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <label class="text-black" for="direccion">Dirección</label>
+                                                                    <input required type="text" name="direccion" class="form-control mayuscula" value="{{old('direccion')}}" placeholder="Dirección...">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <label class="text-black" for="telefono">Teléfono</label>
+                                                                    <input required type="text" name="telefono" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('telefono')}}" placeholder="Teléfono...">
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <label class="text-black" for="email">Email</label>
+                                                                    <input required type="email" name="email" class="form-control" value="{{old('email')}}" placeholder="Email...">
+                                                                </div>
+                                                            </div>
+                                                            {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <label for="imagen">Imagen</label>
+                                                                    <input required type="file" name="imagen" class="form-control" accept="image/*">
+                                                                </div>
+                                                            </div> --}}
+
+                                                        </div>
+                                                        <div class="box box-default">
+                                                            <div class="box-header with-border">
+                                                                {{-- <h3 class="box-title">Conceder Privilegios</h3> --}}
+                                                                <br>
+                                                                Datos Bancarios:
+                                                            </div>
+                                                            <!-- /.box-header -->
+                                                            <div class="box-body">
+                                                                <div class="row">
+
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="text-black" for="Banco">Seleccione Banco</label>
+                                                                            <select name="banco" id="banco" class="form-control selectpicker" data-live-search="true">
+                                                                                <option value="0">Seleccione Banco</option>
+                                                                                @foreach ($bancos as $banco)
+                                                                            <option value="{{$banco->id}}">{{$banco->nombre_banco}}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="text-black" for="nombre_banco">Nombre Banco</label>
+                                                                            <input required type="text" id="nombre_banco" name="nombre_banco" class="form-control titulo" value="{{old('nombre')}}" placeholder="Nombre Banco...">
+                                                                        </div>
+                                                                    </div>
+
+
+
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="text-black" for="num_documento">Código</label>
+                                                                            <input required type="number" id="codigo" name="codigo" class="form-control enteros" value="{{old('codigo')}}" placeholder="Código...">
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="text-black" for="direccion">Número de cuenta</label>
+                                                                            <input required type="text" id="num_cuenta" name="num_cuenta" class="form-control mayuscula" value="{{old('num_cuenta')}}" placeholder="Número de cuenta...">
+                                                                        </div>
+                                                                    </div>
+
+
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="text-black" for="tipo_cuenta">Tipo de cuenta</label>
+                                                                            <select required class="form-control" id="tipo_cuenta" name="tipo_cuenta">
+                                                                                <option value="0">Seleccione tipo de cuenta</option>
+                                                                                <option value="Corriente">Corriente</option>
+                                                                                <option value="Ahorro">Ahorro</option>
+                                                                            </select>
+
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label class="text-black" for="telefono">Teléfono pago Mobil</label>
+                                                                            <input required type="text" name="telefono" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('telefono')}}" placeholder="Teléfono...">
+                                                                        </div>
+                                                                    </div>
+
+
+
+                                                                    {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                        <div class="form-group">
+                                                                            <label for="imagen">Imagen</label>
+                                                                            <input required type="file" name="imagen" class="form-control" accept="image/*">
+                                                                        </div>
+                                                                    </div> --}}
+
+                                                                </div>
+                                                                <!-- /.table-responsive -->
+                                                            </div>
+
+
+                                                        </div>
+                                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            <div class="form-group">
+                                                                <button class="btn btn-primary" type="submit">Guardar</button>
+                                                                <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /.box -->
+                                                        <!-- /.box-body -->
+                                                        <div class="box-footer">
+                                                            {{-- Footer --}}
+                                                        </div>
+                                                        <!-- /.box-footer-->
+                                                    </form>
+                                                </div>
+                                            </div><!-- /.box-body -->
+                                            </div><!-- /.box -->
+                                        </div>
+                                    </div>
+
                                 </div>
 
                         </div>

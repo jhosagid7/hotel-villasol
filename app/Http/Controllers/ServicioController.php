@@ -2777,7 +2777,7 @@ class ServicioController extends Controller
 
                     return Redirect::to('checkout/'.$id)->with('success', 'El servicio fué registrado exitosamente');
             } else {
-                return 'no';
+                // return 'no';
 
                 // return $validarServicio;
 

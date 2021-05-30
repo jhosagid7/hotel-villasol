@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Caja;
 use App\Tasa;
 use App\User;
+use App\Banco;
 use App\Level;
 use App\Precio;
 use App\Horario;
@@ -94,6 +95,8 @@ class CheckoutController extends Controller
 
         $horarios = Horario::where('tipo',$servicio->tipo_habitacion)->orwhere('tipo','24 HORAS')->get();
         $cliente = Persona::where('id',$servicio->persona_id)->first();
+        $bancos = Banco::get();
+        // return $bancos;
         $servicio;
         $servicio->servicios_ventas;
         // $servicio->horario;
@@ -783,7 +786,7 @@ class CheckoutController extends Controller
                     // return $servicio;
                 // return redirect()->route('proceso', array('title' => $title,'levels' => $levels,'habitacion' => $habitacion,'horarios' => $horarios, 'tasaDolarHabitacion' => $tasaDolarHabitacion, 'tasaPesoHabitacion' => $tasaPesoHabitacion, 'users' => $users));
 
-             return view('checkout.show', compact('dolarDisponible','pesoDisponible','bolivarDisponible','verificarHorasExtras','mismaHabitacion','cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
+             return view('checkout.show', compact('bancos','dolarDisponible','pesoDisponible','bolivarDisponible','verificarHorasExtras','mismaHabitacion','cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
             }else{
                 return redirect()
                 ->route('caja.index')
