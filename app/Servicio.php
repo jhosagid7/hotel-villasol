@@ -56,6 +56,14 @@ class Servicio extends Model
         return $this->hasMany(Historial_Vueltos_Pendiente::class);
     }
 
+    public function historialExcedentes(){
+        return $this->hasMany(HistorialExcedente::class);
+    }
+
+    public function detalle_pago_oficina(){
+        return $this->hasMany(DetallePagoOficina::class);
+    }
+
 
 
     // public function habitacion()

@@ -7,6 +7,7 @@ use App\Articulo;
 use App\Articulo_Ingreso;
 use App\Permission\Models\Role;
 // use Facade\FlareClient\Http;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Http;
 use App\Permission\Models\Permission;
@@ -178,4 +179,6 @@ Route::resource('/creditos', 'PagoCreditoController');
 Route::get('print/servicio/{$id}','PrinterController@ticketServicio');
 
 Route::get('print/credito-pagado/{$id}','PrinterController@ticketCreditoPagado');
+
+Route::resource('/excedente', 'ExcedenteController');
 

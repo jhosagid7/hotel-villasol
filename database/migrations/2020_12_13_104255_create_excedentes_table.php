@@ -15,6 +15,7 @@ class CreateExcedentesTable extends Migration
     {
         Schema::create('excedentes', function (Blueprint $table) {
             $table->id();
+            $table->enum('tipo', ['Excedente','Pagar_por_oficina']);
             $table->string('nombre_cliente', 100)->nullable();
             $table->string('cedula_cliente', 20)->nullable();
             $table->string('direccion_cliente', 100)->nullable();

@@ -94,6 +94,10 @@ class Caja extends Model
         return $this->hasMany(Servicio::class);
     }
 
+    public function historialExcedentes(){
+        return $this->hasMany(HistorialExcedente::class);
+    }
+
     public function detalle_creditos(){
         return $this->hasMany(Detalle_credito::class);
     }
@@ -127,6 +131,11 @@ class Caja extends Model
     {
         return $this->hasManyThrough(Pago_Credito::class, Detalle_credito::class);
     }
+
+    public function detalle_pago_oficina(){
+        return $this->hasMany(DetallePagoOficina::class);
+    }
+
 
 
 

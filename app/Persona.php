@@ -21,6 +21,10 @@ class Persona extends Model
         return $this->hasMany(Credito::class);
     }
 
+    public function bancos_clientes(){
+        return $this->hasMany(Banco::class);
+    }
+
     public function creditosPagados(){
         return $this->hasMany(Credito_Pagado::class);
     }
@@ -31,6 +35,14 @@ class Persona extends Model
 
     public function servicios(){
         return $this->hasMany(Servicio::class);
+    }
+
+    public function historialExcedentes(){
+        return $this->hasMany(HistorialExcedente::class);
+    }
+
+    public function detalle_pago_oficina(){
+        return $this->hasMany(DetallePagoOficina::class);
     }
 
     // protected $table = 'persona';

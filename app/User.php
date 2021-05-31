@@ -77,4 +77,12 @@ class User extends Authenticatable
         return $query->where('user_id', '=', "$operador");
     }
 
+    public function historialExcedentes(){
+        return $this->hasMany(HistorialExcedente::class);
+    }
+
+    public function detalle_pago_oficina(){
+        return $this->hasMany(DetallePagoOficina::class);
+    }
+
 }

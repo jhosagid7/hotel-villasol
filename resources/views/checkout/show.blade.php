@@ -595,7 +595,8 @@ if(isset($servicio->id)){
 
                                                     <div id="precortesia2Opciones" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
                                                         {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
-                                                        <a href="#" data-toggle="modal" data-target="#precortesiamodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Pagar Por Oficina</a>
+                                                        <button type="botton"  name="pagarPorOficinaBtn"  id="pagarPorOficinaBtn" class="btn btn-sm btn-warning btn-block col-lg-pull-2 small"> Pagar Por Oficina</button>
+                                                        {{-- <a href="#" data-toggle="modal" data-target="#precortesiamodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Pagar Por Oficina</a> --}}
                                                     </div>
 
                                                     {{-- <div id="cortesia"
@@ -612,7 +613,8 @@ if(isset($servicio->id)){
 
                                                     <div id="precredito2Opciones" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
                                                         {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
-                                                        <a href="#" data-toggle="modal" data-target="#precreditomodal"  class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crear Cuenta</a>
+                                                        {{-- <a href="#" data-toggle="modal" data-target="#precreditomodal"  class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crear Cuenta</a> --}}
+                                                        <button type="botton"  name="crearCuentaBtn"  id="crearCuentaBtn" class="btn btn-sm btn-success btn-block col-lg-pull-2 small"> Crear Cuenta</button>
                                                     </div>
 
                                                 </div>
@@ -622,29 +624,43 @@ if(isset($servicio->id)){
                                     </div>
                                     <div id="contentPagarOficina">
                                         <div class="col-md-12">
-                                            <div class="box box-warning">
+                                            <div id="box_PagarCrear" class="box box-warning">
                                             <div class="box-header with-border">
-                                                <h3 class="box-title"><b class="text-warning" id="countVueltosPendientes">Pagar Por Oficina</b></h3><br>
+                                                <h3 class="box-title"><b class="text-warning" id="tituloPagarCrear">Pagar Por Oficina</b></h3><br>
                                                 Datos de cliente:
                                             </div><!-- /.box-header -->
                                             <div class="box-body">
                                                 <div id="formPagarOficina">
 
-                                                    <form action="{{ route('cliente.store')}}" enctype="multipart/form-data" method="POST" autocomplete="off">
+                                                    <form id="form4" action="{{ route('excedente.store')}}" enctype="multipart/form-data" method="POST" autocomplete="off">
 
                                                         @csrf
                                                         <div class="row">
+
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="form-group">
+                                                                    <label class="text-black" for="Banco">Seleccione Cliente</label>
+                                                                    <select name="selec_cliente" id="selec_cliente" class="form-control selectpicker" data-live-search="true">
+                                                                        <option value="default" selected="selected">Seleccione Cliente</option>
+                                                                        @foreach ($clientes as $dcliente)
+                                                                    <option value="{{$dcliente->id}}_{{$dcliente->nombre}}_{{$dcliente->num_documento}}_{{$dcliente->direccion}}_{{$dcliente->telefono}}_{{$dcliente->email}}">{{$dcliente->nombre}}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
                                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="nombre">Nombre del cliente</label>
-                                                                    <input required type="text" name="nombre" class="form-control titulo" value="{{old('nombre')}}" placeholder="Nombre...">
+                                                                    <input required type="text" id="nombre" name="nombre" class="form-control titulo" value="{{old('nombre')}}" placeholder="Nombre...">
                                                                 </div>
                                                             </div>
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="tipo_documento">Tipo Documento</label>
-                                                                    <select required class="form-control" name="tipo_documento">
+
+                                                                    <select required class="form-control" id="tipo_documento" name="tipo_documento">
+                                                                        <option value="0">Seleccione tipo de documento</option>
                                                                         <option value="CI">CI.V-</option>
                                                                         <option value="CI">CI.E-</option>
                                                                         <option value="RIF">RIF</option>
@@ -657,28 +673,28 @@ if(isset($servicio->id)){
                                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="num_documento">Número de Documento</label>
-                                                                    <input required type="number" name="num_documento" class="form-control enteros" value="{{old('num_documento')}}" placeholder="Número de Documento...">
+                                                                    <input required type="number" id="num_documento" name="num_documento" class="form-control enteros" value="{{old('num_documento')}}" placeholder="Número de Documento...">
                                                                 </div>
                                                             </div>
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="direccion">Dirección</label>
-                                                                    <input required type="text" name="direccion" class="form-control mayuscula" value="{{old('direccion')}}" placeholder="Dirección...">
+                                                                    <input required type="text" id="direccion" name="direccion" class="form-control mayuscula" value="{{old('direccion')}}" placeholder="Dirección...">
                                                                 </div>
                                                             </div>
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="telefono">Teléfono</label>
-                                                                    <input required type="text" name="telefono" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('telefono')}}" placeholder="Teléfono...">
+                                                                    <input required type="text" id="telefono" name="telefono" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('telefono')}}" placeholder="Teléfono...">
                                                                 </div>
                                                             </div>
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="email">Email</label>
-                                                                    <input required type="email" name="email" class="form-control" value="{{old('email')}}" placeholder="Email...">
+                                                                    <input required type="email" id="email" name="email" class="form-control" value="{{old('email')}}" placeholder="Email...">
                                                                 </div>
                                                             </div>
                                                             {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -689,7 +705,7 @@ if(isset($servicio->id)){
                                                             </div> --}}
 
                                                         </div>
-                                                        <div class="box box-default">
+                                                        <div id="datosBanco" class="box box-default">
                                                             <div class="box-header with-border">
                                                                 {{-- <h3 class="box-title">Conceder Privilegios</h3> --}}
                                                                 <br>
@@ -701,11 +717,11 @@ if(isset($servicio->id)){
 
                                                                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                                         <div class="form-group">
-                                                                            <label class="text-black" for="Banco">Seleccione Banco</label>
-                                                                            <select name="banco" id="banco" class="form-control selectpicker" data-live-search="true">
-                                                                                <option value="0">Seleccione Banco</option>
+                                                                            <label class="text-black" for="selec_banco">Seleccione Banco</label>
+                                                                            <select name="selec_banco" id="selec_banco" class="form-control selectpicker" data-live-search="true">
+                                                                                <option value="default" selected="selected">Seleccione Banco</option>
                                                                                 @foreach ($bancos as $banco)
-                                                                            <option value="{{$banco->id}}">{{$banco->nombre_banco}}</option>
+                                                                            <option value="{{$banco->id}}_{{$banco->nombre_banco}}_{{$banco->codigo}}">{{$banco->nombre_banco}}</option>
                                                                                 @endforeach
                                                                             </select>
                                                                         </div>
@@ -770,8 +786,16 @@ if(isset($servicio->id)){
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                             <div class="form-group">
-                                                                <button class="btn btn-primary" type="submit">Guardar</button>
-                                                                <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a>
+                                                                <input class="text-black hidden" type="text" id="dcliente_id" name="dcliente_id">
+                                                                <input class="text-black hidden" type="text" id="banco_id" name="banco_id">
+                                                                <input class="text-black hidden" type="text" id="bandera" name="bandera">
+                                                                <input class="text-black hidden" type="text" id="excedente" name="excedente">
+                                                                <input class="text-black hidden" type="text" id="servicio_id" name="servicio_id" value="{{$servicio->id ?? ''}}">
+                                                                <input class="text-black hidden" type="text" id="num_servicio" name="num_servicio" value="{{$servicio->num_servicio ?? ''}}">
+                                                                <input class="text-black hidden" type="text" id="motivo" name="motivo" value="servicio">
+                                                                <input class="text-black hidden" type="text" id="caja_id" name="caja_id" value="{{$servicio->caja_id ?? ''}}">
+                                                                <button class="btn btn-primary" id="guardarFormaPago" type="button">Guardar</button>
+                                                                {{-- <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a> --}}
                                                             </div>
                                                         </div>
                                                         <!-- /.box -->
@@ -786,6 +810,7 @@ if(isset($servicio->id)){
                                             </div><!-- /.box -->
                                         </div>
                                     </div>
+
 
                                 </div>
 
@@ -1839,6 +1864,7 @@ var procesoPagoPendientealida = 0;
 
 
 
+
                     return false;
                 } else {
                     $("#form1").submit();
@@ -1850,6 +1876,13 @@ var procesoPagoPendientealida = 0;
 
 
         $("#devolverVueltos").click(function() {
+
+            $("#selec_cliente").val('default').selectpicker("refresh");
+            $("#selec_banco").val('default').selectpicker("refresh");
+            $("#form4")[0].reset();
+
+            $("#contentPagarOficina").hide();
+            $("#contentCrearCuenta").hide();
 
             // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
 
@@ -1865,6 +1898,152 @@ var procesoPagoPendientealida = 0;
         });
 
     //Fin de metodos para gestionar los pagos extras
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    $("#selec_cliente").change(showValuesCliente);
+
+$("#selec_cliente").on("change", function () {
+            document.getElementById("tipo_documento").focus();
+            // $("#jidarticulo").val('0');
+            // document.getElementById('jidarticulo').val('0');
+        });
+$("#tipo_documento").on("change", function () {
+            document.getElementById("selec_banco").focus();
+            // $("#jidarticulo").val('0');
+            // document.getElementById('jidarticulo').val('0');
+        });
+
+focusMethod = function getFocus() {
+            document.getElementById("selec_banco").focus();
+            $("#selec_cliente").val('default');
+            $("#selec_cliente").selectpicker("refresh");
+        }
+
+        function showValuesCliente() {
+            // alert('show');
+            datosArticulo = document.getElementById('selec_cliente').value.split('_');
+            // $("#jprecio_venta").val(datosArticulo[2]);
+            $("#dcliente_id").val(datosArticulo[0]);
+            $("#nombre").val(datosArticulo[1]);
+            $("#num_documento").val(datosArticulo[2]);
+            $("#direccion").val(datosArticulo[3]);
+            $("#telefono").val(datosArticulo[4]);
+            $("#email").val(datosArticulo[5]);
+            // $("#jstock").val(datosArticulo[2]);
+
+
+            // $("#jmarjen_venta_dolar").val(12);
+
+
+        }
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        $("#contentPagarOficina").hide();
+        $("#contentCrearCuenta").hide();
+        const tituloPagarCrear    = document.getElementById('tituloPagarCrear');
+        const box_PagarCrear    = document.getElementById('box_PagarCrear');
+
+        $("#pagarPorOficinaBtn").on('click', function() {
+
+            $("#selec_cliente").val('default').selectpicker("refresh");
+            $("#selec_banco").val('default').selectpicker("refresh");
+            $("#form4")[0].reset();
+
+            // const RestaTotal    = document.getElementById('RestaTtotal');
+
+            tituloPagarCrear.classList.remove('text-success');
+            tituloPagarCrear.classList.add('text-warning');
+            box_PagarCrear.classList.remove('box-success');
+            box_PagarCrear.classList.add('box-warning');
+
+            // $("#tituloPagarCrear").remove('text-success');
+            // $("#tituloPagarCrear").add('text-warnning');
+            $("#excedente").val(VueltosvtosPendientes);
+            $("#tituloPagarCrear").html('Pagar por Oficina');
+            $("#contentPagarOficina").show('swing');
+            $("#datosBanco").show('swing');
+            $("#contentCrearCuenta").hide('swing');
+            // alert('boton '+procesoCambioSalida);
+            $("#bandera").val('pagarPorOficina');
+
+        });
+
+        $("#crearCuentaBtn").on('click', function() {
+
+
+            $("#selec_cliente").val('default').selectpicker("refresh");
+            $("#selec_banco").val('default').selectpicker("refresh");
+            $("#form4")[0].reset();
+        $("#datosBanco").hide('swing');
+            // const tituloPagarCrear    = document.getElementById('tituloPagarCrear');
+
+            tituloPagarCrear.classList.remove('text-warning');
+            tituloPagarCrear.classList.add('text-success');
+            box_PagarCrear.classList.remove('box-warning');
+            box_PagarCrear.classList.add('box-success');
+            $("#tituloPagarCrear").html('Crear cuenta');
+
+        // $("#contentCrearCuenta").show('swing');
+        $("#contentPagarOficina").show('swing');
+        // alert('boton '+procesoCambioSalida);
+        $("#excedente").val(VueltosvtosPendientes);
+        $("#bandera").val('crearCuenta');
+
+        });
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        $("#guardarFormaPago").on('click', function() {
+            // alert('enviar');
+            $("#form4").submit();
+            return false;
+        });
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    $("#selec_banco").change(showValuesBanco);
+
+$("#selec_banco").on("change", function () {
+            // document.getElementById("tipo_documento").focus();
+            // $("#jidarticulo").val('0');
+            // document.getElementById('jidarticulo').val('0');
+        });
+$("#selec_banco").on("change", function () {
+    $("#num_cuenta").val('');
+            document.getElementById("num_cuenta").focus();
+            // $("#jidarticulo").val('0');
+            // document.getElementById('jidarticulo').val('0');
+        });
+
+focusMethod = function getFocus() {
+            document.getElementById("selec_banco").focus();
+
+
+            $("#num_cuenta").val('default');
+            $("#num_cuenta").selectpicker("refresh");
+        }
+
+        function showValuesBanco() {
+            // alert('show');
+            datosArticulo = document.getElementById('selec_banco').value.split('_');
+            // $("#jprecio_venta").val(datosArticulo[2]);
+            $("#banco_id").val(datosArticulo[0]);
+            $("#nombre_banco").val(datosArticulo[1]);
+            $("#codigo").val(datosArticulo[2]);
+            // $("#jstock").val(datosArticulo[2]);
+
+
+            // $("#jmarjen_venta_dolar").val(12);
+
+
+        }
+
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
