@@ -410,7 +410,59 @@
         </li>
         @endcan
 
+        @can('haveaccess', 'boton.compras')
+        <li class="treeview">
+          <a href="#">
+          <i class="fa fa-cart-arrow-down"></i> <span>Saldos pendientes</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
+        </a>
+          <ul class="treeview-menu">
 
+            @can('haveaccess', 'ingreso.index')
+                <li><a href="{{asset('pagos/excedentes')}}"><i class="fa fa-sign-in"></i> Excedentes</a></li>
+            @endcan
+            @can('haveaccess', 'menu.transactions')
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-exchange"></i> Pagar por oficina
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @can('haveaccess', 'transferencia.index')
+                            <li><a href="{{asset('pagos/oficina')}}"><i class="fa fa-cubes"></i> Por pagar</a></li>
+                        @endcan
+                        @can('haveaccess', 'cargos.index')
+                            <li><a href="{{asset('pagos/pendientes')}}"><i class="fa fa-truck"></i> Pagados</a></li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcan
+            {{-- @can('haveaccess', 'menu.transactions')
+                <li class="treeview">
+                    <a href="#"><i class="fa fa-exchange"></i> Pagar por oficina
+                    <span class="pull-right-container">
+                        <i class="fa fa-angle-left pull-right"></i>
+                    </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        @can('haveaccess', 'transferencia.index')
+                            <li><a href="{{asset('pagos/oficina')}}"><i class="fa fa-cubes"></i> Por pagar</a></li>
+                        @endcan
+                        @can('haveaccess', 'cargos.index')
+                            <li><a href="{{asset('cargos')}}"><i class="fa fa-truck"></i> Pagados</a></li>
+                        @endcan
+                    </ul>
+                </li>
+            @endcan --}}
+          </ul>
+
+
+
+      </li>
+      @endcan
         @can('haveaccess', 'boton.reportes')
         <li class="treeview">
             <a href="#">

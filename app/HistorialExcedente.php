@@ -8,6 +8,8 @@ class HistorialExcedente extends Model
 {
     protected $fillabel = [
         'tipo_registro',
+        'status',
+        'tipo_operacion',
         'num_servicio',
         'motivo',
         'saldo_anterior',
@@ -15,6 +17,7 @@ class HistorialExcedente extends Model
         'saldo_disponible',
         'operador',
         'banco_id',
+        'detalle_pago_oficina_id',
         'persona_id',
         'servicio_id',
         'caja_id',

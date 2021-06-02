@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class BancosCliente extends Model
+class BancosEmpresa extends Model
 {
     protected $fillabel = [
         'pertenece',
@@ -13,15 +13,15 @@ class BancosCliente extends Model
         'num_cuenta',
         'tipo_cuenta',
         'pago_mobil',
-        'persona_id',
+        'sucursal_id',
         'banco_id'
     ];
 
 
     protected $guarded = [];
 
-    public function persona(){
-        return $this->belongsTo('App\Persona');
+    public function sucursal(){
+        return $this->belongsTo('App\Sucursal');
     }
 
     public function banco(){

@@ -300,12 +300,12 @@
                     <td><h4><strong>${{ number_format($cajas->SumaTotalVentasPagadosConExcedente + $cajas->SumaTotalVentasCredito + $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar + $cajas->SumaTotalVentas,2,'.',',') ?? '0.000' }}</h4></strong></td>
                     <th class="text-blue"></th>
                     <td class="text-blue"></td>
-                    <th><h4><strong class="text-blue">Servicios Brutoa:</strong></h4></th>
-                    <td><h4><strong>${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalCreditosPagadosServicioPorOficina + $cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar + $cajas->SumaTotalServicios,2,'.',',') ?? '0.000' }}</h4></strong></td>
+                    <th><h4><strong class="text-blue">Servicios Bruto:</strong></h4></th>
+                    <td><h4><strong>${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalCreditosPagadosServicioPorOficina + $cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar + $cajas->SumaTotalServicios + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra,2,'.',',') ?? '0.000' }}</h4></strong></td>
                     <th class="text-blue"></th>
                     <td></td>
                     <th><h4><strong class="text-blue">Total Bruto:</h4></strong></th>
-                    <td><h4><strong>${{ number_format(($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalCreditosPagadosServicioPorOficina + $cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar + $cajas->SumaTotalServicios) + ($cajas->SumaTotalVentasPagadosConExcedente + $cajas->SumaTotalVentasCredito + $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar + $cajas->SumaTotalVentas),2,'.',',') ?? '0.000' }}</h4></strong></td>
+                    <td><h4><strong>${{ number_format(($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalCreditosPagadosServicioPorOficina + $cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar + $cajas->SumaTotalServicios) + ($cajas->SumaTotalVentasPagadosConExcedente + $cajas->SumaTotalVentasCredito + $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar + $cajas->SumaTotalVentas + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra),2,'.',',') ?? '0.000' }}</h4></strong></td>
                   </tr>
                   @endcan
                   @can('haveaccess', 'cajatotalventa.show')
@@ -409,16 +409,54 @@
                   @can('haveaccess', 'cajautilidad.show')
 
                   <tr>
+                    <th></th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    {{-- - $cajas->SumaTotalServiciosExcedenteNuevo --}}
+                    <th><h4><strong class="text-aqua">Pagar/Por/Oficina:</h4></strong></th>
+                    <td><h4><strong>${{ number_format($cajas->TotalSumaVueltosPagarOficinaDolarToDolar,2,',','.') ?? '0.000' }}</h4></strong></td>
+                    <td></td>
+                    <td></td>
+                    <th><h4><strong class="text-aqua">Total/Pagar/Por/Oficina:</h4></strong></th>
+                    <td><h4><strong>${{ number_format(($cajas->TotalSumaVueltosPagarOficinaDolarToDolar),2,',','.') ?? '0.000' }}</h4></strong></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  @endcan
+
+                  @can('haveaccess', 'cajautilidad.show')
+
+                  <tr>
+                    <th></th>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    {{-- - $cajas->SumaTotalServiciosExcedenteNuevo --}}
+                    <th><h4><strong class="text-aqua">Pagos/Extras:</h4></strong></th>
+                    <td><h4><strong>${{ number_format($cajas->SumaTotalExtra,2,',','.') ?? '0.000' }}</h4></strong></td>
+                    <td></td>
+                    <td></td>
+                    <th><h4><strong class="text-aqua">Total/Pagos/Extras:</h4></strong></th>
+                    <td><h4><strong>${{ number_format(($cajas->SumaTotalExtra),2,',','.') ?? '0.000' }}</h4></strong></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  @endcan
+
+                  @can('haveaccess', 'cajautilidad.show')
+
+                  <tr>
                     <th><h4><strong class="text-blue">Cons/Total/Recibido:</h4></strong></th>
                     <td><h4><strong>${{ number_format($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalConsumoExcedenteNuevo + $cajas->SumaTotalVentas,2,',','.') ?? '0.000' }}</h4></strong></td>
                     <td></td>
                     <td></td>
                     <th><h4><strong class="text-blue">Serv/Total/Recibido:</h4></strong></th>
-                    <td><h4><strong>${{ number_format($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar + $cajas->SumaTotalServicios,2,',','.') ?? '0.000' }}</h4></strong></td>
+                    <td><h4><strong>${{ number_format($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar + $cajas->SumaTotalServicios + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra,2,',','.') ?? '0.000' }}</h4></strong></td>
                     <td></td>
                     <td></td>
                     <th><h4><strong class="text-blue">Total/Recibidos:</h4></strong></th>
-                    <td><h4><strong>${{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar + $cajas->SumaTotalServicios),2,',','.') ?? '0.000' }}</h4></strong></td>
+                    <td><h4><strong>${{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar + $cajas->SumaTotalServicios + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra),2,',','.') ?? '0.000' }}</h4></strong></td>
                     <td></td>
                     <td></td>
                   </tr>

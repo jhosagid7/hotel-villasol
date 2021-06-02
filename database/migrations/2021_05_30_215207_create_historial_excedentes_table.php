@@ -16,13 +16,16 @@ class CreateHistorialExcedentesTable extends Migration
         Schema::create('historial_excedentes', function (Blueprint $table) {
             $table->id();
             $table->enum('tipo_registro', ['Pago_por_oficina', 'Excedente']);
+            $table->enum('status', ['Pendiente', 'Pagado']);
+            $table->enum('tipo_operacion', ['Ingreso', 'Egreso']);
             $table->string('num_servicio', 30);
             $table->enum('motivo', ['Pagos_extras', 'Consumo', 'Servicio']);
             $table->decimal('saldo_anterior', 25, 2);
             $table->decimal('saldo_operacion', 25, 2);
             $table->decimal('saldo_disponible', 25, 2);
             $table->string('operador', 256);
-            $table->foreignId('banco_id')->references('id')->on('bancos')->nullable();
+            $table->bigInteger('banco_id')->references('id')->on('bancos')->nullable();
+            $table->bigInteger('detalle_pago_oficina_id')->references('id')->on('detalle_pago_oficinas')->nullable();
             $table->foreignId('persona_id')->references('id')->on('personas');
             $table->foreignId('servicio_id')->references('id')->on('servicios');
             $table->foreignId('caja_id')->references('id')->on('cajas');

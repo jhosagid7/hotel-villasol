@@ -8,17 +8,18 @@ class DetallePagoOficina extends Model
 {
     protected $fillabel = [
         'tipo_pago',
-        'telefono_pago_movil',
+        'telefono_pago_movil_cliente',
         'num_cuenta_cliente',
-        'fecha_pago',
-        'banco_cliente',
-        'saldo_pagado',
+        'tipo_cuenta_cliente',
+        'nombre_banco_cliente',
         'num_cuenta_empresa',
-        'tipo_cuenta',
+        'nombre_banco_empresa',
+        'tipo_cuenta_empresa',
         'num_transaccion',
+        'deuda',
+        'saldo_pagado',
+        'fecha_pago',
         'persona_id',
-        'banco_id',
-        'servicio_id',
         'caja_id',
         'user_id'
     ];
@@ -31,17 +32,13 @@ class DetallePagoOficina extends Model
         return $this->belongsTo(Caja::class);
     }
 
-    public function servicio(){
-        return $this->belongsTo(Servicio::class);
-    }
+
 
     public function cliente(){
         return $this->belongsTo(Persona::class);
     }
 
-    public function banco(){
-        return $this->belongsTo(Banco::class);
-    }
+
 
     public function operador(){
         return $this->belongsTo(User::class);

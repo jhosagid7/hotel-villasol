@@ -2,8 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Caja;
+use App\Tasa;
+use App\User;
+use App\Banco;
+use App\Credito;
+use App\Persona;
+use App\Articulo;
 use App\Excedente;
+use Carbon\Carbon;
+use App\Sessioncaja;
 use App\BancosCliente;
+use App\BancosEmpresa;
+use App\Detalle_credito;
 use App\HistorialExcedente;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
@@ -18,9 +29,98 @@ class ExcedenteController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        if ($request) {
+            $mesActual = Carbon::now()->format('Y-m-d');
+            $restaMes = Carbon::now()->subWeek(1);
+            $restaMes = $restaMes->format('Y-m-d');
+            $title='Pagar por oficina';
+            $pagarporoficinas = Excedente::where('tipo','Pagar_por_oficina')->get();
+
+
+
+
+
+
+
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // este codigo maneja las fechas de los creditos vencidos
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            $date   = Carbon::now('America/Caracas');
+
+            $creditos_clientes = Credito::get();
+            if ($creditos_clientes) {
+
+
+            foreach ($creditos_clientes as $fecha_limite) {
+
+                $now = Carbon::parse($date);
+                $second = Carbon::parse($fecha_limite->fecha_limite_pago);
+
+                if ($second->gte($now)) {
+                    // return 'tiene credito vigente';
+                    $credito_id = $fecha_limite->id;
+                    $upCredito = Credito::findOrFail($credito_id);
+                    if ($upCredito->total_deuda > 0) {
+                        $upCredito->estado_credito = 'Moroso';
+                        $upCredito->update();
+                    }else{
+                        $upCredito->estado_credito = 'Activo';
+                        $upCredito->update();
+                    }
+
+                    $upCredito->estado_credito = 'Activo';
+                        $upCredito->update();
+
+                }else{
+                    // return 'tiene credito vencido';
+                    $credito_id = $fecha_limite->id;
+                    $upCredito = Credito::findOrFail($credito_id);
+
+                    $upCredito->estado_credito = 'Moroso';
+                    $upCredito->update();
+
+
+                    if ($upCredito->total_deuda > 0) {
+                        $upCredito->estado_credito = 'Moroso';
+                        $upCredito->update();
+                    }else{
+                        $upCredito->estado_credito = 'Activo';
+                        $upCredito->update();
+                    }
+                }
+
+            }
+        }
+            $detalle_creditos = Detalle_credito::get();
+            // return $detalle_credito;
+            foreach ($detalle_creditos as $detalle_credito) {
+
+                if ($date >= $detalle_credito->fecha_vencimiento) {
+
+                    $detalle_credito_id = $detalle_credito->id;
+                    $upDetalleCredito = Detalle_credito::findOrFail($detalle_credito_id);
+                    if ($upDetalleCredito->estado_pago == 'Pendiente') {
+                        $upDetalleCredito->estado_credito = 'Vencido';
+                        $upDetalleCredito->update();
+                    }
+
+
+                }
+
+        }
+            // echo $difference = $date->diff($date2)->days;
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+            return view('pagos.oficina.index', compact('title','pagarporoficinas'));
+        }
     }
 
     /**
@@ -55,6 +155,7 @@ class ExcedenteController extends Controller
             $nombre_banco = $request->get('nombre_banco');
             $codigo = $request->get('codigo');
             $num_cuenta = $request->get('num_cuenta');
+            $pago_mobil = $request->get('pago_mobil');
             $tipo_cuenta = $request->get('tipo_cuenta');
             $dcliente_id = $request->get('dcliente_id');
             $banco_id = $request->get('banco_id');
@@ -82,6 +183,31 @@ class ExcedenteController extends Controller
 
 
                 try{
+
+                    // TODO verificamos que exista el cliente si no lo registramos
+
+                    $existeCliente = Persona::where('id',$dcliente_id)->where('nombre', '<>', 'Proveedor Comun')->where('nombre', '<>', 'Cliente Comun')->first();
+
+                    if($existeCliente){
+                        $dcliente_id = $existeCliente->id;
+                    }else{
+                        $insertCliente = new Persona;
+                        $insertCliente->tipo_persona = 'Cliente';
+                        $insertCliente->nombre = $nombre_cliente;
+                        $insertCliente->tipo_documento = $tipo_documento;
+                        $insertCliente->num_documento = $num_documento;
+                        $insertCliente->direccion = $direccion;
+                        $insertCliente->telefono = $telefono;
+                        $insertCliente->email = $$email;
+                        $insertCliente->isCortesia = null;
+                        $insertCliente->isCredito = null;
+                        $insertCliente->imagen = 'thumb_upl_57e81d357d468.jpg';
+                        $insertCliente->limite_fecha = null;
+                        $insertCliente->limite_monto = null;
+                        $insertCliente->save();
+
+                        $dcliente_id = $insertCliente->id;
+                    }
 
 
                 // TODO Guardamos en la tabla excedente
@@ -113,9 +239,9 @@ class ExcedenteController extends Controller
 
                             }
 
-                // TODO Guardamos los datos del banco del cliente
+                // TODO Guardamos los datos del banco del cliente pero revisamos si ya existe esa cuenta registrada
 
-                $ifBancoCliente = BancosCliente::where('persona_id',$dcliente_id)->where('num_cuenta',$num_cuenta)->first();
+                $ifBancoCliente = BancosCliente::where('persona_id',$dcliente_id)->where('codigo',$codigo)->where('num_cuenta',$num_cuenta)->first();
                             // return $ifCliente;
 
                             if(!$ifBancoCliente){
@@ -123,10 +249,12 @@ class ExcedenteController extends Controller
 
                                 // return 'no';
                                 $BancosCliente = new BancosCliente;
+                                $BancosCliente->pertenece = 'Cliente';
                                 $BancosCliente->nombre_banco = $nombre_banco;
                                 $BancosCliente->codigo = $codigo;
                                 $BancosCliente->num_cuenta = $num_cuenta;
                                 $BancosCliente->tipo_cuenta = $tipo_cuenta;
+                                $BancosCliente->pago_mobil = $pago_mobil;
                                 $BancosCliente->persona_id = $dcliente_id;
                                 $BancosCliente->banco_id = $banco_id;
                                 $BancosCliente->save();
@@ -137,7 +265,7 @@ class ExcedenteController extends Controller
 
                             // TODO Guardamos en la tabla historial excedente
 
-                            $ifSaldoAnterior = HistorialExcedente::where('persona_id',$dcliente_id)->where('tipo_registro','Pagar_por_oficina')->latest()->first();
+                            $ifSaldoAnterior = HistorialExcedente::where('persona_id',$dcliente_id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->latest()->first();
                             // return $ifSaldoAnterior;
 
                             if($ifSaldoAnterior){
@@ -151,6 +279,8 @@ class ExcedenteController extends Controller
 
                             $HistorialExcedente = new  HistorialExcedente;
                             $HistorialExcedente->tipo_registro = 'Pago_por_oficina';
+                            $HistorialExcedente->status = 'Pendiente';
+                            $HistorialExcedente->tipo_operacion = 'Ingreso';
                             $HistorialExcedente->num_servicio = $num_servicio;
                             $HistorialExcedente->motivo = $motivo;
                             $HistorialExcedente->saldo_anterior = $saldo_anterior;
@@ -158,6 +288,7 @@ class ExcedenteController extends Controller
                             $HistorialExcedente->saldo_disponible = $saldo_disponible;
                             $HistorialExcedente->operador = $operador;
                             $HistorialExcedente->banco_id = $banco_id;
+                            $HistorialExcedente->detalle_pago_oficina_id = null;
                             $HistorialExcedente->persona_id = $dcliente_id;
                             $HistorialExcedente->servicio_id = $servicio_id;
                             $HistorialExcedente->caja_id = $caja_id;
@@ -171,7 +302,7 @@ class ExcedenteController extends Controller
                 $upExcedentesRecibidosCajaActual->Estado = 'PagarOficina';
                 $upExcedentesRecibidosCajaActual->update();
 
-                // DB::commit();
+                DB::commit();
 
             }catch(\Exception $e)
             {
@@ -198,6 +329,32 @@ class ExcedenteController extends Controller
                 // return $request;
 
                 try{
+
+                    // TODO verificamos que exista el cliente si no lo registramos
+
+                    $existeCliente = Persona::where('id',$dcliente_id)->where('nombre', '<>', 'Proveedor Comun')->where('nombre', '<>', 'Cliente Comun')->first();
+
+                    if($existeCliente){
+                        $dcliente_id = $existeCliente->id;
+                    }else{
+                        $insertCliente = new Persona;
+                        $insertCliente->tipo_persona = 'Cliente';
+                        $insertCliente->nombre = $nombre_cliente;
+                        $insertCliente->tipo_documento = $tipo_documento;
+                        $insertCliente->num_documento = $num_documento;
+                        $insertCliente->direccion = $direccion;
+                        $insertCliente->telefono = $telefono;
+                        $insertCliente->email = $email;
+                        $insertCliente->isCortesia = null;
+                        $insertCliente->isCredito = null;
+                        $insertCliente->imagen = 'thumb_upl_57e81d357d468.jpg';
+                        $insertCliente->limite_fecha = null;
+                        $insertCliente->limite_monto = null;
+                        $insertCliente->save();
+
+                        $dcliente_id = $insertCliente->id;
+                    }
+
 
 
                     // TODO Guardamos en la tabla excedente
@@ -233,7 +390,7 @@ class ExcedenteController extends Controller
 
                                 // TODO Guardamos en la tabla historial excedente
 
-                                $ifSaldoAnterior = HistorialExcedente::where('persona_id',$dcliente_id)->where('tipo_registro','Excedente')->latest()->first();
+                                $ifSaldoAnterior = HistorialExcedente::where('persona_id',$dcliente_id)->where('tipo_registro','Excedente')->where('status','Pendiente')->latest()->first();
                                 // return $ifSaldoAnterior;
 
                                 if($ifSaldoAnterior){
@@ -247,6 +404,8 @@ class ExcedenteController extends Controller
 
                                 $HistorialExcedente = new  HistorialExcedente;
                                 $HistorialExcedente->tipo_registro = 'Excedente';
+                                $HistorialExcedente->status = 'Pendiente';
+                                $HistorialExcedente->tipo_operacion = 'Ingreso';
                                 $HistorialExcedente->num_servicio = $num_servicio;
                                 $HistorialExcedente->motivo = $motivo;
                                 $HistorialExcedente->saldo_anterior = $saldo_anterior;
@@ -254,6 +413,7 @@ class ExcedenteController extends Controller
                                 $HistorialExcedente->saldo_disponible = $saldo_disponible;
                                 $HistorialExcedente->operador = $operador;
                                 $HistorialExcedente->banco_id = $banco_id;
+                                $HistorialExcedente->detalle_pago_oficina_id = null;
                                 $HistorialExcedente->persona_id = $dcliente_id;
                                 $HistorialExcedente->servicio_id = $servicio_id;
                                 $HistorialExcedente->caja_id = $caja_id;
@@ -267,7 +427,7 @@ class ExcedenteController extends Controller
                     $upExcedentesRecibidosCajaActual->Estado = 'ExcedenteNuevo';
                     $upExcedentesRecibidosCajaActual->update();
 
-                    // DB::commit();
+                    DB::commit();
 
                 }catch(\Exception $e)
                 {
@@ -304,7 +464,37 @@ class ExcedenteController extends Controller
      */
     public function show($id)
     {
-        //
+        $title = 'Facturas por Pagar';
+        $BancosClientes = BancosCliente::where('persona_id',$id)->get();
+        // return $cliente_id;
+        $pagarporoficina = Excedente::where('persona_id',$id)->where('tipo','Pagar_por_oficina')->first();
+
+        $historialExcedentes = HistorialExcedente::where('persona_id',$id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
+
+
+
+        $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
+        // return $tasaDolarHabitacion->tasa;
+        $tasaPesoHabitacion = Tasa::where('nombre','=','PesoHabitacion')->first();
+        $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
+        $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
+        $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
+        $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
+        $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
+        $users = User::with('roles')->orderBy('id','Desc')->get();
+        $UserName = Auth::user()->name;
+        $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+        $Cajas = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
+        $caja = Caja::find($Cajas->id);
+        // return $caja->sucursal->id;
+
+        $bancosCLientes = BancosCliente::where('pertenece','Cliente')->where('persona_id',$id)->get();
+        $bancosEmpresas = BancosEmpresa::where('pertenece','Empresa')->where('sucursal_id',$caja->sucursal->id)->get();
+        $clientes = Persona::where('nombre', '<>','Proveedor Comun')->where('nombre', '<>','Cliente Comun')->get();
+            $bancos = Banco::get();
+
+        // return $detalle_creditos;
+        return view('pagos.oficina.show', compact('bancosEmpresas','bancosCLientes','clientes','bancos','historialExcedentes','caja','title','pagarporoficina','BancosClientes','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','users','UserName'));
     }
 
     /**

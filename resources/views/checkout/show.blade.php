@@ -764,8 +764,8 @@ if(isset($servicio->id)){
 
                                                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                         <div class="form-group">
-                                                                            <label class="text-black" for="telefono">Teléfono pago Mobil</label>
-                                                                            <input required type="text" name="telefono" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('telefono')}}" placeholder="Teléfono...">
+                                                                            <label class="text-black" for="pago_mobil">Teléfono pago Mobil</label>
+                                                                            <input required type="text" name="pago_mobil" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('pago_mobil')}}" placeholder="Pago mobil...">
                                                                         </div>
                                                                     </div>
 

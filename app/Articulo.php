@@ -42,19 +42,19 @@ class Articulo extends Model
     protected $guarded = [];
 
     public function articulo_ventas(){
-        return hasMany(Articulo_venta::class);
+        return $this->hasMany(Articulo_venta::class);
     }
 
     public function servicios_ventas(){
-        return hasMany(Servicios_ventas::class);
+        return $this->hasMany(Servicios_ventas::class);
     }
 
     public function articulo_ingresos(){
-        return hasMany(Articulo_Ingreso::class);
+        return $this->hasMany(Articulo_Ingreso::class);
     }
 
     public function categoria(){
-        return belongsTo(Categoria::class);
+        return $this->belongsTo(Categoria::class);
     }
 
 

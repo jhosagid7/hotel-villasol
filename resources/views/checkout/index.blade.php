@@ -57,7 +57,7 @@
                                             $color = 'bg-green';
                                         }
                                     @endphp
-                                        <span id="bg_{{$i}}" class="info-box-icon bg-blue-gradient"><i class="fa fa-bed fa-circle {{$color}}"></i></span>
+                                        <span id="bg_{{$i}}" class="info-box-icon bg-blue-gradient"><i class="fa fa-bed fa-circle {{$color ?? ''}}"></i></span>
                                     {{-- @elseif ($habitacion->status == 'Limpieza')
                                         <span class="info-box-icon bg-aqua"><i class="fa fa-bed"></i></span>
                                     @elseif ($habitacion->status == 'Finalizando')

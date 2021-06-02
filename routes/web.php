@@ -181,4 +181,7 @@ Route::get('print/servicio/{$id}','PrinterController@ticketServicio');
 Route::get('print/credito-pagado/{$id}','PrinterController@ticketCreditoPagado');
 
 Route::resource('/excedente', 'ExcedenteController');
+Route::resource('pagos/oficina', 'ExcedenteController');
+Route::resource('/registro', 'DetallePagoOficinaController');
+Route::resource('/pagos/pendientes', 'PagarPorOficinaController');
 
