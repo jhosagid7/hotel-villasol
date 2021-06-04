@@ -2,12 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Caja;
+use App\Tasa;
+use App\User;
+use App\Banco;
 use App\Credito;
+use App\Persona;
 use App\Excedente;
 use Carbon\Carbon;
+use App\Sessioncaja;
+use App\BancosCliente;
+use App\BancosEmpresa;
 use App\Detalle_credito;
 use App\DetallePagoOficina;
+use App\HistorialExcedente;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class PagarPorOficinaController extends Controller
 {
@@ -24,6 +35,8 @@ class PagarPorOficinaController extends Controller
             $restaMes = $restaMes->format('Y-m-d');
             $title='Historial Pagos por oficina';
             $pagarporoficinas = DetallePagoOficina::get();
+
+            // return $pagarporoficinas->cliente;
 
 
 
@@ -106,7 +119,7 @@ class PagarPorOficinaController extends Controller
 
 
 
-            return view('pagos.oficina.index', compact('title','pagarporoficinas'));
+            return view('pagos.pendientes.index', compact('title','pagarporoficinas'));
         }
     }
 
@@ -139,7 +152,38 @@ class PagarPorOficinaController extends Controller
      */
     public function show($id)
     {
-        //
+        $title = 'Facturas por Pagar';
+        // $BancosClientes = BancosCliente::where('persona_id',$id)->get();
+        // return $cliente_id;
+
+
+        $historialExcedentes = HistorialExcedente::where('detalle_pago_oficina_id',$id)->where('tipo_registro','Pago_por_oficina')->where('status','Pagado')->get();
+
+
+
+        $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
+        // return $tasaDolarHabitacion->tasa;
+        $tasaPesoHabitacion = Tasa::where('nombre','=','PesoHabitacion')->first();
+        $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
+        $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
+        $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
+        $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
+        $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
+        $users = User::with('roles')->orderBy('id','Desc')->get();
+        $UserName = Auth::user()->name;
+        $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+        $Cajas = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
+        $caja = Caja::find($Cajas->id);
+        // return $caja->sucursal->id;
+
+        // $bancosCLientes = BancosCliente::where('pertenece','Cliente')->where('persona_id',$historialExcedentes->persona_id)->get();
+        // $pagarporoficina = Excedente::where('persona_id',$historialExcedentes->persona_id)->where('tipo','Pagar_por_oficina')->first();
+        $bancosEmpresas = BancosEmpresa::where('pertenece','Empresa')->where('sucursal_id',$caja->sucursal->id)->get();
+        $clientes = Persona::where('nombre', '<>','Proveedor Comun')->where('nombre', '<>','Cliente Comun')->get();
+            $bancos = Banco::get();
+
+        // return $detalle_creditos;
+        return view('pagos.pendientes.show', compact('bancosEmpresas','bancosCLientes','clientes','bancos','historialExcedentes','caja','title','pagarporoficina','BancosClientes','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','users','UserName'));
     }
 
     /**

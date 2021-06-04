@@ -1051,7 +1051,7 @@ function showValues() {
                 if(isCortesia){
                     let precio = $("#precioDolarHabitacio").val();
                     $("#precio_costo").val(precio);
-                    $('#cortesia').show();
+                    $('#cortesia').show(); //Boton Procesar Cortesia QR
                     $('#precortesia').show();
                     // console.log('Este cliente puede tener credito');
                 }else{
@@ -1062,7 +1062,7 @@ function showValues() {
                     let precio = $("#precioDolarHabitacio").val();
                     $("#precio_costo").val(precio);
                     // console.log('Este cliente puede tener credito');
-                    $('#credito').show();
+                    $('#credito').show(); //Boton Procesar Creditos QR
                     $('#precredito').show();
 
                 }else{
@@ -3244,6 +3244,9 @@ console.log('Falta '+minutes);
         valor_restar = parseFloat(valor_restar);
         resta = parseFloat(resta);
 
+        resta = new Decimal(resta);
+        // x1 = new Decimal(VueltospagoExc);
+
         Excdt.innerHTML = numDecimal(Exc); //se llena el campo resta
         RestaTotal.innerHTML = numDecimal(resta); //se llena el campo resta
 
@@ -3254,7 +3257,7 @@ console.log('Falta '+minutes);
                let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
 
             RestaTotalV.innerHTML = numDecimal(resta); //se llena el campo resta
-        PagoTtotalV.innerHTML = numDecimal(resta); //se llena el campo resta
+        PagoTtotalV.innerHTML = numDecimal(resta); //se llena el campo resta id="RestaTtotalV"
 
         DMontoDolarV();
 
@@ -3265,7 +3268,7 @@ console.log('Falta '+minutes);
 
 
 
-            if (RestaTotal.innerHTML <= -1) {
+            if (resta.lessThan(Decimal(0))) {
             // alert('soy menor');
             $("#vueltos").show("linear");
             $("#guardar").hide("linear");

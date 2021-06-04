@@ -100,7 +100,7 @@
 
 
 
-    <div class="row">
+    {{-- <div class="row">
         <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
             <div class="panel panel-default">
                 <div class="panel-body">
@@ -155,7 +155,7 @@
 
 
         </div>
-    </div>
+    </div> --}}
 
     <div class="row">
         <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
@@ -202,7 +202,7 @@
                                     <th><br><h4><b>Total deuda: </b></h4></th>
 
                                 <th><br><h4 id="total"><b>$. {{$total_deuda}}</b></h4></th>
-                                <th><br><a id="modalPagoPendienteOpcionesBtn" href="#" data-toggle="modal" data-target="#modalPagoPendienteOpciones"  class="btn btn-danger">Procesar pago pendiente</a><br><a id="modalPago" href="#" onClick="selFactura({{floatval($total_deuda) ?? ''}},{{ $pagarporoficina->id ?? ''}},'todas');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Registrar pago</a></th>
+                                {{-- <th><br><a id="modalPagoPendienteOpcionesBtn" href="#" data-toggle="modal" data-target="#modalPagoPendienteOpciones"  class="btn btn-danger">Procesar pago pendiente</a><br><a id="modalPago" href="#" onClick="selFactura({{floatval($total_deuda) ?? ''}},{{ $pagarporoficina->id ?? ''}},'todas');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Registrar pago</a></th> --}}
                                 </tfoot>
                             </tbody>
                         </table>
@@ -431,15 +431,15 @@
                                                         <input id="isVueltos" name="isVueltos" type="hidden" value="0">
                                                         <input id="cantidad" name="cantidad" type="hidden" value="">
                                                         {{-- <input id="num_servicio" name="num_servicio" type="hidden" value="{{$num_servicio}}"> --}}
-                                                        <input id="operador" name="operador" type="hidden" value="{{$UserName}}">
+                                                        {{-- <input id="operador" name="operador" type="hidden" value="{{$UserName}}">
                                                         <input id="facturas_pagadas" name="facturas_pagadas" type="hidden" value="">
                                                         <input id="facturas_pagadas_id" name="facturas_pagadas_id" type="hidden" value="">
                                                         <input id="total_costo" name="total_costo" type="hidden" value="{{floatval($pagarporoficina->excedente) ?? ''}}">
                                                         <input id="precio_costo" name="precio_costo" type="hidden" value="{{floatval($pagarporoficina->excedente) ?? ''}}">
                                                         <input id="tipo_pago" name="tipo_pago" type="hidden" value="">
-                                                        <input id="modo_pago" name="modo_pago" type="hidden" value="">
-                                                        <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}">
-                                                        <input id="cliente_id" name="cliente_id" type="hidden" value="{{ $pagarporoficina->persona_id ?? ''}}">
+                                                        <input id="modo_pago" name="modo_pago" type="hidden" value=""> --}}
+                                                        {{-- <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}"> --}}
+                                                        {{-- <input id="cliente_id" name="cliente_id" type="hidden" value="{{ $pagarporoficina->persona_id ?? ''}}"> --}}
                                                         {{-- <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}"> --}}
                                                         {{-- <input id="user_id" name="user_id" type="hidden" value="{{$UserId}}"> --}}
                                                     <th>
@@ -627,7 +627,7 @@
                                 <div class="modal-header">
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title"><span class="fa fa-spinner"></span>Registrar pago al cliente {{ $pagarporoficina->nombre_cliente ?? ''}} </h4>
+                                    {{-- <h4 class="modal-title"><span class="fa fa-spinner"></span>Registrar pago al cliente {{ $pagarporoficina->nombre_cliente ?? ''}} </h4> --}}
                                 </div>
                                 <div class="modal-body" style="background-color:#fff !important;">
 
@@ -746,97 +746,19 @@
 
                                                             </div>
                                                             <!-- /.box-header -->
-                                                            <div class="box-body">
-                                                                <div class="row">
 
-                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="selec_banco">Seleccione Banco Destino</label>
-                                                                            <select name="selec_banco_cliente" id="selec_banco_cliente" class="form-control selectpicker" data-live-search="true">
-                                                                                <option value="default" selected="selected">Seleccione Banco Destino</option>
-                                                                                @if (count($bancosCLientes))
-                                                                        @php
-                                                                            $bancosCLientes = $bancosCLientes;
-                                                                        @endphp
-                                                                        @else
-                                                                        @php
-                                                                            $bancosCLientes = $bancos;
-                                                                    @endphp
-                                                                        @endif
-                                                                                @foreach ($bancosCLientes as $bancoCliente)
-                                                                            <option value="{{$bancoCliente->id}}_{{$bancoCliente->nombre_banco}}_{{$bancoCliente->codigo}}_{{$bancoCliente->num_cuenta}}_{{$bancoCliente->tipo_cuenta}}_{{$bancoCliente->pago_mobil}}">{{$bancoCliente->nombre_banco}}</option>
-                                                                                @endforeach
-
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="nombre_banco_cliente">Nombre Banco</label>
-                                                                            <input required type="text" id="nombre_banco_cliente" name="nombre_banco_cliente" class="form-control titulo" value="{{old('nombre_banco_cliente')}}" placeholder="Nombre Banco cliente...">
-                                                                        </div>
-                                                                    </div>
-
-
-
-                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="codigo_banco_cliente">Código</label>
-                                                                            <input required type="number" id="codigo_banco_cliente" name="codigo_banco_cliente" class="form-control enteros" value="{{old('codigo_banco_cliente')}}" placeholder="Código Banco cliente...">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="num_cuenta_banco_cliente">Número de cuenta</label>
-                                                                            <input required type="text" id="num_cuenta_banco_cliente" name="num_cuenta_banco_cliente" class="form-control mayuscula" value="{{old('num_cuenta_banco_cliente')}}" placeholder="Número de cuenta banco cliente...">
-                                                                        </div>
-                                                                    </div>
-
-
-                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="tipo_cuenta_banco_cliente">Tipo de cuenta</label>
-                                                                            <select required class="form-control" id="tipo_cuenta_banco_cliente" name="tipo_cuenta_banco_cliente">
-                                                                                <option value="0">Seleccione tipo de cuenta</option>
-                                                                                <option value="Corriente">Corriente</option>
-                                                                                <option value="Ahorro">Ahorro</option>
-                                                                            </select>
-
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="pago_mobil_banco_cliente">Teléfono pago Mobil</label>
-                                                                            <input class="text-black" type="text" id="pago_mobil_banco_cliente" name="pago_mobil_banco_cliente" class="form-control_banco_cliente"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('pago_mobil_banco_cliente')}}" placeholder="Pago mobil banco cliente...">
-                                                                        </div>
-                                                                    </div>
-
-
-
-                                                                    {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label for="imagen">Imagen</label>
-                                                                            <input required type="file" name="imagen" class="form-control" accept="image/*">
-                                                                        </div>
-                                                                    </div> --}}
-
-                                                                </div>
-                                                                <!-- /.table-responsive -->
-                                                            </div>
 
 
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                             <div class="form-group">
-                                                                <input class="text-black hidden" type="text" id="dcliente_id" name="dcliente_id" value="{{ $pagarporoficina->persona_id ?? '' }}">
+                                                                {{-- <input class="text-black hidden" type="text" id="dcliente_id" name="dcliente_id" value="{{ $pagarporoficina->persona_id ?? '' }}">
                                                                 <input class="text-black hidden" type="text" id="motivo" name="motivo" value="servicio">
                                                                 <input class="text-black hidden" type="text" id="caja_id" name="caja_id" value="{{$caja->id ?? ''}}">
                                                                 <input class="text-black" id="banco_id_banco_empresa" name="banco_id_banco_empresa" value="" type="text">
                                                                 <input class="text-black" id="banco_id_banco_cliente" name="banco_id_banco_cliente" value="" type="text">
                                                                 <input class="text-black" id="deudaPendiente" name="deudaPendiente" value="{{ $pagarporoficina->excedente ?? '' }}" type="text">
-                                                                <input class="text-black" id="sucursal_id" name="sucursal_id" value="{{$caja->sucursal_id ?? ''}}" type="text">
+                                                                <input class="text-black" id="sucursal_id" name="sucursal_id" value="{{$caja->sucursal_id ?? ''}}" type="text"> --}}
 
                                                                 <button class="btn btn-primary" id="guardarFormaPago" type="button">Guardar</button>
 

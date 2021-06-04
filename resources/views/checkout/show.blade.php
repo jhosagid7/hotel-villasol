@@ -5154,8 +5154,8 @@ if (btnCambio == 1) {
 
         document.addEventListener('DOMContentLoaded', function() {
 
-            $('#imprimirFactura').show();
-            $('#imprimirBoleta').show();
+            $('#imprimirFactura').show(); // Boton salida para procesar salida de habitaciones QR
+            $('#imprimirBoleta').show(); // Boton salida para procesar salida de habitaciones QR
 
             try {
 

@@ -28,7 +28,7 @@
 <div class="row">
     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
         @can('haveaccess', 'venta.create')
-        <h3>Clientes para realizarles pagos</h3>
+        <h3>Historial pagos por oficina</h3>
         @endcan
         {{-- @include('compras.proveedor.buscar') --}}
     </div>
@@ -47,13 +47,18 @@
             <table id="ven" class="table table-striped table-bordered table-condensed table-hover">
                 <thead>
                     <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Cedula</th>
+                    <th>Cliente</th>
+                    <th>Banco</th>
                     <th>Direccion</th>
-                    <th>Telefono</th>
-                    <th>Total Factura</th>
+                    <th>Num Cuenta</th>
+                    <th>Total Pagado</th>
+                    <th>Banco Empresa</th>
+                    <th>Cuenta Banco Empresa</th>
+                    <th>Num Transaccion</th>
+                    <th>Fecha de Pago</th>
+                    <th>Operador</th>
 
-                    <th>Opciones</th>
+                    {{-- <th>Opciones</th> --}}
                 </thead>
                 <tbody>
                 @php
@@ -62,20 +67,24 @@
                      @foreach ($pagarporoficinas as $pagosOfic)
                      <tr>
                          <td>{{ $pagosOfic->id }}</td>
-                         <td>{{ $pagosOfic->nombre_cliente }}</td>
-                         <td>{{ $pagosOfic->cedula_cliente }}</td>
-                         <td>{{ $pagosOfic->direccion_cliente }}</td>
-                         <td>{{ $pagosOfic->telefono_cliente }}</td>
-                         <td>{{ $pagosOfic->excedente}}</td>
+                         <td><?php $nombre_cliente = "App\Persona"::where('id',$pagosOfic->persona_id)->select('nombre')->first();?> {{$nombre_cliente['nombre']}}</td>
+                         <td>{{ $pagosOfic->nombre_banco_cliente }}</td>
+                         <td>{{ $pagosOfic->num_cuenta_empresa }}</td>
+                         <td>{{ $pagosOfic->deuda }}</td>
+                         <td>{{ $pagosOfic->nombre_banco_empresa}}</td>
+                         <td>{{ $pagosOfic->num_cuenta_empresa}}</td>
+                         <td>{{ $pagosOfic->num_transaccion}}</td>
+                         <td>{{ $pagosOfic->fecha_pago}}</td>
+                         <td><?php $nombre_operador = "App\User"::where('id',$pagosOfic->user_id)->select('name')->first();?> {{$nombre_operador['name']}}</td>
 
                          <td>
-                         <a href="{{URL::action('ExcedenteController@show', $pagosOfic->persona_id)}}"><button class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
+                         <a href="{{URL::action('PagarPorOficinaController@show', $pagosOfic->id)}}"><button class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
                          {{-- <a href="" data-target="#modal-delete-{{$venta->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a> --}}
                          </td>
                      </tr>
                     {{-- @include('ventas.venta.modal') --}}
                     @php
-                    $total += $pagosOfic->excedente;
+                    $total += $pagosOfic->deuda;
                     @endphp
                     @endforeach
 
