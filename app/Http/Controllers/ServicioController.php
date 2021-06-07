@@ -121,17 +121,18 @@ class ServicioController extends Controller
 
             if($VueltospagoConExcedente > 0){
 
+                if($monto_dejado > 0){
+                    $modo_pago = 'contado';
+                    $status = 'Pagado';
+                    $monto_dejado = $VueltospagoConExcedente + $monto_dejado;
+                }
+
                 if($monto_dejado == 0){
                     $modo_pago = 'contado';
                     $status = 'Pagado';
                     $monto_dejado = $VueltospagoConExcedente;
                 }
 
-                if($monto_dejado > 0){
-                    $modo_pago = 'contado';
-                    $status = 'Pagado';
-                    $monto_dejado = $VueltospagoConExcedente + $request->get('modo_pago');
-                }
 
             }else{
                 $status = 'Pagado';
@@ -260,7 +261,7 @@ class ServicioController extends Controller
             $servicio->status = $status;
             $servicio->precio_costo = $request->get('precio_costo');
             $servicio->cantidad = $request->get('cantidad');
-            $servicio->dinero_dejado = $request->get('monto_dejado');
+            $servicio->dinero_dejado = $monto_dejado;
             $servicio->excedente_nuevo = $nuevo_excedente;
             $servicio->pago_con_excedente = $request->get('pagoConExcedente');
             $servicio->total_venta = $request->get('total_costo');
@@ -660,6 +661,9 @@ class ServicioController extends Controller
 
 
             if($modo_pago == 'contado' || $modo_pago == 'Contado-Excedente'){
+
+                /////////////////////////////////////////////////////////////////////////////////////////////////
+                // TODO ingresamos los datos en la tabla Pago_Servicio////////////////////////////////////////////
                 $MontoDivisaR = $request->get('MontoDivisa');
                 $divisaR = $request->get('divisa');
                 $TasaTikeR = $request->get('TasaTike');
@@ -710,6 +714,9 @@ class ServicioController extends Controller
 
                     $cont = $cont+1;
                 }
+
+                // TODO Fin de ingreso en la tabla Pago_Servicio //////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////////////////////////////
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -954,7 +961,7 @@ class ServicioController extends Controller
                     // TODO Method to pay with pending returns
 
                     $VueltospagoConExcedente = $request->get('VueltospagoConExcedente');
-// return $VueltospagoConExcedente;
+                    // return $VueltospagoConExcedente;
                     if($VueltospagoConExcedente > 0){
 
                         // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
@@ -2153,7 +2160,7 @@ class ServicioController extends Controller
 
 
                             }
-// return $request;
+                            // return $request;
 
 
 

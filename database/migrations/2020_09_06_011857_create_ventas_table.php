@@ -37,6 +37,7 @@ class CreateVentasTable extends Migration
             $table->decimal('precio_costo', 25, 9)->nullable();
             $table->decimal('margen_ganancia', 25, 2)->nullable();
             $table->decimal('total_venta', 25, 3)->nullable();
+            $table->decimal('excedente_nuevo', 25, 2)->nullable();
             $table->decimal('ganancia_neta', 25, 3)->nullable();
             $table->enum('estado', ['Aceptada', 'Cancelada', 'Procesando']);
             $table->foreignId('persona_id')->references('id')->on('personas');

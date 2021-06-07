@@ -15,7 +15,9 @@ use App\Servicio;
 use App\Excedente;
 use Carbon\Carbon;
 use App\Pago_Venta;
+use App\Pago_Vuelto;
 use App\Sessioncaja;
+use App\Pago_Credito;
 use App\Articulo_venta;
 use App\Detalle_credito;
 use App\Servicios_Ventas;
@@ -23,6 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use App\Excedentes_Recibidos_Caja_Actual;
 
 class ProcesoVentaController extends Controller
 {
@@ -155,11 +158,642 @@ class ProcesoVentaController extends Controller
             $monto_dejado = $request->get('monto_dejado');
             $monto_dejado = number_format($monto_dejado,2,'.',',');
             // return $monto_dejado;
-            $total_costo = number_format($request->get('total_costo'),2,'.',',');;
+            $total_costo = number_format($request->get('total_costo'),2,'.',',');
             $status = '';
             $estado_pago = '';
 
+            $base_vuelto_monto_dejado = number_format($request->get('base_vuelto_monto_dejado'),2,'.',',');
+            $monto_dejadoResta = number_format($request->get('monto_dejadoResta'),2,'.',',');
+            $isVueltos = $request->get('isVueltos');
 
+            $VueltospagoConExcedente = number_format($request->get('VueltospagoConExcedente'),2,'.',',');
+            $VueltosdispExcedente = number_format($request->get('VueltosdispExcedente'),2,'.',',');
+                // return $request;
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // TODO metodo para pagar con vueltos pendientes
+            // $VueltospagoConExcedente = $request->get('VueltospagoConExcedente');
+
+            // if($VueltospagoConExcedente > 0){
+
+            //     if($monto_dejado > 0){
+            //         $modo_pago = 'contado';
+            //         $status = 'Pagado';
+            //         $monto_dejado = $VueltospagoConExcedente + $monto_dejado;
+            //     }
+
+            //     if($monto_dejado == 0){
+            //         $modo_pago = 'contado';
+            //         $status = 'Pagado';
+            //         $monto_dejado = $VueltospagoConExcedente;
+            //     }
+
+
+            // }else{
+            //     $status = 'Pagado';
+            //     $modo_pago = $request->get('modo_pago');
+            // }
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    // return $monto_dejado;
+
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    // TODO metodo para pagar con vueltos pendientes
+                    // TODO Method to pay with pending returns
+
+                    $VueltospagoConExcedente = $request->get('VueltospagoConExcedente');
+                    // return $VueltospagoConExcedente;
+                    if($VueltospagoConExcedente > 0){
+
+                        // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                        //con este codigo buscamos los saldos disponibles en dolar, peso y bolivar
+                        // el resultado son 3 variables de nombre $dolarDisponible, $pesoDisponible y $bolivarDisponible.
+                        //para luego con esto poder dar los vueltos si hay desponibilidad.
+
+
+                        $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
+                        $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
+                        $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
+                        $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
+                        $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
+
+                        $cajas = Caja::find($request->get('caja_id'));
+                        $cajas->user;
+                        $cajas->ventas;
+                        $cajas->pago_ventas;
+                        $cajas->articulo_ventas;
+                        $cajas->servicios;
+                        $cajas->detalle_creditos;
+                        // $cajas->credito;
+                        $cajas->cortesias;
+                        $cajas->pago_servicios;
+                        $cajas->pago_creditos;
+                        $cajas->creditos_pagados;
+                        $cajas->excedente_actual;
+
+
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        foreach ($cajas->creditos_pagados as $credPagados ) {
+
+                            if ($credPagados->user_id == $cajas->user_id){
+
+                                $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                if (count($validarPagosCreditos)) {
+                                    foreach ($validarPagosCreditos as $credPagadosCaja ) {
+                                        if ($credPagadosCaja->Divisa == 'Dolar') {
+                                            $cajas->SumaTotalDolarCred = $cajas->SumaTotalDolarCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
+                                        }elseif ($credPagadosCaja->Divisa == 'Peso') {
+                                            $cajas->SumaTotalPesoCred = $cajas->SumaTotalPesoCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
+                                        }elseif ($credPagadosCaja->Divisa == 'Bolivar') {
+                                            $cajas->SumaTotalBolivarCred = $cajas->SumaTotalBolivarCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
+                                        }elseif ($credPagadosCaja->Divisa == 'Punto') {
+                                            $cajas->SumaTotalPuntoCred = $cajas->SumaTotalPuntoCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
+                                        }elseif ($credPagadosCaja->Divisa == 'Transferencia') {
+                                            $cajas->SumaTotalTransferenciaCred = $cajas->SumaTotalTransferenciaCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
+                                        }
+                                    }
+                                }
+
+                                if ($credPagados->tipo_operacion == 'Consumo'){
+
+                                    $validarPagosCreditosConsumo = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                    if (count($validarPagosCreditosConsumo)) {
+                                        foreach ($validarPagosCreditosConsumo as $credPagadosCajaConsumo ) {
+                                            if ($credPagadosCajaConsumo->Divisa == 'Dolar') {
+                                                $cajas->SumaTotalDolarCredConsumo = $cajas->SumaTotalDolarCredConsumo + ($credPagadosCajaConsumo->MontoDivisa - $credPagadosCajaConsumo->Vueltos * -1);
+                                            }elseif ($credPagadosCajaConsumo->Divisa == 'Peso') {
+                                                $cajas->SumaTotalPesoCredConsumo = $cajas->SumaTotalPesoCredConsumo + ($credPagadosCajaConsumo->MontoDivisa - $credPagadosCajaConsumo->Vueltos * -1);
+                                            }elseif ($credPagadosCajaConsumo->Divisa == 'Bolivar') {
+                                                $cajas->SumaTotalBolivarCredConsumo = $cajas->SumaTotalBolivarCredConsumo + ($credPagadosCajaConsumo->MontoDivisa - $credPagadosCajaConsumo->Vueltos * -1);
+                                            }elseif ($credPagadosCajaConsumo->Divisa == 'Punto') {
+                                                $cajas->SumaTotalPuntoCredConsumo = $cajas->SumaTotalPuntoCredConsumo + ($credPagadosCajaConsumo->MontoDivisa - $credPagadosCajaConsumo->Vueltos * -1);
+                                            }elseif ($credPagadosCajaConsumo->Divisa == 'Transferencia') {
+                                                $cajas->SumaTotalTransferenciaCredConsumo = $cajas->SumaTotalTransferenciaCredConsumo + ($credPagadosCajaConsumo->MontoDivisa - $credPagadosCajaConsumo->Vueltos * -1);
+                                            }
+                                        }
+                                    }
+
+                                    $cajas->SumaTotalCreditosPagadosConsumoPorCaja = $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $credPagados->monto;
+
+                                }
+
+                                if ($credPagados->tipo_operacion == 'Servicio'){
+
+                                    $validarPagosCreditosServicio = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                    if (count($validarPagosCreditosServicio)) {
+                                        foreach ($validarPagosCreditosServicio as $credPagadosCajaServicio ) {
+                                            if ($credPagadosCajaServicio->Divisa == 'Dolar') {
+                                                $cajas->SumaTotalDolarCredServicio = $cajas->SumaTotalDolarCredServicio + ($credPagadosCajaServicio->MontoDivisa - $credPagadosCajaServicio->Vueltos * -1);
+                                            }elseif ($credPagadosCajaServicio->Divisa == 'Peso') {
+                                                $cajas->SumaTotalPesoCredServicio = $cajas->SumaTotalPesoCredServicio + ($credPagadosCajaServicio->MontoDivisa - $credPagadosCajaServicio->Vueltos * -1);
+                                            }elseif ($credPagadosCajaServicio->Divisa == 'Bolivar') {
+                                                $cajas->SumaTotalBolivarCredServicio = $cajas->SumaTotalBolivarCredServicio + ($credPagadosCajaServicio->MontoDivisa - $credPagadosCajaServicio->Vueltos * -1);
+                                            }elseif ($credPagadosCajaServicio->Divisa == 'Punto') {
+                                                $cajas->SumaTotalPuntoCredServicio = $cajas->SumaTotalPuntoCredServicio + ($credPagadosCajaServicio->MontoDivisa - $credPagadosCajaServicio->Vueltos * -1);
+                                            }elseif ($credPagadosCajaServicio->Divisa == 'Transferencia') {
+                                                $cajas->SumaTotalTransferenciaCredServicio = $cajas->SumaTotalTransferenciaCredServicio + ($credPagadosCajaServicio->MontoDivisa - $credPagadosCajaServicio->Vueltos * -1);
+                                            }
+                                        }
+                                    }
+
+                                    $cajas->SumaTotalCreditosPagadosServicioPorCaja = $cajas->SumaTotalCreditosPagadosServicioPorCaja + $credPagados->monto;
+
+                                }
+                                    $cajas->SumaTotalCreditosPagadosTotalesPorCaja = $cajas->SumaTotalCreditosPagadosTotalesPorCaja + $credPagados->monto;
+
+                            }else{
+
+                                $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                if (count($validarPagosCreditos)) {
+                                    foreach ($validarPagosCreditos as $credPagadosOficina ) {
+                                        if ($credPagadosOficina->Divisa == 'Dolar') {
+                                            $cajas->SumaTotalDolarCredPorOficina = $cajas->SumaTotalDolarCredPorOficina + ($credPagadosOficina->MontoDivisa - $credPagadosOficina->Vueltos * -1);
+                                        }elseif ($credPagadosOficina->Divisa == 'Peso') {
+                                            $cajas->SumaTotalPesoCredPorOficina = $cajas->SumaTotalPesoCredPorOficina + ($credPagadosOficina->MontoDivisa - $credPagadosOficina->Vueltos * -1);
+                                        }elseif ($credPagadosOficina->Divisa == 'Bolivar') {
+                                            $cajas->SumaTotalBolivarCredPorOficina = $cajas->SumaTotalBolivarCredPorOficina + ($credPagadosOficina->MontoDivisa - $credPagadosOficina->Vueltos * -1);
+                                        }elseif ($credPagadosOficina->Divisa == 'Punto') {
+                                            $cajas->SumaTotalPuntoCredPorOficina = $cajas->SumaTotalPuntoCredPorOficina + ($credPagadosOficina->MontoDivisa - $credPagadosOficina->Vueltos * -1);
+                                        }elseif ($credPagadosOficina->Divisa == 'Transferencia') {
+                                            $cajas->SumaTotalTransferenciaCredPorOficina = $cajas->SumaTotalTransferenciaCredPorOficina + ($credPagadosOficina->MontoDivisa - $credPagadosOficina->Vueltos * -1);
+                                        }
+                                    }
+                                }
+
+                                if ($credPagados->tipo_operacion == 'Consumo'){
+
+                                    $cajas->SumaTotalCreditosPagadosConsumoPorOficina = $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $credPagados->monto;
+
+
+                                }
+
+                                if ($credPagados->tipo_operacion == 'Servicio'){
+
+                                    $cajas->SumaTotalCreditosPagadosServicioPorOficina = $cajas->SumaTotalCreditosPagadosServicioPorOficina + $credPagados->monto;
+
+
+                                }
+
+                                $cajas->SumaTotalCreditosPagadosTotalesPorOficina = $cajas->SumaTotalCreditosPagadosTotalesPorOficina + $credPagados->monto;
+
+                            }
+
+
+                            if ($credPagados->tipo_operacion == 'Servicio') {
+
+                                // $cajas->SumaTotalCreditosPagadosServicio = $cajas->SumaTotalCreditosPagadosServicio + $credPagados->monto;
+                                $cajas->SumaTotalCantidadCreditosPagadosServicio = $cajas->SumaTotalCantidadCreditosPagadosServicio + 1;
+
+                            }
+
+                            if ($credPagados->tipo_operacion == 'Consumo') {
+
+                                // $cajas->SumaTotalCreditosPagadosConsumo = $cajas->SumaTotalCreditosPagadosConsumo + $credPagados->monto;
+                                $cajas->SumaTotalCantidadCreditosPagadosConsumo =  $cajas->SumaTotalCantidadCreditosPagadosConsumo + 1;
+
+                            }
+                            // $cajas->SumaTotalCreditosPagadosTotales = $cajas->SumaTotalCreditosPagadosTotales + $credPagados->monto;
+                            $cajas->SumaTotalCantidadCreditosPagadosTotales = $cajas->SumaTotalCantidadCreditosPagadosTotales + 1;
+
+                        }
+                        // return $cajas->SumaTotalCreditosPagados;
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // TODO optenemos los datos de la tabla excedente actual
+
+                        foreach ($cajas->excedente_actual as $excedenteActual) {
+
+                            // TODO sacamos los totales devueltos recibidos por excedentes totales
+                            if ($excedenteActual->Divisa == 'Dolar') {
+                                $cajas->TotalSumaVueltosPendientesDolarDivisa = $cajas->TotalSumaVueltosPendientesDolarDivisa  + $excedenteActual->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesDolarDolar = $cajas->TotalSumaVueltosPendientesDolarDolar  + $excedenteActual->MontoDolar;
+                            }elseif ($excedenteActual->Divisa == 'Peso') {
+                                $cajas->TotalSumaVueltosPendientesPesoDivisa = $cajas->TotalSumaVueltosPendientesPesoDivisa  + $excedenteActual->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesPesoDolar = $cajas->TotalSumaVueltosPendientesPesoDolar  + $excedenteActual->MontoDolar;
+                            }elseif ($excedenteActual->Divisa == 'Bolivar') {
+                                $cajas->TotalSumaVueltosPendientesBolivarDivisa = $cajas->TotalSumaVueltosPendientesBolivarDivisa  + $excedenteActual->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesBolivarDolar = $cajas->TotalSumaVueltosPendientesBolivarDolar  + $excedenteActual->MontoDolar;
+                            }elseif ($excedenteActual->Divisa == 'Punto') {
+                                $cajas->TotalSumaVueltosPendientesPuntoDivisa = $cajas->TotalSumaVueltosPendientesPuntoDivisa  + $excedenteActual->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesPuntoDolar = $cajas->TotalSumaVueltosPendientesPuntoDolar  + $excedenteActual->MontoDolar;
+                            }elseif ($excedenteActual->Divisa == 'Transferencia') {
+                                $cajas->TotalSumaVueltosPendientesTransferenciaDivisa = $cajas->TotalSumaVueltosPendientesTransferenciaDivisa  + $excedenteActual->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesTransferenciaDolar = $cajas->TotalSumaVueltosPendientesTransferenciaDolar  + $excedenteActual->MontoDolar;
+                            }
+
+
+                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                            // TODO hacemos subconsultas
+
+                            if ($excedenteActual->Estado == 'Pendiente') {
+                                if ($excedenteActual->Divisa == 'Dolar') {
+                                    $cajas->SumaVueltosPendientesDolarDivisa = $cajas->SumaVueltosPendientesDolarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesDolarDolar = $cajas->SumaVueltosPendientesDolarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Peso') {
+                                    $cajas->SumaVueltosPendientesPesoDivisa = $cajas->SumaVueltosPendientesPesoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesPesoDolar = $cajas->SumaVueltosPendientesPesoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Bolivar') {
+                                    $cajas->SumaVueltosPendientesBolivarDivisa = $cajas->SumaVueltosPendientesBolivarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesBolivarDolar = $cajas->SumaVueltosPendientesBolivarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Punto') {
+                                    $cajas->SumaVueltosPendientesPuntoDivisa = $cajas->SumaVueltosPendientesPuntoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesPuntoDolar = $cajas->SumaVueltosPendientesPuntoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Transferencia') {
+                                    $cajas->SumaVueltosPendientesTransferenciaDivisa = $cajas->SumaVueltosPendientesTransferenciaDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesTransferenciaDolar = $cajas->SumaVueltosPendientesTransferenciaDolar  + $excedenteActual->MontoDolar;
+                                }
+                            }elseif($excedenteActual->Estado == 'Devueltos'){
+                                if ($excedenteActual->Divisa == 'Dolar') {
+                                    $cajas->SumaVueltosDevueltosDolarDivisa = $cajas->SumaVueltosDevueltosDolarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosDevueltosDolarDolar = $cajas->SumaVueltosDevueltosDolarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Peso') {
+                                    $cajas->SumaVueltosDevueltosPesoDivisa = $cajas->SumaVueltosDevueltosPesoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosDevueltosPesoDolar = $cajas->SumaVueltosDevueltosPesoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Bolivar') {
+                                    $cajas->SumaVueltosDevueltosBolivarDivisa = $cajas->SumaVueltosDevueltosBolivarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosDevueltosBolivarDolar = $cajas->SumaVueltosDevueltosBolivarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Punto') {
+                                    $cajas->SumaVueltosDevueltosPuntoDivisa = $cajas->SumaVueltosDevueltosPuntoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosDevueltosPuntoDolar = $cajas->SumaVueltosDevueltosPuntoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Transferencia') {
+                                    $cajas->SumaVueltosDevueltosTransferenciaDivisa = $cajas->SumaVueltosDevueltosTransferenciaDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosDevueltosTransferenciaDolar = $cajas->SumaVueltosDevueltosTransferenciaDolar  + $excedenteActual->MontoDolar;
+                                }
+                            }elseif($excedenteActual->Estado == 'PagarOficina'){
+                                if ($excedenteActual->Divisa == 'Dolar') {
+                                    $cajas->SumaVueltosPagarOficinaDolarDivisa = $cajas->SumaVueltosPagarOficinaDolarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPagarOficinaDolarDolar = $cajas->SumaVueltosPagarOficinaDolarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Peso') {
+                                    $cajas->SumaVueltosPagarOficinaPesoDivisa = $cajas->SumaVueltosPagarOficinaPesoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPagarOficinaPesoDolar = $cajas->SumaVueltosPagarOficinaPesoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Bolivar') {
+                                    $cajas->SumaVueltosPagarOficinaBolivarDivisa = $cajas->SumaVueltosPagarOficinaBolivarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPagarOficinaBolivarDolar = $cajas->SumaVueltosPagarOficinaBolivarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Punto') {
+                                    $cajas->SumaVueltosPagarOficinaPuntoDivisa = $cajas->SumaVueltosPagarOficinaPuntoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPagarOficinaPuntoDolar = $cajas->SumaVueltosPagarOficinaPuntoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Transferencia') {
+                                    $cajas->SumaVueltosPagarOficinaTransferenciaDivisa = $cajas->SumaVueltosPagarOficinaTransferenciaDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPagarOficinaTransferenciaDolar = $cajas->SumaVueltosPagarOficinaTransferenciaDolar  + $excedenteActual->MontoDolar;
+                                }
+                            }elseif($excedenteActual->Estado == 'ExcedenteNuevo'){
+                                if ($excedenteActual->Divisa == 'Dolar') {
+                                    $cajas->SumaVueltosExcedenteNuevoDolarDivisa = $cajas->SumaVueltosExcedenteNuevoDolarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosExcedenteNuevoDolarDolar = $cajas->SumaVueltosExcedenteNuevoDolarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Peso') {
+                                    $cajas->SumaVueltosExcedenteNuevoPesoDivisa = $cajas->SumaVueltosExcedenteNuevoPesoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosExcedenteNuevoPesoDolar = $cajas->SumaVueltosExcedenteNuevoPesoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Bolivar') {
+                                    $cajas->SumaVueltosExcedenteNuevoBolivarDivisa = $cajas->SumaVueltosExcedenteNuevoBolivarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosExcedenteNuevoBolivarDolar = $cajas->SumaVueltosExcedenteNuevoBolivarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Punto') {
+                                    $cajas->SumaVueltosExcedenteNuevoPuntoDivisa = $cajas->SumaVueltosExcedenteNuevoPuntoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosExcedenteNuevoPuntoDolar = $cajas->SumaVueltosExcedenteNuevoPuntoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Transferencia') {
+                                    $cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa = $cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosExcedenteNuevoTransferenciaDolar = $cajas->SumaVueltosExcedenteNuevoTransferenciaDolar  + $excedenteActual->MontoDolar;
+                                }
+
+                                if($excedenteActual->Tipo == 'Servicio'){
+                                    $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar = $excedenteActual->MontoDolar;
+                                }
+                                if($excedenteActual->Tipo == 'Consumo'){
+                                    $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar = $excedenteActual->MontoDolar;
+                                }
+
+                                if($excedenteActual->Tipo == 'Otros'){
+                                    $cajas->TotalSumaVueltosExcedenteNuevoOtrosDolarToDolar = $excedenteActual->MontoDolar;
+                                }
+                                $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar = $excedenteActual->MontoDolar;
+                            }
+                        }
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        foreach ($cajas->pago_servicios as $pagoS ) {
+
+                            $validarPagosServicios = Servicio::where('id',$pagoS->servicio_id)->first();
+                            if ($validarPagosServicios) {
+                                if ($pagoS->Divisa == 'Dolar') {
+                                    if($pagoS->Vueltos > 0){
+                                        $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - $validarPagosServicios->excedente_nuevo;
+                                    }else{
+                                        $cajas->SumaTotalDolarServDflotante = $cajas->SumaTotalDolarServDflotante + ($pagoS->Vueltos * -1);
+                                        $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - $validarPagosServicios->excedente_nuevo;
+                                    }
+                                }elseif ($pagoS->Divisa == 'Peso') {
+                                    if($pagoS->Vueltos > 0){
+                                        $cajas->SumaTotalPesoServ = $cajas->SumaTotalPesoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaPeso->tasa);
+                                    }else{
+                                        $cajas->SumaTotalPesoServDflotante = $cajas->SumaTotalPesoServDflotante + ( $pagoS->Vueltos * -1);
+                                        $cajas->SumaTotalPesoServ = $cajas->SumaTotalPesoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaPeso->tasa);
+                                    }
+                                }elseif ($pagoS->Divisa == 'Bolivar') {
+                                    if($pagoS->Vueltos > 0){
+                                        $cajas->SumaTotalBolivarServ = $cajas->SumaTotalBolivarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaEfectivo->tasa);
+                                    }else{
+                                        $cajas->SumaTotalBolivarServDflotante = $cajas->SumaTotalBolivarServDflotante + ($pagoS->Vueltos * -1) * $tasaEfectivo->tasa;
+                                        $cajas->SumaTotalBolivarServ = $cajas->SumaTotalBolivarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaEfectivo->tasa);
+                                    }
+                                }elseif ($pagoS->Divisa == 'Punto') {
+                                    if($pagoS->Vueltos > 0){
+                                        $cajas->SumaTotalPuntoServ = $cajas->SumaTotalPuntoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                                    }else{
+                                        $cajas->SumaTotalPuntoServDflotante = $cajas->SumaTotalPuntoServDflotante + ($pagoS->Vueltos * -1) * $tasaTransferenciaPunto->tasa;
+                                        $cajas->SumaTotalPuntoServ = $cajas->SumaTotalPuntoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                                    }
+                                }elseif ($pagoS->Divisa == 'Transferencia') {
+                                    if($pagoS->Vueltos > 0){
+                                        $cajas->SumaTotalTransferenciaServ = $cajas->SumaTotalTransferenciaServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                                    }else{
+                                        $cajas->SumaTotalTransferenciaServDflotante = $cajas->SumaTotalTransferenciaServDflotante + ($pagoS->Vueltos * -1) * $tasaTransferenciaPunto->tasa;
+                                        $cajas->SumaTotalTransferenciaServ = $cajas->SumaTotalTransferenciaServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                                    }
+                                }
+                            }
+
+                        }
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        foreach ($cajas->pago_ventas as $pago ) {
+
+                            if ($pago->Divisa == 'Dolar') {
+                                $cajas->SumaTotalDolar = $cajas->SumaTotalDolar + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                            }elseif ($pago->Divisa == 'Peso') {
+                                $cajas->SumaTotalPeso = $cajas->SumaTotalPeso + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                            }elseif ($pago->Divisa == 'Bolivar') {
+                                $cajas->SumaTotalBolivar = $cajas->SumaTotalBolivar + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                            }elseif ($pago->Divisa == 'Punto') {
+                                $cajas->SumaTotalPunto = $cajas->SumaTotalPunto + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                            }elseif ($pago->Divisa == 'Transferencia') {
+                                $cajas->SumaTotalTransferencia = $cajas->SumaTotalTransferencia + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                            }
+
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        foreach ($cajas->pago_extras as $pagoext ) {
+
+                            if ($pagoext->Divisa == 'Dolar') {
+                                $cajas->SumaTotalDolarPagoExtra = $cajas->SumaTotalDolarPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Peso') {
+                                $cajas->SumaTotalPesoPagoExtra = $cajas->SumaTotalPesoPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Bolivar') {
+                                $cajas->SumaTotalBolivarPagoExtra = $cajas->SumaTotalBolivarPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Punto') {
+                                $cajas->SumaTotalPuntoPagoExtra = $cajas->SumaTotalPuntoPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Transferencia') {
+                                $cajas->SumaTotalTransferenciaPagoExtra = $cajas->SumaTotalTransferenciaPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }
+
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        $excedentesPendientes = Excedentes_Recibidos_Caja_Actual::where('Estado','Pendiente')->get();
+                        if ($excedentesPendientes) {
+
+
+                            foreach ($excedentesPendientes as $excdPendientes ) {
+                                // return $excdPendientes->Divisa;
+                                if ($excdPendientes->Divisa == 'Dolar') {
+                                    $cajas->SumaTotalDolarExcedentesPendientes = $cajas->SumaTotalDolarExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                    // return $cajas->SumaTotalDolarExcedentesPendientes;
+                                }elseif ($excdPendientes->Divisa == 'Peso') {
+                                    $cajas->SumaTotalPesoExcedentesPendientes = $cajas->SumaTotalPesoExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Bolivar') {
+                                    $cajas->SumaTotalBolivarExcedentesPendientes = $cajas->SumaTotalBolivarExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Punto') {
+                                    $cajas->SumaTotalPuntoExcedentesPendientes = $cajas->SumaTotalPuntoExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Transferencia') {
+                                    $cajas->SumaTotalTransferenciaExcedentesPendientes = $cajas->SumaTotalTransferenciaExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }
+
+                            }
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        foreach ($cajas->pago_vueltos as $pagoV ) {
+
+                            if ($pagoV->Divisa == 'Dolar') {
+
+                                $cajas->SumaTotalDolarVueltos = $cajas->SumaTotalDolarVueltos + $pagoV->MontoDivisa;
+
+                            }elseif ($pagoV->Divisa == 'Peso') {
+                                $cajas->SumaTotalPesoVueltos = $cajas->SumaTotalPesoVueltos + $pagoV->MontoDivisa;
+                            }elseif ($pagoV->Divisa == 'Bolivar') {
+                                $cajas->SumaTotalBolivarVueltos = $cajas->SumaTotalBolivarVueltos + $pagoV->MontoDivisa;
+                            }elseif ($pagoV->Divisa == 'Punto') {
+                                $cajas->SumaTotalPuntoVueltos = $cajas->SumaTotalPuntoVueltos + $pagoV->MontoDivisa;
+                            }elseif ($pagoV->Divisa == 'Transferencia') {
+                                $cajas->SumaTotalTransferenciaVueltos = $cajas->SumaTotalTransferenciaVueltos + $pagoV->MontoDivisa;
+                            }
+
+                        }
+
+                        // return $cajas->SumaTotalDolarExcedentesPendientes;
+
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // TODO Ahora le agregamos caja chica
+
+                        // return 'algo';
+                        $dolarDisponible = ($cajas->SumaTotalDolarExcedentesPendientes + $cajas->SumaTotalDolarPagoExtra + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante) - $cajas->SumaTotalDolarVueltos);
+                        // return $dolarDisponible;
+                        $pesoDisponible = ($cajas->SumaTotalPesoExcedentesPendientes + $cajas->SumaTotalPesoPagoExtra + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante) - $cajas->SumaTotalPesoVueltos);
+                        // return $pesoDisponible;
+                        $bolivarDisponible = ($cajas->SumaTotalBolivarExcedentesPendientes + $cajas->SumaTotalBolivarPagoExtra + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante) - $cajas->SumaTotalBolivarVueltos);
+                        // return $bolivarDisponible;
+
+
+                        // TODO Crear proceso que maneje el pago con vueltos pendiente
+
+
+                        // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
+                        $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)->first();
+                        // return $RestarVtossPtesToVtosPtes;
+
+                        if ($RestarVtossPtesToVtosPtes) {
+                            $RestarVtossPtesToVtosPtes->MontoDivisa = $RestarVtossPtesToVtosPtes->MontoDivisa - ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
+                            $RestarVtossPtesToVtosPtes->MontoDolar = $RestarVtossPtesToVtosPtes->MontoDolar - $VueltospagoConExcedente;
+                            $RestarVtossPtesToVtosPtes->update();
+
+
+                            // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                            $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                            $AgregarVtossPtesToVtosPtes->Tipo = 'Horas_Extras';
+                            $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                            $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtesToVtosPtes->Divisa;
+                            $AgregarVtossPtesToVtosPtes->MontoDivisa = ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
+                            $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                            $AgregarVtossPtesToVtosPtes->MontoDolar = $VueltospagoConExcedente;
+                            $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                            $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                            $AgregarVtossPtesToVtosPtes->save();
+
+                            // return $AgregarVtossPtesToVtosPtes->id;
+
+                            // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                            if($RestarVtossPtesToVtosPtes->MontoDolar == 0){
+                                Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtesToVtosPtes->id);
+                            }
+                        }
+
+
+                        // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                        // $tasaPeso
+                        // $tasaTransferenciaPunto
+                        // $tasaEfectivo
+
+                        $Restardivisa = '';
+                        $RestarMontoDivisa = 0;
+                        $RestarTasaTiket = 0;
+                        $RestarMontoDolar = 0;
+
+                        $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                        // return $RestarVtossPtesToVtosPtesDevueltos;
+
+                        if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                            // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                            if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                                // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                                if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
+                                    $Restardivisa = 'Dolar';
+                                    $RestarMontoDivisa = $VueltospagoConExcedente * 1;
+                                    $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                                    $RestarMontoDolar = $VueltospagoConExcedente;
+
+                                }else if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
+                                    $Restardivisa = 'Peso';
+                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
+                                    $RestarTasaTiket = $tasaPeso->tasa;
+                                    $RestarMontoDolar = $VueltospagoConExcedente;
+                                }else if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
+                                    $Restardivisa = 'Bolivar';
+                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
+                                    $RestarTasaTiket = $tasaEfectivo->tasa;
+                                    $RestarMontoDolar = $VueltospagoConExcedente;
+                                }
+                                // return $RestarMontoDivisa;
+
+
+                            }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                                if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
+                                    $Restardivisa = 'Peso';
+                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
+                                    $RestarTasaTiket = $tasaPeso->tasa;
+                                    $RestarMontoDolar = $VueltospagoConExcedente;
+                                }else if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
+                                    $Restardivisa = 'Dolar';
+                                    $RestarMontoDivisa = $VueltospagoConExcedente * 1;
+                                    $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                                    $RestarMontoDolar = $VueltospagoConExcedente;
+                                }else if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
+                                    $Restardivisa = 'Bolivar';
+                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
+                                    $RestarTasaTiket = $tasaEfectivo->tasa;
+                                    $RestarMontoDolar = $VueltospagoConExcedente;
+                                }
+
+
+
+                            }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                                if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
+                                    $Restardivisa = 'Bolivar';
+                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
+                                    $RestarTasaTiket = $tasaEfectivo->tasa;
+                                    $RestarMontoDolar = $VueltospagoConExcedente;
+                                }else if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
+                                    $Restardivisa = 'Peso';
+                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
+                                    $RestarTasaTiket = $tasaPeso->tasa;
+                                    $RestarMontoDolar = $VueltospagoConExcedente;
+                                }else if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
+                                    $Restardivisa = 'Dolar';
+                                    $RestarMontoDivisa = $VueltospagoConExcedente * 1;
+                                    $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                                    $RestarMontoDolar = $VueltospagoConExcedente;
+                                }
+
+
+                            }
+                            // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                                $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                                $Pago_Consumo_Vueltos->Tipo = 'Consumo';
+                                $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
+                                $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                                $Pago_Consumo_Vueltos->TasaTiket = $RestarTasaTiket;
+                                $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
+                                $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                                $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                                $Pago_Consumo_Vueltos->save();
+
+                                $tipo_pago = $Restardivisa;
+                         // REVIEW REVISAR
+                        }
+
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+                        // return $dolarDisponible;
+                        // return $pesoDisponible;
+                        // return $bolivarDisponible;
+
+                        // TODO Se procede a unir el vuelto pagado que ahora es dinero contado con el dinero_dejado si lo hubiera para procesar el pago
+                        if($monto_dejado > 0){
+                            $modo_pago = 'contado';
+                            $status = 'Pagado';
+                            $monto_dejado = $VueltospagoConExcedente + $monto_dejado;
+                        }
+
+                        if($monto_dejado == 0){
+                            $modo_pago = 'contado';
+                            $status = 'Pagado';
+                            $monto_dejado = $VueltospagoConExcedente;
+                        }
+
+                        $monto_dejadoNegativo = Controller::is_negative_number($monto_dejado);
+
+                        if($monto_dejadoNegativo){
+                            if($VueltospagoConExcedente > $request->get('total_costo')){
+                                $status = 'Pagado';
+                                $monto_dejado = $request->get('total_costo');
+                                $modo_pago == 'Contado-Excedente';
+
+
+                            }
+                        }
+
+                    }else{
+                        $status = 'Pagado';
+                        $modo_pago = $request->get('modo_pago');
+                    }
 
 
 
@@ -175,7 +809,6 @@ class ProcesoVentaController extends Controller
             if($modo_pago == 'credito'){
 
                 $status = 'Falta pagar';
-                $estado = 'Aceptada';
                 $estado_pago = 'Falta pagar';
                 $tipo_pago = 'No pagado';
             }
@@ -186,46 +819,144 @@ class ProcesoVentaController extends Controller
 
                 if($monto_dejado == $total_costo){
                     $status = 'Pagado';
-                    $estado = 'Aceptada';
                     $estado_pago = 'Pagado';
                 }
 
                 if($monto_dejado > $total_costo){
                     $status = 'Pagado';
-                    $estado = 'Aceptada';
                     $estado_pago = 'Pagado';
-                    // dd($status);
 
                     $exced = $monto_dejado - $total_costo;
+                    $excedMontoDolar = $monto_dejado - $total_costo;
 
-                    $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-                    // return $ifCliente;
-
-                    if($ifCliente){
-                        // return 'si';
-
-                        $upExcedente = Excedente::findOrFail($ifCliente->id);
-                        $upExcedente->excedente = $upExcedente->excedente + $exced;
-                        $upExcedente->update();
-                    }else{
-                        // return 'no';
-                        $excedente = new Excedente;
-                        $excedente->nombre_cliente = $request->get('nombre');
-                        $excedente->cedula_cliente = $request->get('num_documento');
-                        $excedente->direccion_cliente = $request->get('direccion');
-                        $excedente->telefono_cliente = $request->get('telefono');
-                        $excedente->excedente = $exced;
-                        $excedente->persona_id = $request->get('cliente_id');
-                        $excedente->save();
+                    if ($tipo_pago == 'Dolar') {
+                        $tasaTiket = $request->get('tasaDolar');
+                        $exced = $exced * $tasaTiket;
+                        $divisaExced = 'Dolar';
                     }
+
+                    if ($tipo_pago == 'Peso') {
+                        $tasaTiket = $request->get('tasaPeso');
+                        $exced = $exced * $tasaTiket;
+                        $divisaExced = 'Peso';
+                    }
+
+                    if ($tipo_pago == 'Trans/Punto') {
+                        // return 'Trans/Punto';
+                        $numPunto = $request->get('num_Punto');
+                        // return empty($numPunto);
+                        $numTrans = $request->get('num_Trans');
+                        // return $numTrans;
+                        $numPuntoTrans = '';
+                        if (empty($numPunto) && !empty($numTrans)) {
+                            // return 'p=null y t=si';
+                            $numPuntoTrans = $numTrans;
+                        }
+
+                        if (!empty($numPunto) && empty($numTrans)) {
+                            // return 'p=si y t=null';
+                            $numPuntoTrans = $numPunto;
+                        }
+
+                        if (!empty($numPunto) && !empty($numTrans)) {
+                            // return 'p=si y t=si';
+                            $numPuntoTrans = $numPunto. ' - ' .$numTrans;
+                        }
+
+                        if (empty($numPunto) && empty($numTrans)) {
+                            // return 'p=null y t=null';
+                            $numPuntoTrans = 'S/N - S/N';
+                        }
+                        // return $numPuntoTrans;
+
+                        $tasaTiket = $numPuntoTrans;
+                        $exced = $exced * $request->get('tasaTransPunto');
+                        $divisaExced = 'Trans/Punto';
+                    }
+                    // BUG   revisar el metodo mixto
+
+                    // if ($tipo_pago == 'Mixto') {
+
+                    //     // return 'MIxto';
+                    //     // $exced = $exced * $request->get('tasaMixto');
+                    //     // $divisaExced = 'Dolar';
+
+                    //     $MontoDivisaM = $request->get('MontoDivisa');
+                    //     $divisaM = $request->get('divisa');
+                    //     $TasaTikeM = $request->get('TasaTike');
+                    //     $MontoDolarM = $request->get('MontoDolar');
+                    //     $MontoDivisaM = array_filter($MontoDivisaM);
+
+                    //     // TODO Comvertimos la variable $MontoDolarM en un array y buscamos el valor mas alto
+
+                    //     $MontoDolarMax = array_filter($MontoDolarM);
+
+                    //     // return $MontoDolarM;
+                    //     $valorMax = max($MontoDolarMax);
+                    //     // return $valorMax . ' excedente es '. $exced;
+
+                    //     foreach($MontoDivisaM as $key => $val) {
+                    //         // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
+                    //         if($MontoDolarM[$key] == $valorMax){
+                    //             // return 'MIxto';
+                    //             // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
+
+                    //             $resta = $MontoDolarM[$key] - $exced;
+
+                    //             if ($resta >= 0) {
+                    //                 return $resta;
+                    //             }else{
+
+                    //                 $textos = $MontoDolarMax;
+                    //                 // return $textos;
+
+                    //                 if (($clave = array_search($valorMax, $textos)) !== false) {
+                    //                     unset($textos[$clave]);
+                    //                     return $textos;
+                    //                 }
+                    //             }
+
+                    //             $divisaExced=$divisaM[$key];
+                    //             $MontoDolar = $MontoDolarM[$key];
+                    //             $exced = $exced * $TasaTikeM;
+
+
+                    //         }
+                    //         $ValorMaximo = $MontoDolarM[$key];
+                    //     $divisa[]=$divisaM[$key];
+                    //     $MontoDolar[]=$MontoDolarM[$key];
+                    //     }
+                    // }
+
+                    if ($tipo_pago == 'Efectivo') {
+                        $tasaTiket = $request->get('tasaEfectivo');
+                        $exced = $exced * $tasaTiket;
+                        $divisaExced = 'Bolivar';
+                    }
+
+
+                    $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
+                    $excdtsRecibidosCaja->Tipo = 'Consumo';
+                    $excdtsRecibidosCaja->Estado = 'Pendiente';
+                    $excdtsRecibidosCaja->Divisa = $divisaExced;
+                    $excdtsRecibidosCaja->TasaTiket = $tasaTiket;
+                    $excdtsRecibidosCaja->MontoDivisa = $exced;
+                    $excdtsRecibidosCaja->MontoDolar = $excedMontoDolar;
+                    $excdtsRecibidosCaja->servicio_id = $servicio_id;
+                    $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
+                    $excdtsRecibidosCaja->save();
+
+                    // $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
+
                 }
 
                 if($monto_dejado < $total_costo){
                     $status = 'Falta pagar';
-                    $estado = 'Pendiente';
                     $estado_pago = 'Falta pagar';
                 }
             }
+
+
 
             $articulo_id = $request->get('idarticulo');
             $cantidad = $request->get('cantidad');
@@ -515,50 +1246,463 @@ if($modo_pago == 'credito'){
                 $cont = $cont+1;
             }
 
-            if($modo_pago == 'contado'){
-            $MontoDivisaR = $request->get('MontoDivisa');
-            $divisaR = $request->get('divisa');
-            $TasaTikeR = $request->get('TasaTike');
-            $MontoDolarR = $request->get('MontoDolar');
-            $VeltosR = $request->get('Veltos');
+            if($modo_pago == 'contado' || $modo_pago == 'Contado-Excedente'){
+                $MontoDivisaR = $request->get('MontoDivisa');
+                $divisaR = $request->get('divisa');
+                $TasaTikeR = $request->get('TasaTike');
+                $MontoDolarR = $request->get('MontoDolar');
+                $VeltosR = $request->get('Veltos');
+                // return 'estoy en contado';
+                $MontoDivisaR = array_filter($MontoDivisaR);
 
-            $MontoDivisaR = array_filter($MontoDivisaR);
+                if(count($MontoDivisaR) > 0){
+                    // return 'estoy en MontoDivisaR';
+
+                    // return count($MontoDivisaR);
+
+                    foreach($MontoDivisaR as $key => $val) {
 
 
-            foreach($MontoDivisaR as $key => $val) {
+                        $divisa[]=$divisaR[$key];
+                        $MontoDivisa[]=$MontoDivisaR[$key];
+                        $TasaTiket[]=$TasaTikeR[$key];
+                        $MontoDolar[]=$MontoDolarR[$key];
+                        $Vueltos[]=$VeltosR[$key];
+
+                        if($monto_dejado == $total_costo){
+                            $Vueltos[]=$VeltosR[$key];
+                            // return 'igual';
+
+                        }else{
+
+                            $Vueltos[]=$VeltosR[$key] - $VeltosR[$key];
+                            // return $Vueltos;
+                            $isVuelos = $request->get('isVueltos');
 
 
-                $divisa[]=$divisaR[$key];
-                $MontoDivisa[]=$MontoDivisaR[$key];
-                $TasaTiket[]=$TasaTikeR[$key];
-                $MontoDolar[]=$MontoDolarR[$key];
-                $Vueltos[]=$VeltosR[$key];
+                        if(!$isVuelos > 0 || !$isVuelos != null){
+                            $Vueltos[$key] = 0;
+                            // return $Vueltos;
+
+                        }
+
+                        }
+
+
+                    }
+                    // return $request;
+
+
+
+                    // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                    //creamos un contador
+                    $cont = 0;
+
+
+                    //realizamos el pago en la tabla Pagos Extras
+                    while ($cont < count($MontoDolar)) {
+                        // return 'estoy en MontoDolar '.$divisa[$cont];
+
+                        $Pago_Venta = new Pago_Venta();
+                        $Pago_Venta->Divisa = $divisa[$cont];
+                        $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
+                        $Pago_Venta->TasaTiket = $TasaTiket[$cont];
+                        $Pago_Venta->MontoDolar = $MontoDolar[$cont];
+                        $Pago_Venta->Vueltos = $Vueltos[$cont];
+                        $Pago_Venta->venta_id = $venta->id;
+                        $Pago_Venta->save();
+
+                        $cont = $cont+1;
+                    }
+
+                    // return 'estoy en contado';
+
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos para eso usamos una bandera llamad isVuelto
+                    //que debemos pasar por la vista
+
+                    $isVuelos = $request->get('isVueltos');
+
+                    if($isVuelos > 0 || $isVuelos != null){
+
+
+
+
+                        $MontoDivisaVueltos = $request->get('MontoDivisaV');
+                        $divisaVueltos = $request->get('divisaV');
+                        $TasaTikeVueltos = $request->get('TasaTikeV');
+                        $MontoDolarVueltos = $request->get('MontoDolarV');
+
+
+                        $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
+
+
+                        foreach($MontoDivisaVueltos as $key => $val) {
+
+
+                            $Vdivisa[]=$divisaVueltos[$key];
+                            $VMontoDivisa[]=$MontoDivisaVueltos[$key];
+                            $VTasaTiket[]=$TasaTikeVueltos[$key];
+                            $VMontoDolar[]=$MontoDolarVueltos[$key];
+
+
+
+
+
+                        }
+
+
+
+
+                        // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                        //creamos un contador
+                        $cont = 0;
+
+
+                        //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                        while ($cont < count($VMontoDolar)) {
+
+
+                            $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                            $Pago_Consumo_Vueltos->Tipo = 'Consumo';
+                            $Pago_Consumo_Vueltos->Divisa = $Vdivisa[$cont];
+                            $Pago_Consumo_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
+                            $Pago_Consumo_Vueltos->TasaTiket = $VTasaTiket[$cont];
+                            $Pago_Consumo_Vueltos->MontoDolar = $VMontoDolar[$cont];
+                            $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                            $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                            $Pago_Consumo_Vueltos->save();
+
+                            $cont = $cont+1;
+                        }
+
+                    }
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                    // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
+                    // de lo contrario solo registra el dinero dejado de contado.
+                    // REVIEW  resuelto (revizar si esta resuelto)
+
+                    if($VueltospagoConExcedente > 0){
+                        // return 'estoy en '.$VueltospagoConExcedente;
+                        // $Restardivisa = '';
+                        // $RestarMontoDivisa = 0;
+                        // $RestarTasaTiket = 0;
+                        // $RestarMontoDolar = 0;
+
+                        // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
+                        //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
+                        // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
+                        //con dos divisas
+
+                        $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Consumo_Vueltos->id);
+                        // return $pagoVueltos;
+
+                        if ($pagoVueltos) {
+
+                            // return $Pago_Extra->id;
+                            $UdatePagoConsumoConVtosPendientes = Pago_Venta::findOrFail($Pago_Venta->id);
+                            // return $UdatePagoServiciosConVtosPendientes;
+                            if ($UdatePagoConsumoConVtosPendientes->Divisa == $pagoVueltos->Divisa) {
+                                $UdatePagoConsumoConVtosPendientes->MontoDivisa = $UdatePagoConsumoConVtosPendientes->MontoDivisa + $pagoVueltos->MontoDivisa;
+                                $UdatePagoConsumoConVtosPendientes->MontoDolar = $UdatePagoConsumoConVtosPendientes->MontoDolar + $pagoVueltos->MontoDolar;
+                                // return $UdatePagoConsumoConVtosPendientes->MontoDivisa;
+                                $UdatePagoConsumoConVtosPendientes->update();
+                            }else{
+
+                                $Pago_Venta = new Pago_Venta();
+                                $Pago_Venta->Divisa = $pagoVueltos->Divisa;
+                                $Pago_Venta->MontoDivisa = $pagoVueltos->MontoDivisa;
+                                $Pago_Venta->TasaTiket = $pagoVueltos->TasaTiket;
+                                $Pago_Venta->MontoDolar = $pagoVueltos->MontoDolar;
+                                $Pago_Venta->Vueltos = 0;
+                                $Pago_Venta->venta_id = $venta->id;
+                                $Pago_Venta->save();
+
+
+                            }
+
+
+                        }
+
+                        // // TODO Ahora actualizamos la tabla Excedentes_Recibidos_Caja_Actual para pasar el dinero pendiente si lo hay al nuevo servicio
+                        // //que se creo porque de lo contrario se perderia el vuelto pendiente
+
+                        // // TODO verificamos si exciste un vuelto pendiente con el id del servicio que cerramos $id
+
+
+                        //     $PasarVtossPtesToNextServ = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('Estado','Pendiente')->first();
+                        //     if ($PasarVtossPtesToNextServ) {
+                        //         $PasarVtossPtesToNextServ->servicio_id = $servicio->id;
+                        //         $PasarVtossPtesToNextServ->update();
+                        //     }
+
+
+
+
+                    }
+
+
+                }else{
+                    // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
+                    // de lo contrario solo registra el dinero dejado de contado.
+                    // return 'estoy en else';
+                    if($VueltospagoConExcedente > 0){
+
+                        // $Restardivisa = '';
+                        // $RestarMontoDivisa = 0;
+                        // $RestarTasaTiket = 0;
+                        // $RestarMontoDolar = 0;
+
+                        // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
+                        //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
+                        // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
+                        //con dos divisas
+
+                        $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Consumo_Vueltos->id);
+                        // return $RestarVtossPtesToVtosPtesDevueltos;
+
+
+
+                        if ($pagoVueltos) {
+                            $isVuelos = $request->get('isVueltos');
+
+                            $Pago_Venta = new Pago_Venta();
+                            $Pago_Venta->Divisa = $pagoVueltos->Divisa;
+                            $Pago_Venta->MontoDivisa = $pagoVueltos->MontoDivisa;
+                            $Pago_Venta->TasaTiket = $pagoVueltos->TasaTiket;
+                            $Pago_Venta->MontoDolar = $pagoVueltos->MontoDolar;
+                            $Pago_Venta->Vueltos = -$isVuelos;
+                            $Pago_Venta->venta_id = $venta->id;
+                            $Pago_Venta->save();
+
+                        }
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
+
+                        $isVuelos = $request->get('isVueltos');
+
+                        if($isVuelos > 0 || $isVuelos != null){
+
+
+
+
+                            $MontoDivisaVueltos = $request->get('MontoDivisaV');
+                            $divisaVueltos = $request->get('divisaV');
+                            $TasaTikeVueltos = $request->get('TasaTikeV');
+                            $MontoDolarVueltos = $request->get('MontoDolarV');
+
+
+                            $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
+
+
+                            foreach($MontoDivisaVueltos as $key => $val) {
+
+
+                                $Vdivisa[]=$divisaVueltos[$key];
+                                $VMontoDivisa[]=$MontoDivisaVueltos[$key];
+                                $VTasaTiket[]=$TasaTikeVueltos[$key];
+                                $VMontoDolar[]=$MontoDolarVueltos[$key];
+
+
+
+
+
+                            }
+
+
+
+
+                            // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                            //creamos un contador
+                            $cont = 0;
+
+
+                            //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                            while ($cont < count($VMontoDolar)) {
+
+
+                                $Pago_Extras_Vueltos = new Pago_Vuelto();
+                                $Pago_Extras_Vueltos->Tipo = 'Consumo';
+                                $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
+                                $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
+                                $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
+                                $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
+                                $Pago_Extras_Vueltos->servicio_id = $servicio_id;
+                                $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
+                                $Pago_Extras_Vueltos->save();
+
+                                $cont = $cont+1;
+                            }
+
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+                    }
+
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                }
+
 
             }
 
+            // if($modo_pago == 'contado'){
+
+            //    /////////////////////////////////////////////////////////////////////////////////////////////////
+            //     // TODO ingresamos los datos en la tabla Pago_Venta////////////////////////////////////////////
+
+            //     $MontoDivisaR = $request->get('MontoDivisa');
+            //     $divisaR = $request->get('divisa');
+            //     $TasaTikeR = $request->get('TasaTike');
+            //     $MontoDolarR = $request->get('MontoDolar');
+            //     $VeltosR = $request->get('Veltos');
+
+            //     $MontoDivisaR = array_filter($MontoDivisaR);
+
+
+            //     foreach($MontoDivisaR as $key => $val) {
+
+
+            //         $divisa[]=$divisaR[$key];
+            //         $MontoDivisa[]=$MontoDivisaR[$key];
+            //         $TasaTiket[]=$TasaTikeR[$key];
+            //         $MontoDolar[]=$MontoDolarR[$key];
+            //         $Vueltos[]=$VeltosR[$key];
+
+            //     }
 
 
 
-            // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-            //creamos un contador
-            $cont = 0;
 
-            //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            while ($cont < count($MontoDolar)) {
+            //     // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+            //     //creamos un contador
+            //     $cont = 0;
+
+            //     //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+            //     while ($cont < count($MontoDolar)) {
 
 
-                $Pago_Venta = new Pago_Venta();
-                $Pago_Venta->Divisa = $divisa[$cont];
-                $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
-                $Pago_Venta->TasaTiket = $TasaTiket[$cont];
-                $Pago_Venta->MontoDolar = $MontoDolar[$cont];
-                $Pago_Venta->Vueltos = $Vueltos[$cont];
-                $Pago_Venta->venta_id = $venta->id;
-                $Pago_Venta->save();
+            //         $Pago_Venta = new Pago_Venta();
+            //         $Pago_Venta->Divisa = $divisa[$cont];
+            //         $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
+            //         $Pago_Venta->TasaTiket = $TasaTiket[$cont];
+            //         $Pago_Venta->MontoDolar = $MontoDolar[$cont];
+            //         $Pago_Venta->Vueltos = $Vueltos[$cont];
+            //         $Pago_Venta->venta_id = $venta->id;
+            //         $Pago_Venta->save();
 
-                $cont = $cont+1;
-            }
-        }
+            //         $cont = $cont+1;
+            //     }
+
+            //     // TODO Fin de ingreso en la tabla Pago_Venta //////////////////////////////////////////////////
+            //     //////////////////////////////////////////////////////////////////////////////////////////////////
+
+            //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //     // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
+
+            //     $isVuelos = $request->get('isVueltos');
+
+            //     if($isVuelos > 0 || $isVuelos != null){
+
+
+
+
+            //         $MontoDivisaVueltos = $request->get('MontoDivisaV');
+            //         $divisaVueltos = $request->get('divisaV');
+            //         $TasaTikeVueltos = $request->get('TasaTikeV');
+            //         $MontoDolarVueltos = $request->get('MontoDolarV');
+
+
+            //         $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
+
+
+            //         foreach($MontoDivisaVueltos as $key => $val) {
+
+
+            //             $Vdivisa[]=$divisaVueltos[$key];
+            //             $VMontoDivisa[]=$MontoDivisaVueltos[$key];
+            //             $VTasaTiket[]=$TasaTikeVueltos[$key];
+            //             $VMontoDolar[]=$MontoDolarVueltos[$key];
+
+
+
+
+
+            //         }
+
+
+
+
+            //         // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+            //         //creamos un contador
+            //         $cont = 0;
+
+
+            //         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+            //         while ($cont < count($VMontoDolar)) {
+
+
+            //             $Pago_Servicio = new Pago_Vuelto();
+            //             $Pago_Servicio->Tipo = 'Consumo';
+            //             $Pago_Servicio->Divisa = $Vdivisa[$cont];
+            //             $Pago_Servicio->MontoDivisa = $VMontoDivisa[$cont];
+            //             $Pago_Servicio->TasaTiket = $VTasaTiket[$cont];
+            //             $Pago_Servicio->MontoDolar = $VMontoDolar[$cont];
+            //             $Pago_Servicio->servicio_id = $servicio_id;
+            //             $Pago_Servicio->caja_id = $request->get('caja_id');
+            //             $Pago_Servicio->save();
+
+            //             $cont = $cont+1;
+            //         }
+
+
+
+            //         // // TODO Ahora vamos a actualizar la tabla Pago_Servicios en su campo vueltos para evitar el problema de registrar
+            //         // //vueltos incorrectamente cuando se pagaba por medio del modo mixto
+
+            //         // //consultamos la tabla pago_servicios donde el id se el mismo del servicio que registramos para actualizar el campo
+            //         // //vueltos ejeplo: si pagan 10 en dolares la tabla servicio solo registra los 10 dolares pero el campo vueltos
+            //         // // queda en 0 luego se consulta la tabla vueltos y si dieron vueltos en dolares actualiza el campo vueltos donde
+            //         // //divisa sea igual a dolar esto se hace para corregir el error que presentava cuando se pagaba en modo mixto con
+            //         // // varias modedas.
+
+            //         // $revisarServicios = Pago_Servicio::where('servicio_id', $servicio->id)->get();
+            //         // // return $revisarServicios;
+            //         // if(count($revisarServicios)){
+            //         //     // return $revisarServicios;
+
+            //         //     foreach ($revisarServicios as $servicioReg) {
+            //         //         // return $servicioReg;
+            //         //         //Actializamos la tabla Pago_Servicios donde el id servicio sea igual al id recibido y el campo divisa
+            //         //         //sea igual alcampo divisa de la tabla pagos vuelos para ello consultamos la tabla vueltos
+
+            //         //         $vueltoReg = Pago_Vuelto::where('servicio_id', $servicio->id)->where('Divisa', $servicioReg->Divisa)->get();
+            //         //         if(count($vueltoReg)){
+            //         //             // return $vueltoReg[0]->MontoDivisa;
+            //         //             $upDateVueltos = Pago_Servicio::findOrFail($servicioReg->id);
+            //         //             $upDateVueltos->Vueltos = -$vueltoReg[0]->MontoDivisa;;
+            //         //             $upDateVueltos->update();
+            //         //         }
+
+            //         //     }
+            //         // }
+            //     }
+
+            //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            // }
             DB::commit();
 
         }catch(\Exception $e)
@@ -668,21 +1812,21 @@ if($modo_pago == 'credito'){
                     $cajas->pago_servicios;
 
 
-                    foreach ($cajas->pago_ventas as $pago ) {
+                    // foreach ($cajas->pago_ventas as $pago ) {
 
-                        if ($pago->Divisa == 'Dolar') {
-                            $cajas->SumaTotalDolar = $cajas->SumaTotalDolar + ($pago->MontoDivisa - $pago->Vueltos * -1);
-                        }elseif ($pago->Divisa == 'Peso') {
-                            $cajas->SumaTotalPeso = $cajas->SumaTotalPeso + ($pago->MontoDivisa - $pago->Vueltos * -1);
-                        }elseif ($pago->Divisa == 'Bolivar') {
-                            $cajas->SumaTotalBolivar = $cajas->SumaTotalBolivar + ($pago->MontoDivisa - $pago->Vueltos * -1);
-                        }elseif ($pago->Divisa == 'Punto') {
-                            $cajas->SumaTotalPunto = $cajas->SumaTotalPunto + ($pago->MontoDivisa - $pago->Vueltos * -1);
-                        }elseif ($pago->Divisa == 'Transferencia') {
-                            $cajas->SumaTotalTransferencia = $cajas->SumaTotalTransferencia + ($pago->MontoDivisa - $pago->Vueltos * -1);
-                        }
+                    //     if ($pago->Divisa == 'Dolar') {
+                    //         $cajas->SumaTotalDolar = $cajas->SumaTotalDolar + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                    //     }elseif ($pago->Divisa == 'Peso') {
+                    //         $cajas->SumaTotalPeso = $cajas->SumaTotalPeso + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                    //     }elseif ($pago->Divisa == 'Bolivar') {
+                    //         $cajas->SumaTotalBolivar = $cajas->SumaTotalBolivar + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                    //     }elseif ($pago->Divisa == 'Punto') {
+                    //         $cajas->SumaTotalPunto = $cajas->SumaTotalPunto + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                    //     }elseif ($pago->Divisa == 'Transferencia') {
+                    //         $cajas->SumaTotalTransferencia = $cajas->SumaTotalTransferencia + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                    //     }
 
-                    }
+                    // }
 
                     foreach ($cajas->ventas as $vent ) {
                         if ($vent->estado == 'Aceptada' && $vent->status == 'Pagado') {
@@ -707,25 +1851,27 @@ if($modo_pago == 'credito'){
 
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                    foreach ($cajas->pago_servicios as $pagoS ) {
+                    // foreach ($cajas->pago_servicios as $pagoS ) {
 
-                        if ($pagoS->Divisa == 'Dolar') {
-                            if($pagoS->Vueltos > 0){
-                                $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos);
-                            }else{
-                            $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1);
-                            }
-                        }elseif ($pagoS->Divisa == 'Peso') {
-                            $cajas->SumaTotalPesoServ = $cajas->SumaTotalPesoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1);
-                        }elseif ($pagoS->Divisa == 'Bolivar') {
-                            $cajas->SumaTotalBolivarServ = $cajas->SumaTotalBolivarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1);
-                        }elseif ($pagoS->Divisa == 'Punto') {
-                            $cajas->SumaTotalPuntoServ = $cajas->SumaTotalPuntoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1);
-                        }elseif ($pagoS->Divisa == 'Transferencia') {
-                            $cajas->SumaTotalTransferenciaServ = $cajas->SumaTotalTransferenciaServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1);
-                        }
+                    //     if ($pagoS->Divisa == 'Dolar') {
+                    //         if($pagoS->Vueltos > 0){
+                    //             $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos);
+                    //         }else{
+                    //         $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1);
+                    //         }
+                    //     }elseif ($pagoS->Divisa == 'Peso') {
+                    //         $cajas->SumaTotalPesoServ = $cajas->SumaTotalPesoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1);
+                    //     }elseif ($pagoS->Divisa == 'Bolivar') {
+                    //         $cajas->SumaTotalBolivarServ = $cajas->SumaTotalBolivarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1);
+                    //     }elseif ($pagoS->Divisa == 'Punto') {
+                    //         $cajas->SumaTotalPuntoServ = $cajas->SumaTotalPuntoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1);
+                    //     }elseif ($pagoS->Divisa == 'Transferencia') {
+                    //         $cajas->SumaTotalTransferenciaServ = $cajas->SumaTotalTransferenciaServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1);
+                    //     }
 
-                    }
+                    // }
+
+
 
                     foreach ($cajas->servicios as $serv ) {
                         if ($serv->estado == 'Aceptada') {
@@ -747,6 +1893,461 @@ if($modo_pago == 'credito'){
                         }
                     }
 
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                    // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                        //con este codigo buscamos los saldos disponibles en dolar, peso y bolivar
+                        // el resultado son 3 variables de nombre $dolarDisponible, $pesoDisponible y $bolivarDisponible.
+                        //para luego con esto poder dar los vueltos si hay desponibilidad.
+
+
+                        $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
+                        $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
+                        $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
+                        $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
+                        $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
+
+
+                        $cajas->user;
+                        $cajas->ventas;
+                        $cajas->pago_ventas;
+                        $cajas->articulo_ventas;
+                        $cajas->servicios;
+                        $cajas->detalle_creditos;
+                        // $cajas->credito;
+                        $cajas->cortesias;
+                        $cajas->pago_servicios;
+                        $cajas->pago_creditos;
+                        $cajas->creditos_pagados;
+                        $cajas->excedente_actual;
+
+
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        foreach ($cajas->creditos_pagados as $credPagados ) {
+
+                            if ($credPagados->user_id == $cajas->user_id){
+
+                                $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                if (count($validarPagosCreditos)) {
+                                    foreach ($validarPagosCreditos as $credPagadosCaja ) {
+                                        if ($credPagadosCaja->Divisa == 'Dolar') {
+                                            $cajas->SumaTotalDolarCred = $cajas->SumaTotalDolarCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
+                                        }elseif ($credPagadosCaja->Divisa == 'Peso') {
+                                            $cajas->SumaTotalPesoCred = $cajas->SumaTotalPesoCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
+                                        }elseif ($credPagadosCaja->Divisa == 'Bolivar') {
+                                            $cajas->SumaTotalBolivarCred = $cajas->SumaTotalBolivarCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
+                                        }elseif ($credPagadosCaja->Divisa == 'Punto') {
+                                            $cajas->SumaTotalPuntoCred = $cajas->SumaTotalPuntoCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
+                                        }elseif ($credPagadosCaja->Divisa == 'Transferencia') {
+                                            $cajas->SumaTotalTransferenciaCred = $cajas->SumaTotalTransferenciaCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
+                                        }
+                                    }
+                                }
+
+                                if ($credPagados->tipo_operacion == 'Consumo'){
+
+                                    $validarPagosCreditosConsumo = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                    if (count($validarPagosCreditosConsumo)) {
+                                        foreach ($validarPagosCreditosConsumo as $credPagadosCajaConsumo ) {
+                                            if ($credPagadosCajaConsumo->Divisa == 'Dolar') {
+                                                $cajas->SumaTotalDolarCredConsumo = $cajas->SumaTotalDolarCredConsumo + ($credPagadosCajaConsumo->MontoDivisa - $credPagadosCajaConsumo->Vueltos * -1);
+                                            }elseif ($credPagadosCajaConsumo->Divisa == 'Peso') {
+                                                $cajas->SumaTotalPesoCredConsumo = $cajas->SumaTotalPesoCredConsumo + ($credPagadosCajaConsumo->MontoDivisa - $credPagadosCajaConsumo->Vueltos * -1);
+                                            }elseif ($credPagadosCajaConsumo->Divisa == 'Bolivar') {
+                                                $cajas->SumaTotalBolivarCredConsumo = $cajas->SumaTotalBolivarCredConsumo + ($credPagadosCajaConsumo->MontoDivisa - $credPagadosCajaConsumo->Vueltos * -1);
+                                            }elseif ($credPagadosCajaConsumo->Divisa == 'Punto') {
+                                                $cajas->SumaTotalPuntoCredConsumo = $cajas->SumaTotalPuntoCredConsumo + ($credPagadosCajaConsumo->MontoDivisa - $credPagadosCajaConsumo->Vueltos * -1);
+                                            }elseif ($credPagadosCajaConsumo->Divisa == 'Transferencia') {
+                                                $cajas->SumaTotalTransferenciaCredConsumo = $cajas->SumaTotalTransferenciaCredConsumo + ($credPagadosCajaConsumo->MontoDivisa - $credPagadosCajaConsumo->Vueltos * -1);
+                                            }
+                                        }
+                                    }
+
+                                    $cajas->SumaTotalCreditosPagadosConsumoPorCaja = $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $credPagados->monto;
+
+                                }
+
+                                if ($credPagados->tipo_operacion == 'Servicio'){
+
+                                    $validarPagosCreditosServicio = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                    if (count($validarPagosCreditosServicio)) {
+                                        foreach ($validarPagosCreditosServicio as $credPagadosCajaServicio ) {
+                                            if ($credPagadosCajaServicio->Divisa == 'Dolar') {
+                                                $cajas->SumaTotalDolarCredServicio = $cajas->SumaTotalDolarCredServicio + ($credPagadosCajaServicio->MontoDivisa - $credPagadosCajaServicio->Vueltos * -1);
+                                            }elseif ($credPagadosCajaServicio->Divisa == 'Peso') {
+                                                $cajas->SumaTotalPesoCredServicio = $cajas->SumaTotalPesoCredServicio + ($credPagadosCajaServicio->MontoDivisa - $credPagadosCajaServicio->Vueltos * -1);
+                                            }elseif ($credPagadosCajaServicio->Divisa == 'Bolivar') {
+                                                $cajas->SumaTotalBolivarCredServicio = $cajas->SumaTotalBolivarCredServicio + ($credPagadosCajaServicio->MontoDivisa - $credPagadosCajaServicio->Vueltos * -1);
+                                            }elseif ($credPagadosCajaServicio->Divisa == 'Punto') {
+                                                $cajas->SumaTotalPuntoCredServicio = $cajas->SumaTotalPuntoCredServicio + ($credPagadosCajaServicio->MontoDivisa - $credPagadosCajaServicio->Vueltos * -1);
+                                            }elseif ($credPagadosCajaServicio->Divisa == 'Transferencia') {
+                                                $cajas->SumaTotalTransferenciaCredServicio = $cajas->SumaTotalTransferenciaCredServicio + ($credPagadosCajaServicio->MontoDivisa - $credPagadosCajaServicio->Vueltos * -1);
+                                            }
+                                        }
+                                    }
+
+                                    $cajas->SumaTotalCreditosPagadosServicioPorCaja = $cajas->SumaTotalCreditosPagadosServicioPorCaja + $credPagados->monto;
+
+                                }
+                                    $cajas->SumaTotalCreditosPagadosTotalesPorCaja = $cajas->SumaTotalCreditosPagadosTotalesPorCaja + $credPagados->monto;
+
+                            }else{
+
+                                $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                if (count($validarPagosCreditos)) {
+                                    foreach ($validarPagosCreditos as $credPagadosOficina ) {
+                                        if ($credPagadosOficina->Divisa == 'Dolar') {
+                                            $cajas->SumaTotalDolarCredPorOficina = $cajas->SumaTotalDolarCredPorOficina + ($credPagadosOficina->MontoDivisa - $credPagadosOficina->Vueltos * -1);
+                                        }elseif ($credPagadosOficina->Divisa == 'Peso') {
+                                            $cajas->SumaTotalPesoCredPorOficina = $cajas->SumaTotalPesoCredPorOficina + ($credPagadosOficina->MontoDivisa - $credPagadosOficina->Vueltos * -1);
+                                        }elseif ($credPagadosOficina->Divisa == 'Bolivar') {
+                                            $cajas->SumaTotalBolivarCredPorOficina = $cajas->SumaTotalBolivarCredPorOficina + ($credPagadosOficina->MontoDivisa - $credPagadosOficina->Vueltos * -1);
+                                        }elseif ($credPagadosOficina->Divisa == 'Punto') {
+                                            $cajas->SumaTotalPuntoCredPorOficina = $cajas->SumaTotalPuntoCredPorOficina + ($credPagadosOficina->MontoDivisa - $credPagadosOficina->Vueltos * -1);
+                                        }elseif ($credPagadosOficina->Divisa == 'Transferencia') {
+                                            $cajas->SumaTotalTransferenciaCredPorOficina = $cajas->SumaTotalTransferenciaCredPorOficina + ($credPagadosOficina->MontoDivisa - $credPagadosOficina->Vueltos * -1);
+                                        }
+                                    }
+                                }
+
+                                if ($credPagados->tipo_operacion == 'Consumo'){
+
+                                    $cajas->SumaTotalCreditosPagadosConsumoPorOficina = $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $credPagados->monto;
+
+
+                                }
+
+                                if ($credPagados->tipo_operacion == 'Servicio'){
+
+                                    $cajas->SumaTotalCreditosPagadosServicioPorOficina = $cajas->SumaTotalCreditosPagadosServicioPorOficina + $credPagados->monto;
+
+
+                                }
+
+                                $cajas->SumaTotalCreditosPagadosTotalesPorOficina = $cajas->SumaTotalCreditosPagadosTotalesPorOficina + $credPagados->monto;
+
+                            }
+
+
+                            if ($credPagados->tipo_operacion == 'Servicio') {
+
+                                // $cajas->SumaTotalCreditosPagadosServicio = $cajas->SumaTotalCreditosPagadosServicio + $credPagados->monto;
+                                $cajas->SumaTotalCantidadCreditosPagadosServicio = $cajas->SumaTotalCantidadCreditosPagadosServicio + 1;
+
+                            }
+
+                            if ($credPagados->tipo_operacion == 'Consumo') {
+
+                                // $cajas->SumaTotalCreditosPagadosConsumo = $cajas->SumaTotalCreditosPagadosConsumo + $credPagados->monto;
+                                $cajas->SumaTotalCantidadCreditosPagadosConsumo =  $cajas->SumaTotalCantidadCreditosPagadosConsumo + 1;
+
+                            }
+                            // $cajas->SumaTotalCreditosPagadosTotales = $cajas->SumaTotalCreditosPagadosTotales + $credPagados->monto;
+                            $cajas->SumaTotalCantidadCreditosPagadosTotales = $cajas->SumaTotalCantidadCreditosPagadosTotales + 1;
+
+                        }
+                        // return $cajas->SumaTotalCreditosPagados;
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // TODO optenemos los datos de la tabla excedente actual
+
+                        foreach ($cajas->excedente_actual as $excedenteActual) {
+
+                            // TODO sacamos los totales devueltos recibidos por excedentes totales
+                            if ($excedenteActual->Divisa == 'Dolar') {
+                                $cajas->TotalSumaVueltosPendientesDolarDivisa = $cajas->TotalSumaVueltosPendientesDolarDivisa  + $excedenteActual->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesDolarDolar = $cajas->TotalSumaVueltosPendientesDolarDolar  + $excedenteActual->MontoDolar;
+                            }elseif ($excedenteActual->Divisa == 'Peso') {
+                                $cajas->TotalSumaVueltosPendientesPesoDivisa = $cajas->TotalSumaVueltosPendientesPesoDivisa  + $excedenteActual->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesPesoDolar = $cajas->TotalSumaVueltosPendientesPesoDolar  + $excedenteActual->MontoDolar;
+                            }elseif ($excedenteActual->Divisa == 'Bolivar') {
+                                $cajas->TotalSumaVueltosPendientesBolivarDivisa = $cajas->TotalSumaVueltosPendientesBolivarDivisa  + $excedenteActual->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesBolivarDolar = $cajas->TotalSumaVueltosPendientesBolivarDolar  + $excedenteActual->MontoDolar;
+                            }elseif ($excedenteActual->Divisa == 'Punto') {
+                                $cajas->TotalSumaVueltosPendientesPuntoDivisa = $cajas->TotalSumaVueltosPendientesPuntoDivisa  + $excedenteActual->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesPuntoDolar = $cajas->TotalSumaVueltosPendientesPuntoDolar  + $excedenteActual->MontoDolar;
+                            }elseif ($excedenteActual->Divisa == 'Transferencia') {
+                                $cajas->TotalSumaVueltosPendientesTransferenciaDivisa = $cajas->TotalSumaVueltosPendientesTransferenciaDivisa  + $excedenteActual->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesTransferenciaDolar = $cajas->TotalSumaVueltosPendientesTransferenciaDolar  + $excedenteActual->MontoDolar;
+                            }
+
+
+                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                            // TODO hacemos subconsultas
+
+                            if ($excedenteActual->Estado == 'Pendiente') {
+                                if ($excedenteActual->Divisa == 'Dolar') {
+                                    $cajas->SumaVueltosPendientesDolarDivisa = $cajas->SumaVueltosPendientesDolarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesDolarDolar = $cajas->SumaVueltosPendientesDolarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Peso') {
+                                    $cajas->SumaVueltosPendientesPesoDivisa = $cajas->SumaVueltosPendientesPesoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesPesoDolar = $cajas->SumaVueltosPendientesPesoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Bolivar') {
+                                    $cajas->SumaVueltosPendientesBolivarDivisa = $cajas->SumaVueltosPendientesBolivarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesBolivarDolar = $cajas->SumaVueltosPendientesBolivarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Punto') {
+                                    $cajas->SumaVueltosPendientesPuntoDivisa = $cajas->SumaVueltosPendientesPuntoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesPuntoDolar = $cajas->SumaVueltosPendientesPuntoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Transferencia') {
+                                    $cajas->SumaVueltosPendientesTransferenciaDivisa = $cajas->SumaVueltosPendientesTransferenciaDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesTransferenciaDolar = $cajas->SumaVueltosPendientesTransferenciaDolar  + $excedenteActual->MontoDolar;
+                                }
+                            }elseif($excedenteActual->Estado == 'Devueltos'){
+                                if ($excedenteActual->Divisa == 'Dolar') {
+                                    $cajas->SumaVueltosDevueltosDolarDivisa = $cajas->SumaVueltosDevueltosDolarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosDevueltosDolarDolar = $cajas->SumaVueltosDevueltosDolarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Peso') {
+                                    $cajas->SumaVueltosDevueltosPesoDivisa = $cajas->SumaVueltosDevueltosPesoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosDevueltosPesoDolar = $cajas->SumaVueltosDevueltosPesoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Bolivar') {
+                                    $cajas->SumaVueltosDevueltosBolivarDivisa = $cajas->SumaVueltosDevueltosBolivarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosDevueltosBolivarDolar = $cajas->SumaVueltosDevueltosBolivarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Punto') {
+                                    $cajas->SumaVueltosDevueltosPuntoDivisa = $cajas->SumaVueltosDevueltosPuntoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosDevueltosPuntoDolar = $cajas->SumaVueltosDevueltosPuntoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Transferencia') {
+                                    $cajas->SumaVueltosDevueltosTransferenciaDivisa = $cajas->SumaVueltosDevueltosTransferenciaDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosDevueltosTransferenciaDolar = $cajas->SumaVueltosDevueltosTransferenciaDolar  + $excedenteActual->MontoDolar;
+                                }
+                            }elseif($excedenteActual->Estado == 'PagarOficina'){
+                                if ($excedenteActual->Divisa == 'Dolar') {
+                                    $cajas->SumaVueltosPagarOficinaDolarDivisa = $cajas->SumaVueltosPagarOficinaDolarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPagarOficinaDolarDolar = $cajas->SumaVueltosPagarOficinaDolarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Peso') {
+                                    $cajas->SumaVueltosPagarOficinaPesoDivisa = $cajas->SumaVueltosPagarOficinaPesoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPagarOficinaPesoDolar = $cajas->SumaVueltosPagarOficinaPesoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Bolivar') {
+                                    $cajas->SumaVueltosPagarOficinaBolivarDivisa = $cajas->SumaVueltosPagarOficinaBolivarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPagarOficinaBolivarDolar = $cajas->SumaVueltosPagarOficinaBolivarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Punto') {
+                                    $cajas->SumaVueltosPagarOficinaPuntoDivisa = $cajas->SumaVueltosPagarOficinaPuntoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPagarOficinaPuntoDolar = $cajas->SumaVueltosPagarOficinaPuntoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Transferencia') {
+                                    $cajas->SumaVueltosPagarOficinaTransferenciaDivisa = $cajas->SumaVueltosPagarOficinaTransferenciaDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosPagarOficinaTransferenciaDolar = $cajas->SumaVueltosPagarOficinaTransferenciaDolar  + $excedenteActual->MontoDolar;
+                                }
+                            }elseif($excedenteActual->Estado == 'ExcedenteNuevo'){
+                                if ($excedenteActual->Divisa == 'Dolar') {
+                                    $cajas->SumaVueltosExcedenteNuevoDolarDivisa = $cajas->SumaVueltosExcedenteNuevoDolarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosExcedenteNuevoDolarDolar = $cajas->SumaVueltosExcedenteNuevoDolarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Peso') {
+                                    $cajas->SumaVueltosExcedenteNuevoPesoDivisa = $cajas->SumaVueltosExcedenteNuevoPesoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosExcedenteNuevoPesoDolar = $cajas->SumaVueltosExcedenteNuevoPesoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Bolivar') {
+                                    $cajas->SumaVueltosExcedenteNuevoBolivarDivisa = $cajas->SumaVueltosExcedenteNuevoBolivarDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosExcedenteNuevoBolivarDolar = $cajas->SumaVueltosExcedenteNuevoBolivarDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Punto') {
+                                    $cajas->SumaVueltosExcedenteNuevoPuntoDivisa = $cajas->SumaVueltosExcedenteNuevoPuntoDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosExcedenteNuevoPuntoDolar = $cajas->SumaVueltosExcedenteNuevoPuntoDolar  + $excedenteActual->MontoDolar;
+                                }elseif ($excedenteActual->Divisa == 'Transferencia') {
+                                    $cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa = $cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa  + $excedenteActual->MontoDivisa;
+                                    $cajas->SumaVueltosExcedenteNuevoTransferenciaDolar = $cajas->SumaVueltosExcedenteNuevoTransferenciaDolar  + $excedenteActual->MontoDolar;
+                                }
+
+                                if($excedenteActual->Tipo == 'Servicio'){
+                                    $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar = $excedenteActual->MontoDolar;
+                                }
+                                if($excedenteActual->Tipo == 'Consumo'){
+                                    $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar = $excedenteActual->MontoDolar;
+                                }
+
+                                if($excedenteActual->Tipo == 'Otros'){
+                                    $cajas->TotalSumaVueltosExcedenteNuevoOtrosDolarToDolar = $excedenteActual->MontoDolar;
+                                }
+                                $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar = $excedenteActual->MontoDolar;
+                            }
+                        }
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        foreach ($cajas->pago_servicios as $pagoS ) {
+
+                            $validarPagosServicios = Servicio::where('id',$pagoS->servicio_id)->first();
+                            if ($validarPagosServicios) {
+                                if ($pagoS->Divisa == 'Dolar') {
+                                    if($pagoS->Vueltos > 0){
+                                        $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - $validarPagosServicios->excedente_nuevo;
+                                    }else{
+                                        $cajas->SumaTotalDolarServDflotante = $cajas->SumaTotalDolarServDflotante + ($pagoS->Vueltos * -1);
+                                        $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - $validarPagosServicios->excedente_nuevo;
+                                    }
+                                }elseif ($pagoS->Divisa == 'Peso') {
+                                    if($pagoS->Vueltos > 0){
+                                        $cajas->SumaTotalPesoServ = $cajas->SumaTotalPesoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaPeso->tasa);
+                                    }else{
+                                        $cajas->SumaTotalPesoServDflotante = $cajas->SumaTotalPesoServDflotante + ( $pagoS->Vueltos * -1);
+                                        $cajas->SumaTotalPesoServ = $cajas->SumaTotalPesoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaPeso->tasa);
+                                    }
+                                }elseif ($pagoS->Divisa == 'Bolivar') {
+                                    if($pagoS->Vueltos > 0){
+                                        $cajas->SumaTotalBolivarServ = $cajas->SumaTotalBolivarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaEfectivo->tasa);
+                                    }else{
+                                        $cajas->SumaTotalBolivarServDflotante = $cajas->SumaTotalBolivarServDflotante + ($pagoS->Vueltos * -1) * $tasaEfectivo->tasa;
+                                        $cajas->SumaTotalBolivarServ = $cajas->SumaTotalBolivarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaEfectivo->tasa);
+                                    }
+                                }elseif ($pagoS->Divisa == 'Punto') {
+                                    if($pagoS->Vueltos > 0){
+                                        $cajas->SumaTotalPuntoServ = $cajas->SumaTotalPuntoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                                    }else{
+                                        $cajas->SumaTotalPuntoServDflotante = $cajas->SumaTotalPuntoServDflotante + ($pagoS->Vueltos * -1) * $tasaTransferenciaPunto->tasa;
+                                        $cajas->SumaTotalPuntoServ = $cajas->SumaTotalPuntoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                                    }
+                                }elseif ($pagoS->Divisa == 'Transferencia') {
+                                    if($pagoS->Vueltos > 0){
+                                        $cajas->SumaTotalTransferenciaServ = $cajas->SumaTotalTransferenciaServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                                    }else{
+                                        $cajas->SumaTotalTransferenciaServDflotante = $cajas->SumaTotalTransferenciaServDflotante + ($pagoS->Vueltos * -1) * $tasaTransferenciaPunto->tasa;
+                                        $cajas->SumaTotalTransferenciaServ = $cajas->SumaTotalTransferenciaServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                                    }
+                                }
+                            }
+
+                        }
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        foreach ($cajas->pago_ventas as $pago ) {
+
+                            if ($pago->Divisa == 'Dolar') {
+                                $cajas->SumaTotalDolar = $cajas->SumaTotalDolar + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                            }elseif ($pago->Divisa == 'Peso') {
+                                $cajas->SumaTotalPeso = $cajas->SumaTotalPeso + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                            }elseif ($pago->Divisa == 'Bolivar') {
+                                $cajas->SumaTotalBolivar = $cajas->SumaTotalBolivar + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                            }elseif ($pago->Divisa == 'Punto') {
+                                $cajas->SumaTotalPunto = $cajas->SumaTotalPunto + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                            }elseif ($pago->Divisa == 'Transferencia') {
+                                $cajas->SumaTotalTransferencia = $cajas->SumaTotalTransferencia + ($pago->MontoDivisa - $pago->Vueltos * -1);
+                            }
+
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        foreach ($cajas->pago_extras as $pagoext ) {
+
+                            if ($pagoext->Divisa == 'Dolar') {
+                                $cajas->SumaTotalDolarPagoExtra = $cajas->SumaTotalDolarPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Peso') {
+                                $cajas->SumaTotalPesoPagoExtra = $cajas->SumaTotalPesoPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Bolivar') {
+                                $cajas->SumaTotalBolivarPagoExtra = $cajas->SumaTotalBolivarPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Punto') {
+                                $cajas->SumaTotalPuntoPagoExtra = $cajas->SumaTotalPuntoPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Transferencia') {
+                                $cajas->SumaTotalTransferenciaPagoExtra = $cajas->SumaTotalTransferenciaPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }
+
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        $excedentesPendientes = Excedentes_Recibidos_Caja_Actual::where('Estado','Pendiente')->get();
+                        if ($excedentesPendientes) {
+
+
+                            foreach ($excedentesPendientes as $excdPendientes ) {
+                                // return $excdPendientes->Divisa;
+                                if ($excdPendientes->Divisa == 'Dolar') {
+                                    $cajas->SumaTotalDolarExcedentesPendientes = $cajas->SumaTotalDolarExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                    // return $cajas->SumaTotalDolarExcedentesPendientes;
+                                }elseif ($excdPendientes->Divisa == 'Peso') {
+                                    $cajas->SumaTotalPesoExcedentesPendientes = $cajas->SumaTotalPesoExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Bolivar') {
+                                    $cajas->SumaTotalBolivarExcedentesPendientes = $cajas->SumaTotalBolivarExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Punto') {
+                                    $cajas->SumaTotalPuntoExcedentesPendientes = $cajas->SumaTotalPuntoExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Transferencia') {
+                                    $cajas->SumaTotalTransferenciaExcedentesPendientes = $cajas->SumaTotalTransferenciaExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }
+
+                            }
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        foreach ($cajas->pago_vueltos as $pagoV ) {
+
+                            if ($pagoV->Divisa == 'Dolar') {
+
+                                $cajas->SumaTotalDolarVueltos = $cajas->SumaTotalDolarVueltos + $pagoV->MontoDivisa;
+
+                            }elseif ($pagoV->Divisa == 'Peso') {
+                                $cajas->SumaTotalPesoVueltos = $cajas->SumaTotalPesoVueltos + $pagoV->MontoDivisa;
+                            }elseif ($pagoV->Divisa == 'Bolivar') {
+                                $cajas->SumaTotalBolivarVueltos = $cajas->SumaTotalBolivarVueltos + $pagoV->MontoDivisa;
+                            }elseif ($pagoV->Divisa == 'Punto') {
+                                $cajas->SumaTotalPuntoVueltos = $cajas->SumaTotalPuntoVueltos + $pagoV->MontoDivisa;
+                            }elseif ($pagoV->Divisa == 'Transferencia') {
+                                $cajas->SumaTotalTransferenciaVueltos = $cajas->SumaTotalTransferenciaVueltos + $pagoV->MontoDivisa;
+                            }
+
+                        }
+
+                        // return ($cajas->SumaTotalDolarExcedentesPendientes + $cajas->SumaTotalDolarPagoExtra + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaTotalDolarServDflotante));
+
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // TODO Ahora le agregamos caja chica
+// return $cajas->SumaTotalDolarVueltos;
+                        // return 'algo';
+                        $dolarDisponible = ($cajas->SumaTotalDolarExcedentesPendientes + $cajas->SumaTotalDolarPagoExtra + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaTotalDolarServDflotante) - $cajas->SumaTotalDolarVueltos);
+                        // return $dolarDisponible;
+                        $pesoDisponible = ($cajas->SumaTotalPesoExcedentesPendientes + $cajas->SumaTotalPesoPagoExtra + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + ($cajas->SumaTotalPesoServDflotante) - $cajas->SumaTotalPesoVueltos);
+                        // return $pesoDisponible;
+                        $bolivarDisponible = ($cajas->SumaTotalBolivarExcedentesPendientes + $cajas->SumaTotalBolivarPagoExtra + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + ($cajas->SumaTotalBolivarServDflotante) - $cajas->SumaTotalBolivarVueltos);
+                        // return $bolivarDisponible;
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        // TODO Revisamos si el usuario tiene vueltos pendientes
+                    // TODO pero tomando en cuenta que lo vamos a revisar por servicios no por la caja ?
+                    $excedentesPendientesCajas = Excedentes_Recibidos_Caja_Actual::where('Estado', 'Pendiente')->get();
+                    if($excedentesPendientesCajas){
+                        foreach ($excedentesPendientesCajas as $exctePentesCajas) {
+                            if ($exctePentesCajas->Estado == 'Pendiente' && $exctePentesCajas->servicio_id == $id) {
+                                if ($exctePentesCajas->Divisa == 'Dolar') {
+                                    $cajas->SumaVueltosPendientesDolarDivisa = $cajas->SumaVueltosPendientesDolarDivisa  + $exctePentesCajas->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesDolarDolar = $cajas->SumaVueltosPendientesDolarDolar  + $exctePentesCajas->MontoDolar;
+                                }elseif ($exctePentesCajas->Divisa == 'Peso') {
+                                    $cajas->SumaVueltosPendientesPesoDivisa = $cajas->SumaVueltosPendientesPesoDivisa  + $exctePentesCajas->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesPesoDolar = $cajas->SumaVueltosPendientesPesoDolar  + $exctePentesCajas->MontoDolar;
+                                }elseif ($exctePentesCajas->Divisa == 'Bolivar') {
+                                    $cajas->SumaVueltosPendientesBolivarDivisa = $cajas->SumaVueltosPendientesBolivarDivisa  + $exctePentesCajas->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesBolivarDolar = $cajas->SumaVueltosPendientesBolivarDolar  + $exctePentesCajas->MontoDolar;
+                                }elseif ($exctePentesCajas->Divisa == 'Punto') {
+                                    $cajas->SumaVueltosPendientesPuntoDivisa = $cajas->SumaVueltosPendientesPuntoDivisa  + $exctePentesCajas->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesPuntoDolar = $cajas->SumaVueltosPendientesPuntoDolar  + $exctePentesCajas->MontoDolar;
+                                }elseif ($exctePentesCajas->Divisa == 'Transferencia') {
+                                    $cajas->SumaVueltosPendientesTransferenciaDivisa = $cajas->SumaVueltosPendientesTransferenciaDivisa  + $exctePentesCajas->MontoDivisa;
+                                    $cajas->SumaVueltosPendientesTransferenciaDolar = $cajas->SumaVueltosPendientesTransferenciaDolar  + $exctePentesCajas->MontoDolar;
+                                }
+                                $cajas->TotalSumaVueltosPendientesClienteDivisa = $cajas->TotalSumaVueltosPendientesClienteDivisa  + $exctePentesCajas->MontoDivisa;
+                                $cajas->TotalSumaVueltosPendientesClienteDolar = $cajas->TotalSumaVueltosPendientesClienteDolar  + $exctePentesCajas->MontoDolar;
+                            }
+                        }
+                    }
+
 
                     $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
                     $tasaPesoHabitacion = Tasa::where('nombre','=','PesoHabitacion')->first();
@@ -755,10 +2356,10 @@ if($modo_pago == 'credito'){
 
 
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    //  return $sevicioVenta;
+                    //  return $cajas;
                     //dd($ventas);
 
-                    return view('preventa.create', compact('credito','cliente','UserName','UserId','tasaDolarHabitacion','tasaPesoHabitacion','cajas','habitacion','num_comprobante','serie_comprobante','caja', 'ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
+                    return view('preventa.create', compact('cajas','dolarDisponible','pesoDisponible','bolivarDisponible','credito','cliente','UserName','UserId','tasaDolarHabitacion','tasaPesoHabitacion','cajas','habitacion','num_comprobante','serie_comprobante','caja', 'ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
                 }else{
                     return redirect()
                     ->route('caja.index')

@@ -3588,11 +3588,7 @@ if (btnCambio == 1) {
             const r             = document.getElementById('r');
             const tap           = document.getElementById('tap');
             const RestaTotalV    = document.getElementById('RestaTtotalV');
-            // const PagoTtotalV    = document.getElementById('PagoTtotalV');
-            // const spTotalV       = document.getElementById('spTotalV');
-            // const tpV            = document.getElementById('tp');
-            // const rV             = document.getElementById('r');
-            // const tapV           = document.getElementById('tap');
+
 
 
 
@@ -3658,8 +3654,10 @@ if (btnCambio == 1) {
 
                     $("#VueltosdispExcedenteShow").html('$'+VueltosdispExced.toFixed(2));
                 }
+
+
                 if (VueltosvalidarDispExced){
-                    alert('El monto disponible no supera el monto a pagar... Credito disponible es de: $'+VueltosdispExcedente+ ' y el monto que decea pagar es de: $'+VueltosdispExced.toFixed(2));
+                    alert('El monto disponible no supera el monto a pagar... Deuda disponible es de: $'+VueltosdispExcedente+ ' y el monto que decea pagar es de: $'+VueltosdispExced.toFixed(2));
                     VueltospagoExc = 0;
                     VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
                     $('#VueltospagoConExcedente').val('');
@@ -3667,9 +3665,11 @@ if (btnCambio == 1) {
                 }
 
             }else{
+
+                // alert('aquí');
                 VueltospagoExc = 0;
                 VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
-                $('#VueltospagoConExcedente').val('');
+                // $('#VueltospagoConExcedente').val('');
                 $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
             }
 
@@ -3730,7 +3730,7 @@ if (btnCambio == 1) {
             // }
 
             var valor           = PagoTtotal.innerHTML;
-            var PagoTotal = PagoTtotal.innerHTML;
+            var PagoTotal       = PagoTtotal.innerHTML;
 
             valor = valor - pagoExc - VueltospagoExc;
             var valor_restar    = spTotal.innerHTML;
@@ -3802,6 +3802,7 @@ if (btnCambio == 1) {
             valor = parseFloat(valor);
             valor_restar = parseFloat(valor_restar);
             resta = parseFloat(resta);
+            resta = new Decimal(resta);
 
             VueltosExcdt.innerHTML = numDecimal(VueltosExc); //se llena el campo resta
             Excdt.innerHTML = numDecimal(Exc); //se llena el campo resta
@@ -3820,15 +3821,22 @@ if (btnCambio == 1) {
 
             } else {
                 $("#vueltos").hide();
+                $("#monto_dejadoResta").val(0.00);
 
             }
 
 
 
-            if (RestaTotal.innerHTML <= -1) {
+            if (resta.lessThan(Decimal(0))) {
             // alert('soy menor');
+
+            $("#monto_dejadoResta").val(0.00);
+            $("#DMontoDolarV").val('');
+            $("#DMontoPesoV").val('');
+            $("#DMontoBolivarV").val('');
             $("#vueltos").show("linear");
             $("#guardar").hide("linear");
+
             }
 
 
@@ -3888,6 +3896,7 @@ if (btnCambio == 1) {
                 $("#r").html("RESTA");
                 $("#tap").html("TOTAL A PAGAR");
                 $("#guardar").hide("linear");
+
 
             }
 
@@ -4407,6 +4416,7 @@ if (btnCambio == 1) {
 
 
                 $("#isVueltos").val('');
+                // $("#monto_dejadoResta").val(0.00);
                 $("#DMontoPesoV").val('');
                 DMontoPesoV();
                 $("#DMontoBolivarV").val('');
@@ -4421,6 +4431,7 @@ if (btnCambio == 1) {
             }else{
                 // alert('1');
                 vcargarV = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoDolarV").val('');
                 $("#isVueltos").val('');
                 DMontoDolarV();
@@ -4435,6 +4446,7 @@ if (btnCambio == 1) {
                 vcargarbV = 0;
 
                 $("#isVueltos").val('');
+                // $("#monto_dejadoResta").val(0.00);
 
 
                 $("#DMontoDolarV").val('');
@@ -4448,6 +4460,7 @@ if (btnCambio == 1) {
                 DMontoPesoV();
             }else{
                 vcargarpV = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoPesoV").val('');
                 $("#isVueltos").val('');
                 DMontoPesoV();
@@ -4463,6 +4476,7 @@ if (btnCambio == 1) {
                 $("#isVueltos").val('');
 
 
+
                 $("#DMontoPesoV").val('');
                 DMontoPesoV();
                 $("#DMontoDolarV").val('');
@@ -4474,6 +4488,7 @@ if (btnCambio == 1) {
                 DMontoBolivarV();
             }else{
                 vcargarbV = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoBolivarV").val('');
                 $("#isVueltos").val('');
                 DMontoBolivarV();

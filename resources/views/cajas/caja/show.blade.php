@@ -181,15 +181,32 @@
                 <table class="table">
                     @can('haveaccess', 'cajatotalventa.show')
                     <tr>
-                        <th ><h4><strong class="text-blue">N° Caja:</strong> <strong>{{ $caja->codigo}}</strong></h4></th>
+                        <th >
+                            <h4><strong class="text-blue">N° Caja:</strong> <strong>{{ $caja->codigo ?? ''}}</strong>
+                                <br>
+                                <strong class="text-blue">Estado:</strong> <strong>{{ $caja->estado ?? ''}}</strong>
+                            </h4>
+                        </th>
+                        {{-- <th></th> --}}
+                        <th colspan="2">
+                            <h4>
+                                <strong class="text-blue">Operador:</strong> <strong>{{ $caja->user->name ?? ''}}</strong>
+                                <br>
+                                <strong class="text-blue">Hora Inicio:</strong> <strong>{{ $caja->hora ?? ''}}</strong>
+                            </h4>
+                        </th>
                         <th></th>
-                        <th ><h4><strong class="text-blue">Operador:</strong> <strong>{{ $caja->user->name}}</strong></h4></th>
+                        <th >
+                            <h4>
+                                <strong class="text-blue">Fecha:</strong> <strong>{{ $caja->fecha->format('d-m-Y') ?? ''}}</strong>
+                                <br>
+                                <strong class="text-blue">Hora Cierre:</strong> <strong>{{ $caja->hora_cierre ?? ''}}</strong>
+                            </h4>
+                        </th>
                         <th></th>
-                        <th ><h4><strong class="text-blue">Fecha:</strong> <strong>{{ $caja->fecha->format('d-m-Y')}}</strong></h4></th>
+                        <th ><h4><strong class="text-blue"> {{$cajas->SumaTotalCreditosPagadosTotalesPorCaja ?? ''}}</strong></h4></th>
                         <th></th>
-                        <th ><h4><strong class="text-blue"> {{$cajas->SumaTotalCreditosPagadosTotalesPorCaja}}</strong></h4></th>
-                        <th></th>
-                        <th ><h4><strong class="text-blue">{{$cajas->SumaTotalCreditosPagadosTotalesPorOficina}}</strong></h4></th>
+                        <th ><h4><strong class="text-blue">{{$cajas->SumaTotalCreditosPagadosTotalesPorOficina ?? ''}}</strong></h4></th>
                         <th></th>
 
                     </tr>
@@ -214,11 +231,11 @@
                     <th>Cons/Contado:</th>
                     <td><strong>{{ $cajas->SumaTotalCantidadVentasContado ?? '0' }}</strong></td>
                     <th>Total/Dolar:</th>
-                    <td><strong>${{ $cajas->SumaTotalDolar + $cajas->SumaTotalDolarCredConsumo + $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar ?? '0.000' }}</strong></td>
+                    <td><strong>${{ $cajas->SumaTotalDolar + $cajas->SumaTotalDolarCredConsumo ?? '0.000' }}</strong></td>
                     <th>Serv/Contado:</th>
                     <td><strong>{{ $cajas->SumaTotalCantidadServicios ?? '0' }}</strong></td>
                     <th>Total/Dolar:</th>
-                    <td><strong>${{ $cajas->SumaTotalDolarServ + $cajas->SumaTotalDolarCredServicio + $cajas->SumaVueltosExcedenteNuevoDolarDivisa ?? '0.000' }}</strong></td>
+                    <td><strong>${{ $cajas->SumaTotalDolarServ + $cajas->SumaTotalDolarCredServicio ?? '0.000' }}</strong></td>
                     <th>Creditos/vigentes:</th>
                     <td><strong>{{ $cajas->SumaTotalCantidadCreditosVigentes ?? '0' }}</strong></td>
                   </tr>
@@ -233,7 +250,7 @@
                     <th>Serv/Credíto:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadServiciosPorPagar ?? '0' }}</b></td>
                     <th>Total/Peso:</th>
-                    <td><b>${{ number_format($cajas->SumaTotalPesoServ + $cajas->SumaTotalPesoCredServicio + $cajas->SumaTotalServiciosExcedenteNuevoPeso,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>${{ number_format($cajas->SumaTotalPesoServ + $cajas->SumaTotalPesoCredServicio,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Creditos/vencidos:</th>
                     <td><strong>{{ $cajas->SumaTotalCantidadCreditosVencidos ?? '0' }}</strong></td>
                   </tr>
@@ -247,7 +264,7 @@
                     <th>Serv/Cortesía:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadServiciosCortesia ?? '0' }}</b></td>
                     <th>Total/Punto:</th>
-                    <td><b>Bs.{{ number_format($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPuntoCredServicio + $cajas->SumaTotalServiciosExcedenteNuevoPunto,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>Bs.{{ number_format($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPuntoCredServicio,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Creditos/pagados:</th>
                     <td>{{$cajas->SumaTotalCantidadCreditosPagadosTotales ?? ''}}</td>
                   </tr>
@@ -261,7 +278,7 @@
                     <th>Total/Serv:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadServicios + $cajas->SumaTotalCantidadServiciosPorPagar + $cajas->SumaTotalCantidadServiciosCortesia ?? ' 0,00' }}</b></td>
                     <th>Total/Transf:</th>
-                    <td><b>Bs.{{ number_format($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferenciaCredServicio + $cajas->SumaTotalServiciosExcedenteNuevoTransferencia,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>Bs.{{ number_format($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferenciaCredServicio,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Creditos nuevos:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadServiciosPorPagar + $cajas->SumaTotalCantidadVentasCredito ?? '0' }}</b></td>
                   </tr>
@@ -275,7 +292,7 @@
                     <th>Serv/Créd/Pag:</th>
                     <td>{{$cajas->SumaTotalCantidadCreditosPagadosServicio ?? ''}}</td>
                     <th>Total/Bolivar:</th>
-                    <td><b>Bs.{{ number_format($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivarCredServicio + $cajas->SumaTotalServiciosExcedenteNuevoBolivar,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>Bs.{{ number_format($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivarCredServicio,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Total/Creditos:</th>
                     <td><b>{{$cajas->SumaTotalCantidadCreditosVigentes + $cajas->SumaTotalCantidadCreditosVencidos + $cajas->SumaTotalCantidadCreditosPagadosTotales ?? ''}}</b></td>
                   </tr>
@@ -297,18 +314,18 @@
                   @can('haveaccess', 'cajatotalventa.show')
                   <tr>
                     <th><h4><strong class="text-blue">Consumo Bruto:</strong></h4></th>
-                    <td><h4><strong>${{ number_format($cajas->SumaTotalVentasPagadosConExcedente + $cajas->SumaTotalVentasCredito + $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar + $cajas->SumaTotalVentas,2,'.',',') ?? '0.000' }}</h4></strong></td>
+                    <td><h4><strong>${{ number_format($cajas->SumaTotalVentasCredito + $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas,2,'.',',') ?? '0.000' }}</h4></strong></td>
                     <th class="text-blue"></th>
                     <td class="text-blue"></td>
                     <th><h4><strong class="text-blue">Servicios Bruto:</strong></h4></th>
-                    <td><h4><strong>${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalCreditosPagadosServicioPorOficina + $cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar + $cajas->SumaTotalServicios + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra,2,'.',',') ?? '0.000' }}</h4></strong></td>
+                    <td><h4><strong>${{ number_format($cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalCreditosPagadosServicioPorOficina + $cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios  + $cajas->SumaTotalExtra,2,'.',',') ?? '0.000' }}</h4></strong></td>
                     <th class="text-blue"></th>
                     <td></td>
                     <th><h4><strong class="text-blue">Total Bruto:</h4></strong></th>
-                    <td><h4><strong>${{ number_format(($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalCreditosPagadosServicioPorOficina + $cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar + $cajas->SumaTotalServicios) + ($cajas->SumaTotalVentasPagadosConExcedente + $cajas->SumaTotalVentasCredito + $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar + $cajas->SumaTotalVentas + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra),2,'.',',') ?? '0.000' }}</h4></strong></td>
+                    <td><h4><strong>${{ number_format(($cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalCreditosPagadosServicioPorOficina + $cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios) + ($cajas->SumaTotalVentasCredito + $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas  + $cajas->SumaTotalExtra),2,'.',',') ?? '0.000' }}</h4></strong></td>
                   </tr>
                   @endcan
-                  @can('haveaccess', 'cajatotalventa.show')
+                  {{-- @can('haveaccess', 'cajatotalventa.show')
                   <tr>
                     <th><h4><strong class="text-danger">Cons/Pago/Excts:</strong></h4></th>
                     <td><h4><strong class="text-danger">${{ number_format($cajas->SumaTotalVentasPagadosConExcedente,2,'.',',') ?? '0.000' }}</h4></strong></td>
@@ -321,7 +338,7 @@
                     <th><h4><strong class="text-danger">Total/Pago/Excts:</h4></strong></th>
                     <td><h4><strong class="text-danger">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalVentasPagadosConExcedente,2,'.',',') ?? '0.000' }}</h4></strong></td>
                   </tr>
-                  @endcan
+                  @endcan --}}
 
                   @can('haveaccess', 'cajatotalventa.show')
                   <tr>
@@ -372,7 +389,7 @@
                     <td></td>
                   </tr>
                   @endcan
-                  @can('haveaccess', 'cajatotalventa.show')
+                  {{-- @can('haveaccess', 'cajatotalventa.show')
                   <tr>
                     <th><h4><strong class="text-aqua">Cons/Exct/Nuevos:</strong></h4></th>
                     <td><h4><strong>${{ number_format($cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar,2,'.',',') ?? '0.000' }}</h4></strong></td>
@@ -385,7 +402,7 @@
                     <th><h4><strong class="text-aqua">Total/Exct/Nuevos:</h4></strong></th>
                     <td><h4><strong>${{ number_format($cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar,2,'.',',') ?? '0.000' }}</h4></strong></td>
                   </tr>
-                  @endcan
+                  @endcan --}}
 
                   @can('haveaccess', 'cajautilidad.show')
 
@@ -406,14 +423,14 @@
                   </tr>
                   @endcan
 
-                  @can('haveaccess', 'cajautilidad.show')
+                  {{-- @can('haveaccess', 'cajautilidad.show')
 
                   <tr>
                     <th></th>
                     <td></td>
                     <td></td>
                     <td></td>
-                    {{-- - $cajas->SumaTotalServiciosExcedenteNuevo --}}
+
                     <th><h4><strong class="text-aqua">Pagar/Por/Oficina:</h4></strong></th>
                     <td><h4><strong>${{ number_format($cajas->TotalSumaVueltosPagarOficinaDolarToDolar,2,',','.') ?? '0.000' }}</h4></strong></td>
                     <td></td>
@@ -423,7 +440,7 @@
                     <td></td>
                     <td></td>
                   </tr>
-                  @endcan
+                  @endcan --}}
 
                   @can('haveaccess', 'cajautilidad.show')
 
@@ -447,16 +464,16 @@
                   @can('haveaccess', 'cajautilidad.show')
 
                   <tr>
-                    <th><h4><strong class="text-blue">Cons/Total/Recibido:</h4></strong></th>
+                    <th><h4><strong class="text-blue">Cons/Total/Contable:</h4></strong></th>
                     <td><h4><strong>${{ number_format($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalConsumoExcedenteNuevo + $cajas->SumaTotalVentas,2,',','.') ?? '0.000' }}</h4></strong></td>
                     <td></td>
                     <td></td>
-                    <th><h4><strong class="text-blue">Serv/Total/Recibido:</h4></strong></th>
-                    <td><h4><strong>${{ number_format($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoDolarToDolar + $cajas->SumaTotalServicios + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra,2,',','.') ?? '0.000' }}</h4></strong></td>
+                    <th><h4><strong class="text-blue">Serv/Total/Contable:</h4></strong></th>
+                    <td><h4><strong>${{ number_format($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios  + $cajas->SumaTotalExtra,2,',','.') ?? '0.000' }}</h4></strong></td>
                     <td></td>
                     <td></td>
-                    <th><h4><strong class="text-blue">Total/Recibidos:</h4></strong></th>
-                    <td><h4><strong>${{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoConsumoDolarToDolar + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->TotalSumaVueltosExcedenteNuevoServicioDolarToDolar + $cajas->SumaTotalServicios + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra),2,',','.') ?? '0.000' }}</h4></strong></td>
+                    <th><h4><strong class="text-blue">Total/Contable:</h4></strong></th>
+                    <td><h4><strong>${{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios  + $cajas->SumaTotalExtra),2,',','.') ?? '0.000' }}</h4></strong></td>
                     <td></td>
                     <td></td>
                   </tr>
@@ -469,63 +486,189 @@
         </address>
       </div>
       <!-- /.col -->
-    </div>
+    {{-- </div> --}}
     <!-- /.row -->
     <div class="row">
 
             <div class="panel panel-primary">
-                <div class="panel-body">
+                {{-- <div class="panel-body">
                     <h4 class="text-blue"><strong>Datos de Caja</strong></h4>
                         <table id="detalles" class="table table-striped table-borderd table-condensed table-hover">
                             <thead class="tituloAzul" style="background-color: #A9D0F5">
-                    <tr>
-                        <th>Codigo</th>
-                        <th>Fecha</th>
-                        <th>Hora inicio</th>
-                        <th>Hora cierre</th>
-                        <th>Inicio Dolar</th>
-                        <th>Inicio Peso</th>
-                        <th>Inicio Bolivar</th>
-                        <th>Cierre Dolar</th>
-                        <th>Cierre Peso</th>
-                        <th>Cierre Bolivar</th>
-                        <th>Estado</th>
-                        <th>Caja</th>
-                    </tr>
-                </thead>
-                <tbody id="listarcaja">
+                                <tr>
+                                    <th>Codigo</th>
+                                    <th>Fecha</th>
+                                    <th>Hora inicio</th>
+                                    <th>Hora cierre</th>
+                                    <th>Inicio Dolar</th>
+                                    <th>Inicio Peso</th>
+                                    <th>Inicio Bolivar</th>
+                                    <th>Cierre Dolar</th>
+                                    <th>Cierre Peso</th>
+                                    <th>Cierre Bolivar</th>
+                                    <th>Estado</th>
+                                    <th>Caja</th>
+                                </tr>
+                            </thead>
+                            <tbody id="listarcaja">
 
-                    <tr>
-                        <td>{{ $caja->codigo ?? '' }}</td>
-                        <td>{{ $caja->created_at->diffForHumans() }}</td>
-                        <td>{{ $caja->hora ?? '' }}</td>
-                        <td>{{ $caja->hora_cierre ?? '' }}</td>
-                        <td>{{ $caja->monto_dolar ?? '' }}</td>
-                        <td>{{ $caja->monto_peso ?? '' }}</td>
-                        <td>{{ $caja->monto_bolivar ?? '' }}</td>
-                        <td>{{ $caja->monto_dolar_cierre ?? '' }}</td>
-                        <td>{{ $caja->monto_peso_cierre ?? '' }}</td>
-                        <td>{{ $caja->monto_bolivar_cierre ?? '' }}</td>
-                        <td>{{ $caja->estado ?? '' }}</td>
-                        <td>{{ $caja->caja ?? '' }}</td>
-                </tr>
+                                <tr>
+                                    <td>{{ $caja->codigo ?? '' }}</td>
+                                    <td>{{ $caja->created_at->diffForHumans() }}</td>
+                                    <td>{{ $caja->hora ?? '' }}</td>
+                                    <td>{{ $caja->hora_cierre ?? '' }}</td>
+                                    <td>{{ $caja->monto_dolar ?? '' }}</td>
+                                    <td>{{ $caja->monto_peso ?? '' }}</td>
+                                    <td>{{ $caja->monto_bolivar ?? '' }}</td>
+                                    <td>{{ $caja->monto_dolar_cierre ?? '' }}</td>
+                                    <td>{{ $caja->monto_peso_cierre ?? '' }}</td>
+                                    <td>{{ $caja->monto_bolivar_cierre ?? '' }}</td>
+                                    <td>{{ $caja->estado ?? '' }}</td>
+                                    <td>{{ $caja->caja ?? '' }}</td>
+                                </tr>
 
 
 
-                </tbody>
-            </table>
+                            </tbody>
+                        </table>
 
-            @include('cajas.caja.caja')
-    </div>
+
+                    </div> --}}
+
+    @include('cajas.caja.caja')
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
     <div class="box-header with-border">
         <h3 class="box-title text-bold text-blue">Resumen de Caja </h3>
 
+
         <div class="row">
             <div class="col-sm-2 col-xs-6">
                 <div class="description-block border-right">
                     <span class="description-text">Servicios y Consumos</span>
+                    <h5 class="description-header">______________</h5>
+                    <h5 class="box-title text-bold">Total Contable:</h5>
+                    <h5 class="box-title text-bold">Vtos/Pagar/Oficina:</h5>
+                    <h5 class="description-header">______________</h5>
+                    <h5 class="box-title text-bold">Registrado por Sistema:</h5>
+                    <h5 class="box-title text-bold text-red">- Reportados por Operador:</h5>
+                    <h5 class="description-header">______________</h5>
+                    <h5 class="box-title text-bold text-red">Diferencia:</h5>
+                </div>
+            </div>
+            <div class="col-sm-2 col-xs-6">
+                <div class="description-block border-right">
+                    <span class="description-percentage text-green"><i
+                            class="fa fa-caret-up"></i>
+                        Dolar $</span>
+                        <h5 class="description-header">______________</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios  + $cajas->SumaTotalExtra),2,',','.') ?? '0.000' }}</h5>
+                    <br>
+                    <h5 class="box-title text-bold">$. {{ number_format(($cajas->TotalSumaVueltosPagarOficinaDolarToDolar),2,',','.') ?? '0.000' }}</h5>
+                    <h5 class="description-header">______________</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra),2,',','.') ?? '0.000' }}</h5>
+                    <br>
+                    <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->total_operador_reg),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header">______________</h5>
+                    <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->total_diferencia),2,',','.') ?? ' 0,00' }}</h5>
+                    <br>
+                    <span class="description-text">DOLAR</span>
+                </div>
+                <!-- /.description-block -->
+            </div>
+
+            <div></div>
+            <div></div>
+            <!-- /.col -->
+            <div class="col-sm-8 col-xs-6">
+                <div class="text-left">
+                <br>
+                <br>
+
+                        <span class="box-title text-bold">OBSERVACIONES:</span>
+
+                        <div  class="text-left">
+                            {{$cajas->Observaciones}}
+                        </div>
+
+
+
+                </div>
+
+            </div>
+            <!-- /.col -->
+            {{-- <div class="col-sm-2 col-xs-6">
+                <div class="description-block border-right">
+                    <span class="description-percentage text-green"><i
+                            class="fa fa-caret-up"></i>
+                        {{ $tasaTransferenciaPunto->porcentaje_ganancia  ?? ''}}%</span>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)),2,',','.') ?? ' 0,00' }}</h5>
+
+                        <br><h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPuntoDivisa + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_punto_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_punto_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <span class="description-text">PUNTO</span>
+                </div>
+
+            </div> --}}
+            <!-- /.col -->
+
+            {{-- <div class="col-sm-2 col-xs-6">
+                <div class="description-block border-right">
+                    <span class="description-percentage text-green"><i
+                            class="fa fa-caret-up"></i>
+                        {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaTransferenciaDivisa + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_trans_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_trans_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <span class="description-text">TRANS</span>
+                </div>
+
+            </div> --}}
+            <!-- /.col -->
+
+            {{-- <div class="col-sm-2 col-xs-6">
+                <div class="description-block">
+                    <span class="description-percentage text-red"><i
+                            class="fa fa-caret-down"></i>
+                        {{ $tasaEfectivo->porcentaje_ganancia }}%</span>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaBolivarDivisa + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_bolivar_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_bolivar_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <span class="description-text">EFECTIVO</span>
+                </div>
+
+            </div> --}}
+        </div>
+        <div class="row">
+            <div class="col-sm-2 col-xs-6">
+                <div class="description-block border-right">
+                    <span class="description-text">Servicios y Consumos</span>
+                    <h5 class="description-header">______________</h5>
+                    <h5 class="box-title text-bold">Total Contable:</h5>
+                    <h5 class="box-title text-bold">Vtos/Pagar/Oficina:</h5>
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold">Registrado por Sistema:</h5>
                     <h5 class="box-title text-bold text-red">- Reportados por Operador:</h5>
@@ -538,8 +681,12 @@
                     <span class="description-percentage text-green"><i
                             class="fa fa-caret-up"></i>
                         {{ $tasaDolar->porcentaje_ganancia ?? ''}}%</span>
+                        <h5 class="description-header">______________</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <br>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaDolarDivisa + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <br>
                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_dolar_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
@@ -556,7 +703,11 @@
                             class="fa fa-caret-left"></i>
                         {{ $tasaPeso->porcentaje_ganancia  ?? ''}}%</span>
                         <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPesoDivisa + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra)),2,',','.') ?? ' 0,00' }}</h5>
                         <br>
                         <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_peso_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
                         <h5 class="description-header">______________</h5>
@@ -573,7 +724,11 @@
                             class="fa fa-caret-up"></i>
                         {{ $tasaTransferenciaPunto->porcentaje_ganancia  ?? ''}}%</span>
                         <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)),2,',','.') ?? ' 0,00' }}</h5>
+
+                        <br><h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPuntoDivisa + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)),2,',','.') ?? ' 0,00' }}</h5>
                         <br>
                         <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_punto_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
                         <h5 class="description-header">______________</h5>
@@ -591,7 +746,11 @@
                             class="fa fa-caret-up"></i>
                         {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
                         <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaTransferenciaDivisa + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)),2,',','.') ?? ' 0,00' }}</h5>
                         <br>
                         <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_trans_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
                         <h5 class="description-header">______________</h5>
@@ -609,7 +768,11 @@
                             class="fa fa-caret-down"></i>
                         {{ $tasaEfectivo->porcentaje_ganancia }}%</span>
                         <h5 class="description-header">______________</h5>
-                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                        <br>
+                        <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                        <h5 class="description-header">______________</h5>
+                        <h5 class="box-title text-bold">Bs. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaBolivarDivisa + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)),2,',','.') ?? ' 0,00' }}</h5>
                         <br>
                         <h5 class="box-title text-bold text-red">Bs. {{ number_format(floatval($cajas->monto_bolivar_cierre * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5>
                         <h5 class="description-header">______________</h5>
@@ -620,15 +783,7 @@
                 <!-- /.description-block -->
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-6 col-xs-12">
-                <span class="description-text">OBSERVACIONES:</span>
-                <div>
-                    {{$cajas->Observaciones}}
-                </div>
 
-            </div>
-        </div>
     </div>
     </div></div>
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
@@ -636,14 +791,14 @@
     {{-- Montos de apertura de caja --}}
 
     <div class="box-header with-border">
-        <h3 class="box-title text-bold text-blue">Montos de Apertura de Caja </h3>
+        <h3 class="box-title text-bold text-blue">Montos de Apertura </h3>
 
         <div class="row">
             <div class="col-sm-2 col-xs-6">
                 <div class="description-block border-right">
                     <span class="description-text">Tasa del Día</span>
                     <h5 class="description-header">Caja Chica:</h5>
-                    <h5 class="description-header">Vtos/Pendientes/Caja/Anterior:</h5>
+                    <h5 class="description-header">Vtos/Pendtes/Caja/Anterior:</h5>
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold">Total Base Inicial:</h5>
 
@@ -743,19 +898,19 @@
     {{-- Proceso de excedentes nuevos --}}
     {{-- // TODO Crear proceso para manejo de excedentes nuevos --}}
     <div class="box-header with-border">
-        <h3 class="box-title text-bold text-blue">Procesos de Vueltos Pendientes </h3>
+        <h3 class="box-title text-bold text-blue">Vueltos Pendientes </h3>
 
         <div class="row">
             <div class="col-sm-2 col-xs-6">
                 <div class="description-block border-right">
 
-                    <h5 class="description-header">Vtos/Pendientes/Caja/Anterior:</h5>
-                    <h5 class="description-header">Vtos/Pendientes Recibidos:</h5>
+                    <h5 class="description-header">Vtos/Pendtes/Caja/Anterior:</h5>
+                    <h5 class="description-header">Vtos/Pendtes Recibidos:</h5>
                     <h5 class="description-header">______________</h5>
                     <h5 class="description-header">&nbsp;&nbsp;&nbsp;</h5>
                     <h5 class="description-header text-red">- Vtos/Devueltos:</h5>
                     <h5 class="description-header text-red">- Vtos/Pagar/Oficina:</h5>
-                    <h5 class="description-header text-red">- Excts/Nuevos:</h5>
+                    {{-- <h5 class="description-header text-red">- Excts/Nuevos:</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold">Vtos/Pendientes:</h5>
                     <h5 class="description-header">______________</h5>
@@ -774,7 +929,7 @@
                     <h5 class="description-header">$. {{ number_format(floatval(($cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDivisa + $cajas->TotalSumaVueltosPendientesDolarDivisa) - $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosDevueltosDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                    {{-- <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoDolarDivisa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <br>
@@ -794,7 +949,7 @@
                     <h5 class="description-header">$. {{ number_format(floatval(($cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDivisa + $cajas->TotalSumaVueltosPendientesPesoDivisa) - $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosDevueltosPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                    {{-- <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoPesoDivisa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <br>
@@ -814,7 +969,7 @@
                     <h5 class="description-header">Bs. {{ number_format($cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDivisa + $cajas->TotalSumaVueltosPendientesPuntoDivisa,2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosDevueltosPuntoDivisa,2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosPagarOficinaPuntoDivisa,2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosExcedenteNuevoPuntoDivisa,2,',','.') ?? ' 0,00' }}</h5>
+                    {{-- <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosExcedenteNuevoPuntoDivisa,2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold">Bs. {{ number_format($cajas->SumaVueltosPendientesPuntoDivisa,2,',','.') ?? ' 0,00' }}</h5>
                     <br>
@@ -835,7 +990,7 @@
                     <h5 class="description-header">Bs. {{ number_format($cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDivisa + $cajas->TotalSumaVueltosPendientesTransferenciaDivisa,2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosDevueltosTransferenciaDivisa,2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosPagarOficinaTransferenciaDivisass,2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisass,2,',','.') ?? ' 0,00' }}</h5>
+                    {{-- <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisass,2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold">Bs. {{ number_format($cajas->SumaVueltosPendientesTransferenciaDivisa,2,',','.') ?? ' 0,00' }}</h5>
                     <br>
@@ -856,7 +1011,7 @@
                     <h5 class="description-header">Bs. {{ number_format($cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDivisa + $cajas->TotalSumaVueltosPendientesBolivarDivisa,2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosDevueltosBolivarDivisa,2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosPagarOficinaBolivarDivisa,2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosExcedenteNuevoBolivarDivisa,2,',','.') ?? ' 0,00' }}</h5>
+                    {{-- <h5 class="description-header text-red">Bs. {{ number_format($cajas->SumaVueltosExcedenteNuevoBolivarDivisa,2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold">Bs. {{ number_format($cajas->SumaVueltosPendientesBolivarDivisa,2,',','.') ?? ' 0,00' }}</h5>
                     <br>
@@ -884,7 +1039,7 @@
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
     {{-- Montos recibidos en caja --}}
     <div class="box-header with-border">
-        <h3 class="box-title text-bold text-blue">Montos Recibidos en Caja </h3>
+        <h3 class="box-title text-bold text-blue">Montos Recibidos </h3>
 
         <div class="row">
             <div class="col-sm-2 col-xs-6">
@@ -892,7 +1047,7 @@
                     <span class="description-text">Servicios y Consumos</span>
 
                     <h5 class="description-header">Créd/Pagados/Caja:</h5>
-                    <h5 class="description-header">Exct/Nuevos:</h5>
+                    {{-- <h5 class="description-header">Exct/Nuevos:</h5> --}}
                     <h5 class="description-header">Pagos/Extras:</h5>
                     <h5 class="description-header">Contado:</h5>
                     <h5 class="description-header">______________</h5>
@@ -923,29 +1078,29 @@
                         {{ $tasaDolar->porcentaje_ganancia ?? ''}}%</span>
 
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                    {{-- <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoDolarDivisa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalDolarExtra),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->monto_dolar),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPendientesDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosDevueltosDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalDolarServDflotante + $cajas->SumaTotalDolarExtraDflotante),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalDolarServDflotante + $cajas->SumaTotalDolarExtraDflotante + $cajas->SumaTotalDolarConsuDflotante),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesDolarDivisa + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante  + $cajas->SumaTotalDolarExtraDflotante)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesDolarDivisa + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante  + $cajas->SumaTotalDolarExtraDflotante + $cajas->SumaTotalDolarConsuDflotante)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaTotalDolarVueltos),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesDolarDivisa + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante + $cajas->SumaTotalDolarExtraDflotante) - $cajas->SumaTotalDolarVueltos),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesDolarDivisa + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante + $cajas->SumaTotalDolarExtraDflotante + $cajas->SumaTotalDolarConsuDflotante) - $cajas->SumaTotalDolarVueltos),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaVueltosPendientesDolarDivisa + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante + $cajas->SumaTotalDolarExtraDflotante) - $cajas->SumaTotalDolarVueltos) + ($cajas->SumaVueltosPagarOficinaDolarDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaVueltosPendientesDolarDivisa + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante + $cajas->SumaTotalDolarExtraDflotante + $cajas->SumaTotalDolarConsuDflotante) - $cajas->SumaTotalDolarVueltos) + ($cajas->SumaVueltosPagarOficinaDolarDivisa)),2,',','.') ?? ' 0,00' }}</h5>
                     <br>
-                    <h5 class="description-header text-red">$. {{ number_format(floatval(($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header text-red">$. {{ number_format(floatval(($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPendientesDolarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesDolarDivisa + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante + $cajas->SumaTotalDolarExtraDflotante) - $cajas->SumaTotalDolarVueltos) + ($cajas->SumaVueltosPagarOficinaDolarDivisa)) - (($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra)) - ($cajas->SumaVueltosPagarOficinaDolarDivisa) - ($cajas->SumaVueltosPendientesDolarDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesDolarDivisa + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante + $cajas->SumaTotalDolarExtraDflotante + $cajas->SumaTotalDolarConsuDflotante) - $cajas->SumaTotalDolarVueltos) + ($cajas->SumaVueltosPagarOficinaDolarDivisa)) - (($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar + $cajas->SumaTotalDolarExtra)) - ($cajas->SumaVueltosPagarOficinaDolarDivisa) - ($cajas->SumaVueltosPendientesDolarDivisa)),2,',','.') ?? ' 0,00' }}</h5>
                     {{-- <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->dolar_dolar_operador * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_dolar_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
@@ -962,29 +1117,29 @@
                         {{ $tasaPeso->porcentaje_ganancia  ?? ''}}%</span>
 
                         <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                    {{-- <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoPesoDivisa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPesoExtra),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->monto_peso),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosDevueltosPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPesoServDflotante + $cajas->SumaTotalPesoExtraDflotante),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPesoServDflotante + $cajas->SumaTotalPesoExtraDflotante + $cajas->SumaTotalPesoConsuDflotante),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPesoDivisa + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante  + $cajas->SumaTotalPesoExtraDflotante)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPesoDivisa + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante  + $cajas->SumaTotalPesoExtraDflotante + $cajas->SumaTotalPesoConsuDflotante)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaTotalPesoVueltos),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPesoDivisa + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante + $cajas->SumaTotalPesoExtraDflotante) - $cajas->SumaTotalPesoVueltos),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPesoDivisa + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante + $cajas->SumaTotalPesoExtraDflotante + $cajas->SumaTotalPesoConsuDflotante) - $cajas->SumaTotalPesoVueltos),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaVueltosPendientesPesoDivisa + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante + $cajas->SumaTotalPesoExtraDflotante) - $cajas->SumaTotalPesoVueltos) + ($cajas->SumaVueltosPagarOficinaPesoDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaVueltosPendientesPesoDivisa + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante + $cajas->SumaTotalPesoExtraDflotante + $cajas->SumaTotalPesoConsuDflotante) - $cajas->SumaTotalPesoVueltos) + ($cajas->SumaVueltosPagarOficinaPesoDivisa)),2,',','.') ?? ' 0,00' }}</h5>
                     <br>
-                    <h5 class="description-header text-red">$. {{ number_format(floatval(($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header text-red">$. {{ number_format(floatval(($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPesoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesPesoDivisa + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante + $cajas->SumaTotalPesoExtraDflotante) - $cajas->SumaTotalPesoVueltos) + ($cajas->SumaVueltosPagarOficinaPesoDivisa)) - (($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra)) - ($cajas->SumaVueltosPagarOficinaPesoDivisa) - ($cajas->SumaVueltosPendientesPesoDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesPesoDivisa + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante + $cajas->SumaTotalPesoExtraDflotante + $cajas->SumaTotalPesoConsuDflotante) - $cajas->SumaTotalPesoVueltos) + ($cajas->SumaVueltosPagarOficinaPesoDivisa)) - (($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso + $cajas->SumaTotalPesoExtra)) - ($cajas->SumaVueltosPagarOficinaPesoDivisa) - ($cajas->SumaVueltosPendientesPesoDivisa)),2,',','.') ?? ' 0,00' }}</h5>
                     {{-- <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->dolar_dolar_operador * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_peso_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
@@ -1001,29 +1156,29 @@
                         {{ $tasaTransferenciaPunto->porcentaje_ganancia  ?? ''}}%</span>
 
                         <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                    {{-- <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPuntoExtra),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->monto_punto),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosDevueltosPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPuntoServDflotante + $cajas->SumaTotalPuntoExtraDflotante),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalPuntoServDflotante + $cajas->SumaTotalPuntoExtraDflotante + $cajas->SumaTotalPuntoConsuDflotante),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPuntoDivisa + $cajas->monto_punto + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra) + ($cajas->SumaVueltosDevueltosPuntoDivisa + $cajas->SumaTotalPuntoServDflotante  + $cajas->SumaTotalPuntoExtraDflotante)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPuntoDivisa + $cajas->monto_punto + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra) + ($cajas->SumaVueltosDevueltosPuntoDivisa + $cajas->SumaTotalPuntoServDflotante  + $cajas->SumaTotalPuntoExtraDflotante + $cajas->SumaTotalPuntoConsuDflotante)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaTotalPuntoVueltos),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPuntoDivisa + $cajas->monto_punto + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra) + ($cajas->SumaVueltosDevueltosPuntoDivisa + $cajas->SumaTotalPuntoServDflotante + $cajas->SumaTotalPuntoExtraDflotante) - $cajas->SumaTotalPuntoVueltos),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPuntoDivisa + $cajas->monto_punto + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra) + ($cajas->SumaVueltosDevueltosPuntoDivisa + $cajas->SumaTotalPuntoServDflotante + $cajas->SumaTotalPuntoExtraDflotante + $cajas->SumaTotalPuntoConsuDflotante) - $cajas->SumaTotalPuntoVueltos),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaVueltosPendientesPuntoDivisa + $cajas->monto_punto + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra) + ($cajas->SumaVueltosDevueltosPuntoDivisa + $cajas->SumaTotalPuntoServDflotante + $cajas->SumaTotalPuntoExtraDflotante) - $cajas->SumaTotalPuntoVueltos) + ($cajas->SumaVueltosPagarOficinaPuntoDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaVueltosPendientesPuntoDivisa + $cajas->monto_punto + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra) + ($cajas->SumaVueltosDevueltosPuntoDivisa + $cajas->SumaTotalPuntoServDflotante + $cajas->SumaTotalPuntoExtraDflotante + $cajas->SumaTotalPuntoConsuDflotante) - $cajas->SumaTotalPuntoVueltos) + ($cajas->SumaVueltosPagarOficinaPuntoDivisa)),2,',','.') ?? ' 0,00' }}</h5>
                     <br>
-                    <h5 class="description-header text-red">$. {{ number_format(floatval(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header text-red">$. {{ number_format(floatval(($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPendientesPuntoDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesPuntoDivisa + $cajas->monto_punto + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra) + ($cajas->SumaVueltosDevueltosPuntoDivisa + $cajas->SumaTotalPuntoServDflotante + $cajas->SumaTotalPuntoExtraDflotante) - $cajas->SumaTotalPuntoVueltos) + ($cajas->SumaVueltosPagarOficinaPuntoDivisa)) - (($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPuntoDivisa) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)) - ($cajas->SumaVueltosPagarOficinaPuntoDivisa) - ($cajas->SumaVueltosPendientesPuntoDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesPuntoDivisa + $cajas->monto_punto + ($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra) + ($cajas->SumaVueltosDevueltosPuntoDivisa + $cajas->SumaTotalPuntoServDflotante + $cajas->SumaTotalPuntoExtraDflotante + $cajas->SumaTotalPuntoConsuDflotante) - $cajas->SumaTotalPuntoVueltos) + ($cajas->SumaVueltosPagarOficinaPuntoDivisa)) - (($cajas->SumaTotalPuntoCredConsumo + $cajas->SumaTotalPuntoCredServicio) + ($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPunto + $cajas->SumaTotalPuntoExtra)) - ($cajas->SumaVueltosPagarOficinaPuntoDivisa) - ($cajas->SumaVueltosPendientesPuntoDivisa)),2,',','.') ?? ' 0,00' }}</h5>
                     {{-- <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->dolar_dolar_operador * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_punto_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
@@ -1041,29 +1196,29 @@
                         {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
 
                         <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                    {{-- <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalTransferenciaExtra),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->monto_trans),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPendientesTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosDevueltosTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalTransferenciaServDflotante + $cajas->SumaTotalTransferenciaExtraDflotante),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalTransferenciaServDflotante + $cajas->SumaTotalTransferenciaExtraDflotante + $cajas->SumaTotalTransferenciaConsuDflotante),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesTransferenciaDivisa + $cajas->monto_trans + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante  + $cajas->SumaTotalTransferenciaExtraDflotante)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesTransferenciaDivisa + $cajas->monto_trans + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante  + $cajas->SumaTotalTransferenciaExtraDflotante + $cajas->SumaTotalTransferenciaConsuDflotante)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaTotalTransferenciaVueltos),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesTransferenciaDivisa + $cajas->monto_trans + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante + $cajas->SumaTotalTransferenciaExtraDflotante) - $cajas->SumaTotalTransferenciaVueltos),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesTransferenciaDivisa + $cajas->monto_trans + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante + $cajas->SumaTotalTransferenciaExtraDflotante + $cajas->SumaTotalTransferenciaConsuDflotante) - $cajas->SumaTotalTransferenciaVueltos),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaVueltosPendientesTransferenciaDivisa + $cajas->monto_trans + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante + $cajas->SumaTotalTransferenciaExtraDflotante) - $cajas->SumaTotalTransferenciaVueltos) + ($cajas->SumaVueltosPagarOficinaTransferenciaDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaVueltosPendientesTransferenciaDivisa + $cajas->monto_trans + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante + $cajas->SumaTotalTransferenciaExtraDflotante + $cajas->SumaTotalTransferenciaConsuDflotante) - $cajas->SumaTotalTransferenciaVueltos) + ($cajas->SumaVueltosPagarOficinaTransferenciaDivisa)),2,',','.') ?? ' 0,00' }}</h5>
                     <br>
-                    <h5 class="description-header text-red">$. {{ number_format(floatval(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header text-red">$. {{ number_format(floatval(($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPendientesTransferenciaDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesTransferenciaDivisa + $cajas->monto_trans + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante + $cajas->SumaTotalTransferenciaExtraDflotante) - $cajas->SumaTotalTransferenciaVueltos) + ($cajas->SumaVueltosPagarOficinaTransferenciaDivisa)) - (($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaVueltosExcedenteNuevoTransferenciaDivisa) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)) - ($cajas->SumaVueltosPagarOficinaTransferenciaDivisa) - ($cajas->SumaVueltosPendientesTransferenciaDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesTransferenciaDivisa + $cajas->monto_trans + ($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra) + ($cajas->SumaVueltosDevueltosTransferenciaDivisa + $cajas->SumaTotalTransferenciaServDflotante + $cajas->SumaTotalTransferenciaExtraDflotante + $cajas->SumaTotalTransferenciaConsuDflotante) - $cajas->SumaTotalTransferenciaVueltos) + ($cajas->SumaVueltosPagarOficinaTransferenciaDivisa)) - (($cajas->SumaTotalTransferenciaCredConsumo + $cajas->SumaTotalTransferenciaCredServicio) + ($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaExtra)) - ($cajas->SumaVueltosPagarOficinaTransferenciaDivisa) - ($cajas->SumaVueltosPendientesTransferenciaDivisa)),2,',','.') ?? ' 0,00' }}</h5>
                     {{-- <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->dolar_dolar_operador * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_trans_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
@@ -1081,29 +1236,29 @@
                         {{ $tasaEfectivo->porcentaje_ganancia }}%</span>
 
                         <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5>
+                    {{-- <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosExcedenteNuevoBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalBolivarExtra),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->monto_bolivar),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPendientesBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosDevueltosBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5>
-                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalBolivarServDflotante + $cajas->SumaTotalBolivarExtraDflotante),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaTotalBolivarServDflotante + $cajas->SumaTotalBolivarExtraDflotante + $cajas->SumaTotalBolivarConsuDflotante),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesBolivarDivisa + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante  + $cajas->SumaTotalBolivarExtraDflotante)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesBolivarDivisa + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante  + $cajas->SumaTotalBolivarExtraDflotante + $cajas->SumaTotalBolivarConsuDflotante)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaTotalBolivarVueltos),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesBolivarDivisa + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante + $cajas->SumaTotalBolivarExtraDflotante) - $cajas->SumaTotalBolivarVueltos),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval($cajas->SumaVueltosPendientesBolivarDivisa + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante + $cajas->SumaTotalBolivarExtraDflotante + $cajas->SumaTotalBolivarConsuDflotante) - $cajas->SumaTotalBolivarVueltos),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaVueltosPendientesBolivarDivisa + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante + $cajas->SumaTotalBolivarExtraDflotante) - $cajas->SumaTotalBolivarVueltos) + ($cajas->SumaVueltosPagarOficinaBolivarDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval(($cajas->SumaVueltosPendientesBolivarDivisa + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante + $cajas->SumaTotalBolivarExtraDflotante + $cajas->SumaTotalBolivarConsuDflotante) - $cajas->SumaTotalBolivarVueltos) + ($cajas->SumaVueltosPagarOficinaBolivarDivisa)),2,',','.') ?? ' 0,00' }}</h5>
                     <br>
-                    <h5 class="description-header text-red">$. {{ number_format(floatval(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="description-header text-red">$. {{ number_format(floatval(($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPagarOficinaBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header text-red">$. {{ number_format(floatval($cajas->SumaVueltosPendientesBolivarDivisa),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesBolivarDivisa + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante + $cajas->SumaTotalBolivarExtraDflotante) - $cajas->SumaTotalBolivarVueltos) + ($cajas->SumaVueltosPagarOficinaBolivarDivisa)) - (($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)) - ($cajas->SumaVueltosPagarOficinaBolivarDivisa) - ($cajas->SumaVueltosPendientesBolivarDivisa)),2,',','.') ?? ' 0,00' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(floatval((($cajas->SumaVueltosPendientesBolivarDivisa + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante + $cajas->SumaTotalBolivarExtraDflotante + $cajas->SumaTotalBolivarConsuDflotante) - $cajas->SumaTotalBolivarVueltos) + ($cajas->SumaVueltosPagarOficinaBolivarDivisa)) - (($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarExtra)) - ($cajas->SumaVueltosPagarOficinaBolivarDivisa) - ($cajas->SumaVueltosPendientesBolivarDivisa)),2,',','.') ?? ' 0,00' }}</h5>
                     {{-- <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->dolar_dolar_operador * $tasaDolar->tasa),2,',','.') ?? ' 0,00' }}</h5> --}}
                     <h5 class="description-header">______________</h5>
                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->monto_bolivar_cierre_dif),2,',','.') ?? ' 0,00' }}</h5>
@@ -1122,7 +1277,8 @@
 
             </div>
         </div> -->
-    </div>
+
+
     </div></div>
 
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}

@@ -2436,9 +2436,10 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
         // var restaV           = numDecimal(valorV -valor_restarV);
 
         RestaTotal.innerHTML = numDecimal(resta); //se llena el campo resta
+        resta = new Decimal(resta);
 
 
-
+// alert(resta):
             if (valor_restar > valor) {
                let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
                let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
@@ -2449,13 +2450,19 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
             } else {
                 $("#vueltos").hide();
+                $("#monto_dejadoResta").val(0.00);
 
             }
 
 
 
-            if (RestaTotal.innerHTML <= -1) {
-            // alert('soy menor');
+            if (resta.lessThan(Decimal(0))) {
+            alert('El monto pagado supera el monto a pagar');
+            return false;
+            $("#monto_dejadoResta").val(0.00);
+            $("#DMontoDolarV").val('');
+            $("#DMontoPesoV").val('');
+            $("#DMontoBolivarV").val('');
             $("#vueltos").show("linear");
             $("#guardar").hide("linear");
             }
@@ -2875,7 +2882,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 x = new Decimal(montoBase)
                 y = new Decimal(restaMontoDejadoBase)
                 let r = x.sub(y)                  // '0.2'
-                / console.log(r.toFixed(2));
+                // console.log(r.toFixed(2));
 
                 $('#monto_dejado').val(r.toFixed(2));
 
@@ -3028,6 +3035,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
             }else{
                 // alert('1');
                 vcargarV = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoDolarV").val('');
                 DMontoDolarV();
             }
@@ -3054,6 +3062,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 DMontoPesoV();
             }else{
                 vcargarpV = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoPesoV").val('');
                 DMontoPesoV();
             }
@@ -3079,6 +3088,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 DMontoBolivarV();
             }else{
                 vcargarbV = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoBolivarV").val('');
                 DMontoBolivarV();
             }

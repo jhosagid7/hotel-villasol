@@ -1092,7 +1092,7 @@
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span></button>
-                                                <h4 class="modal-title"><span class="fa fa-spinner"></span> SELECCIONE SERVICIO </h4>
+                                                <h4 class="modal-title"><span class="fa fa-spinner"></span> GESTION DE PAGO DE PRODUCTOS </h4>
                                             </div>
                                             <div class="modal-body" style="background-color:#fff !important;">
 
@@ -1140,6 +1140,23 @@
                                                                 <div class="panel-heading">
                                                                     <h2 id="gestionPago" class="panel-title">Gestion de pagos efectivo
                                                                     </h2>
+                                                                </div>
+                                                                <div class="row">
+                                                                    {{-- <div id="excedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
+                                                                        <label for="pagoConExcedente"><h2 class="text-blue">Exedente disponible: <b id="dispExcedenteShow">$.0.00</b></h2></label>
+                                                                        <input class="form-control" type="text" id="pagoConExcedente" name="pagoConExcedente" >
+                                                                        <input class="form-control" type="hidden" id="dispExcedente" name="dispExcedente" >
+                                                                    </div> --}}
+                                                                    <div id="Vueltosexcedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
+                                                                        <label for="VueltospagoConExcedente"><h2 class="text-blue">Vueltos pendientes: <b id="VueltosdispExcedenteShow">$.0.00</b></h2></label>
+                                                                        <input class="form-control" type="text" id="VueltospagoConExcedente" name="VueltospagoConExcedente" >
+                                                                        <input class="form-control" type="hidden" id="VueltosdispExcedente" name="VueltosdispExcedente" >
+                                                                    </div>
+                                                                    {{-- <div id="nocredito" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
+                                                                        <label for="pagoConCredito"><h2 class="text-blue">Crédito disponible: <b id="dispCreditoShow">$.0.00</b></h2></label>
+                                                                        <input class="form-control" type="text" id="pagoConCredito" name="pagoConCredito" >
+                                                                        <input class="form-control" type="hidden" id="dispCredito" name="dispCredito" >
+                                                                    </div> --}}
                                                                 </div>
                                                                 <div class="panel-body">
                                                                     <div class="table-responsive">
@@ -1275,8 +1292,11 @@
                                                                                 <th></th>
                                                                                 <th>
                                                                                     <h4 id="tp" class="text-bold">TOTAL PAGADO</h4>
+                                                                                    <h4 id="Vueltosex" class="text-bold">TOTAL VTOS/DISP</h4>
+                                                                                    {{-- <h4 id="ex" class="text-bold">TOTAL EXCEDENTE</h4> --}}
                                                                                     <h4 id="r" class="text-bold">RESTA</h4>
                                                                                     <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
+                                                                                    <input id="isVueltos" name="isVueltos" type="hidden" value="0">
                                                                                     <input id="monto_dejado" name="monto_dejado" type="hidden" value="">
                                                                                     {{-- <input id="isVueltos" name="isVueltos" type="text" value="0"> --}}
                                                                                     {{-- <input id="cantidad" name="cantidad" type="hidden" value=""> --}}
@@ -1288,8 +1308,13 @@
                                                                                     <input id="modo_pago" name="modo_pago" type="hidden" value="">
                                                                                     <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}">
                                                                                     <input id="user_id" name="user_id" type="hidden" value="{{$UserId}}">
+
+                                                                                    <input id="base_vuelto_monto_dejado" name="base_vuelto_monto_dejado" type="text" value="">
+                                                                                    <input id="monto_dejadoResta" name="monto_dejadoResta" type="text" value="">
                                                                                 <th>
                                                                                     <h4 class="text-bold" id="spTotal">0.00</h4>
+                                                                                    <h4 class="text-bold" id="Vueltosexcdt">0.00</h4>
+                                                                                    {{-- <h4 class="text-bold" id="excdt">0.00</h4> --}}
                                                                                     <h4 class="text-bold" id="RestaTtotal">0.00</h4>
                                                                                     <h4 class="text-bold" id="PagoTtotal">0.00</h4>
                                                                                 </th>
@@ -1469,6 +1494,9 @@
                                                                         <input name="porPesoHabitacion" value="{{ $tasaPesoHabitacion->porcentaje_ganancia }}" type="hidden">
                                                                         <input id="esCortesia" name="esCortesia"  value="{{ $cliente->isCortesia }}" type="hidden">
                                                                         <input id="esCredito" name="esCredito" value="{{ $cliente->isCredito }}" type="hidden">
+
+                                                                        <input id="vtosPendientes" name="vtosPendientes" value="{{ $cajas->excedenteCLiente ?? '' }}" type="text">
+                                                                        <input id="VueltosvtosPendientes" name="VueltosvtosPendientes" value="{{ $cajas->TotalSumaVueltosPendientesClienteDolar ?? '' }}" type="text">
                                                                         {{-- <button id="enviar" class="btn btn-primary btn-block"
                                                                             type="button">Guardar</button> --}}
                                                                     </div>
@@ -1731,6 +1759,7 @@
                         vcargarb = 0;
                         vcargarpto = 0;
                         vcargart = 0;
+                        $("#isVueltos").val('');
                         $("#DMontoPeso").val('');
                         DMontoPeso();
                         $("#DMontoBolivar").val('');
@@ -1756,6 +1785,7 @@
                         vcargarb = 0;
                         vcargarpto = 0;
                         vcargart = 0;
+                        $("#isVueltos").val('');
                         $("#DMontoPunto").val('');
                         DMontoPunto();
                         $("#DMontoTrans").val('');
@@ -1781,6 +1811,7 @@
                         vcargarp = 0;
                         vcargarpto = 0;
                         vcargart = 0;
+                        $("#isVueltos").val('');
                         $("#DMontoPunto").val('');
                         DMontoPunto();
                         $("#DMontoTrans").val('');
@@ -1806,6 +1837,7 @@
                         vcargarp = 0;
                         vcargarb = 0;
                         vcargart = 0;
+                        $("#isVueltos").val('');
                         $("#DMontoTrans").val('');
                         DMontoTrans();
                         $("#DMontoBolivar").val('');
@@ -1831,6 +1863,7 @@
                         vcargarp = 0;
                         vcargarb = 0;
                         vcargarpto = 0;
+                        $("#isVueltos").val('');
                         $("#DMontoPunto").val('');
                         DMontoPunto();
                         $("#DMontoBolivar").val('');
@@ -1954,6 +1987,8 @@
                     $("#tipo_pago").val('');
                     $("#tipo_pago").val('Dolar');
                     $("#spTotal").html('0.00'); //aqui
+                    $('#base_vuelto_monto_dejado').val(0.00);
+                    $('#monto_dejadoResta').val(0.00);
 
 
                     prepara();
@@ -1984,6 +2019,9 @@
                     $("#tipo_pago").val('');
                     $("#tipo_pago").val('Peso');
                     $("#spTotal").html('0.00'); //aqui
+
+                    $('#base_vuelto_monto_dejado').val(0.00);
+                    $('#monto_dejadoResta').val(0.00);
 
                     $("#DMontoDolar").val('');
                     $("#DMontoPeso").val('');
@@ -2048,6 +2086,8 @@
                     $("#tipo_pago").val('');
                     $("#tipo_pago").val('Trans/Punto');
                     $("#spTotal").html('0.00'); //aqui
+                    $('#base_vuelto_monto_dejado').val(0.00);
+                    $('#monto_dejadoResta').val(0.00);
 
                     $("#DMontoDolar").val('');
                     $("#DMontoPeso").val('');
@@ -2114,6 +2154,9 @@
                     $("#tipo_pago").val('Mixto');
                     $("#spTotal").html('0.00'); //aqui
 
+                    $('#base_vuelto_monto_dejado').val(0.00);
+                    $('#monto_dejadoResta').val(0.00);
+
                     $("#DMontoDolar").val('');
                     $("#DMontoPeso").val('');
                     $("#DMontoBolivar").val('');
@@ -2177,6 +2220,9 @@
                     $("#tipo_pago").val('');
                     $("#tipo_pago").val('Efectivo');
                     $("#spTotal").html('0.00'); //aqui
+
+                    $('#base_vuelto_monto_dejado').val(0.00);
+                    $('#monto_dejadoResta').val(0.00);
 
                     $("#DMontoDolar").val('');
                     $("#DMontoPeso").val('');
@@ -2538,7 +2584,7 @@
                     // precio_compra = precio_compra/1000
 
                 // alert('por kilo '+precio_compra);
-                    // c]antidad.classList.add('readonly');
+                    // cantidad.classList.add('readonly');
 
 
 
@@ -2942,6 +2988,24 @@
                 return decimal/1000;
             }
 
+
+            var VueltosvtosPendientes = $('#VueltosvtosPendientes').val();
+
+    // alert(VueltosvtosPendientes);
+    $("#VueltosdispExcedente").val(VueltosvtosPendientes);
+        // var verCajaExcedente = vtosPendientes;
+        if(VueltosvtosPendientes > 0){
+            // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
+        $("#Vueltosexcedente").show();
+        $("#Vueltosex").show();
+        $("#Vueltosexcdt").show();
+
+        }else{
+            $("#Vueltosexcedente").hide();
+            $("#Vueltosex").hide();
+            $("#Vueltosexcdt").hide();
+        }
+
             // Gestion de pagos
 
             /* Restar dos números. */
@@ -2954,9 +3018,61 @@
                 const r             = document.getElementById('r');
                 const tap           = document.getElementById('tap');
                 const RestaTotalV    = document.getElementById('RestaTtotalV');
+                const Excdt    = document.getElementById('excdt');
+                const VueltosExcdt    = document.getElementById('Vueltosexcdt');
+
+
+                // TODO con este codigo trabajamos los vueltos pendientes
+
+                let VueltosExc = $('#VueltospagoConExcedente').val();
+
+
+
+
+                if(VueltosExc > 0){
+                    VueltospagoExc = VueltosExc;
+
+                    VueltospagoExced = VueltosExc;
+
+                    if(VueltospagoExced > 0){
+
+                        var VueltosdispExcedente = $("#VueltosdispExcedente").val();
+
+                        var VueltosdispExced = VueltosdispExcedente - VueltospagoExced;
+
+                        // 0.1 <= (0.3 - 0.2)                              // false
+                        VueltosdispExced = new Decimal(VueltosdispExced);
+                        // dispExced.lessThanOrEqualTo(Decimal(0.3).minus(0.2))    // true
+                        // new Decimal(-1).lte(x)
+                        var VueltosvalidarDispExced = VueltosdispExced.isNeg();
+                        // alert(validarDispExced);
+
+                        $("#VueltosdispExcedenteShow").html('$'+VueltosdispExced.toFixed(2));
+                    }
+
+
+                    if (VueltosvalidarDispExced){
+                        alert('El monto disponible no supera el monto a pagar... Deuda disponible es de: $'+VueltosdispExcedente+ ' y el monto que decea pagar es de: $'+VueltosdispExced.toFixed(2));
+                        VueltospagoExc = 0;
+                        VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
+                        $('#VueltospagoConExcedente').val('');
+                        $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
+                    }
+
+                }else{
+
+                    // alert('aquí');
+                    VueltospagoExc = 0;
+                    VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
+                    // $('#VueltospagoConExcedente').val('');
+                    $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
+                }
+
 
 
                 var valor           = new Decimal(PagoTtotal.innerHTML);
+
+                valor = valor.minus(VueltospagoExc);
                 var valor_restar    = new Decimal(spTotal.innerHTML);
                 var resta           = new Decimal(valor.minus(valor_restar).toNumber());
                 // alert('resta');
@@ -2965,6 +3081,11 @@
                 // valor_restar = parseFloat(valor_restar);
                 // resta = parseFloat(resta);
 
+
+                resta = new Decimal(resta);
+
+                VueltosExcdt.innerHTML = numDecimal(VueltosExc);
+                // Excdt.innerHTML = numDecimal(Exc);
                 RestaTotal.innerHTML = resta; //se llena el campo resta
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2989,8 +3110,13 @@
 
                     }
 
-                if (RestaTotal.innerHTML <= -1) {
+                if (resta.lessThan(Decimal(0))) {
                     // alert('soy menor < -1');
+
+                    $("#monto_dejadoResta").val(0.00);
+                    $("#DMontoDolarV").val('');
+                    $("#DMontoPesoV").val('');
+                    $("#DMontoBolivarV").val('');
                     $("#vueltos").show("linear");
                     $("#guardar").hide("linear");
                 }
@@ -3057,8 +3183,10 @@
                     }
                 });
                 // alert(total_suma);
-                document.getElementById('spTotal').innerHTML = numDecimal(total_suma);
-                $('#monto_dejado').val(total_suma);
+                let result = new Decimal(total_suma);
+                document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(2));
+                $('#monto_dejado').val(result.toFixed(2));
+                $('#base_vuelto_monto_dejado').val(result.toFixed(2));
 
             }
 
@@ -3209,102 +3337,182 @@
                     $("#RestaTrans").val(RmultT);
                 }
 
-            $(document).ready(function() {
+
+                $(document).ready(function() {
+
+                    var aprovMontoDolar = 0;
+                    $("#DMontoDolar").keyup(function() {
+                        aprovMontoDolar = 1;
+                        $("#isVueltos").val('');
+                        DMontoDolar();
+                    });
+
+                    $("#DMontoPeso").keyup(function() {
+                        aprovMontoDolar = 1;
+                        $("#isVueltos").val('');
+                        DMontoPeso();
+                    });
+
+                    $("#DMontoBolivar").keyup(function() {
+                        aprovMontoDolar = 1;
+                        $("#isVueltos").val('');
+                        DMontoBolivar();
+                    });
+
+                    $("#DMontoPunto").keyup(function() {
+                        aprovMontoDolar = 1;
+                        $("#isVueltos").val('');
+                        DMontoPunto();
+                    });
+
+                    $("#DMontoTrans").keyup(function() {
+                        aprovMontoDolar = 1;
+                        $("#isVueltos").val('');
+                        DMontoTrans();
+                    });
+
+                    $("#pagoConExcedente").keyup(function() {
+                        DMontoDolar();
+
+                    });
+                    $("#pagoConCredito").keyup(function() {
 
 
-                $("#DMontoDolar").keyup(function() {
-                    DMontoDolar();
-                });
+                        DMontoDolar();
+                    });
+                    $("#VueltospagoConExcedente").keyup(function() {
+                        DMontoDolar();
 
-                $("#DMontoPeso").keyup(function() {
-                    DMontoPeso();
-                });
-
-                $("#DMontoBolivar").keyup(function() {
-                    DMontoBolivar();
-                });
-
-                $("#DMontoPunto").keyup(function() {
-                    DMontoPunto();
-                });
-
-                $("#DMontoTrans").keyup(function() {
-                    DMontoTrans();
-                });
+                    });
 
 
+                    });
 
-            });
+            // $(document).ready(function() {
+
+
+            //     $("#DMontoDolar").keyup(function() {
+            //         DMontoDolar();
+            //     });
+
+            //     $("#DMontoPeso").keyup(function() {
+            //         DMontoPeso();
+            //     });
+
+            //     $("#DMontoBolivar").keyup(function() {
+            //         DMontoBolivar();
+            //     });
+
+            //     $("#DMontoPunto").keyup(function() {
+            //         DMontoPunto();
+            //     });
+
+            //     $("#DMontoTrans").keyup(function() {
+            //         DMontoTrans();
+            //     });
+
+
+
+            // });
 
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /* Restar dos números. */
-    function restaV() {
-                // alert('resta');
-                const RestaTotalV    = document.getElementById('RestaTtotalV');
-                const PagoTtotalV    = document.getElementById('PagoTtotalV');
-                const spTotalV       = document.getElementById('spTotalV');
-                const tpV            = document.getElementById('tpV');
-                const rV             = document.getElementById('rV');
-                const tapV           = document.getElementById('tapV');
-
-
-
-                var valorV           = PagoTtotalV.innerHTML;
-                var valor_restarV    = spTotalV.innerHTML;
-                var restaV           = numDecimal(valorV - valor_restarV);
-
-                RestaTotalV.innerHTML = numDecimal(restaV); //se llena el campo resta
+        /* Restar dos números. */
+        function restaV() {
+            // alert('resta');
+            const RestaTotalV    = document.getElementById('RestaTtotalV');
+            const PagoTtotalV    = document.getElementById('PagoTtotalV');
+            const spTotalV       = document.getElementById('spTotalV');
+            const tpV            = document.getElementById('tpV');
+            const rV             = document.getElementById('rV');
+            const tapV           = document.getElementById('tapV');
 
 
 
-                if (RestaTotalV.innerHTML >= 0) {
-                    // alert('soy menor');
-                    RestaTotalV.classList.remove('text-primary');
-                    RestaTotalV.classList.add('text-danger');
-                    rV.classList.remove('text-primary');
-                    rV.classList.add('text-danger');
+            var valorV           = PagoTtotalV.innerHTML;
+            var valor_restarV    = spTotalV.innerHTML;
+            var restaV           = numDecimal(valorV - valor_restarV);
 
-                    PagoTtotalV.classList.add('text-success');
-                    tapV.classList.add('text-success');
-
-                    $("#tapV").html("MONTO COMPLETO...");
-                    $("#rV").html("VUELTOS...");
-                    // verify();
-                    $("#guardar").show("linear");;
+            RestaTotalV.innerHTML = numDecimal(restaV); //se llena el campo resta
 
 
 
+            if (RestaTotalV.innerHTML >= 0) {
+                // alert('soy menor');
+                RestaTotalV.classList.remove('text-primary');
+                RestaTotalV.classList.add('text-danger');
+                rV.classList.remove('text-primary');
+                rV.classList.add('text-danger');
 
-                }
-                if (RestaTotalV.innerHTML < 0) {
+                PagoTtotalV.classList.add('text-success');
+                tapV.classList.add('text-success');
 
-                    // alert('soy mayor');
-                    RestaTotalV.classList.remove('text-danger');
-                    RestaTotalV.classList.add('text-primary');
-                    rV.classList.remove('text-danger');
-                    rV.classList.add('text-primary');
-
-                    PagoTtotalV.classList.remove('text-success');
-                    tapV.classList.remove('text-success');
-
-                    $("#rV").html("RESTA");
-                    $("#tapV").html("TOTAL A PAGAR");
-                    $("#guardar").hide("linear");
-                }
+                $("#tapV").html("MONTO COMPLETO...");
+                $("#rV").html("VUELTOS...");
+                // verify();
+                $("#guardar").show("linear");;
 
 
 
-                // document.getElementById('RestaTtotal').addClass('btn btn-primary');
+
+            }
+            if (RestaTotalV.innerHTML < 0) {
+
+                // alert('soy mayor');
+                RestaTotalV.classList.remove('text-danger');
+                RestaTotalV.classList.add('text-primary');
+                rV.classList.remove('text-danger');
+                rV.classList.add('text-primary');
+
+                PagoTtotalV.classList.remove('text-success');
+                tapV.classList.remove('text-success');
+
+                $("#rV").html("RESTA");
+                $("#tapV").html("TOTAL A PAGAR");
+                $("#guardar").hide("linear");
             }
 
 
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            // document.getElementById('RestaTtotal').addClass('btn btn-primary');
+                }
+
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+            // /* Sumar dos números. */
+            // function sumarV() {
+            //     var total_sumaV = 0;
+            //     var tsV = 0;
+            //     $(".montoV").each(function() {
+            //         if (isNaN(parseFloat($(this).val()))) {
+            //             total_sumaV -= 0;
+            //             tsV += 0;
+            //         } else {
+            //             total_sumaV -= parseFloat($(this).val());
+            //             tsV += parseFloat($(this).val());
+            //         }
+            //     });
+            //     // alert(total_suma);
+            //     // let md = $('#monto_dejado').val();
+            //     // rmd = total_sumaV - md;
+            //     // $('#monto_dejado').val(rmd);
+
+            //     if(tsV > 0){
+            //     let md = $('#monto_dejado').val();
+            //     rmd =  md - tsV;
+            //     $('#monto_dejado').val(rmd);
+            //     // $('#isVueltos').val(tsV);
+            //     }
+            //    document.getElementById('spTotalV').innerHTML = numDecimal(total_sumaV);
+
+            // }
 
 
             /* Sumar dos números. */
@@ -3326,12 +3534,32 @@
                 // $('#monto_dejado').val(rmd);
 
                 if(tsV > 0){
-                let md = $('#monto_dejado').val();
-                rmd =  md - tsV;
-                $('#monto_dejado').val(rmd);
-                // $('#isVueltos').val(tsV);
+                // let md = $('#monto_dejado').val();
+                // rmd =  md - tsV;
+                $('#isVueltos').val(tsV);
+                // let rmdresult = new Decimal(rmd);
+                let rmdresult = new Decimal(tsV);
+                // $('#monto_dejado').val(rmdresult.toFixed(2));
+                $('#monto_dejadoResta').val(rmdresult.toFixed(2));
+
                 }
-               document.getElementById('spTotalV').innerHTML = numDecimal(total_sumaV);
+                let montoBase = $('#base_vuelto_monto_dejado').val();
+                let restaMontoDejadoBase = $('#monto_dejadoResta').val();
+
+                // console.log(montoBase);
+                // console.log(restaMontoDejadoBase);
+                x = new Decimal(montoBase)
+                y = new Decimal(restaMontoDejadoBase)
+                let r = x.sub(y)                  // '0.2'
+                // console.log(r.toFixed(2));
+
+                $('#monto_dejado').val(r.toFixed(2));
+
+
+                // $('#monto_dejado').val(rmdresult.toFixed(2));
+                let result = new Decimal(total_sumaV);
+                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
+
 
             }
 
@@ -3417,36 +3645,57 @@
                 }
 
 
+                $(document).ready(function() {
 
 
+                    $("#DMontoDolarV").keyup(function() {
+                        $("#isVueltos").val('');
+                        $("#monto_dejadoResta").val(0.00);
+                        DMontoDolarV();
+                    });
 
-            $(document).ready(function() {
+                    $("#DMontoPesoV").keyup(function() {
+                        $("#isVueltos").val('');
+                        $("#monto_dejadoResta").val(0.00);
+                        DMontoPesoV();
+                    });
 
+                    $("#DMontoBolivarV").keyup(function() {
+                        $("#isVueltos").val('');
+                        $("#monto_dejadoResta").val(0.00);
+                        DMontoBolivarV();
+                    });
 
-                $("#DMontoDolarV").keyup(function() {
-                    DMontoDolarV();
                 });
 
-                $("#DMontoPesoV").keyup(function() {
-                    DMontoPesoV();
-                });
 
-                $("#DMontoBolivarV").keyup(function() {
-                    DMontoBolivarV();
-                });
+            // $(document).ready(function() {
 
 
+            //     $("#DMontoDolarV").keyup(function() {
+            //         DMontoDolarV();
+            //     });
+
+            //     $("#DMontoPesoV").keyup(function() {
+            //         DMontoPesoV();
+            //     });
+
+            //     $("#DMontoBolivarV").keyup(function() {
+            //         DMontoBolivarV();
+            //     });
 
 
 
-            });
+
+
+            // });
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     $("#cargarDolarV").on('click', function() {
-        // alert('2');
+            // alert('2');
             if(vcargarV == 0){
                 // alert('0');
                 vcargarV = 1;
@@ -3454,7 +3703,8 @@
                 vcargarbV = 0;
 
 
-
+                $("#isVueltos").val('');
+                // $("#monto_dejadoResta").val(0.00);
                 $("#DMontoPesoV").val('');
                 DMontoPesoV();
                 $("#DMontoBolivarV").val('');
@@ -3469,7 +3719,9 @@
             }else{
                 // alert('1');
                 vcargarV = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoDolarV").val('');
+                $("#isVueltos").val('');
                 DMontoDolarV();
             }
         });
@@ -3481,7 +3733,8 @@
                 vcargarV = 0;
                 vcargarbV = 0;
 
-
+                $("#isVueltos").val('');
+                // $("#monto_dejadoResta").val(0.00);
 
 
                 $("#DMontoDolarV").val('');
@@ -3495,7 +3748,9 @@
                 DMontoPesoV();
             }else{
                 vcargarpV = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoPesoV").val('');
+                $("#isVueltos").val('');
                 DMontoPesoV();
             }
         });
@@ -3506,6 +3761,7 @@
                 vcargarV = 0;
                 vcargarpV = 0;
 
+                $("#isVueltos").val('');
 
 
 
@@ -3520,10 +3776,92 @@
                 DMontoBolivarV();
             }else{
                 vcargarbV = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoBolivarV").val('');
+                $("#isVueltos").val('');
                 DMontoBolivarV();
             }
         });
+
+    // $("#cargarDolarV").on('click', function() {
+    //     // alert('2');
+    //         if(vcargarV == 0){
+    //             // alert('0');
+    //             vcargarV = 1;
+    //             vcargarpV = 0;
+    //             vcargarbV = 0;
+
+
+
+    //             $("#DMontoPesoV").val('');
+    //             DMontoPesoV();
+    //             $("#DMontoBolivarV").val('');
+    //             DMontoBolivarV();
+
+    //             let RdV    = document.getElementById('RestaDolarV').value;
+
+    //             RdV = -1 * RdV;
+    //             // alert('valor = '+RdV);
+    //             $("#DMontoDolarV").val(RdV);
+    //             DMontoDolarV();
+    //         }else{
+    //             // alert('1');
+    //             vcargarV = 0;
+    //             $("#DMontoDolarV").val('');
+    //             DMontoDolarV();
+    //         }
+    //     });
+
+    //     $("#cargarPesoV").on('click', function() {
+
+    //         if(vcargarpV == 0){
+    //             vcargarpV = 1;
+    //             vcargarV = 0;
+    //             vcargarbV = 0;
+
+
+
+
+    //             $("#DMontoDolarV").val('');
+    //             DMontoDolarV();
+    //             $("#DMontoBolivarV").val('');
+    //             DMontoBolivarV();
+    //             let RpV    = document.getElementById('RestaPesoV').value;
+
+    //             RpV = -1 * RpV;
+    //             $("#DMontoPesoV").val(RpV);
+    //             DMontoPesoV();
+    //         }else{
+    //             vcargarpV = 0;
+    //             $("#DMontoPesoV").val('');
+    //             DMontoPesoV();
+    //         }
+    //     });
+
+    //     $("#cargarBolivarV").on('click', function() {
+    //         if(vcargarbV == 0){
+    //             vcargarbV = 1;
+    //             vcargarV = 0;
+    //             vcargarpV = 0;
+
+
+
+
+    //             $("#DMontoPesoV").val('');
+    //             DMontoPesoV();
+    //             $("#DMontoDolarV").val('');
+    //             DMontoDolarV();
+    //             let RbV    = document.getElementById('RestaBolivarV').value;
+
+    //             RbV = -1 * RbV;
+    //             $("#DMontoBolivarV").val(RbV);
+    //             DMontoBolivarV();
+    //         }else{
+    //             vcargarbV = 0;
+    //             $("#DMontoBolivarV").val('');
+    //             DMontoBolivarV();
+    //         }
+    //     });
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

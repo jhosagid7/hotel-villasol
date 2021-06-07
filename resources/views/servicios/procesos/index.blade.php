@@ -1507,6 +1507,7 @@ console.log('Falta '+minutes);
                 DMontoDolar();
             }else{
                 vcargar = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoDolar").val('');
                 DMontoDolar();
             }
@@ -1537,6 +1538,7 @@ console.log('Falta '+minutes);
                 DMontoPeso();
             }else{
                 vcargarp = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoPeso").val('');
                 DMontoPeso();
             }
@@ -1567,6 +1569,7 @@ console.log('Falta '+minutes);
                 DMontoBolivar();
             }else{
                 vcargarb = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoBolivar").val('');
                 DMontoBolivar();
             }
@@ -1597,6 +1600,7 @@ console.log('Falta '+minutes);
                 DMontoPunto();
             }else{
                 vcargarpto = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoPunto").val('');
                 DMontoPunto();
             }
@@ -1627,6 +1631,7 @@ console.log('Falta '+minutes);
                 DMontoTrans();
             }else{
                 vcargart = 0;
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoTrans").val('');
                 DMontoTrans();
             }
@@ -3257,7 +3262,7 @@ console.log('Falta '+minutes);
                let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
 
             RestaTotalV.innerHTML = numDecimal(resta); //se llena el campo resta
-        PagoTtotalV.innerHTML = numDecimal(resta); //se llena el campo resta id="RestaTtotalV"
+        PagoTtotalV.innerHTML = numDecimal(resta); //se llena el campo resta
 
         DMontoDolarV();
 
@@ -3270,6 +3275,10 @@ console.log('Falta '+minutes);
 
             if (resta.lessThan(Decimal(0))) {
             // alert('soy menor');
+            $("#monto_dejadoResta").val(0.00);
+            $("#DMontoDolarV").val('');
+            $("#DMontoPesoV").val('');
+            $("#DMontoBolivarV").val('');
             $("#vueltos").show("linear");
             $("#guardar").hide("linear");
             }
@@ -3522,30 +3531,40 @@ console.log('Falta '+minutes);
         $("#DMontoDolar").keyup(function() {
             aprovMontoDolar = 1;
             $("#isVueltos").val('');
+            $("#monto_dejadoResta").val(0.00);
+            $("#DMontoDolarV").val('');
             DMontoDolar();
         });
 
         $("#DMontoPeso").keyup(function() {
             aprovMontoDolar = 1;
             $("#isVueltos").val('');
+            $("#monto_dejadoResta").val(0.00);
+            $("#DMontoPesoV").val('');
             DMontoPeso();
         });
 
         $("#DMontoBolivar").keyup(function() {
             aprovMontoDolar = 1;
             $("#isVueltos").val('');
+            $("#monto_dejadoResta").val(0.00);
+            $("#DMontoBolivarV").val('');
             DMontoBolivar();
         });
 
         $("#DMontoPunto").keyup(function() {
             aprovMontoDolar = 1;
             $("#isVueltos").val('');
+            $("#monto_dejadoResta").val(0.00);
+            $("#DMontoPuntoV").val('');
             DMontoPunto();
         });
 
         $("#DMontoTrans").keyup(function() {
             aprovMontoDolar = 1;
             $("#isVueltos").val('');
+            $("#monto_dejadoResta").val(0.00);
+            $("#DMontoTransV").val('');
             DMontoTrans();
         });
 
@@ -3814,6 +3833,7 @@ console.log('Falta '+minutes);
 
                 $("#isVueltos").val('');
 
+
                 $("#DMontoPesoV").val('');
                 DMontoPesoV();
                 $("#DMontoBolivarV").val('');
@@ -3829,6 +3849,7 @@ console.log('Falta '+minutes);
                 // alert('1');
                 vcargarV = 0;
                 $("#DMontoDolarV").val('');
+                $("#monto_dejadoResta").val(0.00);
                 $("#isVueltos").val('');
                 DMontoDolarV();
             }
@@ -3844,6 +3865,7 @@ console.log('Falta '+minutes);
 
 
                 $("#isVueltos").val('');
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoDolarV").val('');
                 DMontoDolarV();
                 $("#DMontoBolivarV").val('');
@@ -3882,6 +3904,7 @@ console.log('Falta '+minutes);
             }else{
                 vcargarbV = 0;
                 $("#isVueltos").val('');
+                $("#monto_dejadoResta").val(0.00);
                 $("#DMontoBolivarV").val('');
                 DMontoBolivarV();
             }
