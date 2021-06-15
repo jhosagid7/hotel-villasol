@@ -1392,8 +1392,8 @@
                             @endif
                             @endforeach
                         @endif
-                        @if ($cajas->excedente_actual)
-                            @foreach ($cajas->excedente_actual as $vtosDevueltos)
+                        @if ($cajas->excedente_actual_valor)
+                            @foreach ($cajas->excedente_actual_valor as $vtosDevueltos)
                             @if ($vtosDevueltos->servicio_id == $serv->id && $vtosDevueltos->Estado == 'Devueltos' && $vtosDevueltos->Tipo == 'Servicio')
                             <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.floatval($vtosDevueltos->MontoDivisa) ?? '' }}</b>
                             @endif
@@ -1449,8 +1449,8 @@
                     <td>{{ $serv->cedula_cliente ?? '' }}</td>
                     <td colspan="3">{{ $serv->direccion_cliente ?? '' }}</td>
                     <td>
-                        @if ($cajas->excedente_actual)
-                            @foreach ($cajas->excedente_actual as $excdteNuevo)
+                        @if ($cajas->excedente_actual_valor)
+                            @foreach ($cajas->excedente_actual_valor as $excdteNuevo)
                             @if ($excdteNuevo->servicio_id == $serv->id && $excdteNuevo->Estado == 'ExcedenteNuevo')
                             {{ ' '.$excdteNuevo->Divisa.': '.floatval($excdteNuevo->MontoDivisa) ?? '' }}
                             @endif
@@ -1459,8 +1459,8 @@
                         @endif
                     </td>
                     <td>
-                        @if ($cajas->excedente_actual)
-                            @foreach ($cajas->excedente_actual as $vtosPendtes)
+                        @if ($cajas->excedente_actual_valor)
+                            @foreach ($cajas->excedente_actual_valor as $vtosPendtes)
                             @if ($vtosPendtes->servicio_id == $serv->id && $vtosPendtes->Estado == 'Pendiente' && $vtosPendtes->Tipo == 'Servicio')
                             {{ ' '.$vtosPendtes->Divisa.': '.floatval($vtosPendtes->MontoDivisa) ?? '' }}
                             @endif
@@ -1468,8 +1468,8 @@
                             @endforeach
                         @endif
 
-                        @if ($cajas->excedente_actual)
-                            @foreach ($cajas->excedente_actual as $vtosPagarOfic)
+                        @if ($cajas->excedente_actual_valor)
+                            @foreach ($cajas->excedente_actual_valor as $vtosPagarOfic)
                             @if ($vtosPagarOfic->servicio_id == $serv->id && $vtosPagarOfic->Estado == 'PagarOficina')
                             <b class="text-red">{{ ' '.$vtosPagarOfic->Divisa.': '.floatval($vtosPagarOfic->MontoDivisa) ?? '' }}</b>
                             @endif

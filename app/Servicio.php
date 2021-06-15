@@ -106,6 +106,7 @@ class Servicio extends Model
         'num_Trans',
         'modo_pago',
         'tipo_pago',
+        'is_cambio',
         'precio_costo',
         'cantidad',
         'dinero_dejado',

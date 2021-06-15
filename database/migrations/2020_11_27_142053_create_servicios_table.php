@@ -44,6 +44,7 @@ class CreateServiciosTable extends Migration
             $table->string('num_Trans', 20)->nullable();
             $table->enum('modo_pago', ['Contado', 'Credito', 'Cortesia', 'Cambio', 'Excedente', 'Contado-Excedente']);
             $table->string('tipo_pago', 20)->nullable();
+            $table->enum('is_cambio', ['Si', 'No'])->nullable();
             $table->enum('status', ['Pagado', 'Falta pagar', 'Exonerado']);
             $table->decimal('precio_costo', 25, 2)->nullable();
             $table->unsignedInteger('cantidad')->nullable();

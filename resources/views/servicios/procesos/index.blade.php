@@ -1,5 +1,42 @@
 @extends ('layouts.admin3')
 @section('contenido')
+<style>
+.contenidoLlargo {
+    /* width:80%; */
+    /* size:5px; */
+     /*height:10%;
+    background-color:orange;
+    color:white; */
+    /* font-size:12pt; */
+
+    height:14%;
+width:100%;
+size:"10px";
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow: ellipsis;
+}
+
+.tituloTabla{
+    height:14%;
+    width:10%;
+    size:"10px";
+    overflow:hidden;
+    white-space:nowrap;
+    text-overflow: ellipsis;
+}
+
+
+.divLargo{
+/* background:red; */
+height:12%;
+width:50%;
+overflow: hidden;
+white-space:nowrap;
+text-overflow: ellipsis;
+}
+</style>
+
 
 <?php
 date_default_timezone_set('America/Caracas');
@@ -101,7 +138,7 @@ date_default_timezone_set('America/Caracas');
 
                                           @if ($habitacion)
                                             {{-- si hay habitacion --}}
-                                            <form class="form-horizontal" id="form1" role="form" action="{{ route('servicio.store')}}" method="POST">
+                                            <form class="form-horizontal" id="form1" role="form" action="{{ route('servicio.store')}}" method="POST" autocomplete="off">
                                             @csrf
                                             {{-- <form class="form-horizontal" method="post" id="form1" action="index.php?view=addproceso" role="form"> --}}
                                   <div class="box box-default">
@@ -381,8 +418,8 @@ date_default_timezone_set('America/Caracas');
                                             </div>
                                             <div id="contado"
                                                 class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                                <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
-
+                                                <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contad+o</a>
+                                                <a id="hola" href="#" data-toggle="modal" data-target="#precontadomodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small hidden">Contado modal</a>
                                             </div>
                                             <div id="precortesia"
                                                 class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
@@ -612,13 +649,13 @@ date_default_timezone_set('America/Caracas');
                                                 <table id="pagos"
                                                     class="table table-striped table-borderd table-condensed table-hover">
                                                     <thead>
-                                                        <th>Divisa</th>
-                                                        <th>Monto</th>
+                                                        <th class="tituloTabla">Divisa</th>
+                                                        <th class="tituloTabla">Monto</th>
 
-                                                        <th>Tasa</th>
-                                                        <th>Divisa a dolar</th>
-                                                        <th>Resta</th>
-                                                        <th>Subtotal</th>
+                                                        <th class="tituloTabla">Tasa</th>
+                                                        <th class="tituloTabla">Divisa a dolar</th>
+                                                        <th class="tituloTabla">Resta</th>
+                                                        <th class="tituloTabla">Subtotal</th>
                                                     </thead>
                                                     <tbody>
                                                         <tr id="trD">
@@ -626,21 +663,21 @@ date_default_timezone_set('America/Caracas');
                                                                 <h4 class="text-bold text-primary">Dolar</h4>
                                                             </td><input name="divisa[]" value="Dolar"
                                                                 type="hidden">
-                                                            <td><input name="MontoDivisa[]" size="10px" class="decimal"
+                                                            <td class="tituloTabla"><input name="MontoDivisa[]"  class="decimal"
                                                                     type="texto" id="DMontoDolar">
                                                                     <button type="button" id="cargarDolar" class="btn btn-primary btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
 
-                                                            <td><input name="TasaTike[]"  size="10px" type="texto"
+                                                            <td><input name="TasaTike[]"   type="texto"
                                                                     id="TasaDolar"
                                                                     value="{{ $tasaDolar->tasa }}">
                                                             </td>
-                                                            <td><input name="MontoDolar[]"  size="10px" type="text"
-                                                                    id="DolarToDolar" class="monto"
+                                                            <td><input name="MontoDolar[]"   type="text"
+                                                                    id="DolarToDolar" class="monto contenidoLlargo"
                                                                     onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]"  size="10px" type="text"
+                                                            <td><input name="Veltos[]"   type="text"
                                                                     id="RestaDolar"></td>
-                                                            <td id="DsubTotal"></td>
+                                                            <td><div id="DsubTotal" class="divLargo"></div></td>
                                                         </tr>
                                                         <tr id="trP">
                                                             <td>
@@ -648,19 +685,19 @@ date_default_timezone_set('America/Caracas');
                                                             </td>
                                                             </th><input name="divisa[]" value="Peso"
                                                                 type="hidden">
-                                                            <td><input name="MontoDivisa[]"  size="10px" class="decimal"
+                                                            <td><input name="MontoDivisa[]"   class="decimal"
                                                                     type="texto" id="DMontoPeso">
                                                                     <button type="button" id="cargarPeso" class="btn btn-info btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
-                                                            <td><input name="TasaTike[]"  size="10px" type="texto" readonly
+                                                            <td><input name="TasaTike[]"   type="texto" readonly
                                                                     id="TasaPeso" value="{{ $tasaPeso->tasa }}">
                                                             </td>
-                                                            <td><input name="MontoDolar[]"  size="10px" type="text" readonly
-                                                                    id="PesoToDolar" class="monto"
+                                                            <td><input name="MontoDolar[]"   type="text" readonly
+                                                                    id="PesoToDolar" class="monto contenidoLlargo"
                                                                     onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]"  size="10px" type="text" readonly
+                                                            <td><input name="Veltos[]"   type="text" readonly
                                                                     id="RestaPeso"></td>
-                                                            <td id="PeSubTotal"></td>
+                                                            <td class="tituloTabla"><div id="PeSubTotal" class="divLargo"></div></td>
                                                         </tr>
                                                         <tr id="trE">
                                                             <td>
@@ -669,17 +706,17 @@ date_default_timezone_set('America/Caracas');
                                                             </th><input name="divisa[]" value="Bolivar"
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" class="decimal"
-                                                                    type="texto"  size="10px" id="DMontoBolivar">
+                                                                    type="texto"   id="DMontoBolivar">
                                                                     <button type="button" id="cargarBolivar" class="btn btn-warning btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
-                                                            <td><input name="TasaTike[]"  size="10px" type="texto" readonly
+                                                            <td><input name="TasaTike[]"   type="texto" readonly
                                                                     id="TasaBolivar"
                                                                     value="{{ $tasaTransferenciaPunto->tasa }}">
                                                             </td>
-                                                            <td><input name="MontoDolar[]"  size="10px" type="texto" readonly
-                                                                    id="BolivarToDolar" class="monto"
+                                                            <td><input name="MontoDolar[]"   type="texto" readonly
+                                                                    id="BolivarToDolar" class="monto contenidoLlargo"
                                                                     onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]"  size="10px" type="text" readonly
+                                                            <td><input name="Veltos[]"   type="text" readonly
                                                                     id="RestaBolivar"></td>
                                                             <td id="BoSubTotal"></td>
                                                         </tr>
@@ -690,20 +727,20 @@ date_default_timezone_set('America/Caracas');
                                                             </th><input name="divisa[]" value="Punto"
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" class="decimal"
-                                                                    type="texto"  size="10px" id="DMontoPunto">
+                                                                    type="texto"   id="DMontoPunto">
                                                                     <button type="button" id="cargarPunto" class="btn btn-danger btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                 </td>
                                                             <td>
                                                                 <input
-                                                                type="text" size="10px" name="num_Punto" id="num_Punto" placeholder="N° de Punto..."
+                                                                type="text"  name="num_Punto" id="num_Punto" placeholder="N° de Punto..."
                                                                 value="">
-                                                                <input name="TasaTike[]"  size="10px" type="texto"
+                                                                <input name="TasaTike[]"   type="texto"
                                                                     class="enteros" id="TasaPunto" readonly value="{{ $tasaTransferenciaPunto->tasa }}">
                                                             </td>
-                                                            <td><input name="MontoDolar[]"  size="10px" readonly type="texto"
-                                                                    id="PuntoToDolar" class="monto"
+                                                            <td><input name="MontoDolar[]"   readonly type="texto"
+                                                                    id="PuntoToDolar" class="monto contenidoLlargo"
                                                                     onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]" readonly  size="10px" type="text"
+                                                            <td><input name="Veltos[]" readonly   type="text"
                                                                     id="RestaPunto"></td>
                                                             <td id="PuSubTotal"></td>
                                                         </tr>
@@ -715,21 +752,21 @@ date_default_timezone_set('America/Caracas');
                                                             </th><input name="divisa[]" value="Transferencia"
                                                                 type="hidden">
                                                             <td><input name="MontoDivisa[]" class="decimal"
-                                                                    class="" type="texto"  size="10px" id="DMontoTrans">
+                                                                    class="" type="texto"   id="DMontoTrans">
                                                                     <button type="button" id="cargarTrans" class="btn btn-success btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                 </td>
                                                             <td>
                                                                 <input
-                                                                type="text"  size="10px" name="num_Trans" id="num_Trans" placeholder="N° de Transferencia..."
+                                                                type="text"   name="num_Trans" id="num_Trans" placeholder="N° de Transferencia..."
                                                                 value="">
-                                                                <input name="TasaTike[]"  size="10px" type="texto" readonly
+                                                                <input name="TasaTike[]"   type="texto" readonly
                                                                     class="enteros" id="TasaTrans" value="{{ $tasaTransferenciaPunto->tasa }}">
 
                                                             </td>
-                                                            <td><input name="MontoDolar[]"  size="10px" type="texto" readonly
-                                                                    id="TransToDolar" class="monto"
+                                                            <td><input name="MontoDolar[]"   type="texto" readonly
+                                                                    id="TransToDolar" class="monto contenidoLlargo"
                                                                     onchange="sumar();"></td>
-                                                            <td><input name="Veltos[]"  size="10px" type="text" readonly
+                                                            <td><input name="Veltos[]"   type="text" readonly
                                                                     id="RestaTrans"></td>
                                                             <td id="TrSubTotal"></td>
                                                         </tr>
@@ -758,10 +795,10 @@ date_default_timezone_set('America/Caracas');
                                                             <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}">
                                                             <input id="user_id" name="user_id" type="hidden" value="{{$UserId}}">
                                                         <th>
-                                                            <h4 class="text-bold" id="spTotal">0.00</h4>
-                                                            <h4 class="text-bold" id="excdt">0.00</h4>
-                                                            <h4 class="text-bold" id="RestaTtotal">0.00</h4>
-                                                            <h4 class="text-bold" id="PagoTtotal">0.00</h4>
+                                                            <h4 class="text-bold"><div class="divLargo" id="spTotal">0.00</div></h4>
+                                                            <h4 class="text-bold"><div class="divLargo" id="excdt">0.00</div></h4>
+                                                            <h4 class="text-bold"><div class="divLargo" id="RestaTtotal">0.00</div></h4>
+                                                            <h4 class="text-bold"><div class="divLargo" id="PagoTtotal">0.00</div></h4>
                                                         </th>
                                                     </tfoot>
                                                 </table>
@@ -870,9 +907,9 @@ date_default_timezone_set('America/Caracas');
                                                                         <h4 id="rV" class="text-bold">RESTA</h4>
                                                                         <h4 id="tapV" class="text-bold">TOTAL A PAGAR</h4>
                                                                     <th>
-                                                                        <h4 class="text-bold" id="spTotalV">0.00</h4>
-                                                                        <h4 class="text-bold" id="RestaTtotalV">0.00</h4>
-                                                                        <h4 class="text-bold" id="PagoTtotalV">0.00</h4>
+                                                                        <h4 class="text-bold"><div class="divLargo" id="spTotalV">0.00</div></h4>
+                                                                        <h4 class="text-bold"><div class="divLargo" id="RestaTtotalV">0.00</div></h4>
+                                                                        <h4 class="text-bold"><div class="divLargo" id="PagoTtotalV">0.00</div></h4>
                                                                     </th>
                                                                 </tfoot>
                                                             </table>
@@ -925,13 +962,13 @@ date_default_timezone_set('America/Caracas');
                                                 >
                                                 <input name="tasaDolar" value="{{ $tasaDolar->tasa }}" type="hidden">
                                                 <input name="porDolar" value="{{ $tasaDolar->porcentaje_ganancia }}" type="hidden">
-                                                <input name="tasaPeso" value="{{ $tasaPeso->tasa }}" type="hidden">
+                                                <input name="tasaPeso" value="{{ $tasaPeso->tasa }}" type="text">
                                                 <input name="porPeso" value="{{ $tasaPeso->porcentaje_ganancia }}" type="hidden">
                                                 <input name="tasaTransPunto" value="{{ $tasaTransferenciaPunto->tasa }}" type="hidden">
                                                 <input name="porTransPunto" value="{{ $tasaTransferenciaPunto->porcentaje_ganancia }}" type="hidden">
                                                 <input name="tasaMixto" value="{{ $tasaMixto->tasa }}" type="hidden">
                                                 <input name="porMixto" value="{{ $tasaMixto->porcentaje_ganancia }}" type="hidden">
-                                                <input name="tasaEfectivo" value="{{ $tasaEfectivo->tasa }}" type="hidden">
+                                                <input name="tasaEfectivo" value="{{ $tasaEfectivo->tasa }}" type="text">
                                                 <input name="porEfectivo" value="{{ $tasaEfectivo->porcentaje_ganancia }}" type="hidden">
                                                 <input id="tasaDolarHabitacion" name="tasaDolarHabitacion" value="{{ $tasaDolarHabitacion->tasa }}" type="hidden">
                                                 <input name="porDolarHabitacion" value="{{ $tasaDolarHabitacion->porcentaje_ganancia }}" type="hidden">
@@ -957,12 +994,42 @@ date_default_timezone_set('America/Caracas');
                 <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
                 <div class=""
                 id="guardar">
-                <button id="enviar" class="btn btn-outline" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+                <button id="enviar" class="btn btn-outline" type="button"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
             </div>
                 {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
               </div>
             </form>
             </div>
+            {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
+
+
+<div class="modal fade bs-example-modal-xm" id="precontadomodal" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg modal-warning">
+      <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title"><span class="fa fa-warning"></span>PAGO ACTIVADO... ¡Favor escanear el codigo QR!</h4>
+            <h4>EL monto a facturar: <h1 id="motoShow"></h1></h4>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cerrar</button>
+            <a id="procesarpago" href="#" class="btn btn-outline">Procesar pago</a>
+
+          </div>
+
+        </div>
+        <!-- /.modal-content -->
+      </div>
+      <!-- /.modal-dialog -->
+    </div>
+    <!-- /.modal -->
+  </div>
+
+{{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
             <!-- /.modal-content -->
             </div>
           <!-- /.modal-dialog -->
@@ -1320,6 +1387,18 @@ console.log('Falta '+minutes);
     var precio_venta    = parseFloat(0.00);
     var precio_compra   = parseFloat(0.00);
 
+    var total_d         = new Decimal(0.00);
+    var total_p         = new Decimal(0.00);
+    var total_tp        = new Decimal(0.00);
+    var total_m         = new Decimal(0.00);
+    var total_e         = new Decimal(0.00);
+    var total_costo     = new Decimal(0.00);
+
+    var precio_costo    = new Decimal(0.00);
+    var jporEspecial    = new Decimal(0.00);
+    var precio_venta    = new Decimal(0.00);
+    var precio_compra   = new Decimal(0.00);
+
     subtotal    = [];
 
     subtotalPC  = [];
@@ -1330,11 +1409,21 @@ console.log('Falta '+minutes);
     subtotale   = [];
     subtotalc   = [];
 
+
+
     var tasaD   = parseFloat($("#TasaDolar").val());
     var tasaP   = parseFloat($("#TasaPeso").val());
-    var tasaTP  = parseFloat($("#tasaTransPunto").val());
-    var tasaM   = parseFloat($("#tasaMixto").val());
-    var tasaE   = parseFloat($("#tasaEfectivo").val());
+    var tasaTP  = parseFloat($("#TasaPunto").val());
+    var tasaM   = parseFloat($("#TasaPunto").val());
+    var tasaE   = parseFloat($("#TasaBolivar").val());
+
+    tasaD   = new Decimal(tasaD);
+    tasaP   = new Decimal(tasaP);
+    tasaTP  = new Decimal(tasaTP);
+    tasaM   = new Decimal(tasaM);
+    tasaE   = new Decimal(tasaE);
+
+    // alert(tasaE);
     // var tasaPH   = parseFloat($("#tasaEfectivo").val());
     // var tasaDH   = parseFloat($("#tasaEfectivo").val());
 
@@ -1353,7 +1442,8 @@ console.log('Falta '+minutes);
 
 
 
-    $("#guardar").hide();
+    $("#procesarpago").show();//Boton procesar pago servicios
+    $("#guardar").show();
     $("#gestionpago").hide();
     $("#gestionpago_boton").show();
     $("#jidarticulo").change(showValues);
@@ -1382,16 +1472,73 @@ console.log('Falta '+minutes);
 
 
     $(document).ready(function() {
+        var validarPagoServicio = 0;
         $("#enviar").on('click', function() {
-            $("#form1").submit();
+            // alert();
+            const RestaTotal    = document.getElementById('RestaTtotal');
+            // alert(RestaTotal.innerHTML);
+            // $("#form1").submit();
+            modoPagoOn = $('#modo_pago').val();
+            tipoPago = $('#tipo_pago').val();
+            monto_dejadoR = $('#monto_dejado').val();
+            // alert(monto_dejadoR);
+
+            if (modoPagoOn == 'contado') {
+
+                if(cliente_id == 0 || cliente_id == null){
+                    alert('No has seleccionado un cliente...!');
+                    validarPagoServicio = 0;
+                    return false;
+                }
+                if(tipoPago == 0 || tipoPago == null){
+                    alert('No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...)');
+                    validarPagoServicio = 0;
+                    return false;
+                }
+
+                if(monto_dejadoR == 0 || monto_dejadoR == null){
+                    alert('No has ingresado el monto a pagar...!');
+                    validarPagoServicio = 0;
+                    return false;
+                }
+
+                if(RestaTotal.innerHTML > 0){
+                    alert('El monto ingresado no supera la deuda a pagar...!');
+                    validarPagoServicio = 0;
+                    return false;
+                }
+                // alert(RestaTotal.innerHTML);
+
+                $('#motoShow').html('$' + monto_dejadoR);
+                validarPagoServicio = 1;
+                $('#precontadomodal').modal('show');
+
+                // alert('contado');
+                // $("#form1").submit();
+            }
         });
 
+        $("#procesarpago").on('click', function() {
+            // validarPagoServicio = 1;
+            if (validarPagoServicio == 1) {
+                $("#form1").submit();
+                // alert('enviando datos');
+            }
+            return false;
+
+        });
+
+
         $("#contado").on('click', function() {
+            validarPagoServicio = 0;
             let cliente_id = $("#cliente_id").val();
             if(cliente_id == 0 || cliente_id == null){
                 alert('No has seleccionado un cliente...!');
                 return false;
             }
+
+
+            $("#procesarpago").click();
             $("#bt_addD").click();
             $('#modo_pago').val('contado');
         });
@@ -1642,7 +1789,8 @@ console.log('Falta '+minutes);
     });
 
     function numDecimal(valor){
-        let result = Number(valor).toFixed(3);
+        // let result = Number(valor).toFixed();
+        let result = valor;
 
         return result;
     }
@@ -2443,18 +2591,19 @@ console.log('Falta '+minutes);
 
             const negativeSign = amount < 0 ? "-" : "";
 
-            let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed(decimalCount)).toString();
+            let i = parseInt(amount = Math.abs(Number(amount) || 0).toFixed()).toString();
             let j = (i.length > 3) ? i.length % 3 : 0;
 
             return negativeSign + (j ? i.substr(0, j) + thousands : '') + i.substr(j).replace(/(\d{3})(?=\d)/g,
                 "$1" +
-                thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed(decimalCount).slice(2) : "");
+                thousands) + (decimalCount ? decimal + Math.abs(amount - i).toFixed().slice(2) : "");
         } catch (e) {
             console.log(e)
         }
     };
     function numDecimalExp(valor){
-        let result = Number((valor)).toFixed(3);
+        // let result = Number((valor)).toFixed();
+        let result = valor;
         return result;
     }
 
@@ -2487,7 +2636,7 @@ console.log('Falta '+minutes);
             // precio_compra = precio_compra/1000
 
         // alert('por kilo '+precio_compra);
-            // c]antidad.classList.add('readonly');
+            // cantidad.classList.add('readonly');
 
 
 
@@ -3280,7 +3429,7 @@ console.log('Falta '+minutes);
             $("#DMontoPesoV").val('');
             $("#DMontoBolivarV").val('');
             $("#vueltos").show("linear");
-            $("#guardar").hide("linear");
+            $("#guardar").show("linear");//mostrar boton qr
             }
 
 
@@ -3339,7 +3488,7 @@ console.log('Falta '+minutes);
 
             $("#r").html("RESTA");
             $("#tap").html("TOTAL A PAGAR");
-            $("#guardar").hide("linear");
+            $("#guardar").show("linear"); //boton qr bueno
 
         }
 
@@ -3370,68 +3519,120 @@ console.log('Falta '+minutes);
         // alert(total_suma);
 
         let result = new Decimal(total_suma);
-        document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(2));
-        $('#monto_dejado').val(result.toFixed(2));
-        $('#base_vuelto_monto_dejado').val(result.toFixed(2));
+        document.getElementById('spTotal').innerHTML = result;
+        $('#monto_dejado').val(result);
+        $('#base_vuelto_monto_dejado').val(result);
 
     }
 
+
+
     function DMontoDolar(){
              // alert('clic');
-            Mdolar      = $("#DMontoDolar").val();
-            Tdolar      = $("#TasaDolar").val();
-            Tpeso       = $("#TasaPeso").val();
-            Tbolivar    = $("#TasaBolivar").val();
-            Tpunto      = $("#TasaPunto").val();
-            Ttrans      = $("#TasaTrans").val();
+            let Mdolar      = parseFloat($("#DMontoDolar").val());
+            // let Mdolar = 0;
+            if (isNaN(Mdolar)) {
+                Mdolar = 0;
+            } else {
+                Mdolar      = parseFloat($("#DMontoDolar").val());
+            }
 
-            DsupTotal = Mdolar * Tdolar;
-            $("#DolarToDolar").val(DsupTotal.toFixed(2));
-            $("#DsubTotal").html(DsupTotal.toFixed(2));
+            let Tdolar      = tasaD;
+            let Tpeso       = tasaP;
+            let Tbolivar    = tasaTP;
+            let Tpunto      = tasaM;
+            let Ttrans      = tasaE;
+
+            Mdolar      = new Decimal(Mdolar);
+            Tdolar      = new Decimal(Tdolar);
+            Tpeso       = new Decimal(Tpeso);
+            Tbolivar    = new Decimal(Tbolivar);
+            Tpunto      = new Decimal(Tpunto);
+            Ttrans      = new Decimal(Ttrans);
+
+            // DsupTotal = Mdolar * Tdolar;
+            DsupTotal = new Decimal(Mdolar).mul(Tdolar);
+            // alert(DsupTotal.toFixed());
+            $("#DolarToDolar").val(DsupTotal.toFixed());
+            $("#DsubTotal").html(DsupTotal.toFixed());
 
             sumar();
             resta();
             const Resta     = document.getElementById('RestaTtotal');
-            var valor       = Resta.innerHTML;
-            var RmultD      = valor * Tdolar;
-            $("#RestaDolar").val(RmultD.toFixed(2));
-            var RmultP      = valor * Tpeso;
-            $("#RestaPeso").val(RmultP.toFixed(2));
-            var RmultB      = valor * Tbolivar;
-            $("#RestaBolivar").val(RmultB.toFixed(2));
-            var RmultPu     = valor * Tpunto;
-            $("#RestaPunto").val(RmultPu.toFixed(2));
-            var RmultT      = valor * Ttrans;
-            $("#RestaTrans").val(RmultT.toFixed(2));
+            var valor       = new Decimal(Resta.innerHTML);
+
+            // var RmultD      = valor * Tdolar;
+            var RmultD      = new Decimal(valor).mul(Tdolar);
+            $("#RestaDolar").val(RmultD.toFixed());
+            // var RmultP      = valor * Tpeso;
+            var RmultP      = new Decimal(valor).mul(Tpeso);
+            $("#RestaPeso").val(RmultP.toFixed());
+            // var RmultB      = valor * Tbolivar;
+            var RmultB      = new Decimal(valor).mul(Tbolivar);
+            $("#RestaBolivar").val(RmultB.toFixed());
+            // var RmultPu     = valor * Tpunto;
+            var RmultPu      = new Decimal(valor).mul(Tpunto);
+            $("#RestaPunto").val(RmultPu.toFixed());
+            // var RmultT      = valor * Ttrans;
+            var RmultT      = new Decimal(valor).mul(Ttrans);
+            $("#RestaTrans").val(RmultT.toFixed());
 
         }
 
         function DMontoPeso(){
-            Mpeso       = $("#DMontoPeso").val();
-            Tdolar      = $("#TasaDolar").val();
-            Tpeso       = $("#TasaPeso").val();
-            Tbolivar    = $("#TasaBolivar").val();
-            Tpunto      = $("#TasaPunto").val();
-            Ttrans      = $("#TasaTrans").val();
+            // Mpeso       = $("#DMontoPeso").val();
+            // Tdolar      = $("#TasaDolar").val();
+            // Tpeso       = $("#TasaPeso").val();
+            // Tbolivar    = $("#TasaBolivar").val();
+            // Tpunto      = $("#TasaPunto").val();
+            // Ttrans      = $("#TasaTrans").val();
 
-            PsupTotal = Mpeso / Tpeso;
-            $("#PesoToDolar").val(PsupTotal.toFixed(2));
-            $("#PeSubTotal").html(PsupTotal.toFixed(2));
+            let Mpeso      = parseFloat($("#DMontoPeso").val());
+            // let Mdolar = 0;
+            if (isNaN(Mpeso)) {
+                Mpeso = 0;
+            } else {
+                Mpeso      = parseFloat($("#DMontoPeso").val());
+            }
+
+            let Tdolar      = tasaD;
+            let Tpeso       = tasaP;
+            let Tbolivar    = tasaTP;
+            let Tpunto      = tasaM;
+            let Ttrans      = tasaE;
+
+            Mpeso      = new Decimal(Mpeso);
+            Tdolar      = new Decimal(Tdolar);
+            Tpeso       = new Decimal(Tpeso);
+            Tbolivar    = new Decimal(Tbolivar);
+            Tpunto      = new Decimal(Tpunto);
+            Ttrans      = new Decimal(Ttrans);
+
+            // PsupTotal = Mpeso / Tpeso;
+            PsupTotal = new Decimal(Mpeso).div(Tpeso)
+            $("#PesoToDolar").val(PsupTotal.toFixed());
+            $("#PeSubTotal").html(PsupTotal.toFixed());
             $("#RestaPeso").val();
             sumar();
             resta();
             const Resta = document.getElementById('RestaTtotal');
-            var valor   = Resta.innerHTML;
-            var RmultD  = valor * Tdolar;
-            $("#RestaDolar").val(RmultD.toFixed(2));
-            var RmultP  = valor * Tpeso;
+            // var valor   = Resta.innerHTML;
+            var valor       = new Decimal(Resta.innerHTML);
+            // var RmultD  = valor * Tdolar;
+            var RmultD      = new Decimal(valor).mul(Tdolar);
+            $("#RestaDolar").val(RmultD.toFixed());
+            // var RmultP  = valor * Tpeso;
+            var RmultP      = new Decimal(valor).mul(Tpeso);
             $("#RestaPeso").val(RmultP.toFixed(2));
-            var RmultB  = valor * Tbolivar;
-            $("#RestaBolivar").val(RmultB.toFixed(2));
-            var RmultPu = valor * Tpunto;
-            $("#RestaPunto").val(RmultPu.toFixed(2));
-            var RmultT = valor * Ttrans;
-            $("#RestaTrans").val(RmultT.toFixed(2));
+            // var RmultB  = valor * Tbolivar;
+            var RmultB      = new Decimal(valor).mul(Tbolivar);
+            $("#RestaBolivar").val(RmultB.toFixed());
+            // var RmultPu = valor * Tpunto;
+            var RmultPu      = new Decimal(valor).mul(Tpunto);
+            $("#RestaPunto").val(RmultPu.toFixed());
+            // var RmultT = valor * Ttrans;
+            var RmultT      = new Decimal(valor).mul(Ttrans);
+            $("#RestaTrans").val(RmultT.toFixed());
         }
 
         function DMontoBolivar(){
@@ -3445,23 +3646,23 @@ console.log('Falta '+minutes);
             peso = $("#RestaPeso").val();
             // 10767280  alert(Mpeso);
             BsupTotal = Mbolivar / Tbolivar;
-            $("#BolivarToDolar").val(BsupTotal.toFixed(2));
-            $("#BoSubTotal").html(BsupTotal.toFixed(2));
+            $("#BolivarToDolar").val(BsupTotal.toFixed());
+            $("#BoSubTotal").html(BsupTotal.toFixed());
             $("#RestaBolivar").val();
             sumar();
             resta();
             const Resta = document.getElementById('RestaTtotal');
             var valor = Resta.innerHTML;
             var RmultD = valor * Tdolar;
-            $("#RestaDolar").val(RmultD.toFixed(2));
+            $("#RestaDolar").val(RmultD.toFixed());
             var RmultP = valor * Tpeso;
-            $("#RestaPeso").val(RmultP.toFixed(2));
+            $("#RestaPeso").val(RmultP.toFixed());
             var RmultB = valor * Tbolivar;
-            $("#RestaBolivar").val(RmultB.toFixed(2));
+            $("#RestaBolivar").val(RmultB.toFixed());
             var RmultPu = valor * Tpunto;
-            $("#RestaPunto").val(RmultPu.toFixed(2));
+            $("#RestaPunto").val(RmultPu.toFixed());
             var RmultT = valor * Ttrans;
-            $("#RestaTrans").val(RmultT.toFixed(2));
+            $("#RestaTrans").val(RmultT.toFixed());
         }
 
         function DMontoPunto(){
@@ -3475,23 +3676,23 @@ console.log('Falta '+minutes);
             peso = $("#RestaPeso").val();
             // 10767280  alert(Mpeso);
             PusupTotal = MPunto / Tpunto;
-            $("#PuntoToDolar").val(PusupTotal.toFixed(2));
-            $("#PuSubTotal").html(PusupTotal.toFixed(2));
+            $("#PuntoToDolar").val(PusupTotal.toFixed());
+            $("#PuSubTotal").html(PusupTotal.toFixed());
             $("#RestaPunto").val();
             sumar();
             resta();
             const Resta = document.getElementById('RestaTtotal');
             var valor = Resta.innerHTML;
             var RmultD = valor * Tdolar;
-            $("#RestaDolar").val(RmultD.toFixed(2));
+            $("#RestaDolar").val(RmultD.toFixed());
             var RmultP = valor * Tpeso;
-            $("#RestaPeso").val(RmultP.toFixed(2));
+            $("#RestaPeso").val(RmultP.toFixed());
             var RmultB = valor * Tbolivar;
-            $("#RestaBolivar").val(RmultB.toFixed(2));
+            $("#RestaBolivar").val(RmultB.toFixed());
             var RmultPu = valor * Tpunto;
-            $("#RestaPunto").val(RmultPu.toFixed(2));
+            $("#RestaPunto").val(RmultPu.toFixed());
             var RmultT = valor * Ttrans;
-            $("#RestaTrans").val(RmultT.toFixed(2));
+            $("#RestaTrans").val(RmultT.toFixed());
         }
 
         function DMontoTrans(){
@@ -3505,23 +3706,23 @@ console.log('Falta '+minutes);
             peso = $("#RestaPeso").val();
             // 10767280  alert(Mpeso);
             TsupTotal = Mtrans / Ttrans;
-            $("#TransToDolar").val(TsupTotal.toFixed(2));
-            $("#TrSubTotal").html(TsupTotal.toFixed(2));
+            $("#TransToDolar").val(TsupTotal.toFixed());
+            $("#TrSubTotal").html(TsupTotal.toFixed());
             $("#RestaTrans").val();
             sumar();
             resta();
             const Resta = document.getElementById('RestaTtotal');
             var valor = Resta.innerHTML;
             var RmultD = valor * Tdolar;
-            $("#RestaDolar").val(RmultD.toFixed(2));
+            $("#RestaDolar").val(RmultD.toFixed());
             var RmultP = valor * Tpeso;
             $("#RestaPeso").val(RmultP.toFixed(2));
             var RmultB = valor * Tbolivar;
-            $("#RestaBolivar").val(RmultB.toFixed(2));
+            $("#RestaBolivar").val(RmultB.toFixed());
             var RmultPu = valor * Tpunto;
-            $("#RestaPunto").val(RmultPu.toFixed(2));
+            $("#RestaPunto").val(RmultPu.toFixed());
             var RmultT = valor * Ttrans;
-            $("#RestaTrans").val(RmultT.toFixed(2));
+            $("#RestaTrans").val(RmultT.toFixed());
 
         }
 
@@ -3684,7 +3885,7 @@ console.log('Falta '+minutes);
                 // let rmdresult = new Decimal(rmd);
                 let rmdresult = new Decimal(tsV);
                 // $('#monto_dejado').val(rmdresult.toFixed(2));
-                $('#monto_dejadoResta').val(rmdresult.toFixed(2));
+                $('#monto_dejadoResta').val(rmdresult.toFixed());
 
                 }
                 let montoBase = $('#base_vuelto_monto_dejado').val();
@@ -3697,12 +3898,12 @@ console.log('Falta '+minutes);
                 let r = x.sub(y)                  // '0.2'
                 console.log(r.toFixed(2));
 
-                $('#monto_dejado').val(r.toFixed(2));
+                $('#monto_dejado').val(r.toFixed());
 
 
                 // $('#monto_dejado').val(rmdresult.toFixed(2));
                 let result = new Decimal(total_sumaV);
-                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
+                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed());
 
 
             }
@@ -3710,56 +3911,150 @@ console.log('Falta '+minutes);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    function DMontoDolarV(){
-                     // alert('clic');
-                     MdolarV      = $("#DMontoDolarV").val();
-                    TdolarV      = $("#TasaDolarV").val();
-                    TpesoV       = $("#TasaPesoV").val();
-                    TbolivarV    = $("#TasaBolivarV").val();
+    // function DMontoDolarV(){
+    //                  // alert('clic');
+    //                  MdolarV      = $("#DMontoDolarV").val();
+    //                 TdolarV      = $("#TasaDolarV").val();
+    //                 TpesoV       = $("#TasaPesoV").val();
+    //                 TbolivarV    = $("#TasaBolivarV").val();
 
 
-                    DsupTotalV = MdolarV * TdolarV;
-                    $("#DolarToDolarV").val(DsupTotalV.toFixed(2));
-                    $("#DsubTotalV").html(DsupTotalV.toFixed(2));
+    //                 DsupTotalV = MdolarV * TdolarV;
+    //                 $("#DolarToDolarV").val(DsupTotalV);
+    //                 $("#DsubTotalV").html(DsupTotalV);
 
-                    sumarV();
-                    restaV();
-                    const RestaV     = document.getElementById('RestaTtotalV');
-                    var valorV       = RestaV.innerHTML;
-                    var RmultDV      = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV.toFixed(2));
-                    var RmultPV      = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV.toFixed(2));
-                    var RmultBV      = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV.toFixed(2));
+    //                 sumarV();
+    //                 restaV();
+    //                 const RestaV     = document.getElementById('RestaTtotalV');
+    //                 var valorV       = RestaV.innerHTML;
+    //                 var RmultDV      = valorV * TdolarV;
+    //                 $("#RestaDolarV").val(RmultDV);
+    //                 var RmultPV      = valorV * TpesoV;
+    //                 $("#RestaPesoV").val(RmultPV);
+    //                 var RmultBV      = valorV * TbolivarV;
+    //                 $("#RestaBolivarV").val(RmultBV);
 
 
-                }
+    //             }
+
+                function DMontoDolarV(){
+             // alert('clic');
+            let MdolarV      = parseFloat($("#DMontoDolarV").val());
+            // let Mdolar = 0;
+            if (isNaN(MdolarV)) {
+                MdolarV = 0;
+            } else {
+                Mdolar      = parseFloat($("#DMontoDolarV").val());
+            }
+
+            let TdolarV      = $("#TasaDolarV").val();
+            let TpesoV       = $("#TasaPesoV").val();
+            let TbolivarV    = $("#TasaBolivarV").val();
+
+
+            MdolarV      = new Decimal(MdolarV);
+            TdolarV      = new Decimal(TdolarV);
+            TpesoV       = new Decimal(TpesoV);
+            TbolivarV    = new Decimal(TbolivarV);
+
+
+            // DsupTotal = Mdolar * Tdolar;
+            DsupTotalV = new Decimal(MdolarV).mul(TdolarV);
+            // alert(DsupTotal.toFixed());
+            $("#DolarToDolarV").val(DsupTotalV.toFixed());
+            $("#DsubTotalV").html(DsupTotalV.toFixed());
+
+            sumarV();
+            restaV();
+            const RestaV     = document.getElementById('RestaTtotalV');
+            var valorV       = new Decimal(RestaV.innerHTML);
+
+            // var RmultD      = valor * Tdolar;
+            var RmultDV      = new Decimal(valorV).mul(TdolarV);
+            $("#RestaDolarV").val(RmultDV.toFixed());
+            // var RmultP      = valor * Tpeso;
+            var RmultPV      = new Decimal(valorV).mul(TpesoV);
+            $("#RestaPesoV").val(RmultPV.toFixed());
+            // var RmultB      = valor * Tbolivar;
+            var RmultBV      = new Decimal(valorV).mul(TbolivarV);
+            $("#RestaBolivarV").val(RmultBV.toFixed());
+
+
+        }
+
+                // function DMontoPesoV(){
+                //     MpesoV       = $("#DMontoPesoV").val();
+                //     TdolarV      = $("#TasaDolarV").val();
+                //     TpesoV      = $("#TasaPesoV").val();
+                //     TbolivarV   = $("#TasaBolivarV").val();
+
+
+                //     PsupTotalV = MpesoV / TpesoV;
+                //     $("#PesoToDolarV").val(PsupTotalV);
+                //     $("#PeSubTotalV").html(PsupTotalV);
+                //     $("#RestaPesoV").val();
+                //     sumarV();
+                //     restaV();
+                //     const RestaV = document.getElementById('RestaTtotalV');
+                //     var valorV   = RestaV.innerHTML;
+                //     var RmultDV  = valorV * TdolarV;
+                //     $("#RestaDolarV").val(RmultDV);
+                //     var RmultPV  = valorV * TpesoV;
+                //     $("#RestaPesoV").val(RmultPV);
+                //     var RmultBV  = valorV * TbolivarV;
+                //     $("#RestaBolivarV").val(RmultBV);
+
+
+                // }
 
                 function DMontoPesoV(){
-                    MpesoV       = $("#DMontoPesoV").val();
-                    TdolarV      = $("#TasaDolarV").val();
-                    TpesoV      = $("#TasaPesoV").val();
-                    TbolivarV   = $("#TasaBolivarV").val();
+            // Mpeso       = $("#DMontoPeso").val();
+            // Tdolar      = $("#TasaDolar").val();
+            // Tpeso       = $("#TasaPeso").val();
+            // Tbolivar    = $("#TasaBolivar").val();
+            // Tpunto      = $("#TasaPunto").val();
+            // Ttrans      = $("#TasaTrans").val();
+
+            let MpesoV      = parseFloat($("#DMontoPesoV").val());
+            // let Mdolar = 0;
+            if (isNaN(MpesoV)) {
+                MpesoV = 0;
+            } else {
+                MpesoV      = parseFloat($("#DMontoPesoV").val());
+            }
+
+            let TdolarV      = tasaD;
+            let TpesoV       = tasaP;
+            let TbolivarV    = tasaE;
 
 
-                    PsupTotalV = MpesoV / TpesoV;
-                    $("#PesoToDolarV").val(PsupTotalV.toFixed(2));
-                    $("#PeSubTotalV").html(PsupTotalV.toFixed(2));
-                    $("#RestaPesoV").val();
-                    sumarV();
-                    restaV();
-                    const RestaV = document.getElementById('RestaTtotalV');
-                    var valorV   = RestaV.innerHTML;
-                    var RmultDV  = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV.toFixed(2));
-                    var RmultPV  = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV.toFixed(2));
-                    var RmultBV  = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV.toFixed(2));
+            MpesoV      = new Decimal(MpesoV);
+            TdolarV      = new Decimal(TdolarV);
+            TpesoV       = new Decimal(TpesoV);
+            TbolivarV    = new Decimal(TbolivarV);
 
 
-                }
+            // PsupTotal = Mpeso / Tpeso;
+            PsupTotalV = new Decimal(MpesoV).div(TpesoV)
+            $("#PesoToDolarV").val(PsupTotalV.toFixed());
+            $("#PeSubTotalV").html(PsupTotalV.toFixed());
+            $("#RestaPesoV").val();
+            sumarV();
+            restaV();
+            const RestaV = document.getElementById('RestaTtotalV');
+            // var valor   = Resta.innerHTML;
+            var valorV       = new Decimal(RestaV.innerHTML);
+            // var RmultD  = valor * Tdolar;
+            var RmultDV      = new Decimal(valorV).mul(TdolarV);
+            $("#RestaDolarV").val(RmultDV.toFixed());
+            // var RmultP  = valor * Tpeso;
+            var RmultPV      = new Decimal(valorV).mul(TpesoV);
+            $("#RestaPesoV").val(RmultPV.toFixed());
+            // var RmultB  = valor * Tbolivar;
+            var RmultBV      = new Decimal(valorV).mul(TbolivarV);
+            $("#RestaBolivarV").val(RmultBV.toFixed());
+
+        }
 
                 function DMontoBolivarV(){
                     MbolivarV = $("#DMontoBolivarV").val();
@@ -3771,19 +4066,19 @@ console.log('Falta '+minutes);
                     pesoV = $("#RestaPesoV").val();
                     // 10767280  alert(Mpeso);
                     BsupTotalV = MbolivarV / TbolivarV;
-                    $("#BolivarToDolarV").val(BsupTotalV.toFixed(2));
-                    $("#BoSubTotalV").html(BsupTotalV.toFixed(2));
+                    $("#BolivarToDolarV").val(BsupTotalV);
+                    $("#BoSubTotalV").html(BsupTotalV);
                     $("#RestaBolivarV").val();
                     sumarV();
                     restaV();
                     const RestaV = document.getElementById('RestaTtotalV');
                     var valorV = RestaV.innerHTML;
                     var RmultDV = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV.toFixed(2));
+                    $("#RestaDolarV").val(RmultDV);
                     var RmultPV = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV.toFixed(2));
+                    $("#RestaPesoV").val(RmultPV);
                     var RmultBV = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV.toFixed(2));
+                    $("#RestaBolivarV").val(RmultBV);
 
 
                 }
@@ -3843,7 +4138,7 @@ console.log('Falta '+minutes);
 
                 RdV = -1 * RdV;
                 // alert('valor = '+RdV);
-                $("#DMontoDolarV").val(RdV.toFixed(2));
+                $("#DMontoDolarV").val(RdV);
                 DMontoDolarV();
             }else{
                 // alert('1');
@@ -3853,7 +4148,7 @@ console.log('Falta '+minutes);
                 $("#isVueltos").val('');
                 DMontoDolarV();
             }
-        });
+        });///
 
         $("#cargarPesoV").on('click', function() {
 
@@ -3872,8 +4167,10 @@ console.log('Falta '+minutes);
                 DMontoBolivarV();
                 let RpV    = document.getElementById('RestaPesoV').value;
 
-                RpV = -1 * RpV;
-                $("#DMontoPesoV").val(RpV.toFixed(2));
+                RpV = new Decimal(RpV).mul(-1);
+
+                // RpV = -1 * RpV;
+                $("#DMontoPesoV").val(RpV.toFixed());
                 DMontoPesoV();
             }else{
                 vcargarpV = 0;
@@ -3899,7 +4196,7 @@ console.log('Falta '+minutes);
                 let RbV    = document.getElementById('RestaBolivarV').value;
 
                 RbV = -1 * RbV;
-                $("#DMontoBolivarV").val(RbV.toFixed(2));
+                $("#DMontoBolivarV").val(RbV);
                 DMontoBolivarV();
             }else{
                 vcargarbV = 0;
@@ -3943,6 +4240,7 @@ console.log('Falta '+minutes);
                         if (barcode == nombreHabitacionBarcode) {
                             // alert('es igual barcode');
                             // return false;
+                            const RestaTotal    = document.getElementById('RestaTtotal');
                             modoPagoOn = $('#modo_pago').val();
                             tipoPago = $('#tipo_pago').val();
                             monto_dejadoR = $('#monto_dejado').val();
@@ -3963,8 +4261,31 @@ console.log('Falta '+minutes);
                                     return false;
                                 }
 
-                                // alert('contado');
-                                $("#form1").submit();
+                                if(RestaTotal.innerHTML > 0){
+                                    alert('El monto ingresado no supera la deuda a pagar...!');
+                                    validarPagoServicio = 0;
+                                    return false;
+                                }
+
+                                $("#procesarpago").click();
+
+                                // if (validarPagoServicio == 1) {
+                                //     // $("#form1").submit();
+                                //     alert('enviando datos');
+                                //     return false;
+
+                                //  } //else {
+                                //     validarPagoServicio = 0;
+                                //     $("#enviar").click();
+
+                                // }
+                                alert('Debe clickar el boton Procesar Servicio...!');
+                                // validarPagoServicio = 1;
+                                // $('#precontadomodal').modal('show');
+
+                                // // alert('contado');
+                                // $("#precontadomodal").click();
+                                // $("#form1").submit();
                             }else if (modoPagoOn == 'cortesia'){
                                 let cliente_id = $("#cliente_id").val();
 

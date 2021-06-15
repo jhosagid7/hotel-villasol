@@ -300,7 +300,7 @@
 
       </li> --}}
 
-            <li class="active">
+            <li class="{{ request()->is('recepcion') ? 'active' : ''}}">
                 <a href="{{asset('recepcion')}}">
                     <i class="fa fa-th"></i> <span>Recepcion</span>
                     <span class="pull-right-container">
@@ -309,7 +309,7 @@
                 </a>
             </li>
 
-            <li class="active">
+            <li class="{{ request()->is('checkout') ? 'active' : ''}}">
                 <a href="{{asset('checkout')}}">
                     <i class="fa fa-th"></i> <span>Check Out</span>
 
@@ -318,13 +318,13 @@
 
 
 
-            <li class="active">
+            <li class="{{ request()->is('preventa') ? 'active' : ''}}">
                 <a href="{{asset('preventa')}}">
                     <i class="fa fa-th"></i> <span>Vender</span>
 
                 </a>
             </li>
-            <li class="active">
+            <li class="{{ request()->is('creditos') ? 'active' : ''}}">
                 <a href="{{asset('creditos')}}">
                     <i class="fa fa-th"></i> <span>Créditos</span>
 
@@ -332,7 +332,7 @@
             </li>
 
       @can('haveaccess', 'boton.almacen')
-      <li class="treeview">
+      <li class="treeview {{ request()->is('almacen/categoria') ? 'active' : ''}} {{ request()->is('almacen/articulo') ? 'active' : ''}} {{ request()->is('almacen/categoria') ? 'active' : ''}} {{ request()->is('almacen/transferencia') ? 'active' : ''}} {{ request()->is('cargos') ? 'active' : ''}} {{ request()->is('descargos') ? 'active' : ''}}">
         <a href="#"><i class="fa fa-database"></i> Almacen
           <span class="pull-right-container">
             <i class="fa fa-angle-left pull-right"></i>
@@ -340,13 +340,13 @@
         </a>
         <ul class="treeview-menu">
             @can('haveaccess', 'categoria.index')
-            <li><a href="{{asset('almacen/categoria')}}"><i class="fa fa-cube"></i> Categorías</a></li>
+            <li class="{{ request()->is('almacen/categoria') ? 'active' : ''}}"><a href="{{asset('almacen/categoria')}}"><i class="fa fa-cube"></i> Categorías</a></li>
             @endcan
             @can('haveaccess', 'articulo.index')
-            <li><a href="{{asset('almacen/articulo')}}"><i class="fa fa-cubes"></i> Artículos</a></li>
+            <li class="{{ request()->is('almacen/articulo') ? 'active' : ''}}"><a href="{{asset('almacen/articulo')}}"><i class="fa fa-cubes"></i> Artículos</a></li>
             @endcan
             @can('haveaccess', 'menu.transactions')
-            <li class="treeview">
+            <li class="treeview {{ request()->is('almacen/transferencia') ? 'active' : ''}} {{ request()->is('cargos') ? 'active' : ''}} {{ request()->is('descargos') ? 'active' : ''}}">
                 <a href="#"><i class="fa fa-exchange"></i> Transacciones
                 <span class="pull-right-container">
                     <i class="fa fa-angle-left pull-right"></i>
@@ -354,13 +354,13 @@
                 </a>
                 <ul class="treeview-menu">
                     @can('haveaccess', 'transferencia.index')
-                    <li><a href="{{asset('almacen/transferencia')}}"><i class="fa fa-cubes"></i> Transferencias</a></li>
+                    <li class="{{ request()->is('almacen/transferencia') ? 'active' : ''}}"><a href="{{asset('almacen/transferencia')}}"><i class="fa fa-cubes"></i> Transferencias</a></li>
                     @endcan
                     @can('haveaccess', 'cargos.index')
-                    <li><a href="{{asset('cargos')}}"><i class="fa fa-truck"></i> Cargos</a></li>
+                    <li class="{{ request()->is('cargos') ? 'active' : ''}}"><a href="{{asset('cargos')}}"><i class="fa fa-truck"></i> Cargos</a></li>
                     @endcan
                     @can('haveaccess', 'descargos.index')
-                    <li><a href="{{asset('descargos')}}"><i class="fa fa-sign-in"></i> Descargos</a></li>
+                    <li class="{{ request()->is('descargos') ? 'active' : ''}}"><a href="{{asset('descargos')}}"><i class="fa fa-sign-in"></i> Descargos</a></li>
                     @endcan
                 </ul>
             </li>

@@ -240,7 +240,7 @@ if(isset($servicio->id)){
                             <table class="table table-bordered">
                                 <tr style="background-color: #dcd6d6;">
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;"></th>
-                                    <th colspan="5" style="border-right:1px solid #a09e9e;">Costo del alojamiento</th>
+                                    <th colspan="5" style="border-right:1px solid #a09e9e;">Costo del alojamientoss</th>
                                     <th style="width: 100px"></th>
                                 </tr>
                                 <tr>
@@ -971,7 +971,7 @@ if(isset($servicio->id)){
         </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-            <button name="procesarServicio" id="procesarServicio" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+            <button name="procesarServicio" id="procesarServicio" class="btn btn-outline ocular" type="button"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
             {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
           </div>
         {{-- </form> --}}
@@ -1415,7 +1415,7 @@ if(isset($servicio->id)){
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
             <div class=""
             id="">
-            <button id="enviar" class="btn btn-outline" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+            <button id="enviar" class="btn btn-outline" type="button"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
         </div>
             {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
           </div>
@@ -1846,7 +1846,15 @@ var procesoPagoPendientealida = 0;
 
         //     }
         // });
+        $("#modalPagoPendienteOpcionesBtn").click(function() {
+            if (VueltosvtosPendientes > 0) {
 
+                pagoVueltosPendiente(VueltosvtosPendientes);
+                // $("#modalPagoPendienteOpcionesBtn").show();
+                $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
+                return false;
+                }
+        });
         $("#imprimirBoleta").click(function() {
             let $valorDeuda = $('#total').val();
 
@@ -1860,7 +1868,6 @@ var procesoPagoPendientealida = 0;
                 // console.log('todo bien');
                 if (VueltosvtosPendientes > 0) {
                     $("#modalPagoPendienteOpcionesBtn").click();
-                    $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
 
 
 
@@ -1888,7 +1895,7 @@ var procesoPagoPendientealida = 0;
 
                 // console.log('todo bien');
                 if (VueltosvtosPendientes > 0) {
-
+                    $("#modalPago").click();
                     pagoVueltosPendiente(VueltosvtosPendientes);
                     // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
                     return false;
@@ -2159,7 +2166,78 @@ if (btnCambio == 1) {
 
     $(document).ready(function() {
         $("#enviar").on('click', function() {
+            let pagoVueltosConExc = $('#VueltospagoConExcedente').val();
+
+
+            let spTotalV = document.getElementById('spTotalV').innerHTML;
+            let RestaTtotalV = document.getElementById('RestaTtotalV').innerHTML;
+            let PagoTtotalV = document.getElementById('PagoTtotalV').innerHTML;
+
+            let = banderaDarVueltos = $("#banderaHorasExtras").val();
+
+            // alert(banderaDarVueltos);
+            if(banderaDarVueltos == 'pagarVueltosPendientes'){
+                if (!pagoVueltosConExc > 0) {
+                alert('Debe escribir el monto a usar de los vueltos pendientes disponibles...!');
+                document.getElementById("VueltospagoConExcedente").focus();
+                return false;
+                }
+
+                if (RestaTtotalV == 0) {
+                    // alert('enviar');
+                    $("#form3").submit();
+                }
+
+                if (RestaTtotalV < 0) {
+                    alert('El monto total de vueltos a pagar es de: $' + PagoTtotalV * -1 + ' y usted solo reporto: $' + spTotalV * -1 + '. Resta: $' + RestaTtotalV * -1 + '. Debe completar la totalidad del pago...!');
+                    document.getElementById("DMontoDolarV").focus();
+                    return false;
+                }
+
+                if (RestaTtotalV > 0) {
+                    alert('El monto total de vueltos a pagar es de: $' + PagoTtotalV * -1 + ' y usted reporto: $' + spTotalV * -1 + '. Se ha excedido por: $' + RestaTtotalV + ' ...!');
+                    document.getElementById("DMontoDolarV").focus();
+                    return false;
+                }
+
+                $("#form3").submit();
+            }
+
+            // alert('estoy aquí ya...');
+            if(banderaDarVueltos == '' && procesoCambioSalida == 1){
+
+            let spTotal = document.getElementById('spTotal').innerHTML;
+            let RestaTtotal = document.getElementById('RestaTtotal').innerHTML;
+            let PagoTtotal = document.getElementById('PagoTtotal').innerHTML;
+            let Vueltosexcdt = document.getElementById('Vueltosexcdt').innerHTML;
+
+                let reslt = parseFloat(spTotal) + parseFloat(Vueltosexcdt);
+
+            // alert('estoy aquí...');
+            modoPagoOn = $('#modo_pago').val();
+            tipoPago = $('#tipo_pago').val();
+            monto_dejadoR = $('#monto_dejado').val();
+            VueltospagoConExcedente = $('#VueltospagoConExcedente').val();
+
+            // alert(VueltospagoConExcedente);
+
+            if (RestaTtotal == 0) {
+                    // alert('enviar');
+                    $("#form3").submit();
+                }
+
+
+
+                if (RestaTtotal > 0 ) {
+                    alert('El monto total a pagar es de: $' + PagoTtotal + ' y usted reporto: $' + reslt + '. Debe ingresar el pago completo...!');
+                    document.getElementById("DMontoDolar").focus();
+                    return false;
+                }
+            // alert('Enviando ...');
             $("#form3").submit();
+
+            }
+
         });
 
         $("#procesarServicio").on('click', function() {
@@ -2167,7 +2245,19 @@ if (btnCambio == 1) {
             $("#monto_dejado").val(0);
             $("#base_vuelto_monto_dejado").val(0);
             $('#modo_pago').val('cambio');
-            $("#form3").submit();
+
+            let precio_costo = $("#precio_costo").val();
+
+            if (precio_costo == 0) {
+                alert('enviando de procesa...');
+                // $("#form3").submit();
+            } else {
+                $("#modalPago").click();
+
+            }
+
+            return false;
+
         });
 
         $("#contado").on('click', function() {
@@ -3173,7 +3263,7 @@ if (btnCambio == 1) {
             // precio_compra = precio_compra/1000
 
         // alert('por kilo '+precio_compra);
-            // c]antidad.classList.add('readonly');
+            // cantidad.classList.add('readonly');
 
 
 
@@ -5263,6 +5353,7 @@ if (btnCambio == 1) {
                                 // alert(monto_dejadoR);
 
                                 if (modoPagoOn == 'contado') {
+
                                     if(cliente_id == 0 || cliente_id == null){
                                         alert('No has seleccionado un cliente...!');
                                         return false;
@@ -5398,6 +5489,7 @@ if (btnCambio == 1) {
 
         function numDecimal(valor){
             let result = Number(valor).toFixed(2);
+
 
             return result;
         }
