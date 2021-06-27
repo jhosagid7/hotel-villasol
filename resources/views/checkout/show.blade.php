@@ -3851,7 +3851,7 @@ if (btnCambio == 1) {
 
             }
 
-//prueba
+//quite prueba
 
             if (resta.lessThan(Decimal(0))) {
             // alert('soy menor');
