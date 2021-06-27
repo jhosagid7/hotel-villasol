@@ -283,7 +283,7 @@ class ServicioController extends Controller
             if($modo_pago == 'contado'){
 
                 if($monto_dejado > $total_costo){
-
+// return 'aquí dentro '. $tipo_pago;
 
                     // dd($status);
 
@@ -2651,8 +2651,8 @@ class ServicioController extends Controller
                             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                     // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
                                     $Pago_Vuelto_Cuenta = Pago_Vuelto::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->get();
-
                                     $total_Pago_Vuelto_Cuenta = 0;
+                                    // return $Pago_Vuelto_Cuenta;
 
 
 
@@ -2774,7 +2774,7 @@ class ServicioController extends Controller
 
                                         if ($RestarVtos->MontoDolar < $monto_dejadoResta) {
                                             // return 'Bien mal ff';
-                                            return $RestarVtos->id;
+                                            // return $RestarVtos->id;
                                             if ($RestarVtos) {
 
                                                 $UpdateDevueltosUp = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarVtos->id);

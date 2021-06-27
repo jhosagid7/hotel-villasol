@@ -1887,7 +1887,7 @@
             });
 
             function numDecimal(valor){
-                let result = Number(valor).toFixed(3);
+                let result = Number(valor).toFixed(6);
 
                 return result;
             }
@@ -2551,7 +2551,7 @@
             };
 
             function numDecimalExp(valor){
-                let result = Number((valor)).toFixed(3);
+                let result = Number((valor)).toFixed(6);
                 return result;
             }
 
@@ -3184,158 +3184,212 @@
                 });
                 // alert(total_suma);
                 let result = new Decimal(total_suma);
-                document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(2));
-                $('#monto_dejado').val(result.toFixed(2));
-                $('#base_vuelto_monto_dejado').val(result.toFixed(2));
+                document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(6));
+                $('#monto_dejado').val(result.toFixed(6));
+                $('#base_vuelto_monto_dejado').val(result.toFixed(6));
 
             }
 
             function DMontoDolar(){
-                     // alert('clic');
-                     Mdolar      = $("#DMontoDolar").val();
-                    Tdolar      = $("#TasaDolar").val();
-                    Tpeso       = $("#TasaPeso").val();
-                    Tbolivar    = $("#TasaBolivar").val();
-                    Tpunto      = $("#TasaPunto").val();
-                    Ttrans      = $("#TasaTrans").val();
+             // alert('clic');
+            let Mdolar      = parseFloat($("#DMontoDolar").val());
+            // let Mdolar = 0;
+            if (isNaN(Mdolar)) {
+                Mdolar = 0;
+            } else {
+                Mdolar      = parseFloat($("#DMontoDolar").val());
+            }
 
-                    DsupTotal = Mdolar * Tdolar;
-                    $("#DolarToDolar").val(DsupTotal);
-                    $("#DsubTotal").html(DsupTotal);
+            let Tdolar      = tasaD;
+            let Tpeso       = tasaP;
+            let Tbolivar    = tasaTP;
+            let Tpunto      = tasaM;
+            let Ttrans      = tasaE;
 
-                    sumar();
-                    resta();
-                    const Resta     = document.getElementById('RestaTtotal');
-                    var valor       = Resta.innerHTML;
-                    var RmultD      = valor * Tdolar;
-                    $("#RestaDolar").val(RmultD);
-                    var RmultP      = valor * Tpeso;
-                    $("#RestaPeso").val(RmultP);
-                    var RmultB      = valor * Tbolivar;
-                    $("#RestaBolivar").val(RmultB);
-                    var RmultPu     = valor * Tpunto;
-                    $("#RestaPunto").val(RmultPu);
-                    var RmultT      = valor * Ttrans;
-                    $("#RestaTrans").val(RmultT);
-                }
+            Mdolar      = new Decimal(Mdolar);
+            Tdolar      = new Decimal(Tdolar);
+            Tpeso       = new Decimal(Tpeso);
+            Tbolivar    = new Decimal(Tbolivar);
+            Tpunto      = new Decimal(Tpunto);
+            Ttrans      = new Decimal(Ttrans);
 
-                function DMontoPeso(){
-                    Mpeso       = $("#DMontoPeso").val();
-                    Tdolar      = $("#TasaDolar").val();
-                    Tpeso       = $("#TasaPeso").val();
-                    Tbolivar    = $("#TasaBolivar").val();
-                    Tpunto      = $("#TasaPunto").val();
-                    Ttrans      = $("#TasaTrans").val();
+            // Mdolar.toFixed(6)
 
-                    PsupTotal = Mpeso / Tpeso;
-                    $("#PesoToDolar").val(PsupTotal);
-                    $("#PeSubTotal").html(PsupTotal);
-                    $("#RestaPeso").val();
-                    sumar();
-                    resta();
-                    const Resta = document.getElementById('RestaTtotal');
-                    var valor   = Resta.innerHTML;
-                    var RmultD  = valor * Tdolar;
-                    $("#RestaDolar").val(RmultD);
-                    var RmultP  = valor * Tpeso;
-                    $("#RestaPeso").val(RmultP);
-                    var RmultB  = valor * Tbolivar;
-                    $("#RestaBolivar").val(RmultB);
-                    var RmultPu = valor * Tpunto;
-                    $("#RestaPunto").val(RmultPu);
-                    var RmultT = valor * Ttrans;
-                    $("#RestaTrans").val(RmultT);
-                }
+            // DsupTotal = Mdolar * Tdolar;
+            DsupTotal = new Decimal(Mdolar).mul(Tdolar);
+            // alert(DsupTotal.toFixed());
+            $("#DolarToDolar").val(DsupTotal.toFixed(6));
+            $("#DsubTotal").html(DsupTotal.toFixed(6));
 
-                function DMontoBolivar(){
-                    Mbolivar = $("#DMontoBolivar").val();
-                    Tdolar   = $("#TasaDolar").val();
-                    Tpeso    = $("#TasaPeso").val();
-                    Tbolivar = $("#TasaBolivar").val();
-                    Tpunto   = $("#TasaPunto").val();
-                    Ttrans   = $("#TasaTrans").val();
+            sumar();
+            resta();
+            const Resta     = document.getElementById('RestaTtotal');
+            var valor       = new Decimal(Resta.innerHTML);
 
-                    peso = $("#RestaPeso").val();
-                    // 10767280  alert(Mpeso);
-                    BsupTotal = Mbolivar / Tbolivar;
-                    $("#BolivarToDolar").val(BsupTotal);
-                    $("#BoSubTotal").html(BsupTotal);
-                    $("#RestaBolivar").val();
-                    sumar();
-                    resta();
-                    const Resta = document.getElementById('RestaTtotal');
-                    var valor = Resta.innerHTML;
-                    var RmultD = valor * Tdolar;
-                    $("#RestaDolar").val(RmultD);
-                    var RmultP = valor * Tpeso;
-                    $("#RestaPeso").val(RmultP);
-                    var RmultB = valor * Tbolivar;
-                    $("#RestaBolivar").val(RmultB);
-                    var RmultPu = valor * Tpunto;
-                    $("#RestaPunto").val(RmultPu);
-                    var RmultT = valor * Ttrans;
-                    $("#RestaTrans").val(RmultT);
-                }
+            // var RmultD      = valor * Tdolar;
+            var RmultD      = new Decimal(valor).mul(Tdolar);
+            $("#RestaDolar").val(RmultD.toFixed(6));
+            // var RmultP      = valor * Tpeso;
+            var RmultP      = new Decimal(valor).mul(Tpeso);
+            $("#RestaPeso").val(RmultP.toFixed(2));
+            // var RmultB      = valor * Tbolivar;
+            var RmultB      = new Decimal(valor).mul(Tbolivar);
+            $("#RestaBolivar").val(RmultB.toFixed(2));
+            // var RmultPu     = valor * Tpunto;
+            var RmultPu      = new Decimal(valor).mul(Tpunto);
+            $("#RestaPunto").val(RmultPu.toFixed(2));
+            // var RmultT      = valor * Ttrans;
+            var RmultT      = new Decimal(valor).mul(Ttrans);
+            $("#RestaTrans").val(RmultT.toFixed(2));
 
-                function DMontoPunto(){
-                    MPunto = $("#DMontoPunto").val();
-                    Tdolar = $("#TasaDolar").val();
-                    Tpeso = $("#TasaPeso").val();
-                    Tbolivar = $("#TasaBolivar").val();
-                    Tpunto = $("#TasaPunto").val();
-                    Ttrans = $("#TasaTrans").val();
+        }
 
-                    peso = $("#RestaPeso").val();
-                    // 10767280  alert(Mpeso);
-                    PusupTotal = MPunto / Tpunto;
-                    $("#PuntoToDolar").val(PusupTotal);
-                    $("#PuSubTotal").html(PusupTotal);
-                    $("#RestaPunto").val();
-                    sumar();
-                    resta();
-                    const Resta = document.getElementById('RestaTtotal');
-                    var valor = Resta.innerHTML;
-                    var RmultD = valor * Tdolar;
-                    $("#RestaDolar").val(RmultD);
-                    var RmultP = valor * Tpeso;
-                    $("#RestaPeso").val(RmultP);
-                    var RmultB = valor * Tbolivar;
-                    $("#RestaBolivar").val(RmultB);
-                    var RmultPu = valor * Tpunto;
-                    $("#RestaPunto").val(RmultPu);
-                    var RmultT = valor * Ttrans;
-                    $("#RestaTrans").val(RmultT);
-                }
+        function DMontoPeso(){
+            // Mpeso       = $("#DMontoPeso").val();
+            // Tdolar      = $("#TasaDolar").val();
+            // Tpeso       = $("#TasaPeso").val();
+            // Tbolivar    = $("#TasaBolivar").val();
+            // Tpunto      = $("#TasaPunto").val();
+            // Ttrans      = $("#TasaTrans").val();
 
-                function DMontoTrans(){
-                    Mtrans = $("#DMontoTrans").val();
-                    Tdolar = $("#TasaDolar").val();
-                    Tpeso = $("#TasaPeso").val();
-                    Tbolivar = $("#TasaBolivar").val();
-                    Tpunto = $("#TasaPunto").val();
-                    Ttrans = $("#TasaTrans").val();
+            let Mpeso      = parseFloat($("#DMontoPeso").val());
+            // let Mdolar = 0;
+            if (isNaN(Mpeso)) {
+                Mpeso = 0;
+            } else {
+                Mpeso      = parseFloat($("#DMontoPeso").val());
+            }
 
-                    peso = $("#RestaPeso").val();
-                    // 10767280  alert(Mpeso);
-                    TsupTotal = Mtrans / Ttrans;
-                    $("#TransToDolar").val(TsupTotal);
-                    $("#TrSubTotal").html(TsupTotal);
-                    $("#RestaTrans").val();
-                    sumar();
-                    resta();
-                    const Resta = document.getElementById('RestaTtotal');
-                    var valor = Resta.innerHTML;
-                    var RmultD = valor * Tdolar;
-                    $("#RestaDolar").val(RmultD);
-                    var RmultP = valor * Tpeso;
-                    $("#RestaPeso").val(RmultP);
-                    var RmultB = valor * Tbolivar;
-                    $("#RestaBolivar").val(RmultB);
-                    var RmultPu = valor * Tpunto;
-                    $("#RestaPunto").val(RmultPu);
-                    var RmultT = valor * Ttrans;
-                    $("#RestaTrans").val(RmultT);
-                }
+            let Tdolar      = tasaD;
+            let Tpeso       = tasaP;
+            let Tbolivar    = tasaTP;
+            let Tpunto      = tasaM;
+            let Ttrans      = tasaE;
+
+            Mpeso      = new Decimal(Mpeso);
+            Tdolar      = new Decimal(Tdolar);
+            Tpeso       = new Decimal(Tpeso);
+            Tbolivar    = new Decimal(Tbolivar);
+            Tpunto      = new Decimal(Tpunto);
+            Ttrans      = new Decimal(Ttrans);
+
+            // PsupTotal = Mpeso / Tpeso;
+            PsupTotal = new Decimal(Mpeso).div(Tpeso)
+            $("#PesoToDolar").val(PsupTotal.toFixed(6));
+            $("#PeSubTotal").html(PsupTotal.toFixed(6));
+            $("#RestaPeso").val();
+            sumar();
+            resta();
+            const Resta = document.getElementById('RestaTtotal');
+            // var valor   = Resta.innerHTML;
+            var valor       = new Decimal(Resta.innerHTML);
+            // var RmultD  = valor * Tdolar;
+            var RmultD      = new Decimal(valor).mul(Tdolar);
+            $("#RestaDolar").val(RmultD.toFixed(6));
+            // var RmultP  = valor * Tpeso;
+            var RmultP      = new Decimal(valor).mul(Tpeso);
+            $("#RestaPeso").val(RmultP.toFixed(2));
+            // var RmultB  = valor * Tbolivar;
+            var RmultB      = new Decimal(valor).mul(Tbolivar);
+            $("#RestaBolivar").val(RmultB.toFixed(2));
+            // var RmultPu = valor * Tpunto;
+            var RmultPu      = new Decimal(valor).mul(Tpunto);
+            $("#RestaPunto").val(RmultPu.toFixed(2));
+            // var RmultT = valor * Ttrans;
+            var RmultT      = new Decimal(valor).mul(Ttrans);
+            $("#RestaTrans").val(RmultT.toFixed(2));
+        }
+
+        function DMontoBolivar(){
+            Mbolivar = $("#DMontoBolivar").val();
+            Tdolar   = $("#TasaDolar").val();
+            Tpeso    = $("#TasaPeso").val();
+            Tbolivar = $("#TasaBolivar").val();
+            Tpunto   = $("#TasaPunto").val();
+            Ttrans   = $("#TasaTrans").val();
+
+            peso = $("#RestaPeso").val();
+            // 10767280  alert(Mpeso);
+            BsupTotal = Mbolivar / Tbolivar;
+            $("#BolivarToDolar").val(BsupTotal.toFixed(6));
+            $("#BoSubTotal").html(BsupTotal.toFixed(6));
+            $("#RestaBolivar").val();
+            sumar();
+            resta();
+            const Resta = document.getElementById('RestaTtotal');
+            var valor = Resta.innerHTML;
+            var RmultD = valor * Tdolar;
+            $("#RestaDolar").val(RmultD.toFixed(6));
+            var RmultP = valor * Tpeso;
+            $("#RestaPeso").val(RmultP.toFixed(2));
+            var RmultB = valor * Tbolivar;
+            $("#RestaBolivar").val(RmultB.toFixed(2));
+            var RmultPu = valor * Tpunto;
+            $("#RestaPunto").val(RmultPu.toFixed(2));
+            var RmultT = valor * Ttrans;
+            $("#RestaTrans").val(RmultT.toFixed(2));
+        }
+
+        function DMontoPunto(){
+            MPunto = $("#DMontoPunto").val();
+            Tdolar = $("#TasaDolar").val();
+            Tpeso = $("#TasaPeso").val();
+            Tbolivar = $("#TasaBolivar").val();
+            Tpunto = $("#TasaPunto").val();
+            Ttrans = $("#TasaTrans").val();
+
+            peso = $("#RestaPeso").val();
+            // 10767280  alert(Mpeso);
+            PusupTotal = MPunto / Tpunto;
+            $("#PuntoToDolar").val(PusupTotal.toFixed(6));
+            $("#PuSubTotal").html(PusupTotal.toFixed(6));
+            $("#RestaPunto").val();
+            sumar();
+            resta();
+            const Resta = document.getElementById('RestaTtotal');
+            var valor = Resta.innerHTML;
+            var RmultD = valor * Tdolar;
+            $("#RestaDolar").val(RmultD.toFixed(6));
+            var RmultP = valor * Tpeso;
+            $("#RestaPeso").val(RmultP.toFixed(2));
+            var RmultB = valor * Tbolivar;
+            $("#RestaBolivar").val(RmultB.toFixed(2));
+            var RmultPu = valor * Tpunto;
+            $("#RestaPunto").val(RmultPu.toFixed(2));
+            var RmultT = valor * Ttrans;
+            $("#RestaTrans").val(RmultT.toFixed(2));
+        }
+
+        function DMontoTrans(){
+            Mtrans = $("#DMontoTrans").val();
+            Tdolar = $("#TasaDolar").val();
+            Tpeso = $("#TasaPeso").val();
+            Tbolivar = $("#TasaBolivar").val();
+            Tpunto = $("#TasaPunto").val();
+            Ttrans = $("#TasaTrans").val();
+
+            peso = $("#RestaPeso").val();
+            // 10767280  alert(Mpeso);
+            TsupTotal = Mtrans / Ttrans;
+            $("#TransToDolar").val(TsupTotal.toFixed(6));
+            $("#TrSubTotal").html(TsupTotal.toFixed(6));
+            $("#RestaTrans").val();
+            sumar();
+            resta();
+            const Resta = document.getElementById('RestaTtotal');
+            var valor = Resta.innerHTML;
+            var RmultD = valor * Tdolar;
+            $("#RestaDolar").val(RmultD.toFixed(6));
+            var RmultP = valor * Tpeso;
+            $("#RestaPeso").val(RmultP.toFixed(2));
+            var RmultB = valor * Tbolivar;
+            $("#RestaBolivar").val(RmultB.toFixed(2));
+            var RmultPu = valor * Tpunto;
+            $("#RestaPunto").val(RmultPu.toFixed(2));
+            var RmultT = valor * Ttrans;
+            $("#RestaTrans").val(RmultT.toFixed(2));
+
+        }
 
 
                 $(document).ready(function() {

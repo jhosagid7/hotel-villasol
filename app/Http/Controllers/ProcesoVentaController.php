@@ -646,7 +646,7 @@ class ProcesoVentaController extends Controller
                             // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
 
                             $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
-                            $AgregarVtossPtesToVtosPtes->Tipo = 'Horas_Extras';
+                            $AgregarVtossPtesToVtosPtes->Tipo = 'Consumo';
                             $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
                             $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtesToVtosPtes->Divisa;
                             $AgregarVtossPtesToVtosPtes->MontoDivisa = ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);

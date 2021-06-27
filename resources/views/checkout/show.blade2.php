@@ -240,7 +240,7 @@ if(isset($servicio->id)){
                             <table class="table table-bordered">
                                 <tr style="background-color: #dcd6d6;">
                                     <th style="width: 10px;border-right: 1px solid #a09e9e;"></th>
-                                    <th colspan="5" style="border-right:1px solid #a09e9e;">Costo del alojamiento</th>
+                                    <th colspan="5" style="border-right:1px solid #a09e9e;">Costo del alojamientoss</th>
                                     <th style="width: 100px"></th>
                                 </tr>
                                 <tr>
@@ -453,8 +453,8 @@ if(isset($servicio->id)){
 
 	                        {{-- <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
                             <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> --}}
-                            <a id="pagoPendienteBtn" href="#" data-toggle="modal" data-target="#modalPagoPendiente"  class="btn btn-primary ">Procesar deuda/vuelto pendiente</a>
-                            <a id="modalPagoPendienteOpcionesBtn" href="#" data-toggle="modal" data-target="#modalPagoPendienteOpciones"  class="btn btn-primary hidden">Reintegro al cliente</a>
+                            <a id="pagoPendienteBtn" href="#" data-toggle="modal" data-target="#modalPagoPendiente"  class="btn btn-danger">Procesar pago pendiente</a>
+                            <a id="modalPagoPendienteOpcionesBtn" href="#" data-toggle="modal" data-target="#modalPagoPendienteOpciones"  class="btn btn-primary">Reintegro de Vueltos</a>
                             <!-- <button type="submit"  name="pagar"  id="pagar" class="btn btn-success pull-right"><i class='fa fa-print'></i> Procesar pago pendiente</button> -->
                             <!-- <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a> -->
                         </div>
@@ -465,7 +465,7 @@ if(isset($servicio->id)){
                             {{-- <input type="hidden" name="quetal" value="{{$servicio->habitacion_id ?? ''}}"> --}}
                             <input type="hidden" name="id_habitacion" value="{{$servicio->habitacion_id ?? ''}}">
                             <button type="botton"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
-                            {{-- <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> --}}
+                            <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button>
                         </form>
 
                     </div>
@@ -971,7 +971,7 @@ if(isset($servicio->id)){
         </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-            <button name="procesarServicio" id="procesarServicio" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+            <button name="procesarServicio" id="procesarServicio" class="btn btn-outline ocular" type="button"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
             {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
           </div>
         {{-- </form> --}}
@@ -1415,7 +1415,7 @@ if(isset($servicio->id)){
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
             <div class=""
             id="">
-            <button id="enviar" class="btn btn-outline" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+            <button id="enviar" class="btn btn-outline" type="button"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
         </div>
             {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
           </div>
@@ -1719,30 +1719,6 @@ var procesoPagoPendientealida = 0;
             pagoExtraPendiente();
             procesoCambioSalida = 3;
             // alert('boton '+procesoCambioSalida);
-            let valorDeuda = $('#total').val();
-
-            // if(valorDeuda > 0){
-
-
-            //     $("#pagoPendienteBtn").click();
-            //     // console.log('tienes deuda pendiente'+$valorDeuda);
-            //     return false;
-            // }else{
-            //     // console.log('todo bien');
-            //     if (VueltosvtosPendientes > 0) {
-            //         $("#modalPagoPendienteOpcionesBtn").click();
-            //         $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
-
-
-
-
-            //         return false;
-            //     } else {
-            //         alert('La habitacion no pocee deudas ni vueltos pendintes...!');
-            //         // return false;
-            //     }
-
-            // }
 
         });
 
@@ -1870,34 +1846,39 @@ var procesoPagoPendientealida = 0;
 
         //     }
         // });
+        $("#modalPagoPendienteOpcionesBtn").click(function() {
+            if (VueltosvtosPendientes > 0) {
 
+                pagoVueltosPendiente(VueltosvtosPendientes);
+                // $("#modalPagoPendienteOpcionesBtn").show();
+                $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
+                return false;
+                }
+        });
         $("#imprimirBoleta").click(function() {
-            let valorDeuda = $('#total').val();
+            let $valorDeuda = $('#total').val();
 
-            // return false;
-            if(valorDeuda > 0){
-            // alert(valorDeuda);
-            // return false;
+            if($valorDeuda > 0){
+
+
                 $("#pagoPendienteBtn").click();
                 // console.log('tienes deuda pendiente'+$valorDeuda);
                 return false;
+            }else{
+                // console.log('todo bien');
+                if (VueltosvtosPendientes > 0) {
+                    $("#modalPagoPendienteOpcionesBtn").click();
+
+
+
+
+                    return false;
+                } else {
+                    $("#form1").submit();
+                    // return false;
+                }
+
             }
-
-            if (VueltosvtosPendientes > 0) {
-                // alert(VueltosvtosPendientes);
-                $("#modalPagoPendienteOpcionesBtn").click();
-                $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
-
-
-
-
-                return false;
-            }
-                $("#form1").submit();
-                return false;
-
-
-
         });
 
 
@@ -1914,7 +1895,7 @@ var procesoPagoPendientealida = 0;
 
                 // console.log('todo bien');
                 if (VueltosvtosPendientes > 0) {
-
+                    $("#modalPago").click();
                     pagoVueltosPendiente(VueltosvtosPendientes);
                     // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
                     return false;
@@ -2185,7 +2166,111 @@ if (btnCambio == 1) {
 
     $(document).ready(function() {
         $("#enviar").on('click', function() {
+            let pagoVueltosConExc = $('#VueltospagoConExcedente').val();
+
+
+            let spTotalV = document.getElementById('spTotalV').innerHTML;
+            let RestaTtotalV = document.getElementById('RestaTtotalV').innerHTML;
+            let PagoTtotalV = document.getElementById('PagoTtotalV').innerHTML;
+
+            let = banderaDarVueltos = $("#banderaHorasExtras").val();
+
+            // alert(banderaDarVueltos);
+            if(banderaDarVueltos == 'pagarVueltosPendientes'){
+                if (!pagoVueltosConExc > 0) {
+                alert('Debe escribir el monto a usar de los vueltos pendientes disponibles...!');
+                document.getElementById("VueltospagoConExcedente").focus();
+                return false;
+                }
+
+                if (RestaTtotalV == 0) {
+                    // alert('enviar');
+                    $("#form3").submit();
+                }
+
+                if (RestaTtotalV < 0) {
+                    alert('El monto total de vueltos a pagar es de: $' + PagoTtotalV * -1 + ' y usted solo reporto: $' + spTotalV * -1 + '. Resta: $' + RestaTtotalV * -1 + '. Debe completar la totalidad del pago...!');
+                    document.getElementById("DMontoDolarV").focus();
+                    return false;
+                }
+
+                if (RestaTtotalV > 0) {
+                    alert('El monto total de vueltos a pagar es de: $' + PagoTtotalV * -1 + ' y usted reporto: $' + spTotalV * -1 + '. Se ha excedido por: $' + RestaTtotalV + ' ...!');
+                    document.getElementById("DMontoDolarV").focus();
+                    return false;
+                }
+
+                $("#form3").submit();
+            }
+
+            // alert('estoy aquí ya...');
+            if(banderaDarVueltos == '' && procesoCambioSalida == 1){
+
+            let spTotal = document.getElementById('spTotal').innerHTML;
+            let RestaTtotal = document.getElementById('RestaTtotal').innerHTML;
+            let PagoTtotal = document.getElementById('PagoTtotal').innerHTML;
+            let Vueltosexcdt = document.getElementById('Vueltosexcdt').innerHTML;
+
+                let reslt = parseFloat(spTotal) + parseFloat(Vueltosexcdt);
+
+            // alert('estoy aquí...');
+            modoPagoOn = $('#modo_pago').val();
+            tipoPago = $('#tipo_pago').val();
+            monto_dejadoR = $('#monto_dejado').val();
+            VueltospagoConExcedente = $('#VueltospagoConExcedente').val();
+
+            // alert(VueltospagoConExcedente);
+
+            if (RestaTtotal == 0) {
+                    // alert('enviando');
+                    $("#form3").submit();
+                }
+
+
+
+                if (RestaTtotal > 0 ) {
+                    alert('El monto total a pagar es de: $' + PagoTtotal + ' y usted reporto: $' + reslt + '. Debe ingresar el pago completo...!');
+                    document.getElementById("DMontoDolar").focus();
+                    return false;
+                }
+            // alert('Enviando ...');
             $("#form3").submit();
+
+            }
+
+           let  banderaPagoPendiente = $("#banderaHorasExtras").val();
+            if(banderaPagoPendiente == 'PagoHorasExtras'){
+                let spTotal = document.getElementById('spTotal').innerHTML;
+            let RestaTtotal = document.getElementById('RestaTtotal').innerHTML;
+            let PagoTtotal = document.getElementById('PagoTtotal').innerHTML;
+            let Vueltosexcdt = document.getElementById('Vueltosexcdt').innerHTML;
+
+                let reslt = parseFloat(spTotal) + parseFloat(Vueltosexcdt);
+
+            // alert('estoy aquí...');
+            modoPagoOn = $('#modo_pago').val();
+            tipoPago = $('#tipo_pago').val();
+            monto_dejadoR = $('#monto_dejado').val();
+            VueltospagoConExcedente = $('#VueltospagoConExcedente').val();
+
+            // alert(VueltospagoConExcedente);
+
+            if (RestaTtotal == 0) {
+                    // alert('enviando');
+                    $("#form3").submit();
+                }
+
+
+
+                if (RestaTtotal > 0 ) {
+                    alert('El monto total a pagar es de: $' + PagoTtotal + ' y usted reporto: $' + reslt + '. Debe ingresar el pago completo...!');
+                    document.getElementById("DMontoDolar").focus();
+                    return false;
+                }
+            // alert('Enviando ...');
+            $("#form3").submit();
+            };
+
         });
 
         $("#procesarServicio").on('click', function() {
@@ -2193,7 +2278,20 @@ if (btnCambio == 1) {
             $("#monto_dejado").val(0);
             $("#base_vuelto_monto_dejado").val(0);
             $('#modo_pago').val('cambio');
-            $("#form3").submit();
+
+            let precio_costo = $("#precio_costo").val();
+            // alert(precio_costo);
+
+            if (precio_costo <= 0) {
+                alert('enviando de procesa...');
+                // $("#form3").submit();
+            } else {
+                $("#modalPago").click();
+
+            }
+
+            return false;
+
         });
 
         $("#contado").on('click', function() {
@@ -2448,7 +2546,7 @@ if (btnCambio == 1) {
     });
 
     function numDecimal(valor){
-        let result = Number(valor).toFixed(6);
+        let result = Number(valor).toFixed(3);
 
         return result;
     }
@@ -3166,7 +3264,7 @@ if (btnCambio == 1) {
         }
     };
     function numDecimalExp(valor){
-        let result = Number((valor)).toFixed(6);
+        let result = Number((valor)).toFixed(3);
         return result;
     }
 
@@ -3944,122 +4042,70 @@ if (btnCambio == 1) {
                 // alert(total_suma);
 
                 let result = new Decimal(total_suma);
-                document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(6));
+                document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(2));
                 $('#monto_dejado').val(result.toFixed(2));
-                $('#base_vuelto_monto_dejado').val(result.toFixed(6));
+                $('#base_vuelto_monto_dejado').val(result.toFixed(2));
 
 
 
         }
 
         function DMontoDolar(){
-             // alert('clic');
-            let Mdolar      = parseFloat($("#DMontoDolar").val());
-            // let Mdolar = 0;
-            if (isNaN(Mdolar)) {
-                Mdolar = 0;
-            } else {
-                Mdolar      = parseFloat($("#DMontoDolar").val());
+                // alert('clic');
+                Mdolar      = $("#DMontoDolar").val();
+                Tdolar      = $("#TasaDolar").val();
+                Tpeso       = $("#TasaPeso").val();
+                Tbolivar    = $("#TasaBolivar").val();
+                Tpunto      = $("#TasaPunto").val();
+                Ttrans      = $("#TasaTrans").val();
+
+                DsupTotal = Mdolar * Tdolar;
+                $("#DolarToDolar").val(DsupTotal);
+                $("#DsubTotal").html(DsupTotal);
+
+                sumar();
+                resta();
+                const Resta     = document.getElementById('RestaTtotal');
+                var valor       = Resta.innerHTML;
+                var RmultD      = valor * Tdolar;
+                $("#RestaDolar").val(RmultD);
+                var RmultP      = valor * Tpeso;
+                $("#RestaPeso").val(RmultP);
+                var RmultB      = valor * Tbolivar;
+                $("#RestaBolivar").val(RmultB);
+                var RmultPu     = valor * Tpunto;
+                $("#RestaPunto").val(RmultPu);
+                var RmultT      = valor * Ttrans;
+                $("#RestaTrans").val(RmultT);
+
             }
-
-            let Tdolar      = tasaD;
-            let Tpeso       = tasaP;
-            let Tbolivar    = tasaTP;
-            let Tpunto      = tasaM;
-            let Ttrans      = tasaE;
-
-            Mdolar      = new Decimal(Mdolar);
-            Tdolar      = new Decimal(Tdolar);
-            Tpeso       = new Decimal(Tpeso);
-            Tbolivar    = new Decimal(Tbolivar);
-            Tpunto      = new Decimal(Tpunto);
-            Ttrans      = new Decimal(Ttrans);
-
-            // Mdolar.toFixed(6)
-
-            // DsupTotal = Mdolar * Tdolar;
-            DsupTotal = new Decimal(Mdolar).mul(Tdolar);
-            // alert(DsupTotal.toFixed());
-            $("#DolarToDolar").val(DsupTotal.toFixed(6));
-            $("#DsubTotal").html(DsupTotal.toFixed(6));
-
-            sumar();
-            resta();
-            const Resta     = document.getElementById('RestaTtotal');
-            var valor       = new Decimal(Resta.innerHTML);
-
-            // var RmultD      = valor * Tdolar;
-            var RmultD      = new Decimal(valor).mul(Tdolar);
-            $("#RestaDolar").val(RmultD.toFixed(6));
-            // var RmultP      = valor * Tpeso;
-            var RmultP      = new Decimal(valor).mul(Tpeso);
-            $("#RestaPeso").val(RmultP.toFixed(2));
-            // var RmultB      = valor * Tbolivar;
-            var RmultB      = new Decimal(valor).mul(Tbolivar);
-            $("#RestaBolivar").val(RmultB.toFixed(2));
-            // var RmultPu     = valor * Tpunto;
-            var RmultPu      = new Decimal(valor).mul(Tpunto);
-            $("#RestaPunto").val(RmultPu.toFixed(2));
-            // var RmultT      = valor * Ttrans;
-            var RmultT      = new Decimal(valor).mul(Ttrans);
-            $("#RestaTrans").val(RmultT.toFixed(2));
-
-        }
 
         function DMontoPeso(){
-            // Mpeso       = $("#DMontoPeso").val();
-            // Tdolar      = $("#TasaDolar").val();
-            // Tpeso       = $("#TasaPeso").val();
-            // Tbolivar    = $("#TasaBolivar").val();
-            // Tpunto      = $("#TasaPunto").val();
-            // Ttrans      = $("#TasaTrans").val();
+            Mpeso       = $("#DMontoPeso").val();
+            Tdolar      = $("#TasaDolar").val();
+            Tpeso       = $("#TasaPeso").val();
+            Tbolivar    = $("#TasaBolivar").val();
+            Tpunto      = $("#TasaPunto").val();
+            Ttrans      = $("#TasaTrans").val();
 
-            let Mpeso      = parseFloat($("#DMontoPeso").val());
-            // let Mdolar = 0;
-            if (isNaN(Mpeso)) {
-                Mpeso = 0;
-            } else {
-                Mpeso      = parseFloat($("#DMontoPeso").val());
-            }
-
-            let Tdolar      = tasaD;
-            let Tpeso       = tasaP;
-            let Tbolivar    = tasaTP;
-            let Tpunto      = tasaM;
-            let Ttrans      = tasaE;
-
-            Mpeso      = new Decimal(Mpeso);
-            Tdolar      = new Decimal(Tdolar);
-            Tpeso       = new Decimal(Tpeso);
-            Tbolivar    = new Decimal(Tbolivar);
-            Tpunto      = new Decimal(Tpunto);
-            Ttrans      = new Decimal(Ttrans);
-
-            // PsupTotal = Mpeso / Tpeso;
-            PsupTotal = new Decimal(Mpeso).div(Tpeso)
-            $("#PesoToDolar").val(PsupTotal.toFixed(6));
-            $("#PeSubTotal").html(PsupTotal.toFixed(6));
+            PsupTotal = Mpeso / Tpeso;
+            $("#PesoToDolar").val(PsupTotal);
+            $("#PeSubTotal").html(PsupTotal);
             $("#RestaPeso").val();
             sumar();
             resta();
             const Resta = document.getElementById('RestaTtotal');
-            // var valor   = Resta.innerHTML;
-            var valor       = new Decimal(Resta.innerHTML);
-            // var RmultD  = valor * Tdolar;
-            var RmultD      = new Decimal(valor).mul(Tdolar);
-            $("#RestaDolar").val(RmultD.toFixed(6));
-            // var RmultP  = valor * Tpeso;
-            var RmultP      = new Decimal(valor).mul(Tpeso);
-            $("#RestaPeso").val(RmultP.toFixed(2));
-            // var RmultB  = valor * Tbolivar;
-            var RmultB      = new Decimal(valor).mul(Tbolivar);
-            $("#RestaBolivar").val(RmultB.toFixed(2));
-            // var RmultPu = valor * Tpunto;
-            var RmultPu      = new Decimal(valor).mul(Tpunto);
-            $("#RestaPunto").val(RmultPu.toFixed(2));
-            // var RmultT = valor * Ttrans;
-            var RmultT      = new Decimal(valor).mul(Ttrans);
-            $("#RestaTrans").val(RmultT.toFixed(2));
+            var valor   = Resta.innerHTML;
+            var RmultD  = valor * Tdolar;
+            $("#RestaDolar").val(RmultD);
+            var RmultP  = valor * Tpeso;
+            $("#RestaPeso").val(RmultP);
+            var RmultB  = valor * Tbolivar;
+            $("#RestaBolivar").val(RmultB);
+            var RmultPu = valor * Tpunto;
+            $("#RestaPunto").val(RmultPu);
+            var RmultT = valor * Ttrans;
+            $("#RestaTrans").val(RmultT);
         }
 
         function DMontoBolivar(){
@@ -4073,23 +4119,23 @@ if (btnCambio == 1) {
             peso = $("#RestaPeso").val();
             // 10767280  alert(Mpeso);
             BsupTotal = Mbolivar / Tbolivar;
-            $("#BolivarToDolar").val(BsupTotal.toFixed(6));
-            $("#BoSubTotal").html(BsupTotal.toFixed(6));
+            $("#BolivarToDolar").val(BsupTotal);
+            $("#BoSubTotal").html(BsupTotal);
             $("#RestaBolivar").val();
             sumar();
             resta();
             const Resta = document.getElementById('RestaTtotal');
             var valor = Resta.innerHTML;
             var RmultD = valor * Tdolar;
-            $("#RestaDolar").val(RmultD.toFixed(6));
+            $("#RestaDolar").val(RmultD);
             var RmultP = valor * Tpeso;
-            $("#RestaPeso").val(RmultP.toFixed(2));
+            $("#RestaPeso").val(RmultP);
             var RmultB = valor * Tbolivar;
-            $("#RestaBolivar").val(RmultB.toFixed(2));
+            $("#RestaBolivar").val(RmultB);
             var RmultPu = valor * Tpunto;
-            $("#RestaPunto").val(RmultPu.toFixed(2));
+            $("#RestaPunto").val(RmultPu);
             var RmultT = valor * Ttrans;
-            $("#RestaTrans").val(RmultT.toFixed(2));
+            $("#RestaTrans").val(RmultT);
         }
 
         function DMontoPunto(){
@@ -4103,23 +4149,23 @@ if (btnCambio == 1) {
             peso = $("#RestaPeso").val();
             // 10767280  alert(Mpeso);
             PusupTotal = MPunto / Tpunto;
-            $("#PuntoToDolar").val(PusupTotal.toFixed(6));
-            $("#PuSubTotal").html(PusupTotal.toFixed(6));
+            $("#PuntoToDolar").val(PusupTotal);
+            $("#PuSubTotal").html(PusupTotal);
             $("#RestaPunto").val();
             sumar();
             resta();
             const Resta = document.getElementById('RestaTtotal');
             var valor = Resta.innerHTML;
             var RmultD = valor * Tdolar;
-            $("#RestaDolar").val(RmultD.toFixed(6));
+            $("#RestaDolar").val(RmultD);
             var RmultP = valor * Tpeso;
-            $("#RestaPeso").val(RmultP.toFixed(2));
+            $("#RestaPeso").val(RmultP);
             var RmultB = valor * Tbolivar;
-            $("#RestaBolivar").val(RmultB.toFixed(2));
+            $("#RestaBolivar").val(RmultB);
             var RmultPu = valor * Tpunto;
-            $("#RestaPunto").val(RmultPu.toFixed(2));
+            $("#RestaPunto").val(RmultPu);
             var RmultT = valor * Ttrans;
-            $("#RestaTrans").val(RmultT.toFixed(2));
+            $("#RestaTrans").val(RmultT);
         }
 
         function DMontoTrans(){
@@ -4133,23 +4179,23 @@ if (btnCambio == 1) {
             peso = $("#RestaPeso").val();
             // 10767280  alert(Mpeso);
             TsupTotal = Mtrans / Ttrans;
-            $("#TransToDolar").val(TsupTotal.toFixed(6));
-            $("#TrSubTotal").html(TsupTotal.toFixed(6));
+            $("#TransToDolar").val(TsupTotal);
+            $("#TrSubTotal").html(TsupTotal);
             $("#RestaTrans").val();
             sumar();
             resta();
             const Resta = document.getElementById('RestaTtotal');
             var valor = Resta.innerHTML;
             var RmultD = valor * Tdolar;
-            $("#RestaDolar").val(RmultD.toFixed(6));
+            $("#RestaDolar").val(RmultD);
             var RmultP = valor * Tpeso;
-            $("#RestaPeso").val(RmultP.toFixed(2));
+            $("#RestaPeso").val(RmultP);
             var RmultB = valor * Tbolivar;
-            $("#RestaBolivar").val(RmultB.toFixed(2));
+            $("#RestaBolivar").val(RmultB);
             var RmultPu = valor * Tpunto;
-            $("#RestaPunto").val(RmultPu.toFixed(2));
+            $("#RestaPunto").val(RmultPu);
             var RmultT = valor * Ttrans;
-            $("#RestaTrans").val(RmultT.toFixed(2));
+            $("#RestaTrans").val(RmultT);
 
         }
 
@@ -4160,50 +4206,30 @@ if (btnCambio == 1) {
                 aprovMontoDolar = 1;
                 $("#isVueltos").val('');
                 DMontoDolar();
-                DMontoPeso();
-                DMontoBolivar();
-                DMontoPunto();
-                DMontoTrans();
             });
 
             $("#DMontoPeso").keyup(function() {
                 aprovMontoDolar = 1;
                 $("#isVueltos").val('');
                 DMontoPeso();
-                DMontoDolar();
-                DMontoBolivar();
-                DMontoPunto();
-                DMontoTrans();
             });
 
             $("#DMontoBolivar").keyup(function() {
                 aprovMontoDolar = 1;
                 $("#isVueltos").val('');
                 DMontoBolivar();
-                DMontoDolar();
-                DMontoPeso();
-                DMontoPunto();
-                DMontoTrans();
             });
 
             $("#DMontoPunto").keyup(function() {
                 aprovMontoDolar = 1;
                 $("#isVueltos").val('');
                 DMontoPunto();
-                DMontoDolar();
-                DMontoPeso();
-                DMontoBolivar();
-                DMontoTrans();
             });
 
             $("#DMontoTrans").keyup(function() {
                 aprovMontoDolar = 1;
                 $("#isVueltos").val('');
                 DMontoTrans();
-                DMontoDolar();
-                DMontoPeso();
-                DMontoBolivar();
-                DMontoPunto();
             });
 
             $("#pagoConExcedente").keyup(function() {
@@ -4360,11 +4386,11 @@ if (btnCambio == 1) {
                 if(tsV > 0){
                 // let md = $('#monto_dejado').val();
                 // rmd =  md - tsV;
+                $('#isVueltos').val(tsV);
                 // let rmdresult = new Decimal(rmd);
                 let rmdresult = new Decimal(tsV);
-                $('#isVueltos').val(rmdresult.toFixed(6));
                 // $('#monto_dejado').val(rmdresult.toFixed(2));
-                $('#monto_dejadoResta').val(rmdresult.toFixed(6));
+                $('#monto_dejadoResta').val(rmdresult.toFixed(2));
 
                 }
                 let montoBase = $('#base_vuelto_monto_dejado').val();
@@ -4377,12 +4403,12 @@ if (btnCambio == 1) {
                 let r = x.sub(y)                  // '0.2'
                 // console.log(r.toFixed(2));
 
-                $('#monto_dejado').val(r.toFixed(6));
+                $('#monto_dejado').val(r.toFixed(2));
 
 
                 // $('#monto_dejado').val(rmdresult.toFixed(2));
                 let result = new Decimal(total_sumaV);
-                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(6));
+                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
 
 
             }
@@ -4400,19 +4426,19 @@ if (btnCambio == 1) {
 
 
             DsupTotalV = MdolarV * TdolarV;
-            $("#DolarToDolarV").val(DsupTotalV.toFixed(6));
-            $("#DsubTotalV").html(DsupTotalV.toFixed(6));
+            $("#DolarToDolarV").val(DsupTotalV);
+            $("#DsubTotalV").html(DsupTotalV);
 
             sumarV();
             restaV();
             const RestaV     = document.getElementById('RestaTtotalV');
             var valorV       = RestaV.innerHTML;
             var RmultDV      = valorV * TdolarV;
-            $("#RestaDolarV").val(RmultDV.toFixed(6));
+            $("#RestaDolarV").val(RmultDV);
             var RmultPV      = valorV * TpesoV;
-            $("#RestaPesoV").val(RmultPV.toFixed(2));
+            $("#RestaPesoV").val(RmultPV);
             var RmultBV      = valorV * TbolivarV;
-            $("#RestaBolivarV").val(RmultBV.toFixed(2));
+            $("#RestaBolivarV").val(RmultBV);
 
 
         }
@@ -4425,19 +4451,19 @@ if (btnCambio == 1) {
 
 
             PsupTotalV = MpesoV / TpesoV;
-            $("#PesoToDolarV").val(PsupTotalV.toFixed(6));
-            $("#PeSubTotalV").html(PsupTotalV.toFixed(6));
+            $("#PesoToDolarV").val(PsupTotalV);
+            $("#PeSubTotalV").html(PsupTotalV);
             $("#RestaPesoV").val();
             sumarV();
             restaV();
             const RestaV = document.getElementById('RestaTtotalV');
             var valorV   = RestaV.innerHTML;
             var RmultDV  = valorV * TdolarV;
-            $("#RestaDolarV").val(RmultDV.toFixed(6));
+            $("#RestaDolarV").val(RmultDV);
             var RmultPV  = valorV * TpesoV;
-            $("#RestaPesoV").val(RmultPV.toFixed(2));
+            $("#RestaPesoV").val(RmultPV);
             var RmultBV  = valorV * TbolivarV;
-            $("#RestaBolivarV").val(RmultBV.toFixed(2));
+            $("#RestaBolivarV").val(RmultBV);
 
 
         }
@@ -4452,19 +4478,19 @@ if (btnCambio == 1) {
             pesoV = $("#RestaPesoV").val();
             // 10767280  alert(Mpeso);
             BsupTotalV = MbolivarV / TbolivarV;
-            $("#BolivarToDolarV").val(BsupTotalV.toFixed(6));
-            $("#BoSubTotalV").html(BsupTotalV.toFixed(6));
+            $("#BolivarToDolarV").val(BsupTotalV);
+            $("#BoSubTotalV").html(BsupTotalV);
             $("#RestaBolivarV").val();
             sumarV();
             restaV();
             const RestaV = document.getElementById('RestaTtotalV');
             var valorV = RestaV.innerHTML;
             var RmultDV = valorV * TdolarV;
-            $("#RestaDolarV").val(RmultDV.toFixed(6));
+            $("#RestaDolarV").val(RmultDV);
             var RmultPV = valorV * TpesoV;
-            $("#RestaPesoV").val(RmultPV.toFixed(2));
+            $("#RestaPesoV").val(RmultPV);
             var RmultBV = valorV * TbolivarV;
-            $("#RestaBolivarV").val(RmultBV.toFixed(2));
+            $("#RestaBolivarV").val(RmultBV);
 
 
         }
@@ -5361,6 +5387,7 @@ if (btnCambio == 1) {
                                 // alert(monto_dejadoR);
 
                                 if (modoPagoOn == 'contado') {
+
                                     if(cliente_id == 0 || cliente_id == null){
                                         alert('No has seleccionado un cliente...!');
                                         return false;
@@ -5495,7 +5522,8 @@ if (btnCambio == 1) {
     <script>
 
         function numDecimal(valor){
-            let result = Number(valor).toFixed(6);
+            let result = Number(valor).toFixed(2);
+
 
             return result;
         }

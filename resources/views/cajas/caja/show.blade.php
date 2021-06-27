@@ -1388,14 +1388,19 @@
                         @if ($serv->modo_pago)
                             @foreach ($serv->pago_vueltos as $pagovuts)
                             @if ($pagovuts->servicio_id == $serv->id && $pagovuts->Tipo == 'Servicio')
-                            {{ ' '.$pagovuts->Divisa.': '.floatval($pagovuts->MontoDivisa) ?? '0.00' }}
+                                {{ ' '.$pagovuts->Divisa.': '.floatval($pagovuts->MontoDivisa) ?? '0.00' }}
                             @endif
                             @endforeach
                         @endif
                         @if ($cajas->excedente_actual_valor)
                             @foreach ($cajas->excedente_actual_valor as $vtosDevueltos)
                             @if ($vtosDevueltos->servicio_id == $serv->id && $vtosDevueltos->Estado == 'Devueltos' && $vtosDevueltos->Tipo == 'Servicio')
-                            <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.floatval($vtosDevueltos->MontoDivisa) ?? '' }}</b>
+                                @if ($vtosDevueltos->Divisa <> 'Dolar')
+                                    <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.number_format($vtosDevueltos->MontoDivisa,2) ?? '' }}</b>
+                                @else
+                                    <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.floatval($vtosDevueltos->MontoDivisa) ?? '' }}</b>
+                                @endif
+
                             @endif
 
                             @endforeach
@@ -1462,7 +1467,12 @@
                         @if ($cajas->excedente_actual_valor)
                             @foreach ($cajas->excedente_actual_valor as $vtosPendtes)
                             @if ($vtosPendtes->servicio_id == $serv->id && $vtosPendtes->Estado == 'Pendiente' && $vtosPendtes->Tipo == 'Servicio')
-                            {{ ' '.$vtosPendtes->Divisa.': '.floatval($vtosPendtes->MontoDivisa) ?? '' }}
+                            @if ($vtosPendtes->Divisa <> 'Dolar')
+                                    <b class="text-bold">{{ ' '.$vtosPendtes->Divisa.': '.number_format(floatval($vtosPendtes->MontoDivisa),2,',','.') ?? '' }}</b>
+                                @else
+                                    <b class="text-bold">{{ ' '.$vtosPendtes->Divisa.': '.floatval($vtosPendtes->MontoDivisa) ?? '' }}</b>
+                                @endif
+                                {{-- {{ ' '.$vtosPendtes->Divisa.': '.floatval($vtosPendtes->MontoDivisa) ?? '' }} --}}
                             @endif
 
                             @endforeach
@@ -2023,9 +2033,9 @@
                     <td>{{ $horasEx->fecha_hora_salida_sugerida ?? '' }}</td>
                     <td>{{ $horasEx->fecha_hora_salida_real ?? '' }}
                     <td>Excedido por: {{ $horasEx->cantidad_hora_extra ?? '' }} horas extras.</td>
-                    <td >{{ $horasEx->cantidad_hora_extra ?? '' }}</td>
-                    <td>{{ $horasEx->precio_hora_extra ?? '' }}</td>
-                    <td>{{ $horasEx->monto_total_hora_extra ?? '' }}</td>
+                    <td >{{ $horasEx->cantidad_hora_extra ?? '0' }}</td>
+                    <td>{{ $horasEx->precio_hora_extra ?? '0.00' }}</td>
+                    <td>{{ floatval($horasEx->monto_total_hora_extra) ?? '0.00' }}</td>
                     <td>
                         @if ($cajas->excedente_actual)
                             @foreach ($cajas->excedente_actual as $excdteNuevo)
