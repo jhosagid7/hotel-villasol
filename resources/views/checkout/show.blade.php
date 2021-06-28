@@ -589,12 +589,12 @@ if(isset($servicio->id)){
                                             </div><!-- /.box-header -->
                                             <div class="box-body">
                                                 <div id="btnPago2Opciones">
-                                                    <div id="contado2Opciones" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                    <div id="contado2Opciones" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 small">
                                                         {{-- <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a> --}}
                                                         <button type="botton"  name="devolverVueltos"  id="devolverVueltos" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small"> Contado</button>
                                                     </div>
 
-                                                    <div id="precortesia2Opciones" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                    <div id="precortesia2Opciones" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 small">
                                                         {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
                                                         <button type="botton"  name="pagarPorOficinaBtn"  id="pagarPorOficinaBtn" class="btn btn-sm btn-warning btn-block col-lg-pull-2 small"> Pagar Por Oficina</button>
                                                         {{-- <a href="#" data-toggle="modal" data-target="#precortesiamodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Pagar Por Oficina</a> --}}
@@ -612,11 +612,10 @@ if(isset($servicio->id)){
 
                                                     </div> --}}
 
-                                                    <div id="precredito2Opciones" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
-                                                        {{-- <a href="#" data-toggle="modal" data-target="#precreditomodal"  class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crear Cuenta</a> --}}
+                                                    {{-- <div id="precredito2Opciones" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+
                                                         <button type="botton"  name="crearCuentaBtn"  id="crearCuentaBtn" class="btn btn-sm btn-success btn-block col-lg-pull-2 small"> Crear Cuenta</button>
-                                                    </div>
+                                                    </div> --}}
 
                                                 </div>
                                             </div><!-- /.box-body -->
@@ -624,8 +623,42 @@ if(isset($servicio->id)){
                                         </div>
                                     </div>
                                     <div id="contentPagarOficina">
+                                        <form id="form4" action="{{ route('excedente.store')}}" enctype="multipart/form-data" method="POST" autocomplete="off">
+
+                                                        @csrf
                                         <div class="col-md-12">
-                                            <div id="box_PagarCrear" class="box box-warning">
+                                            <div class="box box-default">
+                                                <div class="box-header with-border">
+                                                    <h3 class="box-title">Seleccione tipo de pago</h3>
+                                                </div>
+                                                <!-- /.box-header -->
+                                                <div class="box-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table no-margin">
+
+                                                            <tbody style="padding: 0px;">
+                                                                <tr style="padding: 0px;">
+                                                                    <td><h4 class="text-primary" style="margin-top: 0px !important;">Transferencia: &nbsp;&nbsp;&nbsp; <input class="transferencia" name="isTransferencia" type="checkbox"></h4></td>
+
+                                                                    <td><h4 class="text-primary" style="margin-top: 0px !important;">Pago Mobil: &nbsp;&nbsp;&nbsp;<input class="pagomobil" name="isPagoMobil" type="checkbox"></h4></td>
+
+                                                                    <td><h4 class="text-primary" style="margin-top: 0px !important;">Efectivo: &nbsp;&nbsp;&nbsp;<input class="efectivo" name="isEfectivo" type="checkbox"></h4></td>
+
+
+                                                                </tr>
+
+
+
+                                                            </tbody>
+                                                        </table>
+
+                                                    </div>
+                                                    <!-- /.table-responsive -->
+                                                </div>
+
+
+                                            </div>
+                                            <div id="box_PagarCrear" class="box box-warning pagarPorOficina"  style="display:none">
                                             <div class="box-header with-border">
                                                 <h3 class="box-title"><b class="text-warning" id="tituloPagarCrear">Pagar Por Oficina</b></h3><br>
                                                 Datos de cliente:
@@ -633,12 +666,10 @@ if(isset($servicio->id)){
                                             <div class="box-body">
                                                 <div id="formPagarOficina">
 
-                                                    <form id="form4" action="{{ route('excedente.store')}}" enctype="multipart/form-data" method="POST" autocomplete="off">
 
-                                                        @csrf
                                                         <div class="row">
 
-                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 seleccioneCliente"  style="display:none">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="Banco">Seleccione Cliente</label>
                                                                     <select name="selec_cliente" id="selec_cliente" class="form-control selectpicker" data-live-search="true">
@@ -649,14 +680,14 @@ if(isset($servicio->id)){
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 nombre"  style="display:none">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="nombre">Nombre del cliente</label>
                                                                     <input required type="text" id="nombre" name="nombre" class="form-control titulo" value="{{old('nombre')}}" placeholder="Nombre...">
                                                                 </div>
                                                             </div>
 
-                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="tipo_documento">Tipo Documento</label>
 
@@ -669,35 +700,35 @@ if(isset($servicio->id)){
                                                                     </select>
 
                                                                 </div>
-                                                            </div>
+                                                            </div> --}}
 
-                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 cedula"  style="display:none">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="num_documento">Número de Documento</label>
                                                                     <input required type="number" id="num_documento" name="num_documento" class="form-control enteros" value="{{old('num_documento')}}" placeholder="Número de Documento...">
                                                                 </div>
                                                             </div>
 
-                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="direccion">Dirección</label>
                                                                     <input required type="text" id="direccion" name="direccion" class="form-control mayuscula" value="{{old('direccion')}}" placeholder="Dirección...">
                                                                 </div>
-                                                            </div>
+                                                            </div> --}}
 
-                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="telefono">Teléfono</label>
                                                                     <input required type="text" id="telefono" name="telefono" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('telefono')}}" placeholder="Teléfono...">
                                                                 </div>
-                                                            </div>
+                                                            </div> --}}
 
-                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                            {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="email">Email</label>
                                                                     <input required type="email" id="email" name="email" class="form-control" value="{{old('email')}}" placeholder="Email...">
                                                                 </div>
-                                                            </div>
+                                                            </div> --}}
                                                             {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
                                                                     <label for="imagen">Imagen</label>
@@ -706,7 +737,7 @@ if(isset($servicio->id)){
                                                             </div> --}}
 
                                                         </div>
-                                                        <div id="datosBanco" class="box box-default">
+                                                        <div id="datosBanco" class="box box-default datosBanco"  style="display:none">
                                                             <div class="box-header with-border">
                                                                 {{-- <h3 class="box-title">Conceder Privilegios</h3> --}}
                                                                 <br>
@@ -716,7 +747,7 @@ if(isset($servicio->id)){
                                                             <div class="box-body">
                                                                 <div class="row">
 
-                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 selecctBanco "  style="display:none">
                                                                         <div class="form-group">
                                                                             <label class="text-black" for="selec_banco">Seleccione Banco</label>
                                                                             <select name="selec_banco" id="selec_banco" class="form-control selectpicker" data-live-search="true">
@@ -727,7 +758,7 @@ if(isset($servicio->id)){
                                                                             </select>
                                                                         </div>
                                                                     </div>
-                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12  nombreBanco "  style="display:none">
                                                                         <div class="form-group">
                                                                             <label class="text-black" for="nombre_banco">Nombre Banco</label>
                                                                             <input required type="text" id="nombre_banco" name="nombre_banco" class="form-control titulo" value="{{old('nombre')}}" placeholder="Nombre Banco...">
@@ -736,14 +767,14 @@ if(isset($servicio->id)){
 
 
 
-                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 codigo" style="display:none">
                                                                         <div class="form-group">
                                                                             <label class="text-black" for="num_documento">Código</label>
                                                                             <input required type="number" id="codigo" name="codigo" class="form-control enteros" value="{{old('codigo')}}" placeholder="Código...">
                                                                         </div>
                                                                     </div>
 
-                                                                    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+                                                                    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 numCuenta" style="display:none">
                                                                         <div class="form-group">
                                                                             <label class="text-black" for="direccion">Número de cuenta</label>
                                                                             <input required type="text" id="num_cuenta" name="num_cuenta" class="form-control mayuscula" value="{{old('num_cuenta')}}" placeholder="Número de cuenta...">
@@ -751,7 +782,7 @@ if(isset($servicio->id)){
                                                                     </div>
 
 
-                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 tipoCuenta" style="display:none">
                                                                         <div class="form-group">
                                                                             <label class="text-black" for="tipo_cuenta">Tipo de cuenta</label>
                                                                             <select required class="form-control" id="tipo_cuenta" name="tipo_cuenta">
@@ -763,9 +794,9 @@ if(isset($servicio->id)){
                                                                         </div>
                                                                     </div>
 
-                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 telefonoMobil"  style="display:none">
                                                                         <div class="form-group">
-                                                                            <label class="text-black" for="pago_mobil">Teléfono pago Mobil</label>
+                                                                            <label class="text-black" for="pago_mobil">Teléfono</label>
                                                                             <input required type="text" name="pago_mobil" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('pago_mobil')}}" placeholder="Pago mobil...">
                                                                         </div>
                                                                     </div>
@@ -1573,6 +1604,206 @@ if(isset($servicio->id)){
   <div class="clearfix"></div>
 @push('sciptsMain')
 <script>
+
+    $(document).ready(function(){
+
+        $('.transferencia').click(function(){
+            if($(this).is(':checked')){
+                $('.pagarPorOficina').css('display', 'block');
+                $('.seleccioneCliente').css('display', 'block');
+                $('.nombre').css('display', 'block');
+                $('.cedula').css('display', 'block');
+                $('.datosBanco').css('display', 'block');
+                $('.selecctBanco').css('display', 'block');
+                $('.nombreBanco').css('display', 'block');
+                $('.cedula').css('display', 'block');
+                $('.codigo').css('display', 'block');
+                $('.numCuenta').css('display', 'block');
+                $('.tipoCuenta').css('display', 'block');
+                // $('.telefonoMobil').css('display', 'block');
+                // $('.transM').css('display', 'block');
+            }else{
+                $('.pagarPorOficina').css('display', 'none');
+                $('.seleccioneCliente').css('display', 'none');
+                $('.nombre').css('display', 'none');
+                $('.cedula').css('display', 'none');
+                $('.datosBanco').css('display', 'none');
+                $('.selecctBanco').css('display', 'none');
+                $('.nombreBanco').css('display', 'none');
+                $('.cedula').css('display', 'none');
+                $('.codigo').css('display', 'none');
+                $('.numCuenta').css('display', 'none');
+                $('.tipoCuenta').css('display', 'none');
+                // $('.transM').css('display', 'none');
+
+
+                if($('.pagomobil').is(':checked')){
+                    $('.pagarPorOficina').css('display', 'block');
+                    $('.seleccioneCliente').css('display', 'block');
+                    $('.nombre').css('display', 'block');
+                    $('.cedula').css('display', 'block');
+                    $('.datosBanco').css('display', 'block');
+                    $('.selecctBanco').css('display', 'block');
+                    $('.nombreBanco').css('display', 'block');
+                    $('.telefonoMobil').css('display', 'block');
+                }else{
+                    $('.pagarPorOficina').css('display', 'none');
+                    $('.seleccioneCliente').css('display', 'none');
+                    $('.nombre').css('display', 'none');
+                    $('.cedula').css('display', 'none');
+                    $('.datosBanco').css('display', 'none');
+                    $('.selecctBanco').css('display', 'none');
+                    $('.nombreBanco').css('display', 'none');
+                    $('.telefonoMobil').css('display', 'none');
+
+                    if($('.efectivo').is(':checked')){
+                        $('.pagarPorOficina').css('display', 'block');
+                        $('.seleccioneCliente').css('display', 'block');
+                        $('.nombre').css('display', 'block');
+                        $('.cedula').css('display', 'block');
+                    }else{
+                        $('.pagarPorOficina').css('display', 'none');
+                        $('.seleccioneCliente').css('display', 'none');
+                        $('.nombre').css('display', 'none');
+                        $('.cedula').css('display', 'none');
+                    }
+                }
+
+
+            }
+
+        });
+
+        $('.pagomobil').click(function(){
+            if($(this).is(':checked')){
+                $('.pagarPorOficina').css('display', 'block');
+                $('.seleccioneCliente').css('display', 'block');
+                $('.nombre').css('display', 'block');
+                $('.cedula').css('display', 'block');
+                $('.datosBanco').css('display', 'block');
+                $('.selecctBanco').css('display', 'block');
+                $('.nombreBanco').css('display', 'block');
+                $('.telefonoMobil').css('display', 'block');
+            }else{
+                $('.pagarPorOficina').css('display', 'none');
+                $('.seleccioneCliente').css('display', 'none');
+                $('.nombre').css('display', 'none');
+                $('.cedula').css('display', 'none');
+                $('.datosBanco').css('display', 'none');
+                $('.selecctBanco').css('display', 'none');
+                $('.nombreBanco').css('display', 'none');
+                $('.telefonoMobil').css('display', 'none');
+
+                if($('.transferencia').is(':checked')){
+                    $('.pagarPorOficina').css('display', 'block');
+                    $('.seleccioneCliente').css('display', 'block');
+                    $('.nombre').css('display', 'block');
+                    $('.cedula').css('display', 'block');
+                    $('.datosBanco').css('display', 'block');
+                    $('.selecctBanco').css('display', 'block');
+                    $('.nombreBanco').css('display', 'block');
+                    $('.cedula').css('display', 'block');
+                    $('.codigo').css('display', 'block');
+                    $('.numCuenta').css('display', 'block');
+                    $('.tipoCuenta').css('display', 'block');
+                }else{
+                    $('.pagarPorOficina').css('display', 'none');
+                    $('.seleccioneCliente').css('display', 'none');
+                    $('.nombre').css('display', 'none');
+                    $('.cedula').css('display', 'none');
+                    $('.datosBanco').css('display', 'none');
+                    $('.selecctBanco').css('display', 'none');
+                    $('.nombreBanco').css('display', 'none');
+                    $('.cedula').css('display', 'none');
+                    $('.codigo').css('display', 'none');
+                    $('.numCuenta').css('display', 'none');
+                    $('.tipoCuenta').css('display', 'none');
+
+                    if($('.efectivo').is(':checked')){
+                        $('.pagarPorOficina').css('display', 'block');
+                        $('.seleccioneCliente').css('display', 'block');
+                        $('.nombre').css('display', 'block');
+                        $('.cedula').css('display', 'block');
+                    }else{
+                        $('.pagarPorOficina').css('display', 'none');
+                        $('.seleccioneCliente').css('display', 'none');
+                        $('.nombre').css('display', 'none');
+                        $('.cedula').css('display', 'none');
+                    }
+                }
+
+
+            }
+        });
+
+
+        $('.efectivo').click(function(){
+            if($(this).is(':checked')){
+                $('.pagarPorOficina').css('display', 'block');
+                $('.seleccioneCliente').css('display', 'block');
+                $('.nombre').css('display', 'block');
+                $('.cedula').css('display', 'block');
+
+
+            }else{
+                $('.pagarPorOficina').css('display', 'none');
+                $('.seleccioneCliente').css('display', 'none');
+                $('.nombre').css('display', 'none');
+                $('.cedula').css('display', 'none');
+
+                if($('.transferencia').is(':checked')){
+                    // alert('trans');
+                    $('.pagarPorOficina').css('display', 'block');
+                    $('.seleccioneCliente').css('display', 'block');
+                    $('.nombre').css('display', 'block');
+                    $('.cedula').css('display', 'block');
+                    $('.datosBanco').css('display', 'block');
+                    $('.selecctBanco').css('display', 'block');
+                    $('.nombreBanco').css('display', 'block');
+                    $('.cedula').css('display', 'block');
+                    $('.codigo').css('display', 'block');
+                    $('.numCuenta').css('display', 'block');
+                    $('.tipoCuenta').css('display', 'block');
+                }else{
+                    $('.pagarPorOficina').css('display', 'none');
+                    $('.seleccioneCliente').css('display', 'none');
+                    $('.nombre').css('display', 'none');
+                    $('.cedula').css('display', 'none');
+                    $('.datosBanco').css('display', 'none');
+                    $('.selecctBanco').css('display', 'none');
+                    $('.nombreBanco').css('display', 'none');
+                    $('.cedula').css('display', 'none');
+                    $('.codigo').css('display', 'none');
+                    $('.numCuenta').css('display', 'none');
+                    $('.tipoCuenta').css('display', 'none');
+
+                    if($('.pagomobil').is(':checked')){
+                        $('.pagarPorOficina').css('display', 'block');
+                        $('.seleccioneCliente').css('display', 'block');
+                        $('.nombre').css('display', 'block');
+                        $('.cedula').css('display', 'block');
+                        $('.datosBanco').css('display', 'block');
+                        $('.selecctBanco').css('display', 'block');
+                        $('.nombreBanco').css('display', 'block');
+                        $('.telefonoMobil').css('display', 'block');
+                    }else{
+                        $('.pagarPorOficina').css('display', 'none');
+                        $('.seleccioneCliente').css('display', 'none');
+                        $('.nombre').css('display', 'none');
+                        $('.cedula').css('display', 'none');
+                        $('.datosBanco').css('display', 'none');
+                        $('.selecctBanco').css('display', 'none');
+                        $('.nombreBanco').css('display', 'none');
+                        $('.telefonoMobil').css('display', 'none');
+                    }
+                }
+
+
+
+
+            }
+        });
+    });
 // alert('hola');
 $('#cambiarHabitacionBtn').hide();
     var nombreVieja = $('#nombre_vieja').val();
@@ -1990,12 +2221,12 @@ var procesoPagoPendientealida = 0;
     $("#selec_cliente").change(showValuesCliente);
 
 $("#selec_cliente").on("change", function () {
-            document.getElementById("tipo_documento").focus();
+            // document.getElementById("tipo_documento").focus();
             // $("#jidarticulo").val('0');
             // document.getElementById('jidarticulo').val('0');
         });
 $("#tipo_documento").on("change", function () {
-            document.getElementById("selec_banco").focus();
+            // document.getElementById("selec_banco").focus();
             // $("#jidarticulo").val('0');
             // document.getElementById('jidarticulo').val('0');
         });
@@ -2033,7 +2264,7 @@ focusMethod = function getFocus() {
         const box_PagarCrear    = document.getElementById('box_PagarCrear');
 
         $("#pagarPorOficinaBtn").on('click', function() {
-
+            $('.pagarPorOficina').css('display', 'none');
             $("#selec_cliente").val('default').selectpicker("refresh");
             $("#selec_banco").val('default').selectpicker("refresh");
             $("#form4")[0].reset();

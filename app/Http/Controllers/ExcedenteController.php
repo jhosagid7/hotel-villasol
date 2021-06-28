@@ -145,6 +145,9 @@ class ExcedenteController extends Controller
 
 
             $bandera = $request->get('bandera');
+            $isTransferencia = $request->get('isTransferencia');
+            $isPagoMobil = $request->get('isPagoMobil');
+            $isEfectivo = $request->get('isEfectivo');
             $nombre_cliente = $request->get('nombre');
             $tipo_documento = $request->get('tipo_documento');
             $num_documento = $request->get('num_documento');
@@ -169,6 +172,13 @@ class ExcedenteController extends Controller
 
             $operador = Auth::user()->name;
             $user_id = Auth::user()->id;
+
+
+            if ($tipo_documento == null) {
+                $tipo_documento = 'CI.V-';
+            } else {
+                $tipo_documento = $tipo_documento;
+            }
 
 
 
@@ -198,7 +208,7 @@ class ExcedenteController extends Controller
                         $insertCliente->num_documento = $num_documento;
                         $insertCliente->direccion = $direccion;
                         $insertCliente->telefono = $telefono;
-                        $insertCliente->email = $$email;
+                        $insertCliente->email = $email;
                         $insertCliente->isCortesia = null;
                         $insertCliente->isCredito = null;
                         $insertCliente->imagen = 'thumb_upl_57e81d357d468.jpg';
@@ -239,29 +249,43 @@ class ExcedenteController extends Controller
 
                             }
 
-                // TODO Guardamos los datos del banco del cliente pero revisamos si ya existe esa cuenta registrada
+                            // TODO Guardamos los datos del banco del cliente pero revisamos si ya existe esa cuenta registrada
 
-                $ifBancoCliente = BancosCliente::where('persona_id',$dcliente_id)->where('codigo',$codigo)->where('num_cuenta',$num_cuenta)->first();
-                            // return $ifCliente;
+                            if (!$isTransferencia == null || !$isPagoMobil == null) {
+                                $ifBancoCliente = BancosCliente::where('persona_id',$dcliente_id)->where('codigo',$codigo)->where('num_cuenta',$num_cuenta)->first();
+                                // return $ifCliente;
 
-                            if(!$ifBancoCliente){
-                                // return 'si';
+                                if(!$ifBancoCliente){
+                                    // return 'si';
 
-                                // return 'no';
-                                $BancosCliente = new BancosCliente;
-                                $BancosCliente->pertenece = 'Cliente';
-                                $BancosCliente->nombre_banco = $nombre_banco;
-                                $BancosCliente->codigo = $codigo;
-                                $BancosCliente->num_cuenta = $num_cuenta;
-                                $BancosCliente->tipo_cuenta = $tipo_cuenta;
-                                $BancosCliente->pago_mobil = $pago_mobil;
-                                $BancosCliente->persona_id = $dcliente_id;
-                                $BancosCliente->banco_id = $banco_id;
-                                $BancosCliente->save();
+                                    // return 'no';
+
+                                    if (!$nombre_banco == null) {
+                                            if ($num_cuenta == null) {
+                                                $num_cuenta = '0';
+                                            } else {
+                                                $num_cuenta = $num_cuenta;
+                                            }
+
+                                        $BancosCliente = new BancosCliente;
+                                        $BancosCliente->pertenece = 'Cliente';
+                                        $BancosCliente->nombre_banco = $nombre_banco;
+                                        $BancosCliente->codigo = $codigo;
+                                        $BancosCliente->num_cuenta = $num_cuenta;
+                                        $BancosCliente->tipo_cuenta = $tipo_cuenta;
+                                        $BancosCliente->pago_mobil = $pago_mobil;
+                                        $BancosCliente->persona_id = $dcliente_id;
+                                        $BancosCliente->banco_id = $banco_id;
+                                        $BancosCliente->save();
+                                    }
 
 
 
+
+                                }
                             }
+
+
 
                             // TODO Guardamos en la tabla historial excedente
 
@@ -470,6 +494,8 @@ class ExcedenteController extends Controller
         $pagarporoficina = Excedente::where('persona_id',$id)->where('tipo','Pagar_por_oficina')->first();
 
         $historialExcedentes = HistorialExcedente::where('persona_id',$id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
+
+        // return $pagarporoficina;
 
 
 
