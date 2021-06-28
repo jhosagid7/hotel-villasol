@@ -453,7 +453,8 @@ if(isset($servicio->id)){
 
 	                        {{-- <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
                             <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> --}}
-                            <a id="pagoPendienteBtn" href="#" data-toggle="modal" data-target="#modalPagoPendiente"  class="btn btn-primary ">Procesar deuda/vuelto pendiente</a>
+                            <button id="dualbtn" class="btn btn-primary ">Procesar deuda/vuelto pendiente</button>
+                            <a id="pagoPendienteBtn" href="#" data-toggle="modal" data-target="#modalPagoPendiente"  class="btn btn-primary hidden">Procesar deuda/vuelto pendiente</a>
                             <a id="modalPagoPendienteOpcionesBtn" href="#" data-toggle="modal" data-target="#modalPagoPendienteOpciones"  class="btn btn-primary hidden">Reintegro al cliente</a>
                             <!-- <button type="submit"  name="pagar"  id="pagar" class="btn btn-success pull-right"><i class='fa fa-print'></i> Procesar pago pendiente</button> -->
                             <!-- <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a> -->
@@ -1052,7 +1053,7 @@ if(isset($servicio->id)){
                                             <input class="form-control" type="hidden" id="dispExcedente" name="dispExcedente" >
                                         </div>
                                         <div id="Vueltosexcedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
-                                            <label for="VueltospagoConExcedente"><h2 class="text-blue">Vueltos pendientes: <b id="VueltosdispExcedenteShow">$.0.00</b></h2></label>
+                                            <label for="VueltospagoConExcedente"><h2 class="text-blue">Vueltos pendientes: <b>$.</b><b id="VueltosdispExcedenteShow">0.00</b></h2></label>
                                             <input class="form-control" type="text" id="VueltospagoConExcedente" name="VueltospagoConExcedente" >
                                             <input class="form-control" type="hidden" id="VueltosdispExcedente" name="VueltosdispExcedente" >
                                         </div>
@@ -1622,7 +1623,8 @@ var procesoPagoPendientealida = 0;
             // $('#diferenciaPrecio2').html(totalPendt.toFixed(2));
             // $("#pagoPendienteBtn").click();
 
-
+            $("#banderaHorasExtras").val('');
+            $("#banderaHorasExtras").val('pagarVueltosPendientes');
 
             let isCortesia = $("#isCortesia").val();
             let isCredito = $("#isCredito").val();
@@ -1671,6 +1673,7 @@ var procesoPagoPendientealida = 0;
             let numero2 = $("#numero2").val();
             let observacionOtros = $("#observacionOtros").val();
 
+            $("#banderaHorasExtras").val('');
             $("#banderaHorasExtras").val('PagoHorasExtras');
             $("#cantHorasExtras").val(dataCantHorasExtras);
             $("#precioHorasExtras").val(dataPrecioHorasExtras);
@@ -1715,36 +1718,61 @@ var procesoPagoPendientealida = 0;
         }
 
         $("#pagoPendienteBtn").on('click', function() {
-            fncSumar();
-            pagoExtraPendiente();
-            procesoCambioSalida = 3;
-            // alert('boton '+procesoCambioSalida);
             let valorDeuda = $('#total').val();
 
-            // if(valorDeuda > 0){
+            if (valorDeuda > 0) {
+                $("#banderaHorasExtras").val('PagoHorasExtras');
+                $("#VueltospagoConExcedente").val('');
+                fncSumar();
+                pagoExtraPendiente();
+                procesoCambioSalida = 3;
+                // alert('boton '+procesoCambioSalida);
+            } else {
+                // $("#banderaHorasExtras").val('');
+                alert('No posee deuda pendiente...');
+                    return false;
 
+            }
 
-            //     $("#pagoPendienteBtn").click();
-            //     // console.log('tienes deuda pendiente'+$valorDeuda);
-            //     return false;
-            // }else{
-            //     // console.log('todo bien');
-            //     if (VueltosvtosPendientes > 0) {
-            //         $("#modalPagoPendienteOpcionesBtn").click();
-            //         $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
-
-
-
-
-            //         return false;
-            //     } else {
-            //         alert('La habitacion no pocee deudas ni vueltos pendintes...!');
-            //         // return false;
-            //     }
-
-            // }
 
         });
+
+        $("#modalPagoPendienteOpcionesBtn").on('click', function() {
+            fncSumar();
+
+            procesoCambioSalida = 3;
+            if (VueltosvtosPendientes > 0) {
+                 $("#banderaHorasExtras").val('pagarVueltosPendientes');
+            // alert('total pendiente '+totalPendiente);
+
+            const RestaTotalV    = document.getElementById('RestaTtotalV');
+
+            let totalPendt1 = new Decimal(VueltosvtosPendientes);
+
+            RestaTotalV.innerHTML = numDecimal(totalPendt1); //se llena el campo resta
+            PagoTtotalV.innerHTML = numDecimal(totalPendt1);
+            // verify();
+
+            // $("#modalPago").click();
+
+            $("#total_costo").val('');
+
+
+                $("#VueltospagoConExcedente").val('');
+
+                $("#banderaHorasExtras").val('pagarVueltosPendientes');
+
+                $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
+
+                }else{
+                    // $("#banderaHorasExtras").val('');
+                    alert('No posee vueltos pendiente...');
+                    return false;
+                }
+
+
+        });
+
 
         // $("#procesarServicio").on('click', function() {
         //     addHabitacion();
@@ -1871,6 +1899,36 @@ var procesoPagoPendientealida = 0;
         //     }
         // });
 
+
+        $("#dualbtn").click(function() {
+            let valorDeuda = $('#total').val();
+
+            // return false;
+            if(valorDeuda > 0){
+            // alert(valorDeuda);
+            // return false;
+                $("#pagoPendienteBtn").click();
+                // console.log('tienes deuda pendiente'+$valorDeuda);
+                return false;
+            }
+
+            if (VueltosvtosPendientes > 0) {
+                // alert(VueltosvtosPendientes);
+                $("#modalPagoPendienteOpcionesBtn").click();
+                $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
+
+
+
+
+                return false;
+            }
+            alert('No posee deuda ni hay vueltos pendientes por entregar...');
+                return false;
+
+
+
+        });
+
         $("#imprimirBoleta").click(function() {
             let valorDeuda = $('#total').val();
 
@@ -1899,6 +1957,8 @@ var procesoPagoPendientealida = 0;
 
 
         });
+
+
 
 
         $("#devolverVueltos").click(function() {
@@ -2185,6 +2245,58 @@ if (btnCambio == 1) {
 
     $(document).ready(function() {
         $("#enviar").on('click', function() {
+            event.preventDefault();
+
+            let band = $("#banderaHorasExtras").val();
+            if(band == 'PagoHorasExtras'){
+                // alert(band);
+
+                let RestaTtotal = document.getElementById('RestaTtotal');
+                RestaTtotalCuenta = new Decimal(RestaTtotal.innerHTML);
+
+                if (RestaTtotalCuenta > 0) {
+                    alert('Debe ingresar monto para pagar la deuda...');
+                    if (VueltosvtosPendientes > 0) {
+                        document.getElementById("VueltospagoConExcedente").focus();
+                    }else{
+                        document.getElementById("DMontoDolar").focus();
+                    }
+                    return false;
+                } else {
+                    $("#form3").submit();
+                }
+                return false;
+            }
+            if(band == 'pagarVueltosPendientes'){
+                // alert(band);
+                // let cantVueltos = $('VueltosdispExcedenteShow').text();
+                let cantVueltos = document.getElementById('VueltosdispExcedenteShow');
+                let cantVueltosUsados = document.getElementById('Vueltosexcdt');
+                let restaTotalV = document.getElementById('RestaTtotalV');
+
+                cantVueltosUsados = new Decimal(cantVueltosUsados.innerHTML);
+                cantVueltos = new Decimal(cantVueltos.innerHTML);
+                restaTotalV = new Decimal(restaTotalV.innerHTML);
+                // alert(cantVueltosUsados.toFixed());
+                // alert(restaTotalV.toFixed());
+                if (cantVueltosUsados == 0) {
+
+                    alert('Debe especificar la cantidad a debolver...');
+                    document.getElementById("VueltospagoConExcedente").focus();
+
+                    return false;
+                }
+                if (restaTotalV == 0) {
+                    $("#form3").submit();
+                }else{
+                    alert('Monto no es valido o No has especificado con que moneda daras los vueltos...');
+                    document.getElementById("DMontoDolarV").focus();
+                    return false;
+                }
+            }
+            // $("#banderaHorasExtras").val('PagoHorasExtras');
+            // $("#banderaHorasExtras").val('pagarVueltosPendientes');
+
             $("#form3").submit();
         });
 
@@ -3385,7 +3497,8 @@ if (btnCambio == 1) {
             $('#gestionpago').show("linear");
         } else {
             let = banderaDarVueltos = $("#banderaHorasExtras").val();
-            if(banderaDarVueltos = 'pagarVueltosPendientes'){
+            // alert(banderaDarVueltos);
+            if(banderaDarVueltos == 'pagarVueltosPendientes'){
                 $('#gestionpago').show("linear");
                 $('#vueltos').show("linear");
                 return false;
@@ -3678,7 +3791,7 @@ if (btnCambio == 1) {
                     var VueltosvalidarDispExced = VueltosdispExced.isNeg();
                     // alert(validarDispExced);
 
-                    $("#VueltosdispExcedenteShow").html('$'+VueltosdispExced.toFixed(2));
+                    $("#VueltosdispExcedenteShow").html(parseFloat(VueltosdispExced.toFixed(6)));
                 }
 
 
@@ -3687,7 +3800,7 @@ if (btnCambio == 1) {
                     VueltospagoExc = 0;
                     VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
                     $('#VueltospagoConExcedente').val('');
-                    $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
+                    $("#VueltosdispExcedenteShow").html(parseFloat(VueltosexcedenteDispSet));
                 }
 
             }else{
@@ -3696,7 +3809,7 @@ if (btnCambio == 1) {
                 VueltospagoExc = 0;
                 VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
                 // $('#VueltospagoConExcedente').val('');
-                $("#VueltosdispExcedenteShow").html('$'+VueltosexcedenteDispSet);
+                $("#VueltosdispExcedenteShow").html(parseFloat(VueltosexcedenteDispSet));
             }
 
 
@@ -4221,6 +4334,7 @@ if (btnCambio == 1) {
 
             });
             $("#VueltospagoConExcedente").keyup(function() {
+                resta();
                 DMontoDolar();
 
             });
