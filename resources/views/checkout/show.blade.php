@@ -1003,7 +1003,7 @@ if(isset($servicio->id)){
         </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-            <button name="procesarServicio" id="procesarServicio" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+            <button name="procesarServicio" id="procesarServicio" class="btn btn-outline " type="button"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
             {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
           </div>
         {{-- </form> --}}
@@ -2367,6 +2367,7 @@ focusMethod = function getFocus() {
     $("#cambiarHabitacionBtn").on('click', function() {
     procesoCambioSalida = 1;
     $("#banderaHorasExtras").val('');
+    $("#banderaHorasExtras").val('cambiarHabitacion');
     // alert('boton '+procesoCambioSalida);
 
     });
@@ -2525,18 +2526,176 @@ if (btnCambio == 1) {
                     return false;
                 }
             }
+
+            if(band == 'cambiarHabitacion'){
+                // alert(band);
+                // let cantVueltos = $('VueltosdispExcedenteShow').text();
+                let RestaTtotal = document.getElementById('RestaTtotal');
+                restaTotal = new Decimal(RestaTtotal.innerHTML);
+                // alert(restaTotal.toFixed());
+
+                // alert(restaTotalV.toFixed());
+                if (restaTotal > 0) {
+
+                    alert('El monto a pagar debe ser igual o mayor a la deuda...');
+                    document.getElementById("DMontoDolar").focus();
+                    if (VueltosvtosPendientes > 0) {
+                        document.getElementById("VueltospagoConExcedente").focus();
+                    }else{
+                        document.getElementById("DMontoDolar").focus();
+                    }
+                    return false;
+
+                }
+
+                $("#form3").submit();
+            }
             // $("#banderaHorasExtras").val('PagoHorasExtras');
             // $("#banderaHorasExtras").val('pagarVueltosPendientes');
 
-            $("#form3").submit();
+            // $("#form3").submit();
         });
 
         $("#procesarServicio").on('click', function() {
-            addHabitacion();
-            $("#monto_dejado").val(0);
-            $("#base_vuelto_monto_dejado").val(0);
-            $('#modo_pago').val('cambio');
-            $("#form3").submit();
+
+
+
+            let diferenciaPrecio    = $("#precioDolarHabitacio").val();
+
+            if (diferenciaPrecio <= 0) {
+                // alert('tengo el foco...');
+
+                addHabitacion();
+                $("#monto_dejado").val(0);
+                $("#base_vuelto_monto_dejado").val(0);
+                $('#modo_pago').val('cambio');
+
+                $("#form3").submit();
+                // alert('puede procesar la diferencia es: '+diferenciaPrecio);
+
+            }else{
+                modoPagoOn = $('#modo_pago').val();
+                                tipoPago = $('#tipo_pago').val();
+                                monto_dejadoR = $('#monto_dejado').val();
+                                // alert(monto_dejadoR);
+
+                                if (modoPagoOn == 'contado') {
+                                    if(cliente_id == 0 || cliente_id == null){
+                                        alert('No has seleccionado un cliente...!');
+                                        return false;
+                                    }
+                                    if(tipoPago == 0 || tipoPago == null){
+                                        alert('No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...)');
+                                        return false;
+                                    }
+
+                                    if(monto_dejadoR == 0 || monto_dejadoR == null){
+                                        alert('No has ingresado el monto a pagar...!');
+                                        return false;
+                                    }
+                                    // alert('contado');
+                                    $("#form3").submit();
+                                }else if (modoPagoOn == 'cambio'){
+                                    let cliente_id = $("#cliente_id").val();
+
+                                    if(cliente_id == 0 || cliente_id == null){
+                                        alert('No has seleccionado un cliente...!');
+                                        return false;
+                                    }
+
+                                    if(tipoPago == 0 || tipoPago == null){
+                                        alert('No has seleccionado un modo de pago! ... (Contado, Crédito o Cortesía.)');
+                                        return false;
+                                    }
+                                    $("#form3").submit();
+                                }else if (modoPagoOn == 'cortesia'){
+                                    let cliente_id = $("#cliente_id").val();
+
+                                    if(cliente_id == 0 || cliente_id == null){
+                                        alert('No has seleccionado un cliente...!');
+                                        return false;
+                                    }
+                                    $("#form3").submit();
+                                }else if (modoPagoOn == 'credito') {
+                                    let cliente_id = $("#cliente_id").val();
+
+                                    if(cliente_id == 0 || cliente_id == null){
+                                        alert('No has seleccionado un cliente...!');
+                                        return false;
+                                    }
+                                    let estado_credito = $("#estado_credito").val();
+                                    if (estado_credito == 'Moroso') {
+                                        alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
+                                    } else {
+
+                                        addHabitacion();
+                                        $("#monto_dejado").val(0);
+                                        $("#base_vuelto_monto_dejado").val(0);
+                                        $('#modo_pago').val('credito');
+                                        let costo = $("#total_costo").val();
+                                        // alert('total costo '+costo);
+                                        let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+                                        // alert(deuda_credito_pendiente);
+                                        let limite_fecha_credito = $("#limite_fecha").val();
+                                        let limite_monto_credito = $("#limite_monto").val();
+
+                                        if (deuda_credito_pendiente) {
+                                            let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+                                            // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+                                            if (credito_disponible > 0) {
+                                                // alert('es mayor puede continuar costo '+ costo);
+                                                let credito_disponible_total_operacion = credito_disponible - costo;
+
+                                                if (credito_disponible_total_operacion >= 0) {
+                                                    // alert('puede seguir');
+                                                    $("#form3").submit();
+                                                }else{
+                                                    alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+                                                }
+
+                                            }else{
+                                                alert('El cliente no tiene Credito...');
+                                            }
+                                        } else {
+                                            // alert('no hay deuda pendiente');
+                                            let credito_disponible = limite_monto_credito;
+                                            // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+
+                                            if (credito_disponible > 0) {
+                                                // alert('es mayor puede continuar costo '+ costo);
+                                                let credito_disponible_total_operacion = credito_disponible - costo;
+
+                                                if (credito_disponible_total_operacion >= 0) {
+                                                    // alert('puede seguir');
+                                                    $("#form3").submit();
+                                                }else{
+                                                    alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+                                                }
+
+                                            }else{
+                                                alert('El cliente no tiene Credito...');
+                                            }
+                                        }
+
+                                    }
+                                }else{
+                                    let cliente_id = $("#cliente_id").val();
+
+                                    if(cliente_id == 0 || cliente_id == null){
+                                        alert('No has seleccionado un cliente...!');
+                                        return false;
+                                    }
+                                    alert('No has seleccionado un modo de pago! ... (Contado, Crédito o Cortesía.)');
+                                }
+            }
+
+
+
+
+
+            return false;
+
         });
 
         $("#contado").on('click', function() {
@@ -5698,117 +5857,125 @@ if (btnCambio == 1) {
                             var n = barcode;
 
                             if (barcode == nombreHabitacionBarcodeNueva) {
+
+                                $("#procesarServicio").click();
+
                                 // alert('es igual barcode');
                                 // return false;
-                                modoPagoOn = $('#modo_pago').val();
-                                tipoPago = $('#tipo_pago').val();
-                                monto_dejadoR = $('#monto_dejado').val();
-                                // alert(monto_dejadoR);
+                                // modoPagoOn = $('#modo_pago').val();
+                                // tipoPago = $('#tipo_pago').val();
+                                // monto_dejadoR = $('#monto_dejado').val();
+                                // // alert(monto_dejadoR);
 
-                                if (modoPagoOn == 'contado') {
-                                    if(cliente_id == 0 || cliente_id == null){
-                                        alert('No has seleccionado un cliente...!');
-                                        return false;
-                                    }
-                                    if(tipoPago == 0 || tipoPago == null){
-                                        alert('No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...)');
-                                        return false;
-                                    }
+                                // if (modoPagoOn == 'contado') {
+                                //     if(cliente_id == 0 || cliente_id == null){
+                                //         alert('No has seleccionado un cliente...!');
+                                //         return false;
+                                //     }
+                                //     if(tipoPago == 0 || tipoPago == null){
+                                //         alert('No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...)');
+                                //         return false;
+                                //     }
 
-                                    if(monto_dejadoR == 0 || monto_dejadoR == null){
-                                        alert('No has ingresado el monto a pagar...!');
-                                        return false;
-                                    }
-                                    // alert('contado');
-                                    $("#form3").submit();
-                                }else if (modoPagoOn == 'cambio'){
-                                    let cliente_id = $("#cliente_id").val();
+                                //     if(monto_dejadoR == 0 || monto_dejadoR == null){
+                                //         alert('No has ingresado el monto a pagar...!');
+                                //         return false;
+                                //     }
+                                //     // alert('contado');
+                                //     $("#form3").submit();
+                                // }else if (modoPagoOn == 'cambio'){
+                                //     let cliente_id = $("#cliente_id").val();
 
-                                    if(cliente_id == 0 || cliente_id == null){
-                                        alert('No has seleccionado un cliente...!');
-                                        return false;
-                                    }
-                                    $("#form3").submit();
-                                }else if (modoPagoOn == 'cortesia'){
-                                    let cliente_id = $("#cliente_id").val();
+                                //     if(cliente_id == 0 || cliente_id == null){
+                                //         alert('No has seleccionado un cliente...!');
+                                //         return false;
+                                //     }
 
-                                    if(cliente_id == 0 || cliente_id == null){
-                                        alert('No has seleccionado un cliente...!');
-                                        return false;
-                                    }
-                                    $("#form3").submit();
-                                }else if (modoPagoOn == 'credito') {
-                                    let cliente_id = $("#cliente_id").val();
+                                //     if(tipoPago == 0 || tipoPago == null){
+                                //         alert('No has seleccionado un modo de pago! ... (Contado, Crédito o Cortesía.)');
+                                //         return false;
+                                //     }
+                                //     $("#form3").submit();
+                                // }else if (modoPagoOn == 'cortesia'){
+                                //     let cliente_id = $("#cliente_id").val();
 
-                                    if(cliente_id == 0 || cliente_id == null){
-                                        alert('No has seleccionado un cliente...!');
-                                        return false;
-                                    }
-                                    let estado_credito = $("#estado_credito").val();
-                                    if (estado_credito == 'Moroso') {
-                                        alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
-                                    } else {
+                                //     if(cliente_id == 0 || cliente_id == null){
+                                //         alert('No has seleccionado un cliente...!');
+                                //         return false;
+                                //     }
+                                //     $("#form3").submit();
+                                // }else if (modoPagoOn == 'credito') {
+                                //     let cliente_id = $("#cliente_id").val();
 
-                                        addHabitacion();
-                                        $("#monto_dejado").val(0);
-                                        $("#base_vuelto_monto_dejado").val(0);
-                                        $('#modo_pago').val('credito');
-                                        let costo = $("#total_costo").val();
-                                        // alert('total costo '+costo);
-                                        let deuda_credito_pendiente = $("#total_credito_pendiente").val();
-                                        // alert(deuda_credito_pendiente);
-                                        let limite_fecha_credito = $("#limite_fecha").val();
-                                        let limite_monto_credito = $("#limite_monto").val();
+                                //     if(cliente_id == 0 || cliente_id == null){
+                                //         alert('No has seleccionado un cliente...!');
+                                //         return false;
+                                //     }
+                                //     let estado_credito = $("#estado_credito").val();
+                                //     if (estado_credito == 'Moroso') {
+                                //         alert('Cliente se encuentra suspendido por Incumplimiento de pago! Favor pasar por Oficina a realizar el respectivo pago...');
+                                //     } else {
 
-                                        if (deuda_credito_pendiente) {
-                                            let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
-                                            // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+                                //         addHabitacion();
+                                //         $("#monto_dejado").val(0);
+                                //         $("#base_vuelto_monto_dejado").val(0);
+                                //         $('#modo_pago').val('credito');
+                                //         let costo = $("#total_costo").val();
+                                //         // alert('total costo '+costo);
+                                //         let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+                                //         // alert(deuda_credito_pendiente);
+                                //         let limite_fecha_credito = $("#limite_fecha").val();
+                                //         let limite_monto_credito = $("#limite_monto").val();
 
-                                            if (credito_disponible > 0) {
-                                                // alert('es mayor puede continuar costo '+ costo);
-                                                let credito_disponible_total_operacion = credito_disponible - costo;
+                                //         if (deuda_credito_pendiente) {
+                                //             let credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+                                //             // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
 
-                                                if (credito_disponible_total_operacion >= 0) {
-                                                    // alert('puede seguir');
-                                                    $("#form3").submit();
-                                                }else{
-                                                    alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
-                                                }
+                                //             if (credito_disponible > 0) {
+                                //                 // alert('es mayor puede continuar costo '+ costo);
+                                //                 let credito_disponible_total_operacion = credito_disponible - costo;
 
-                                            }else{
-                                                alert('El cliente no tiene Credito...');
-                                            }
-                                        } else {
-                                            // alert('no hay deuda pendiente');
-                                            let credito_disponible = limite_monto_credito;
-                                            // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
+                                //                 if (credito_disponible_total_operacion >= 0) {
+                                //                     // alert('puede seguir');
+                                //                     $("#form3").submit();
+                                //                 }else{
+                                //                     alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+                                //                 }
 
-                                            if (credito_disponible > 0) {
-                                                // alert('es mayor puede continuar costo '+ costo);
-                                                let credito_disponible_total_operacion = credito_disponible - costo;
+                                //             }else{
+                                //                 alert('El cliente no tiene Credito...');
+                                //             }
+                                //         } else {
+                                //             // alert('no hay deuda pendiente');
+                                //             let credito_disponible = limite_monto_credito;
+                                //             // alert('si hay deuda pendiente y el limite es de '+limite_monto_credito+ ' y el credito disponible es de '+credito_disponible);
 
-                                                if (credito_disponible_total_operacion >= 0) {
-                                                    // alert('puede seguir');
-                                                    $("#form3").submit();
-                                                }else{
-                                                    alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
-                                                }
+                                //             if (credito_disponible > 0) {
+                                //                 // alert('es mayor puede continuar costo '+ costo);
+                                //                 let credito_disponible_total_operacion = credito_disponible - costo;
 
-                                            }else{
-                                                alert('El cliente no tiene Credito...');
-                                            }
-                                        }
+                                //                 if (credito_disponible_total_operacion >= 0) {
+                                //                     // alert('puede seguir');
+                                //                     $("#form3").submit();
+                                //                 }else{
+                                //                     alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $'+credito_disponible+ ' Costo del Servicio es de: $'+costo);
+                                //                 }
 
-                                    }
-                                }else{
-                                    let cliente_id = $("#cliente_id").val();
+                                //             }else{
+                                //                 alert('El cliente no tiene Credito...');
+                                //             }
+                                //         }
 
-                                    if(cliente_id == 0 || cliente_id == null){
-                                        alert('No has seleccionado un cliente...!');
-                                        return false;
-                                    }
-                                    alert('No has seleccionado un modo de pago! ... (Contado, Crédito o Cortesía.)');
-                                }
+                                //     }
+                                // }else{
+                                //     let cliente_id = $("#cliente_id").val();
+
+                                //     if(cliente_id == 0 || cliente_id == null){
+                                //         alert('No has seleccionado un cliente...!');
+                                //         return false;
+                                //     }
+                                //     alert('No has seleccionado un modo de pago! ... (Contado, Crédito o Cortesía.)');
+                                // }
                             }else{
                                 alert('¡Error al Ingresar el QR!... Por favor Ingrese el QR correcto. (llave incorrecta)');
                                 return false;
@@ -5920,13 +6087,15 @@ if (btnCambio == 1) {
                                 $("#precio_costo").val(diferencia);
 
                                 if( (is_numeric(diferencia)) && (diferencia>0) ){
-                                    // return true;
+                                    // alert('estoy en horario');
+                                    $('#procesarServicio').show("swing");
                                 }else{
                                     $('#modo_pago').val('cambio');
                                     $("#precioDolarHabitacio").val(diferencia);
                                     $("#diferenciaPrecio").html('($0.00)');
                                     $("#total_costo").val(0.00);
                                     $("#precio_costo").val(0.00);
+
                                 }
 
                                 // if(){
@@ -6010,16 +6179,18 @@ if (btnCambio == 1) {
                                         $('#btnPago').show("swing");
                                         $('#infoQR').hide("swing");
                                         $('#infoPago').show("swing");
+                                        $('#procesarServicio').hide();
                                     }
                                     if (x1.lessThanOrEqualTo(y1)) {
                                         // alert('menor o igual');
                                         $('#btnPago').hide("swing");
                                         $('#infoQR').show("swing");
                                         $('#infoPago').hide("swing");
+                                        $('#procesarServicio').show();
 
                                     }
 
-                                    $('#procesarServicio').show();
+
                                     // $('#origen').append("<option value='0'>Selecciones Producto a Descargar</option>");
                                             // // alert(origens[0].nombre);
                                             // for(var i = 0; i < origens.length; i++){
@@ -6034,6 +6205,7 @@ if (btnCambio == 1) {
                                     $('#infoPago').hide("swing");
 
                                 }
+
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                 $('.detalle').html('<div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Dolar</span><h5 class="description-header">$'+formatMoney(precioData[0].precio)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Pesos</span><h5 class="description-header">$'+formatMoney(precioData[0].precio*tasaPeso)+'</h5></div></div><div class="col-sm-4 col-xs-6"><div class="description-block border-right"><span class="description-percentage text-green"><i class="fa fa-caret-up"></i> Bolivares</span><h5 class="description-header">Bs.'+formatMoney(precioData[0].precio*tasaDolar)+'</h5></div></div>');

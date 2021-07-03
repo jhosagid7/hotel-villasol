@@ -1615,6 +1615,7 @@
             var precio_venta    = parseFloat(0.00);
             var precio_compra   = parseFloat(0.00);
 
+
             subtotal    = [];
 
             subtotalPC  = [];
@@ -2550,7 +2551,7 @@
                 }
             };
 
-            function numDecimalExp(valor){
+            function numDecimal(valor){
                 let result = Number((valor)).toFixed(6);
                 return result;
             }
@@ -3070,16 +3071,16 @@
 
 
 
-                var valor           = new Decimal(PagoTtotal.innerHTML);
+                var valor           = PagoTtotal.innerHTML;
 
-                valor = valor.minus(VueltospagoExc);
-                var valor_restar    = new Decimal(spTotal.innerHTML);
-                var resta           = new Decimal(valor.minus(valor_restar).toNumber());
+                valor = valor - VueltospagoExc;
+                var valor_restar    = spTotal.innerHTML;
+                var resta           = valor - valor_restar;
                 // alert('resta');
-                // valor = parseFloat(valor);
+                valor = parseFloat(valor);
 
-                // valor_restar = parseFloat(valor_restar);
-                // resta = parseFloat(resta);
+                valor_restar = parseFloat(valor_restar);
+                resta = parseFloat(resta);
 
 
                 resta = new Decimal(resta);
@@ -3190,7 +3191,117 @@
 
             }
 
-            function DMontoDolar(){
+        //     function DMontoDolar(){
+        //      // alert('clic');
+        //     let Mdolar      = parseFloat($("#DMontoDolar").val());
+        //     // let Mdolar = 0;
+        //     if (isNaN(Mdolar)) {
+        //         Mdolar = 0;
+        //     } else {
+        //         Mdolar      = parseFloat($("#DMontoDolar").val());
+        //     }
+
+        //     let Tdolar      = tasaD;
+        //     let Tpeso       = tasaP;
+        //     let Tbolivar    = tasaTP;
+        //     let Tpunto      = tasaM;
+        //     let Ttrans      = tasaE;
+
+        //     Mdolar      = new Decimal(Mdolar);
+        //     Tdolar      = new Decimal(Tdolar);
+        //     Tpeso       = new Decimal(Tpeso);
+        //     Tbolivar    = new Decimal(Tbolivar);
+        //     Tpunto      = new Decimal(Tpunto);
+        //     Ttrans      = new Decimal(Ttrans);
+
+        //     // Mdolar.toFixed(6)
+
+        //     // DsupTotal = Mdolar * Tdolar;
+        //     DsupTotal = new Decimal(Mdolar).mul(Tdolar);
+        //     // alert(DsupTotal.toFixed());
+        //     $("#DolarToDolar").val(DsupTotal.toFixed(6));
+        //     $("#DsubTotal").html(DsupTotal.toFixed(6));
+
+        //     sumar();
+        //     resta();
+        //     const Resta     = document.getElementById('RestaTtotal');
+        //     var valor       = new Decimal(Resta.innerHTML);
+
+        //     // var RmultD      = valor * Tdolar;
+        //     var RmultD      = new Decimal(valor).mul(Tdolar);
+        //     $("#RestaDolar").val(RmultD.toFixed(6));
+        //     // var RmultP      = valor * Tpeso;
+        //     var RmultP      = new Decimal(valor).mul(Tpeso);
+        //     $("#RestaPeso").val(RmultP.toFixed(2));
+        //     // var RmultB      = valor * Tbolivar;
+        //     var RmultB      = new Decimal(valor).mul(Tbolivar);
+        //     $("#RestaBolivar").val(RmultB.toFixed(2));
+        //     // var RmultPu     = valor * Tpunto;
+        //     var RmultPu      = new Decimal(valor).mul(Tpunto);
+        //     $("#RestaPunto").val(RmultPu.toFixed(2));
+        //     // var RmultT      = valor * Ttrans;
+        //     var RmultT      = new Decimal(valor).mul(Ttrans);
+        //     $("#RestaTrans").val(RmultT.toFixed(2));
+
+        // }
+
+        // function DMontoPeso(){
+        //     // Mpeso       = $("#DMontoPeso").val();
+        //     // Tdolar      = $("#TasaDolar").val();
+        //     // Tpeso       = $("#TasaPeso").val();
+        //     // Tbolivar    = $("#TasaBolivar").val();
+        //     // Tpunto      = $("#TasaPunto").val();
+        //     // Ttrans      = $("#TasaTrans").val();
+
+        //     let Mpeso      = parseFloat($("#DMontoPeso").val());
+        //     // let Mdolar = 0;
+        //     if (isNaN(Mpeso)) {
+        //         Mpeso = 0;
+        //     } else {
+        //         Mpeso      = parseFloat($("#DMontoPeso").val());
+        //     }
+
+        //     let Tdolar      = tasaD;
+        //     let Tpeso       = tasaP;
+        //     let Tbolivar    = tasaTP;
+        //     let Tpunto      = tasaM;
+        //     let Ttrans      = tasaE;
+
+        //     Mpeso      = new Decimal(Mpeso);
+        //     Tdolar      = new Decimal(Tdolar);
+        //     Tpeso       = new Decimal(Tpeso);
+        //     Tbolivar    = new Decimal(Tbolivar);
+        //     Tpunto      = new Decimal(Tpunto);
+        //     Ttrans      = new Decimal(Ttrans);
+
+        //     // PsupTotal = Mpeso / Tpeso;
+        //     PsupTotal = new Decimal(Mpeso).div(Tpeso)
+        //     $("#PesoToDolar").val(PsupTotal.toFixed(6));
+        //     $("#PeSubTotal").html(PsupTotal.toFixed(6));
+        //     $("#RestaPeso").val();
+        //     sumar();
+        //     resta();
+        //     const Resta = document.getElementById('RestaTtotal');
+        //     // var valor   = Resta.innerHTML;
+        //     var valor       = new Decimal(Resta.innerHTML);
+        //     // var RmultD  = valor * Tdolar;
+        //     var RmultD      = new Decimal(valor).mul(Tdolar);
+        //     $("#RestaDolar").val(RmultD.toFixed(6));
+        //     // var RmultP  = valor * Tpeso;
+        //     var RmultP      = new Decimal(valor).mul(Tpeso);
+        //     $("#RestaPeso").val(RmultP.toFixed(2));
+        //     // var RmultB  = valor * Tbolivar;
+        //     var RmultB      = new Decimal(valor).mul(Tbolivar);
+        //     $("#RestaBolivar").val(RmultB.toFixed(2));
+        //     // var RmultPu = valor * Tpunto;
+        //     var RmultPu      = new Decimal(valor).mul(Tpunto);
+        //     $("#RestaPunto").val(RmultPu.toFixed(2));
+        //     // var RmultT = valor * Ttrans;
+        //     var RmultT      = new Decimal(valor).mul(Ttrans);
+        //     $("#RestaTrans").val(RmultT.toFixed(2));
+        // }
+
+        function DMontoDolar(){
              // alert('clic');
             let Mdolar      = parseFloat($("#DMontoDolar").val());
             // let Mdolar = 0;
@@ -3620,129 +3731,298 @@
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // function DMontoDolarV(){
+    //                  // alert('clic');
+    //                  MdolarV      = $("#DMontoDolarV").val();
+    //                 TdolarV      = $("#TasaDolarV").val();
+    //                 TpesoV       = $("#TasaPesoV").val();
+    //                 TbolivarV    = $("#TasaBolivarV").val();
+
+
+    //                 DsupTotalV = MdolarV * TdolarV;
+    //                 $("#DolarToDolarV").val(DsupTotalV);
+    //                 $("#DsubTotalV").html(DsupTotalV);
+
+    //                 sumarV();
+    //                 restaV();
+    //                 const RestaV     = document.getElementById('RestaTtotalV');
+    //                 var valorV       = RestaV.innerHTML;
+    //                 var RmultDV      = valorV * TdolarV;
+    //                 $("#RestaDolarV").val(RmultDV);
+    //                 var RmultPV      = valorV * TpesoV;
+    //                 $("#RestaPesoV").val(RmultPV);
+    //                 var RmultBV      = valorV * TbolivarV;
+    //                 $("#RestaBolivarV").val(RmultBV);
+
+
+    //             }
+
+    //             function DMontoPesoV(){
+    //                 MpesoV       = $("#DMontoPesoV").val();
+    //                 TdolarV      = $("#TasaDolarV").val();
+    //                 TpesoV      = $("#TasaPesoV").val();
+    //                 TbolivarV   = $("#TasaBolivarV").val();
+
+
+    //                 PsupTotalV = MpesoV / TpesoV;
+    //                 $("#PesoToDolarV").val(PsupTotalV);
+    //                 $("#PeSubTotalV").html(PsupTotalV);
+    //                 $("#RestaPesoV").val();
+    //                 sumarV();
+    //                 restaV();
+    //                 const RestaV = document.getElementById('RestaTtotalV');
+    //                 var valorV   = RestaV.innerHTML;
+    //                 var RmultDV  = valorV * TdolarV;
+    //                 $("#RestaDolarV").val(RmultDV);
+    //                 var RmultPV  = valorV * TpesoV;
+    //                 $("#RestaPesoV").val(RmultPV);
+    //                 var RmultBV  = valorV * TbolivarV;
+    //                 $("#RestaBolivarV").val(RmultBV);
+
+
+    //             }
+
+    //             function DMontoBolivarV(){
+    //                 MbolivarV = $("#DMontoBolivarV").val();
+    //                 TdolarV   = $("#TasaDolarV").val();
+    //                 TpesoV    = $("#TasaPesoV").val();
+    //                 TbolivarV = $("#TasaBolivarV").val();
+
+
+    //                 pesoV = $("#RestaPesoV").val();
+    //                 // 10767280  alert(Mpeso);
+    //                 BsupTotalV = MbolivarV / TbolivarV;
+    //                 $("#BolivarToDolarV").val(BsupTotalV);
+    //                 $("#BoSubTotalV").html(BsupTotalV);
+    //                 $("#RestaBolivarV").val();
+    //                 sumarV();
+    //                 restaV();
+    //                 const RestaV = document.getElementById('RestaTtotalV');
+    //                 var valorV = RestaV.innerHTML;
+    //                 var RmultDV = valorV * TdolarV;
+    //                 $("#RestaDolarV").val(RmultDV);
+    //                 var RmultPV = valorV * TpesoV;
+    //                 $("#RestaPesoV").val(RmultPV);
+    //                 var RmultBV = valorV * TbolivarV;
+    //                 $("#RestaBolivarV").val(RmultBV);
+
+
+    //             }
+
+
+    //             $(document).ready(function() {
+
+
+    //                 $("#DMontoDolarV").keyup(function() {
+    //                     $("#isVueltos").val('');
+    //                     $("#monto_dejadoResta").val(0.00);
+    //                     DMontoDolarV();
+    //                 });
+
+    //                 $("#DMontoPesoV").keyup(function() {
+    //                     $("#isVueltos").val('');
+    //                     $("#monto_dejadoResta").val(0.00);
+    //                     DMontoPesoV();
+    //                 });
+
+    //                 $("#DMontoBolivarV").keyup(function() {
+    //                     $("#isVueltos").val('');
+    //                     $("#monto_dejadoResta").val(0.00);
+    //                     DMontoBolivarV();
+    //                 });
+
+    //             });
+
+
+    //         // $(document).ready(function() {
+
+
+    //         //     $("#DMontoDolarV").keyup(function() {
+    //         //         DMontoDolarV();
+    //         //     });
+
+    //         //     $("#DMontoPesoV").keyup(function() {
+    //         //         DMontoPesoV();
+    //         //     });
+
+    //         //     $("#DMontoBolivarV").keyup(function() {
+    //         //         DMontoBolivarV();
+    //         //     });
+
+
+
+
+
+    //         // });
     function DMontoDolarV(){
-                     // alert('clic');
-                     MdolarV      = $("#DMontoDolarV").val();
-                    TdolarV      = $("#TasaDolarV").val();
-                    TpesoV       = $("#TasaPesoV").val();
-                    TbolivarV    = $("#TasaBolivarV").val();
+             // alert('clic');
+            let MdolarV      = parseFloat($("#DMontoDolarV").val());
+            // let Mdolar = 0;
+            if (isNaN(MdolarV)) {
+                MdolarV = 0;
+            } else {
+                Mdolar      = parseFloat($("#DMontoDolarV").val());
+            }
+
+            let TdolarV      = $("#TasaDolarV").val();
+            let TpesoV       = $("#TasaPesoV").val();
+            let TbolivarV    = $("#TasaBolivarV").val();
 
 
-                    DsupTotalV = MdolarV * TdolarV;
-                    $("#DolarToDolarV").val(DsupTotalV);
-                    $("#DsubTotalV").html(DsupTotalV);
-
-                    sumarV();
-                    restaV();
-                    const RestaV     = document.getElementById('RestaTtotalV');
-                    var valorV       = RestaV.innerHTML;
-                    var RmultDV      = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV);
-                    var RmultPV      = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV);
-                    var RmultBV      = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV);
+            MdolarV      = new Decimal(MdolarV);
+            TdolarV      = new Decimal(TdolarV);
+            TpesoV       = new Decimal(TpesoV);
+            TbolivarV    = new Decimal(TbolivarV);
 
 
-                }
+            // DsupTotal = Mdolar * Tdolar;
+            DsupTotalV = new Decimal(MdolarV).mul(TdolarV);
+            // alert(DsupTotal.toFixed());
+            $("#DolarToDolarV").val(DsupTotalV.toFixed(6));
+            $("#DsubTotalV").html(DsupTotalV.toFixed(6));
+
+            sumarV();
+            restaV();
+            const RestaV     = document.getElementById('RestaTtotalV');
+            var valorV       = new Decimal(RestaV.innerHTML);
+
+            // var RmultD      = valor * Tdolar;
+            var RmultDV      = new Decimal(valorV).mul(TdolarV);
+            $("#RestaDolarV").val(RmultDV.toFixed(6));
+            // var RmultP      = valor * Tpeso;
+            var RmultPV      = new Decimal(valorV).mul(TpesoV);
+            $("#RestaPesoV").val(RmultPV.toFixed(2));
+            // var RmultB      = valor * Tbolivar;
+            var RmultBV      = new Decimal(valorV).mul(TbolivarV);
+            $("#RestaBolivarV").val(RmultBV.toFixed(2));
+
+
+        }
+
+                // function DMontoPesoV(){
+                //     MpesoV       = $("#DMontoPesoV").val();
+                //     TdolarV      = $("#TasaDolarV").val();
+                //     TpesoV      = $("#TasaPesoV").val();
+                //     TbolivarV   = $("#TasaBolivarV").val();
+
+
+                //     PsupTotalV = MpesoV / TpesoV;
+                //     $("#PesoToDolarV").val(PsupTotalV);
+                //     $("#PeSubTotalV").html(PsupTotalV);
+                //     $("#RestaPesoV").val();
+                //     sumarV();
+                //     restaV();
+                //     const RestaV = document.getElementById('RestaTtotalV');
+                //     var valorV   = RestaV.innerHTML;
+                //     var RmultDV  = valorV * TdolarV;
+                //     $("#RestaDolarV").val(RmultDV);
+                //     var RmultPV  = valorV * TpesoV;
+                //     $("#RestaPesoV").val(RmultPV);
+                //     var RmultBV  = valorV * TbolivarV;
+                //     $("#RestaBolivarV").val(RmultBV);
+
+
+                // }
 
                 function DMontoPesoV(){
-                    MpesoV       = $("#DMontoPesoV").val();
-                    TdolarV      = $("#TasaDolarV").val();
-                    TpesoV      = $("#TasaPesoV").val();
-                    TbolivarV   = $("#TasaBolivarV").val();
+            // Mpeso       = $("#DMontoPeso").val();
+            // Tdolar      = $("#TasaDolar").val();
+            // Tpeso       = $("#TasaPeso").val();
+            // Tbolivar    = $("#TasaBolivar").val();
+            // Tpunto      = $("#TasaPunto").val();
+            // Ttrans      = $("#TasaTrans").val();
+
+            let MpesoV      = parseFloat($("#DMontoPesoV").val());
+            // let Mdolar = 0;
+            if (isNaN(MpesoV)) {
+                MpesoV = 0;
+            } else {
+                MpesoV      = parseFloat($("#DMontoPesoV").val());
+            }
+
+            let TdolarV      = tasaD;
+            let TpesoV       = tasaP;
+            let TbolivarV    = tasaE;
 
 
-                    PsupTotalV = MpesoV / TpesoV;
-                    $("#PesoToDolarV").val(PsupTotalV);
-                    $("#PeSubTotalV").html(PsupTotalV);
-                    $("#RestaPesoV").val();
-                    sumarV();
-                    restaV();
-                    const RestaV = document.getElementById('RestaTtotalV');
-                    var valorV   = RestaV.innerHTML;
-                    var RmultDV  = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV);
-                    var RmultPV  = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV);
-                    var RmultBV  = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV);
+            MpesoV      = new Decimal(MpesoV);
+            TdolarV      = new Decimal(TdolarV);
+            TpesoV       = new Decimal(TpesoV);
+            TbolivarV    = new Decimal(TbolivarV);
 
 
-                }
+            // PsupTotal = Mpeso / Tpeso;
+            PsupTotalV = new Decimal(MpesoV).div(TpesoV);
+            $("#PesoToDolarV").val(PsupTotalV.toFixed(6));
+            $("#PeSubTotalV").html(PsupTotalV.toFixed(6));
+            $("#RestaPesoV").val();
+            sumarV();
+            restaV();
+            const RestaV = document.getElementById('RestaTtotalV');
+            // var valor   = Resta.innerHTML;
+            var valorV       = new Decimal(RestaV.innerHTML);
+            // var RmultD  = valor * Tdolar;
+            var RmultDV      = new Decimal(valorV).mul(TdolarV);
+            $("#RestaDolarV").val(RmultDV.toFixed(6));
+            // var RmultP  = valor * Tpeso;
+            var RmultPV      = new Decimal(valorV).mul(TpesoV);
+            $("#RestaPesoV").val(RmultPV.toFixed(2));
+            // var RmultB  = valor * Tbolivar;
+            var RmultBV      = new Decimal(valorV).mul(TbolivarV);
+            $("#RestaBolivarV").val(RmultBV.toFixed(2));
+
+        }
 
                 function DMontoBolivarV(){
-                    MbolivarV = $("#DMontoBolivarV").val();
-                    TdolarV   = $("#TasaDolarV").val();
-                    TpesoV    = $("#TasaPesoV").val();
-                    TbolivarV = $("#TasaBolivarV").val();
+
+                    let MbolivarV      = parseFloat($("#DMontoBolivarV").val());
+                    // let Mdolar = 0;
+                    if (isNaN(MbolivarV)) {
+                        MbolivarV = 0;
+                    } else {
+                        MbolivarV      = parseFloat($("#DMontoBolivarV").val());
+                    }
+
+                    let TdolarV      = tasaD;
+                    let TpesoV       = tasaP;
+                    let TbolivarV    = tasaE;
+
+
+                    MbolivarV      = new Decimal(MbolivarV);
+                    TdolarV      = new Decimal(TdolarV);
+                    TpesoV       = new Decimal(TpesoV);
+                    TbolivarV    = new Decimal(TbolivarV);
+
+                    // MbolivarV = $("#DMontoBolivarV").val();
+                    // TdolarV   = $("#TasaDolarV").val();
+                    // TpesoV    = $("#TasaPesoV").val();
+                    // TbolivarV = $("#TasaBolivarV").val();
 
 
                     pesoV = $("#RestaPesoV").val();
                     // 10767280  alert(Mpeso);
-                    BsupTotalV = MbolivarV / TbolivarV;
-                    $("#BolivarToDolarV").val(BsupTotalV);
-                    $("#BoSubTotalV").html(BsupTotalV);
+                    // BsupTotalV = MbolivarV / TbolivarV;
+                    BsupTotalV = new Decimal(MbolivarV).div(TbolivarV);
+                    $("#BolivarToDolarV").val(BsupTotalV.toFixed(6));
+                    $("#BoSubTotalV").html(BsupTotalV.toFixed(6));
                     $("#RestaBolivarV").val();
                     sumarV();
                     restaV();
                     const RestaV = document.getElementById('RestaTtotalV');
-                    var valorV = RestaV.innerHTML;
-                    var RmultDV = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV);
-                    var RmultPV = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV);
-                    var RmultBV = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV);
+                    // var valorV = RestaV.innerHTML;
+                    var valorV       = new Decimal(RestaV.innerHTML);
+                    // var RmultDV = valorV * TdolarV;
+                    var RmultDV      = new Decimal(valorV).mul(TdolarV);
+                    $("#RestaDolarV").val(RmultDV.toFixed(6));
+                    // var RmultPV = valorV * TpesoV;
+                    var RmultPV      = new Decimal(valorV).mul(TpesoV);
+                    $("#RestaPesoV").val(RmultPV.toFixed(2));
+                    // var RmultBV = valorV * TbolivarV;
+                    var RmultBV      = new Decimal(valorV).mul(TbolivarV);
+                    $("#RestaBolivarV").val(RmultBV.toFixed(2));
 
 
                 }
-
-
-                $(document).ready(function() {
-
-
-                    $("#DMontoDolarV").keyup(function() {
-                        $("#isVueltos").val('');
-                        $("#monto_dejadoResta").val(0.00);
-                        DMontoDolarV();
-                    });
-
-                    $("#DMontoPesoV").keyup(function() {
-                        $("#isVueltos").val('');
-                        $("#monto_dejadoResta").val(0.00);
-                        DMontoPesoV();
-                    });
-
-                    $("#DMontoBolivarV").keyup(function() {
-                        $("#isVueltos").val('');
-                        $("#monto_dejadoResta").val(0.00);
-                        DMontoBolivarV();
-                    });
-
-                });
-
-
-            // $(document).ready(function() {
-
-
-            //     $("#DMontoDolarV").keyup(function() {
-            //         DMontoDolarV();
-            //     });
-
-            //     $("#DMontoPesoV").keyup(function() {
-            //         DMontoPesoV();
-            //     });
-
-            //     $("#DMontoBolivarV").keyup(function() {
-            //         DMontoBolivarV();
-            //     });
-
-
-
-
-
-            // });
 
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -2769,10 +2769,7 @@ class ServicioController extends Controller
                                             }
 
                                             $total_Pago_Vuelto_Cuenta = 0;
-                                        }
-
-
-                                        if ($RestarVtos->MontoDolar < $monto_dejadoResta) {
+                                        }else if ($RestarVtos->MontoDolar < $monto_dejadoResta) {
                                             // return 'Bien mal ff';
                                             // return $RestarVtos->id;
                                             if ($RestarVtos) {
@@ -2823,10 +2820,10 @@ class ServicioController extends Controller
 
 
                     return Redirect::to('checkout/'.$id)->with('success', 'El servicio fué registrado exitosamente');
-            } else {
+            } else if ($bandera == 'cambiarHabitacion') {
                 // return 'no';
 
-                // return $validarServicio;
+                return $bandera;
 
                 try{
 
