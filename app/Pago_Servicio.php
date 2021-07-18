@@ -11,6 +11,8 @@ class Pago_Servicio extends Model
         'MontoDivisa',
         'TasaTiket',
         'MontoDolar',
+        'MontoDolarServicio',
+        'Excedente',
         'Vueltos',
         'servicio_id'
     ];

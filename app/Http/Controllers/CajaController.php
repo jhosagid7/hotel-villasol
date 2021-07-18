@@ -436,7 +436,7 @@ class CajaController extends Controller
 //         $cajas->creditos = $creditos;
 
 
-// return $cajas;
+// return $cajas->excedente_actual_valor;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -543,7 +543,8 @@ class CajaController extends Controller
         $cajas->excedente_actual_valor  = $valor;
         // $vueltosPendientesCajaAnterior = Historial_Vueltos_Pendiente::where('caja_id', '<>', $cajas->id)->get();
     }
-
+    // return $cajas->excedente_actual_valor;
+// return $valor;
     foreach ($valor as $excedenteActual) {
 
         // TODO sacamos los totales devueltos recibidos por excedentes totales
@@ -665,7 +666,7 @@ class CajaController extends Controller
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 foreach ($cajas->creditos_pagados as $credPagados ) {
-
+// return $cajas->creditos_pagados;
     if ($credPagados->user_id == $caja->user->id){
 
         $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
@@ -845,15 +846,16 @@ foreach ($detalle_creditos as $detalleCredito ) {
         //     }
 
         // }
-
+$ver = [];
         foreach ($cajas->ventas as $vent ) {
             // if ($vent->estado == 'Aceptada') {
             // $cajas->SumaTotalVentas = $cajas->SumaTotalVentas + $vent->total_venta;
             // $cajas->SumaTotalCantidadVentas = $cajas->SumaTotalCantidadVentas + 1;
             // }
-            if ($vent->estado == 'Aceptada'  && $vent->status == 'Pagado') {
+            if ($vent->estado == 'Aceptada'  && $vent->modo_pago == 'Contado') {
 
                     $cajas->SumaTotalVentas = $cajas->SumaTotalVentas + $vent->total_venta;
+                    $ver[] = $vent->total_venta;
                     $cajas->SumaTotalCostoVentas = $cajas->SumaTotalCostoVentas + $vent->precio_costo;
                     $cajas->SumaTotalMargenVentas = $cajas->SumaTotalMargenVentas + $vent->margen_ganancia;
                     $cajas->SumaTotalUtilidadVentas = $cajas->SumaTotalUtilidadVentas + $vent->ganancia_neta;
@@ -880,6 +882,7 @@ foreach ($detalle_creditos as $detalleCredito ) {
                 $cajas->SumaTotalCantidadVentasCortesia = $cajas->SumaTotalCantidadVentasCortesia + 1;
             }
         }
+        // return $ver;
         $nombre = [];
         foreach ($cajas->articulo_ventas as $art_vent ) {
             $nombre[] = Articulo::find($art_vent->articulo_id);
@@ -940,6 +943,7 @@ foreach ($detalle_creditos as $detalleCredito ) {
                     }else{
                         $cajas->SumaTotalDolarConsuDflotante = $cajas->SumaTotalDolarConsuDflotante + ($pagoConsumo->Vueltos * -1);
                         $cajas->SumaTotalDolar = $cajas->SumaTotalDolar + ($pagoConsumo->MontoDivisa - $pagoConsumo->Vueltos * -1) - $validarPagosConsumo->excedente_nuevo;
+                        $test[] = ($pagoConsumo->MontoDivisa - $pagoConsumo->Vueltos * -1) - $validarPagosConsumo->excedente_nuevo;
                     }
                 }elseif ($pagoConsumo->Divisa == 'Peso') {
                     if($pagoConsumo->Vueltos > 0){
@@ -977,9 +981,11 @@ foreach ($detalle_creditos as $detalleCredito ) {
 
 
         }
-        // return $cajas->SumaTotalDolarConsu;
+        // return $cajas->pago_ventas;
         // TODO pagos servicios
-
+$ojo = [];
+$ojop = [];
+$ojot = [];
         foreach ($cajas->pago_servicios as $pagoS ) {
 
 
@@ -989,36 +995,39 @@ foreach ($detalle_creditos as $detalleCredito ) {
                     if($pagoS->Vueltos > 0){
                         $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - $validarPagosServicios->excedente_nuevo;
                     }else{
+                        $ojo[] = ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - $validarPagosServicios->excedente_nuevo;
                         $cajas->SumaTotalDolarServDflotante = $cajas->SumaTotalDolarServDflotante + ($pagoS->Vueltos * -1);
-                        $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - $validarPagosServicios->excedente_nuevo;
+                        $cajas->SumaTotalDolarServ = $cajas->SumaTotalDolarServ + ($pagoS->MontoDolarServicio * $tasaDolar->tasa);
                     }
                 }elseif ($pagoS->Divisa == 'Peso') {
                     if($pagoS->Vueltos > 0){
                         $cajas->SumaTotalPesoServ = $cajas->SumaTotalPesoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaPeso->tasa);
                     }else{
-                        $cajas->SumaTotalPesoServDflotante = $cajas->SumaTotalPesoServDflotante + ( $pagoS->Vueltos * -1);
-                        $cajas->SumaTotalPesoServ = $cajas->SumaTotalPesoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaPeso->tasa);
+                        $ojop[] = ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaPeso->tasa);
+                        $cajas->SumaTotalPesoServDflotante = $cajas->SumaTotalPesoServDflotante + ( $pagoS->Vueltos * -1) * $tasaPeso->tasa;
+                        $cajas->SumaTotalPesoServ = $cajas->SumaTotalPesoServ + ($pagoS->MontoDolarServicio * $tasaPeso->tasa);
                     }
                 }elseif ($pagoS->Divisa == 'Bolivar') {
                     if($pagoS->Vueltos > 0){
                         $cajas->SumaTotalBolivarServ = $cajas->SumaTotalBolivarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaEfectivo->tasa);
                     }else{
                         $cajas->SumaTotalBolivarServDflotante = $cajas->SumaTotalBolivarServDflotante + ($pagoS->Vueltos * -1) * $tasaEfectivo->tasa;
-                        $cajas->SumaTotalBolivarServ = $cajas->SumaTotalBolivarServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaEfectivo->tasa);
+                        $cajas->SumaTotalBolivarServ = $cajas->SumaTotalBolivarServ + ($pagoS->MontoDolarServicio * $tasaEfectivo->tasa);
                     }
                 }elseif ($pagoS->Divisa == 'Punto') {
                     if($pagoS->Vueltos > 0){
                         $cajas->SumaTotalPuntoServ = $cajas->SumaTotalPuntoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
                     }else{
                         $cajas->SumaTotalPuntoServDflotante = $cajas->SumaTotalPuntoServDflotante + ($pagoS->Vueltos * -1) * $tasaTransferenciaPunto->tasa;
-                        $cajas->SumaTotalPuntoServ = $cajas->SumaTotalPuntoServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                        $cajas->SumaTotalPuntoServ = $cajas->SumaTotalPuntoServ + ($pagoS->MontoDolarServicio * $tasaTransferenciaPunto->tasa);
                     }
                 }elseif ($pagoS->Divisa == 'Transferencia') {
                     if($pagoS->Vueltos > 0){
                         $cajas->SumaTotalTransferenciaServ = $cajas->SumaTotalTransferenciaServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
                     }else{
+                        $ojot[] = ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
                         $cajas->SumaTotalTransferenciaServDflotante = $cajas->SumaTotalTransferenciaServDflotante + ($pagoS->Vueltos * -1) * $tasaTransferenciaPunto->tasa;
-                        $cajas->SumaTotalTransferenciaServ = $cajas->SumaTotalTransferenciaServ + ($pagoS->MontoDivisa - $pagoS->Vueltos * -1) - ($validarPagosServicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
+                        $cajas->SumaTotalTransferenciaServ = $cajas->SumaTotalTransferenciaServ + ($pagoS->MontoDolarServicio * $tasaTransferenciaPunto->tasa);
                     }
                 }
 
@@ -1028,7 +1037,7 @@ foreach ($detalle_creditos as $detalleCredito ) {
 
 
         }
-// return $cajas->SumaTotalPesoServ;
+// return $ojo;
         // TODO captuaramos en variables los montos pagados en el proseso de pagos extras de la tabla horas extras
 
 

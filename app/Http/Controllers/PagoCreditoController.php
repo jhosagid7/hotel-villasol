@@ -46,7 +46,7 @@ class PagoCreditoController extends Controller
 // lt: determina si la primera fecha es menor que la segunda.
 // gte-determinar si la primera fecha es mayor o igual que la segunda fecha.
 // lte-determinar si la primera fecha es menor o igual que la segunda fecha.
-            
+
 
 //             $first = Carbon::create(2012, 9, 5, 23, 26, 11);
 // $second = Carbon::create(2012, 9, 5, 20, 26, 11, 'America/Vancouver');
@@ -197,6 +197,11 @@ class PagoCreditoController extends Controller
         $num_Punto = $request->get('num_Punto');
         $num_Trans = $request->get('num_Trans');
 
+
+
+
+
+
         $idFacturasPagadas = [];
 
 
@@ -281,6 +286,17 @@ class PagoCreditoController extends Controller
 
             // Llenamos la tabla Creditos_pagados
             $detalle_credito_datos = Detalle_credito::findOrFail($facturas_pagadas_id);
+
+            $monto_consumo = 0;
+            $monto_servicio = 0;
+
+            if($detalle_credito_datos->tipo_operacion == 'Consumo'){
+                $monto_consumo = $monto_consumo + $detalle_credito_datos->monto;
+            }
+
+            if($detalle_credito_datos->tipo_operacion == 'Servicio'){
+                $monto_servicio = $monto_servicio + $detalle_credito_datos->monto;
+            }
 
             $credito_pagado = new Credito_Pagado();
             $credito_pagado->numero_factura = $detalle_credito_datos->numero_factura;
@@ -370,8 +386,11 @@ class PagoCreditoController extends Controller
                 $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
                 $Pago_Venta->TasaTiket = $TasaTiket[$cont];
                 $Pago_Venta->MontoDolar = $MontoDolar[$cont];
+                $Pago_Venta->MontoConsumo = $monto_consumo;
+                $Pago_Venta->MontoServicio = $monto_servicio;
                 $Pago_Venta->Vueltos = $Vueltos[$cont];
                 $Pago_Venta->detalle_credito_id = $detalle_credito->id;
+                $Pago_Venta->caja_id = $caja_id;
                 $Pago_Venta->save();
 
                 $cont = $cont+1;
@@ -389,7 +408,8 @@ class PagoCreditoController extends Controller
             $creditos_ids = Detalle_credito::where('credito_id',$facturas_pagadas_id)->get();
 
             // return $creditos_ids;
-
+            $monto_consumo = 0;
+            $monto_servicio = 0;
 
             foreach($creditos_ids as $ids) {
 
@@ -399,6 +419,14 @@ class PagoCreditoController extends Controller
 
                     // Llenamos la tabla Creditos_pagados
                     $detalle_credito_datos = Detalle_credito::findOrFail($ids->id);
+
+                    if($detalle_credito_datos->tipo_operacion == 'Consumo'){
+                        $monto_consumo = $monto_consumo + $detalle_credito_datos->monto;
+                    }
+
+                    if($detalle_credito_datos->tipo_operacion == 'Servicio'){
+                        $monto_servicio = $monto_servicio + $detalle_credito_datos->monto;
+                    }
 
                     $credito_pagado = new Credito_Pagado();
                     $credito_pagado->numero_factura = $detalle_credito_datos->numero_factura;
@@ -490,8 +518,11 @@ class PagoCreditoController extends Controller
                 $Pago_Credito->MontoDivisa = $MontoDivisa[$cont];
                 $Pago_Credito->TasaTiket = $TasaTiket[$cont];
                 $Pago_Credito->MontoDolar = $MontoDolar[$cont];
+                $Pago_Credito->MontoConsumo = $monto_consumo;
+                $Pago_Credito->MontoServicio = $monto_servicio;
                 $Pago_Credito->Vueltos = $Vueltos[$cont];
                 $Pago_Credito->detalle_credito_id = $detalle_credito->id;
+                $Pago_Credito->caja_id = $caja_id;
                 $Pago_Credito->save();
 
                 $cont = $cont+1;

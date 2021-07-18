@@ -79,6 +79,10 @@ class Caja extends Model
     {
         return $this->hasManyThrough(Pago_Venta::class, Venta::class);
     }
+    public function pagos_ventas()
+    {
+        return $this->hasMany(Pago_Venta::class);
+    }
 
     public function personas()
     {

@@ -156,18 +156,18 @@ class ProcesoVentaController extends Controller
             }
             $modo_pago = $request->get('modo_pago');
             $monto_dejado = $request->get('monto_dejado');
-            $monto_dejado = number_format($monto_dejado,2,'.',',');
+            // $monto_dejado = $monto_dejado;
             // return $monto_dejado;
-            $total_costo = number_format($request->get('total_costo'),2,'.',',');
+            $total_costo = $request->get('total_costo');
             $status = '';
             $estado_pago = '';
 
-            $base_vuelto_monto_dejado = number_format($request->get('base_vuelto_monto_dejado'),2,'.',',');
-            $monto_dejadoResta = number_format($request->get('monto_dejadoResta'),2,'.',',');
+            $base_vuelto_monto_dejado = $request->get('base_vuelto_monto_dejado');
+            $monto_dejadoResta = $request->get('monto_dejadoResta');
             $isVueltos = $request->get('isVueltos');
 
-            $VueltospagoConExcedente = number_format($request->get('VueltospagoConExcedente'),2,'.',',');
-            $VueltosdispExcedente = number_format($request->get('VueltosdispExcedente'),2,'.',',');
+            $VueltospagoConExcedente = $request->get('VueltospagoConExcedente');
+            $VueltosdispExcedente = $request->get('VueltosdispExcedente');
                 // return $request;
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -628,13 +628,101 @@ class ProcesoVentaController extends Controller
                         // return $pesoDisponible;
                         $bolivarDisponible = ($cajas->SumaTotalBolivarExcedentesPendientes + $cajas->SumaTotalBolivarPagoExtra + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante) - $cajas->SumaTotalBolivarVueltos);
                         // return $bolivarDisponible;
+                    }
+
+
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        // TODO creamos metodo para realizar el pago cuando se paga con dinero contable viene en la variable base_vuelto_monto_dejado
+                        // primero validamos si exciste un pago hecho.
+
+                        $montoBase = $request->get('base_vuelto_monto_dejado');
+                        $montoResta = $request->get('monto_dejadoResta');
+                        $montoPendiente = $request->get('VueltospagoConExcedente');
+                        $total_venta = $request->get('total_venta');
+
+
+                        $montoBase = floatval($montoBase);
+                        $montoPendiente = floatval($montoPendiente);
+                        $montoResta = floatval($montoResta);
+                        $total_venta = floatval($total_venta);
+
+                        $opS = $montoBase + $montoPendiente;
+
+                        //validamos si el monto pagado es mayor a 0 sea que lo paguen con montoBase o con montoPendiente
+                        if($opS > 0 && $modo_pago == 'contado'){
+                            // return $opS;
+
+                            //validamos que el monto pagado sea mayor o igual al total de la venta
+                            if($opS >= $total_venta){
+                                // return 'si';
+
+                                //validamos si montobase es mayor y montopendiente es menor... lo que significa esto es que estamos reciviendo una moneda nueva
+                                if($montoBase > 0 && $montoPendiente <= 0){
+                                    // return 'pagado con plata nueva = montoBase';
+                                //metodo para procesar pago con dinero nuevo
+
+                                // validamos  si montopendiente es mayor y montobase es menor... lo que significa esto es que estamos reciviendo una moneda pendiente
+                                }else if($montoPendiente > 0 && $montoBase <= 0){
+                                    // return 'pagado con plata pendiente = montoPendiente';
+                                    //metodo para procesar pago con dinero con pendiente
+                                }else{
+                                    // metodo para procesar la venta con dinero nuevo y pendiente
+                                    return 'pagado con plata nueva y pendiente = montoBase y montoPendiente';
+                                    // metodo para procesar la venta con dinero nuevo y pendiente
+                                }
+
+
+
+
+                            }else{
+                                return Redirect::back()
+                                ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
+                            }
+
+                             return 'no';
+                        }else{
+
+
+                            return Redirect::back()
+                                ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
+                        }
+
+
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
                         // TODO Crear proceso que maneje el pago con vueltos pendiente
 
+                        // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
+                                    $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)->where('caja_id',$request->get('caja_id'))->where('Estado','Pendiente')->get();
+                                    return $RestarVtossPtesToVtosPtes;
+
+                                    $totalExcedenteSumado = 0;
+
+                                    $mayor=$RestarVtossPtesToVtosPtes[0];
+                                    // return $mayor;
+
+                                    foreach ($RestarVtossPtesToVtosPtes as $key) {
+
+                                        $totalExcedenteSumado += $key->MontoDolar;
+
+                                        if($mayor>$key){ $mayor=$key;	}
+                                    }
+                                    $monto_dejadoResta = floatval($monto_dejadoResta);
+                                    $totalExcedenteSumado = floatval($totalExcedenteSumado);
+
+
+
 
                         // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
-                        $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)->first();
+                        // $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)->first();
+                         $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)->where('caja_id',$request->get('caja_id'))->where('Estado','Pendiente')->get();
+
+                        return $RestarVtossPtesToVtosPtes;
+
                         // return $RestarVtossPtesToVtosPtes;
 
                         if ($RestarVtossPtesToVtosPtes) {
@@ -757,10 +845,12 @@ class ProcesoVentaController extends Controller
                          // REVIEW REVISAR
                         }
 
+
+
                         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+                        if($VueltospagoConExcedente > 0){
                         // return $dolarDisponible;
                         // return $pesoDisponible;
                         // return $bolivarDisponible;
@@ -1006,6 +1096,7 @@ class ProcesoVentaController extends Controller
             $venta->ganancia_neta = $utilidad;
             $venta->estado = 'Aceptada';
             $venta->persona_id = $request->get('idcliente');
+            $venta->servicio_id = $request->get('servicio_id');
             $venta->caja_id = $request->get('caja_id');
             $venta->save();
 
@@ -1308,7 +1399,11 @@ if($modo_pago == 'credito'){
                         $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
                         $Pago_Venta->TasaTiket = $TasaTiket[$cont];
                         $Pago_Venta->MontoDolar = $MontoDolar[$cont];
-                        $Pago_Venta->Vueltos = $Vueltos[$cont];
+                        $Pago_Venta->MontoDolarConsumo = $total_venta;
+                        $Pago_Venta->Excedente = $MontoDolar[$cont];/////////////////////////////////////////ojo//////////////////////////////////////
+                        $Pago_Venta->Vueltos = $Vueltos[$cont];///////////////////////////////////////////ojo/////////////////////////////////////////
+                        $Pago_Venta->servicio_id = $request->get('servicio_id');
+                        $Pago_Venta->caja_id = $request->get('caja_id');
                         $Pago_Venta->venta_id = $venta->id;
                         $Pago_Venta->save();
 
@@ -1417,7 +1512,11 @@ if($modo_pago == 'credito'){
                                 $Pago_Venta->MontoDivisa = $pagoVueltos->MontoDivisa;
                                 $Pago_Venta->TasaTiket = $pagoVueltos->TasaTiket;
                                 $Pago_Venta->MontoDolar = $pagoVueltos->MontoDolar;
+                                $Pago_Venta->MontoDolarConsumo = $total_venta;
+                                $Pago_Venta->Excedente = $MontoDolar[$cont];/////////////////////////////////////////ojo//////////////////////////////////////
                                 $Pago_Venta->Vueltos = 0;
+                                $Pago_Venta->servicio_id = $request->get('servicio_id');
+                                $Pago_Venta->caja_id = $request->get('caja_id');
                                 $Pago_Venta->venta_id = $venta->id;
                                 $Pago_Venta->save();
 
@@ -1451,34 +1550,6 @@ if($modo_pago == 'credito'){
                     // return 'estoy en else';
                     if($VueltospagoConExcedente > 0){
 
-                        // $Restardivisa = '';
-                        // $RestarMontoDivisa = 0;
-                        // $RestarTasaTiket = 0;
-                        // $RestarMontoDolar = 0;
-
-                        // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
-                        //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
-                        // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
-                        //con dos divisas
-
-                        $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Consumo_Vueltos->id);
-                        // return $RestarVtossPtesToVtosPtesDevueltos;
-
-
-
-                        if ($pagoVueltos) {
-                            $isVuelos = $request->get('isVueltos');
-
-                            $Pago_Venta = new Pago_Venta();
-                            $Pago_Venta->Divisa = $pagoVueltos->Divisa;
-                            $Pago_Venta->MontoDivisa = $pagoVueltos->MontoDivisa;
-                            $Pago_Venta->TasaTiket = $pagoVueltos->TasaTiket;
-                            $Pago_Venta->MontoDolar = $pagoVueltos->MontoDolar;
-                            $Pago_Venta->Vueltos = -$isVuelos;
-                            $Pago_Venta->venta_id = $venta->id;
-                            $Pago_Venta->save();
-
-                        }
 
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1543,6 +1614,38 @@ if($modo_pago == 'credito'){
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                         // $Restardivisa = '';
+                        // $RestarMontoDivisa = 0;
+                        // $RestarTasaTiket = 0;
+                        // $RestarMontoDolar = 0;
+
+                        // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
+                        //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
+                        // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
+                        //con dos divisas
+
+                        $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Extras_Vueltos->id);
+                        // return $RestarVtossPtesToVtosPtesDevueltos;
+
+
+
+                        if ($pagoVueltos) {
+                            $isVuelos = $request->get('isVueltos');
+
+                            $Pago_Venta = new Pago_Venta();
+                            $Pago_Venta->Divisa = $pagoVueltos->Divisa;
+                            $Pago_Venta->MontoDivisa = $pagoVueltos->MontoDivisa;
+                            $Pago_Venta->TasaTiket = $pagoVueltos->TasaTiket;
+                            $Pago_Venta->MontoDolar = $pagoVueltos->MontoDolar;
+                            $Pago_Venta->MontoDolarConsumo = $total_venta;
+                            $Pago_Venta->Excedente = 0;/////////////////////////////////////////ojo//////////////////////////////////////
+                            $Pago_Venta->Vueltos = -$isVuelos;///////////////////////////////////////////ojo/////////////////////////////////////////
+                            $Pago_Venta->servicio_id = $request->get('servicio_id');
+                            $Pago_Venta->caja_id = $request->get('caja_id');
+                            $Pago_Venta->venta_id = $venta->id;
+                            $Pago_Venta->save();
+
+                        }
 
 
 

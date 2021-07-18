@@ -188,7 +188,7 @@ class ExcedenteController extends Controller
             // TODO Verificamos que variable viene en bandera para hacer el proceso de pagar por oficina o crear nuevo excedente
             //comensamos proceso de pagar por oficina
             if($bandera == 'pagarPorOficina'){
-                // return 'pagar por oficina';
+                // return $request->isEfectivo;
 
 
 
@@ -235,13 +235,25 @@ class ExcedenteController extends Controller
                                 $upExcedente->update();
                             }else{
                                 // return 'no';
+                                if ($num_cuenta == null) {
+                                    $num_cuenta = '0';
+                                } else {
+                                    $num_cuenta = $num_cuenta;
+                                }
+
                                 $dexcedente = new Excedente;
                                 $dexcedente->tipo = 'Pagar_por_oficina';
                                 $dexcedente->nombre_cliente = $nombre_cliente;
                                 $dexcedente->cedula_cliente = $num_documento;
                                 $dexcedente->direccion_cliente = $direccion;
-                                $dexcedente->telefono_cliente = $telefono;
+                                $dexcedente->telefono_pago_mobil_cliente = $pago_mobil;
+                                $dexcedente->nombre_banco_cliente = $nombre_banco;
+                                $dexcedente->num_cuenta_cliente = $codigo .' - '.$num_cuenta;
+                                $dexcedente->tipo_cuenta_cliente = $tipo_cuenta;
                                 $dexcedente->excedente = $exced;
+                                $dexcedente->isTransferencia = $request->isTransferencia;
+                                $dexcedente->isPagoMobil = $request->isPagoMobil;
+                                $dexcedente->isEfectivo = $request->isEfectivo;
                                 $dexcedente->persona_id = $dcliente_id;
                                 $dexcedente->save();
 
@@ -251,39 +263,39 @@ class ExcedenteController extends Controller
 
                             // TODO Guardamos los datos del banco del cliente pero revisamos si ya existe esa cuenta registrada
 
-                            if (!$isTransferencia == null || !$isPagoMobil == null) {
-                                $ifBancoCliente = BancosCliente::where('persona_id',$dcliente_id)->where('codigo',$codigo)->where('num_cuenta',$num_cuenta)->first();
-                                // return $ifCliente;
+                            // if (!$isTransferencia == null || !$isPagoMobil == null) {
+                            //     $ifBancoCliente = BancosCliente::where('persona_id',$dcliente_id)->where('codigo',$codigo)->where('num_cuenta',$num_cuenta)->first();
+                            //     // return $ifCliente;
 
-                                if(!$ifBancoCliente){
-                                    // return 'si';
+                            //     if(!$ifBancoCliente){
+                            //         // return 'si';
 
-                                    // return 'no';
+                            //         // return 'no';
 
-                                    if (!$nombre_banco == null) {
-                                            if ($num_cuenta == null) {
-                                                $num_cuenta = '0';
-                                            } else {
-                                                $num_cuenta = $num_cuenta;
-                                            }
+                            //         if (!$nombre_banco == null) {
+                            //                 if ($num_cuenta == null) {
+                            //                     $num_cuenta = '0';
+                            //                 } else {
+                            //                     $num_cuenta = $num_cuenta;
+                            //                 }
 
-                                        $BancosCliente = new BancosCliente;
-                                        $BancosCliente->pertenece = 'Cliente';
-                                        $BancosCliente->nombre_banco = $nombre_banco;
-                                        $BancosCliente->codigo = $codigo;
-                                        $BancosCliente->num_cuenta = $num_cuenta;
-                                        $BancosCliente->tipo_cuenta = $tipo_cuenta;
-                                        $BancosCliente->pago_mobil = $pago_mobil;
-                                        $BancosCliente->persona_id = $dcliente_id;
-                                        $BancosCliente->banco_id = $banco_id;
-                                        $BancosCliente->save();
-                                    }
-
-
+                            //             $BancosCliente = new BancosCliente;
+                            //             $BancosCliente->pertenece = 'Cliente';
+                            //             $BancosCliente->nombre_banco = $nombre_banco;
+                            //             $BancosCliente->codigo = $codigo;
+                            //             $BancosCliente->num_cuenta = $num_cuenta;
+                            //             $BancosCliente->tipo_cuenta = $tipo_cuenta;
+                            //             $BancosCliente->pago_mobil = $pago_mobil;
+                            //             $BancosCliente->persona_id = $dcliente_id;
+                            //             $BancosCliente->banco_id = $banco_id;
+                            //             $BancosCliente->save();
+                            //         }
 
 
-                                }
-                            }
+
+
+                            //     }
+                            // }
 
 
 
@@ -305,13 +317,13 @@ class ExcedenteController extends Controller
                             $HistorialExcedente->tipo_registro = 'Pago_por_oficina';
                             $HistorialExcedente->status = 'Pendiente';
                             $HistorialExcedente->tipo_operacion = 'Ingreso';
+                            $HistorialExcedente->modo_pago = 'no_definido';
                             $HistorialExcedente->num_servicio = $num_servicio;
                             $HistorialExcedente->motivo = $motivo;
                             $HistorialExcedente->saldo_anterior = $saldo_anterior;
                             $HistorialExcedente->saldo_operacion = $excedente;
                             $HistorialExcedente->saldo_disponible = $saldo_disponible;
                             $HistorialExcedente->operador = $operador;
-                            $HistorialExcedente->banco_id = $banco_id;
                             $HistorialExcedente->detalle_pago_oficina_id = null;
                             $HistorialExcedente->persona_id = $dcliente_id;
                             $HistorialExcedente->servicio_id = $servicio_id;
@@ -401,7 +413,10 @@ class ExcedenteController extends Controller
                                     $dexcedente->nombre_cliente = $nombre_cliente;
                                     $dexcedente->cedula_cliente = $num_documento;
                                     $dexcedente->direccion_cliente = $direccion;
-                                    $dexcedente->telefono_cliente = $telefono;
+                                    $dexcedente->telefono_pago_mobil_cliente = $telefono;
+                                    $dexcedente->nombre_banco_cliente = $telefono;
+                                    $dexcedente->num_cuenta_cliente = $telefono;
+                                    $dexcedente->tipo_cuenta_cliente = $telefono;
                                     $dexcedente->excedente = $exced;
                                     $dexcedente->persona_id = $dcliente_id;
                                     $dexcedente->save();
@@ -519,7 +534,7 @@ class ExcedenteController extends Controller
         $clientes = Persona::where('nombre', '<>','Proveedor Comun')->where('nombre', '<>','Cliente Comun')->get();
             $bancos = Banco::get();
 
-        // return $detalle_creditos;
+        // return $bancosCLientes;
         return view('pagos.oficina.show', compact('bancosEmpresas','bancosCLientes','clientes','bancos','historialExcedentes','caja','title','pagarporoficina','BancosClientes','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','users','UserName'));
     }
 

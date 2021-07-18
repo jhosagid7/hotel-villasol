@@ -709,7 +709,9 @@ class ServicioController extends Controller
                     $Pago_Servicio->MontoDivisa = $MontoDivisa[$cont];
                     $Pago_Servicio->TasaTiket = $TasaTiket[$cont];
                     $Pago_Servicio->MontoDolar = $MontoDolar[$cont];
-                    $Pago_Servicio->Vueltos = $Vueltos[$cont];
+                    $Pago_Servicio->MontoDolarServicio = $request->get('total_costo');
+                    $Pago_Servicio->Excedente = $request->get('restaVueltos');
+                    $Pago_Servicio->Vueltos = -$request->get('monto_dejadoResta');
                     $Pago_Servicio->servicio_id = $servicio->id;
                     $Pago_Servicio->save();
 
@@ -2513,16 +2515,18 @@ class ServicioController extends Controller
 
                         $VueltosdispExcedente = $request->get('VueltosdispExcedente');
                         $monto_dejadoResta = $request->get('monto_dejadoResta');
+                        
+
                         $base_vuelto_monto_dejado = $request->get('base_vuelto_monto_dejado');
                         $monto_dejado = $request->get('monto_dejado');
 
                         $resta = $monto_dejadoResta - $base_vuelto_monto_dejado;
 
-//                         if($base_vuelto_monto_dejado > 0){
-// return 'es mayor';
-//                         }else{
-//                             return 'es menor';
-//                         }
+                        //                         if($base_vuelto_monto_dejado > 0){
+                        // return 'es mayor';
+                        //                         }else{
+                        //                             return 'es menor';
+                        //                         }
 
                         // return $request;
 
@@ -2646,6 +2650,9 @@ class ServicioController extends Controller
                                     $cont = $cont+1;
                                 }
 
+
+                                    // return $RestarVtossPtesToVtosPtes;
+
                             }
                             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2686,6 +2693,7 @@ class ServicioController extends Controller
 
 
                                     $mayor=$RestarVtossPtesToVtosPtes[0];
+                                    // return $mayor;
 
                                     foreach ($RestarVtossPtesToVtosPtes as $key) {
 
@@ -2693,7 +2701,9 @@ class ServicioController extends Controller
 
                                         if($mayor>$key){ $mayor=$key;	}
                                     }
-
+                                    $monto_dejadoResta = floatval($monto_dejadoResta);
+                                    $totalExcedenteSumado = floatval($totalExcedenteSumado);
+                                    // return $totalExcedenteSumado .' '.$monto_dejadoResta;
 
                                     // return 'Excedente: '.$totalExcedenteSumado.' Vueltos: '.$total_Pago_Vuelto_Cuenta;
 
@@ -2713,12 +2723,13 @@ class ServicioController extends Controller
                                     // return 'Bien';
 
                                     if ($totalExcedenteSumado == $monto_dejadoResta) {
+                                        // return 'igual';
                                         $RestarVtossPtesTo = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->where('Estado','Pendiente')->get();
 
-                                        // return 'Bien malss';
+                                        
                                         foreach ($RestarVtossPtesTo as $restaVueltosTo ) {
                                             if ($restaVueltosTo) {
-
+                                                // return $restaVueltosTo->id;
                                                 $UpdateDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($restaVueltosTo->id);
                                                 $UpdateDevueltos->Estado = 'Devueltos';
                                                 $UpdateDevueltos->update();
@@ -2728,10 +2739,10 @@ class ServicioController extends Controller
                                         // return 'Bienss';
                                         $total_Pago_Vuelto_Cuenta = 0;
                                     }
-// return 'mal';
+                                    // return 'mal';
 
                                     if ($totalExcedenteSumado > $monto_dejadoResta && $monto_dejadoResta > 0 ) {
-
+                                        // return 'aquí';
                                         // $montoResta = $totalExcedenteSumado - $total_Pago_Vuelto_Cuenta;
                                         // return $montoResta;
 
@@ -2771,22 +2782,89 @@ class ServicioController extends Controller
                                             $total_Pago_Vuelto_Cuenta = 0;
                                         }else if ($RestarVtos->MontoDolar < $monto_dejadoResta) {
                                             // return 'Bien mal ff';
-                                            // return $RestarVtos->id;
-                                            if ($RestarVtos) {
+                                            //consultamos la tabla Excedentes recibidos en caja actual para restarle el vuelto
 
-                                                $UpdateDevueltosUp = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarVtos->id);
-                                                $UpdateDevueltosUp->Estado = 'Devueltos';
-                                                $UpdateDevueltosUp->update();
+
+                                            $resta_actual = $isVuelos;
+                                            $valor = $resta_actual;
+                                            $resto = 0;
+
+
+                                            while ($valor > 0) {
+
+                                                // return 'cero';
+
+                                                $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->where('Estado','Pendiente')->get();
+
+                                                foreach ($RestarVtossPtesToVtosPtes as $key) {
+                                                    $resto = $key->MontoDolar - $resta_actual;
+                                                    $valor = $resto;
+                                                    // $resto = $resta_actual - $key->MontoDolar;
+                                                    // return $resto;
+
+                                                    if($resto < 0 ){
+                                                        // return 'menos';
+
+                                                        $UpdateDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($key->id);
+                                                        $UpdateDevueltos->Estado = 'Devueltos';
+                                                        $UpdateDevueltos->update();
+
+                                                        $resto = $resta_actual - $key->MontoDolar;
+                                                        $valor = $resto;
+                                                        $resta_actual = $resto;
+
+                                                        // return $resto;
+
+                                                    }else {
+                                                        // return 'mas';
+
+                                                        $RestarVtos = Excedentes_Recibidos_Caja_Actual::findOrFail($key->id);
+                                                        if ($RestarVtos) {
+
+                                                            if($RestarVtos->MontoDolar > $resto){
+                                                                $valor = 0;
+                                                                // return $RestarVtos->TasaTiket;
+                                                                // if($RestarVtos->Divisa == 'Dolar'){
+
+                                                                // }
+
+                                                                $RestarVtos->Estado = 'Devueltos';
+                                                                $RestarVtos->MontoDivisa = $RestarVtos->MontoDivisa - ($resto * $RestarVtos->TasaTiket);
+                                                                $RestarVtos->MontoDolar = $RestarVtos->MontoDolar - $resto;
+                                                                $RestarVtos->update();
+
+
+                                                                // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                                                                $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                                                $AgregarVtossPtesToVtosPtes->Tipo = 'servicio';
+                                                                $AgregarVtossPtesToVtosPtes->Estado = 'Pendiente';
+                                                                $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtos->Divisa;
+                                                                $AgregarVtossPtesToVtosPtes->MontoDivisa = ($resto * $RestarVtos->TasaTiket);
+                                                                $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtos->TasaTiket;
+                                                                $AgregarVtossPtesToVtosPtes->MontoDolar = $resto;
+                                                                $AgregarVtossPtesToVtosPtes->servicio_id = $id;
+                                                                $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                                                $AgregarVtossPtesToVtosPtes->save();
+
+                                                                // return $AgregarVtossPtesToVtosPtes->id;
+                                                            }
+                                                            if($RestarVtos->MontoDolar == $resto){
+                                                                $valor = 0;
+                                                                // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                                                if($RestarVtossPtesToVtosPtes->MontoDolar == 0){
+                                                                    Excedentes_Recibidos_Caja_Actual::destroy($RestarVtos->id);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
 
                                             }
 
-                                            $total_Pago_Vuelto_Cuenta = $monto_dejadoResta - $RestarVtos->MontoDolar;
-
 
                                         }
-
-
-
 
                                     }
 
@@ -2807,7 +2885,7 @@ class ServicioController extends Controller
                 }catch(\Exception $e)
                 {
 
-                    dd($e);
+                    // dd($e);
                     DB::rollback();
                     // if (isset($MontoDolarR)) {
 
@@ -2823,7 +2901,7 @@ class ServicioController extends Controller
             } else if ($bandera == 'cambiarHabitacion') {
                 // return 'no';
 
-                return $bandera;
+                // return $bandera;
 
                 try{
 

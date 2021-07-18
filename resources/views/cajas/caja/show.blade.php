@@ -135,6 +135,18 @@
                 $servicioCreditosPagadosPorCaja    = 0;
                 $consumoCreditosPagadosPorOficina  = 0;
                 $servicioCreditosPagadosPorOficina = 0;
+                $consumoCreditosPagadosPorCajaDolar = 0;
+                $servicioCreditosPagadosPorCajaDolar = 0;
+                $consumoCreditosPagadosPorCajaPeso = 0;
+                $servicioCreditosPagadosPorCajaPeso = 0;
+                $servicioCreditosPagadosPorCajaPunto = 0;
+                $servicioCreditosPagadosPorCajaTransferencia = 0;
+                $consumoCreditosPagadosPorCajaPunto = 0;
+                $consumoCreditosPagadosPorCajaTransferencia = 0;
+                $consumoCreditosPagadosPorCajaBolivar = 0;
+                $consumoCreditosPagadosPorCajaTransferenciaPunto  = 0;
+                $servicioCreditosPagadosPorCajaTransferenciaPunto = 0;
+                $pago_creditos = 0;
                 $tr = '';
             @endphp
             @foreach ($cajas->creditos_pagados as $creditosPagados)
@@ -142,12 +154,60 @@
                 @if ($creditosPagados->user_id == $caja->user->id)
                     @if ($creditosPagados->tipo_operacion == 'Consumo')
                         @php
+                        if($creditosPagados->tipo_pago == 'Dolar'){
+                            $consumoCreditosPagadosPorCajaDolar = $consumoCreditosPagadosPorCajaDolar + $creditosPagados->monto * $tasaDolar->tasa;
+                        }
+                        if($creditosPagados->tipo_pago == 'Peso'){
+                            $consumoCreditosPagadosPorCajaPeso = ($consumoCreditosPagadosPorCajaPeso + $creditosPagados->monto * $tasaPeso->tasa) ;
+                        }
+                        if($creditosPagados->tipo_pago == 'Trans/Punto'){
+                            // return 'estoy ';
+                            $consumoCreditosPagadosPorCajaTransferenciaPunto = $consumoCreditosPagadosPorCajaTransferenciaPunto + $creditosPagados->monto * $tasaTransferenciaPunto->tasa;
+                            // $pago_creditos_Consumo = "App\Pago_Credito"::where('detalle_credito_id', $creditosPagados->detalle_credito_id)->get();
+                            // foreach ($pago_creditos_Consumo as $divisaUsadaConsumo) {
+                            //     if ($divisaUsadaConsumo->Divisa == 'Punto') {
+                            //         $consumoCreditosPagadosPorCajaPunto = $consumoCreditosPagadosPorCajaPunto + $creditosPagados->monto * $tasaTransferenciaPunto->tasa;
+                            //     }
+
+                            //     if ($divisaUsadaConsumo->Divisa == 'Transferencia') {
+                            //         $consumoCreditosPagadosPorCajaTransferencia = $consumoCreditosPagadosPorCajaTransferencia + $creditosPagados->monto * $tasaTransferenciaPunto->tasa;
+                            //     }
+                            // }
+                            // $servicioCreditosPagadosPorCajaPeso = $consumoCreditosPagadosPorCajaPeso + $creditosPagados->monto * $tasaPeso->tasa;
+                        }
+                        if($creditosPagados->tipo_pago == 'Bolivar'){
+                            $consumoCreditosPagadosPorCajaBolivar = ($consumoCreditosPagadosPorCajaBolivar + $creditosPagados->monto * $tasaBolivar->tasa) ;
+                        }
                             $consumoCreditosPagadosPorCaja = $consumoCreditosPagadosPorCaja + $creditosPagados->monto;
                             $tr = '<tr';
                         @endphp
                     @endif
                     @if ($creditosPagados->tipo_operacion == 'Servicio')
                         @php
+                        if($creditosPagados->tipo_pago == 'Dolar'){
+                            $servicioCreditosPagadosPorCajaDolar = $consumoCreditosPagadosPorCajaDolar + $creditosPagados->monto * $tasaDolar->tasa;
+                        }
+                        if($creditosPagados->tipo_pago == 'Peso'){
+                            $servicioCreditosPagadosPorCajaPeso = $consumoCreditosPagadosPorCajaPeso + $creditosPagados->monto * $tasaPeso->tasa;
+                        }
+                        if($creditosPagados->tipo_pago == 'Trans/Punto'){
+                            // return 'estoy ';
+                            $servicioCreditosPagadosPorCajaTransferenciaPunto = $servicioCreditosPagadosPorCajaTransferenciaPunto + $creditosPagados->monto * $tasaTransferenciaPunto->tasa;
+                            // $pago_creditos_Servicios = "App\Pago_Credito"::where('detalle_credito_id', $creditosPagados->detalle_credito_id)->get();
+                            // foreach ($pago_creditos_Servicios as $divisaUsada) {
+                            //     if ($divisaUsada->Divisa == 'Punto') {
+                            //         $servicioCreditosPagadosPorCajaPunto = $servicioCreditosPagadosPorCajaPunto + $creditosPagados->monto * $tasaTransferenciaPunto->tasa;
+                            //     }
+
+                            //     if ($divisaUsada->Divisa == 'Transferencia') {
+                            //         $servicioCreditosPagadosPorCajaTransferencia = $servicioCreditosPagadosPorCajaTransferencia + $creditosPagados->monto * $tasaTransferenciaPunto->tasa;
+                            //     }
+                            // }
+                            // $servicioCreditosPagadosPorCajaPeso = $consumoCreditosPagadosPorCajaPeso + $creditosPagados->monto * $tasaPeso->tasa;
+                        }
+                        if($creditosPagados->tipo_pago == 'Bolivar'){
+                            $servicioCreditosPagadosPorCajaBolivar = ($servicioCreditosPagadosPorCajaBolivar + $creditosPagados->monto * $tasaBolivar->tasa) ;
+                        }
                             $servicioCreditosPagadosPorCaja = $servicioCreditosPagadosPorCaja + $creditosPagados->monto;
                             $tr = '<tr>';
                         @endphp
@@ -204,9 +264,9 @@
                             </h4>
                         </th>
                         <th></th>
-                        <th ><h4><strong class="text-blue"> {{$cajas->SumaTotalCreditosPagadosTotalesPorCaja ?? ''}}</strong></h4></th>
+                        <th ><h4><strong class="text-blue"> </strong></h4></th>
                         <th></th>
-                        <th ><h4><strong class="text-blue">{{$cajas->SumaTotalCreditosPagadosTotalesPorOficina ?? ''}}</strong></h4></th>
+                        <th ><h4><strong class="text-blue"></strong></h4></th>
                         <th></th>
 
                     </tr>
@@ -231,11 +291,11 @@
                     <th>Cons/Contado:</th>
                     <td><strong>{{ $cajas->SumaTotalCantidadVentasContado ?? '0' }}</strong></td>
                     <th>Total/Dolar:</th>
-                    <td><strong>${{ $cajas->SumaTotalDolar + $cajas->SumaTotalDolarCredConsumo ?? '0.000' }}</strong></td>
+                    <td><strong>${{ $cajas->SumaTotalDolar ?? '0.000' }}</strong></td>
                     <th>Serv/Contado:</th>
                     <td><strong>{{ $cajas->SumaTotalCantidadServicios ?? '0' }}</strong></td>
                     <th>Total/Dolar:</th>
-                    <td><strong>${{ $cajas->SumaTotalDolarServ + $cajas->SumaTotalDolarCredServicio ?? '0.000' }}</strong></td>
+                    <td><strong>${{ $cajas->SumaTotalDolarServ ?? '0.000' }}</strong></td>
                     <th>Creditos/vigentes:</th>
                     <td><strong>{{ $cajas->SumaTotalCantidadCreditosVigentes ?? '0' }}</strong></td>
                   </tr>
@@ -246,11 +306,11 @@
                     <th>Cons/Credíto:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadVentasCredito ?? '0' }}</b></td>
                     <th>Total/Peso:</th>
-                    <td><b>${{ number_format($cajas->SumaTotalPeso + $cajas->SumaTotalPesoCredConsumo,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>${{ number_format($cajas->SumaTotalPeso,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Serv/Credíto:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadServiciosPorPagar ?? '0' }}</b></td>
                     <th>Total/Peso:</th>
-                    <td><b>${{ number_format($cajas->SumaTotalPesoServ + $cajas->SumaTotalPesoCredServicio,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>${{ number_format($cajas->SumaTotalPesoServ,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Creditos/vencidos:</th>
                     <td><strong>{{ $cajas->SumaTotalCantidadCreditosVencidos ?? '0' }}</strong></td>
                   </tr>
@@ -260,11 +320,11 @@
                     <th>Cons/Cortesía:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadVentasCortesia ?? '0' }}</b></td>
                     <th>Total/Punto:</th>
-                    <td><b>Bs.{{ number_format($cajas->SumaTotalPunto + $cajas->SumaTotalPuntoCredConsumo,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>Bs.{{ number_format($cajas->SumaTotalPunto,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Serv/Cortesía:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadServiciosCortesia ?? '0' }}</b></td>
                     <th>Total/Punto:</th>
-                    <td><b>Bs.{{ number_format($cajas->SumaTotalPuntoServ + $cajas->SumaTotalPuntoCredServicio,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>Bs.{{ number_format($cajas->SumaTotalPuntoServ,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Creditos/pagados:</th>
                     <td>{{$cajas->SumaTotalCantidadCreditosPagadosTotales ?? ''}}</td>
                   </tr>
@@ -274,11 +334,11 @@
                     <th>Total/Consumo:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadVentasContado + $cajas->SumaTotalCantidadVentasCredito + $cajas->SumaTotalCantidadVentasCortesia ?? '0' }}</b></td>
                     <th>Total/Transf:</th>
-                    <td><b>Bs.{{ number_format($cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaCredConsumo,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>Bs.{{ number_format($cajas->SumaTotalTransferencia,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Total/Serv:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadServicios + $cajas->SumaTotalCantidadServiciosPorPagar + $cajas->SumaTotalCantidadServiciosCortesia ?? ' 0,00' }}</b></td>
                     <th>Total/Transf:</th>
-                    <td><b>Bs.{{ number_format($cajas->SumaTotalTransferenciaServ + $cajas->SumaTotalTransferenciaCredServicio,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>Bs.{{ number_format($cajas->SumaTotalTransferenciaServ,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Creditos nuevos:</th>
                     <td><b>{{ $cajas->SumaTotalCantidadServiciosPorPagar + $cajas->SumaTotalCantidadVentasCredito ?? '0' }}</b></td>
                   </tr>
@@ -292,7 +352,7 @@
                     <th>Serv/Créd/Pag:</th>
                     <td>{{$cajas->SumaTotalCantidadCreditosPagadosServicio ?? ''}}</td>
                     <th>Total/Bolivar:</th>
-                    <td><b>Bs.{{ number_format($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivarCredServicio,2,'.',',') ?? '0.00' }}</b></td>
+                    <td><b>Bs.{{ number_format($cajas->SumaTotalBolivarServ,2,'.',',') ?? '0.00' }}</b></td>
                     <th>Total/Creditos:</th>
                     <td><b>{{$cajas->SumaTotalCantidadCreditosVigentes + $cajas->SumaTotalCantidadCreditosVencidos + $cajas->SumaTotalCantidadCreditosPagadosTotales ?? ''}}</b></td>
                   </tr>
@@ -314,15 +374,15 @@
                   @can('haveaccess', 'cajatotalventa.show')
                   <tr>
                     <th><h4><strong class="text-blue">Consumo Bruto:</strong></h4></th>
-                    <td><h4><strong>${{ number_format($cajas->SumaTotalVentasCredito + $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas,2,'.',',') ?? '0.000' }}</h4></strong></td>
+                    <td><h4><strong>${{ number_format($cajas->SumaTotalVentasCredito + $cajas->SumaTotalVentas,2,'.',',') ?? '0.000' }}</h4></strong></td>
                     <th class="text-blue"></th>
                     <td class="text-blue"></td>
                     <th><h4><strong class="text-blue">Servicios Bruto:</strong></h4></th>
-                    <td><h4><strong>${{ number_format($cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalCreditosPagadosServicioPorOficina + $cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios  + $cajas->SumaTotalExtra,2,'.',',') ?? '0.000' }}</h4></strong></td>
+                    <td><h4><strong>${{ number_format($cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalServicios  + $cajas->SumaTotalExtra,2,'.',',') ?? '0.000' }}</h4></strong></td>
                     <th class="text-blue"></th>
                     <td></td>
                     <th><h4><strong class="text-blue">Total Bruto:</h4></strong></th>
-                    <td><h4><strong>${{ number_format(($cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalCreditosPagadosServicioPorOficina + $cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios) + ($cajas->SumaTotalVentasCredito + $cajas->SumaTotalCreditosPagadosConsumoPorOficina + $cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas  + $cajas->SumaTotalExtra),2,'.',',') ?? '0.000' }}</h4></strong></td>
+                    <td><h4><strong>${{ number_format(($cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalServicios) + ($cajas->SumaTotalVentasCredito + $cajas->SumaTotalVentas  + $cajas->SumaTotalExtra),2,'.',',') ?? '0.000' }}</h4></strong></td>
                   </tr>
                   @endcan
                   {{-- @can('haveaccess', 'cajatotalventa.show')
@@ -1394,7 +1454,7 @@
                         @endif
                         @if ($cajas->excedente_actual_valor)
                             @foreach ($cajas->excedente_actual_valor as $vtosDevueltos)
-                            @if ($vtosDevueltos->servicio_id == $serv->id && $vtosDevueltos->Estado == 'Devueltos' && $vtosDevueltos->Tipo == 'Servicio')
+                            @if ($vtosDevueltos->servicio_id == $serv->id && $vtosDevueltos->Estado == 'Devueltos')
                                 @if ($vtosDevueltos->Divisa <> 'Dolar')
                                     <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.number_format($vtosDevueltos->MontoDivisa,2) ?? '' }}</b>
                                 @else
@@ -1466,7 +1526,7 @@
                     <td>
                         @if ($cajas->excedente_actual_valor)
                             @foreach ($cajas->excedente_actual_valor as $vtosPendtes)
-                            @if ($vtosPendtes->servicio_id == $serv->id && $vtosPendtes->Estado == 'Pendiente' && $vtosPendtes->Tipo == 'Servicio')
+                            @if ($vtosPendtes->servicio_id == $serv->id && $vtosPendtes->Estado == 'Pendiente')
                             @if ($vtosPendtes->Divisa <> 'Dolar')
                                     <b class="text-bold">{{ ' '.$vtosPendtes->Divisa.': '.number_format(floatval($vtosPendtes->MontoDivisa),2,',','.') ?? '' }}</b>
                                 @else
@@ -1518,7 +1578,7 @@
             <thead style="background-color: rgb(35, 192, 245);" class="tituloAzul">
                 <th>ID</th>
                 <th>Fecha</th>
-                <th>Comprobante</th>
+                <th>Num Servicio</th>
                 <th>Tasa</th>
                 <th>Modo Pago</th>
                 <th>Tipo Pago</th>
@@ -1553,22 +1613,75 @@
                     @endif
                     <td>{{ $venta->id ?? '' }}</td>
                     <td>{{ $venta->fecha_hora ?? '' }}</td>
-                    <td>{{ $venta->serie_comprobante ?? '' }}</td>
+                    <td>{{ $venta->servicio_id ?? '' }}</td>
                     <td>{{ $venta->tasaTransPunto ?? '' }}</td>
                     <td>{{ $venta->modo_pago ?? '' }}</td>
                     <td>{{ $venta->tipo_pago ?? '' }}</td>
                     <td>&nbsp;{{ $venta->num_Punto ?? '' }} &nbsp;{{ $venta->num_Trans ?? '' }}</td>
                     @can('haveaccess', 'cajacosto.show')
-                    <td>{{ floatval($venta->precio_costo) ?? '' }}</td>
-                    <td>{{ $venta->margen_ganancia ?? '' }}</td>
-                    @endcan
+                    <td>
+                        @if ($venta->modo_pago)
+                        @foreach ($venta->pago_ventas as $pagoV)
+                        {{ ' '.$pagoV->Divisa.': '.floatval($pagoV->MontoDivisa) ?? '' }}
+                        @endforeach
+                        @endif
+                        {{-- @if ($venta->pago_con_excedente)
+                            <b class="text-red">{{' Excedente: '. floatval($venta->pago_con_excedente) ?? '' }}</b>
+                            @endif --}}
+                        </td>
+                        @endcan
 
+                    <td>
+                        @if ($venta->modo_pago)
+                            @foreach ($cajas->pago_vueltos as $pagovuts)
+                            @if ($pagovuts->servicio_id == $venta->servicio_id && $pagovuts->Tipo == 'Consumo')
+                                {{ ' '.$pagovuts->Divisa.': '.floatval($pagovuts->MontoDivisa) ?? '0.00' }}
+                            @endif
+                            @endforeach
+                        @endif
+                        @if ($cajas->excedente_actual_valor)
+                            @foreach ($cajas->excedente_actual_valor as $vtosDevueltos)
+                            @if ($vtosDevueltos->servicio_id == $venta->servicio_id && $vtosDevueltos->Estado == 'Devueltos' && $vtosDevueltos->Tipo == 'Consumo')
+                                @if ($vtosDevueltos->Divisa <> 'Dolar')
+                                    <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.number_format($vtosDevueltos->MontoDivisa,2) ?? '' }}</b>
+                                @else
+                                    <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.floatval($vtosDevueltos->MontoDivisa) ?? '' }}</b>
+                                @endif
+
+                            @endif
+
+                            @endforeach
+                        @endif
+                    </td>
                     <td>{{ floatval($venta->total_venta) ?? '' }}</td>
 
                     @can('haveaccess', 'cajacosto.show')
                     <td>{{ floatval($venta->ganancia_neta) ?? '' }}</td>
                     @endcan
-                    <td>{{ $venta->estado ?? '' }}</td>
+                    <td>
+                        @if ($cajas->excedente_actual_valor)
+                            @foreach ($cajas->excedente_actual_valor as $vtosPendtes)
+                            @if ($vtosPendtes->servicio_id == $venta->servicio_id && $vtosPendtes->Estado == 'Pendiente' && $vtosPendtes->Tipo == 'Consumo')
+                            @if ($vtosPendtes->Divisa <> 'Dolar')
+                                    <b class="text-bold">{{ ' '.$vtosPendtes->Divisa.': '.number_format(floatval($vtosPendtes->MontoDivisa),2,',','.') ?? '' }}</b>
+                                @else
+                                    <b class="text-bold">{{ ' '.$vtosPendtes->Divisa.': '.floatval($vtosPendtes->MontoDivisa) ?? '' }}</b>
+                                @endif
+                                {{-- {{ ' '.$vtosPendtes->Divisa.': '.floatval($vtosPendtes->MontoDivisa) ?? '' }} --}}
+                            @endif
+
+                            @endforeach
+                        @endif
+
+                        @if ($cajas->excedente_actual_valor)
+                            @foreach ($cajas->excedente_actual_valor as $vtosPagarOfic)
+                            @if ($vtosPagarOfic->servicio_id == $venta->id && $vtosPagarOfic->Estado == 'PagarOficina')
+                            <b class="text-red">{{ ' '.$vtosPagarOfic->Divisa.': '.floatval($vtosPagarOfic->MontoDivisa) ?? '' }}</b>
+                            @endif
+
+                            @endforeach
+                        @endif
+                    </td>
 
                 </tr>
 
@@ -1834,7 +1947,7 @@
                             @endphp
                             @if (count($pago_creditos))
                             @foreach ($pago_creditos as $pagoCrt)
-                            {{ ' '.$pagoCrt->Divisa.': '.floatval($pagoCrt->MontoDivisa) ?? '' }}
+                            {{ ' '.$pagoCrt->Divisa.': '.floatval($pagoCrt->MontoDivisa) ?? '' }} / {{ ' Tasa: '.floatval($pagoCrt->TasaTiket) ?? '' }}
                             @endforeach
                             @endif
 

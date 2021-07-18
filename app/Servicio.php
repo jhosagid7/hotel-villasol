@@ -31,6 +31,10 @@ class Servicio extends Model
         return $this->hasMany(Pago_Servicio::class);
     }
 
+    public function pago_ventas(){
+        return $this->hasMany(Pago_Venta::class);
+    }
+
     public function pago_vueltos(){
         return $this->hasMany(Pago_Vuelto::class);
     }
@@ -132,4 +136,6 @@ class Servicio extends Model
 
 
     protected $guarded = [];
+
+
 }

@@ -16,7 +16,6 @@ class HistorialExcedente extends Model
         'saldo_operacion',
         'saldo_disponible',
         'operador',
-        'banco_id',
         'detalle_pago_oficina_id',
         'persona_id',
         'servicio_id',

@@ -38,6 +38,8 @@ class ClienteController extends Controller
     }
     public function store(PersonaFormRequest $request)
     {
+
+        // return $request->isCortesia;;
         //creamos un objeto del modelo categoria
         $persona = new Persona;
         $persona->tipo_persona = 'Cliente';

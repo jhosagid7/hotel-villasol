@@ -11,7 +11,10 @@ class Excedente extends Model
         'nombre_cliente',
         'cedula_cliente',
         'direccion_cliente',
-        'telefono_cliente',
+        'telefono_pago_mobil_cliente',
+        'nombre_banco_cliente',
+        'num_cuenta_cliente',
+        'tipo_cuenta_cliente',
         'excedente',
         'persona_id'
     ];
@@ -54,6 +57,16 @@ class Excedente extends Model
     public function scopeInactivo($query){
 
         return $query->where('estado', '=', "Inactivo");
+    }
+
+    public function setIsTransferenciaAttribute($value){
+        $this->attributes['isTransferencia'] = ($value == 'on' ? '1' : null);
+    }
+    public function setIsPagoMobilAttribute($value){
+        $this->attributes['isPagoMobil'] = ($value == 'on' ? '1' : null);
+    }
+    public function setIsEfectivoAttribute($value){
+        $this->attributes['isEfectivo'] = ($value == 'on' ? '1' : null);
     }
 
     public function scopeFecha($query, $fecha){

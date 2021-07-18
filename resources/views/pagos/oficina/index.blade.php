@@ -49,7 +49,7 @@
                     <th>ID</th>
                     <th>Nombre</th>
                     <th>Cedula</th>
-                    <th>Direccion</th>
+                    <th>Modo pago</th>
                     <th>Telefono</th>
                     <th>Total Factura</th>
 
@@ -64,7 +64,18 @@
                          <td>{{ $pagosOfic->id }}</td>
                          <td>{{ $pagosOfic->nombre_cliente }}</td>
                          <td>{{ $pagosOfic->cedula_cliente }}</td>
-                         <td>{{ $pagosOfic->direccion_cliente }}</td>
+                         <td>
+                             @if ($pagosOfic->isTransferencia)
+                                 Transferencia:
+                             @endif
+                             @if ($pagosOfic->isPagoMobil)
+                                 Pago mobil:
+                             @endif
+                             @if ($pagosOfic->isEfectivo)
+                                 Efectivo:
+                             @endif
+                             {{-- {{ $pagosOfic->isEfectivo }} --}}
+                        </td>
                          <td>{{ $pagosOfic->telefono_cliente }}</td>
                          <td>{{ $pagosOfic->excedente}}</td>
 

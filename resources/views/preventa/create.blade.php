@@ -3810,44 +3810,44 @@
     //             }
 
 
-    //             $(document).ready(function() {
+                $(document).ready(function() {
 
 
-    //                 $("#DMontoDolarV").keyup(function() {
-    //                     $("#isVueltos").val('');
-    //                     $("#monto_dejadoResta").val(0.00);
-    //                     DMontoDolarV();
-    //                 });
+                    $("#DMontoDolarV").keyup(function() {
+                        $("#isVueltos").val('');
+                        $("#monto_dejadoResta").val(0.00);
+                        DMontoDolarV();
+                    });
 
-    //                 $("#DMontoPesoV").keyup(function() {
-    //                     $("#isVueltos").val('');
-    //                     $("#monto_dejadoResta").val(0.00);
-    //                     DMontoPesoV();
-    //                 });
+                    $("#DMontoPesoV").keyup(function() {
+                        $("#isVueltos").val('');
+                        $("#monto_dejadoResta").val(0.00);
+                        DMontoPesoV();
+                    });
 
-    //                 $("#DMontoBolivarV").keyup(function() {
-    //                     $("#isVueltos").val('');
-    //                     $("#monto_dejadoResta").val(0.00);
-    //                     DMontoBolivarV();
-    //                 });
+                    $("#DMontoBolivarV").keyup(function() {
+                        $("#isVueltos").val('');
+                        $("#monto_dejadoResta").val(0.00);
+                        DMontoBolivarV();
+                    });
 
-    //             });
-
-
-    //         // $(document).ready(function() {
+                });
 
 
-    //         //     $("#DMontoDolarV").keyup(function() {
-    //         //         DMontoDolarV();
-    //         //     });
+            // $(document).ready(function() {
 
-    //         //     $("#DMontoPesoV").keyup(function() {
-    //         //         DMontoPesoV();
-    //         //     });
 
-    //         //     $("#DMontoBolivarV").keyup(function() {
-    //         //         DMontoBolivarV();
-    //         //     });
+            //     $("#DMontoDolarV").keyup(function() {
+            //         DMontoDolarV();
+            //     });
+
+            //     $("#DMontoPesoV").keyup(function() {
+            //         DMontoPesoV();
+            //     });
+
+            //     $("#DMontoBolivarV").keyup(function() {
+            //         DMontoBolivarV();
+            //     });
 
 
 

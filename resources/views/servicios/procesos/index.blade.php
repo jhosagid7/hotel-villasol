@@ -961,6 +961,8 @@ text-overflow: ellipsis;
                                         <div class="panel-footer" id="guardar1">
                                             <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
                                                 >
+                                                <input id="restaPagos"name="restaPagos" value="0" type="text">
+                                                <input id="restaVueltos"name="restaVueltos" value="0" type="text">
                                                 <input name="tasaDolar" value="{{ $tasaDolar->tasa }}" type="hidden">
                                                 <input name="porDolar" value="{{ $tasaDolar->porcentaje_ganancia }}" type="hidden">
                                                 <input name="tasaPeso" value="{{ $tasaPeso->tasa }}" type="text">
@@ -1478,6 +1480,8 @@ console.log('Falta '+minutes);
         $("#enviar").on('click', function() {
             // alert();
             const RestaTotal    = document.getElementById('RestaTtotal');
+            const RestaTotalV    = document.getElementById('RestaTtotalV');
+            const PagoTtotalV    = document.getElementById('PagoTtotalV');
             // alert(RestaTotal.innerHTML);
             // $("#form1").submit();
             modoPagoOn = $('#modo_pago').val();
@@ -1506,6 +1510,12 @@ console.log('Falta '+minutes);
 
                 if(RestaTotal.innerHTML > 0){
                     alert('El monto ingresado no supera la deuda a pagar...!');
+                    validarPagoServicio = 0;
+                    return false;
+                }
+
+                if(RestaTotalV.innerHTML > 0){
+                    alert('El vuelto no pueden ser mayor a $' + -1 * PagoTtotalV.innerHTML + ' ...!');
                     validarPagoServicio = 0;
                     return false;
                 }
@@ -3409,6 +3419,9 @@ console.log('Falta '+minutes);
         Excdt.innerHTML = numDecimal(Exc); //se llena el campo resta
         RestaTotal.innerHTML = numDecimal(resta); //se llena el campo resta
 
+        //cargamos los datos de la resta para enviarlos al controlador
+        $('#restaPagos').val(resta);
+
 // alert('valor resta = '+ valor_restar + ' valor = ' + valor + 'resta = ' + resta);
 
             if (valor_restar > valor) {
@@ -3417,6 +3430,10 @@ console.log('Falta '+minutes);
 
             RestaTotalV.innerHTML = numDecimal(resta); //se llena el campo resta
         PagoTtotalV.innerHTML = numDecimal(resta); //se llena el campo resta
+
+        //cargamos los datos de la resta para enviarlos al controlador
+
+        $('#restaVueltos').val(resta);
 
         DMontoDolarV();
 
@@ -3891,7 +3908,7 @@ $("#guardar").show("linear"); //boton qr bueno
 
                 RestaTotalV.innerHTML = numDecimal(restaV); //se llena el campo resta
 
-
+                $('#restaVueltos').val(restaV);
 
                 if (RestaTotalV.innerHTML >= 0) {
                     // alert('soy menor');
