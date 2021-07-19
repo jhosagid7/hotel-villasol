@@ -1649,7 +1649,7 @@
 
 
 
-            $("#guardar").hide();
+            $("#guardar").show();
             $("#gestionpago").hide();
             $("#jidarticulo").change(showValues);
             $("#jidarticulo").change(por);
@@ -1666,7 +1666,57 @@
 
         $(document).ready(function() {
             $("#enviar").on('click', function() {
-                // alert('imprimiendo...');
+                event.preventDefault();
+                let PagoTtotal = document.getElementById('PagoTtotal');
+                let RestaTtotal = document.getElementById('RestaTtotal');
+                let RestaTtotalV = document.getElementById('RestaTtotalV');
+                let Vueltosexcdt = document.getElementById('Vueltosexcdt');
+                let monto_dejadoResta = $('#monto_dejadoResta').val();
+
+                RestaTtotalCuenta = new Decimal(RestaTtotal.innerHTML);
+                RestaTtotalV = new Decimal(RestaTtotalV.innerHTML);
+                PagoExcdntesss = new Decimal(Vueltosexcdt.innerHTML);
+                PagoTtotal = new Decimal(PagoTtotal.innerHTML);
+
+                if (RestaTtotalCuenta > 0) {
+                    alert('Debe ingresar monto para pagar la deuda...');
+                    if (VueltosvtosPendientes > 0) {
+                        document.getElementById("VueltospagoConExcedente").focus();
+                    }else{
+                        document.getElementById("DMontoDolar").focus();
+                    }
+                    return false;
+
+
+                } 
+
+                if (PagoExcdntesss > PagoTtotal) {
+                    alert('Cuando pagas con excedentes. Debe ingresar monto menor o igual a la deuda...');
+                    if (VueltosvtosPendientes > 0) {
+                        document.getElementById("VueltospagoConExcedente").focus();
+                    }else{
+                        document.getElementById("DMontoDolar").focus();
+                    }
+                    return false;
+
+
+                } 
+
+                if (RestaTtotalV  > 0) {
+                    alert('Estas dando mal el vuelto. No puede ser mayor a lo que resta...');
+                    if (VueltosvtosPendientes > 0) {
+                        document.getElementById("VueltospagoConExcedente").focus();
+                    }else{
+                        document.getElementById("DMontoDolar").focus();
+                    }
+                    return false;
+
+
+                } 
+                
+
+                
+                // return false;
                 $("#form1").submit();
             });
 
@@ -3119,7 +3169,7 @@
                     $("#DMontoPesoV").val('');
                     $("#DMontoBolivarV").val('');
                     $("#vueltos").show("linear");
-                    $("#guardar").hide("linear");
+                    $("#guardar").show("linear");
                 }
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3156,7 +3206,7 @@
 
                     $("#r").html("RESTA");
                     $("#tap").html("TOTAL A PAGAR");
-                    $("#guardar").hide("linear");
+                    $("#guardar").show("linear");
                 }
 
 
@@ -3638,7 +3688,7 @@
 
                 $("#rV").html("RESTA");
                 $("#tapV").html("TOTAL A PAGAR");
-                $("#guardar").hide("linear");
+                $("#guardar").show("linear");
             }
 
 
