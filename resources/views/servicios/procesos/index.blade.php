@@ -666,7 +666,7 @@ text-overflow: ellipsis;
                                                                 type="hidden">
                                                             <td class="tituloTabla"><input name="MontoDivisa[]"  class="decimal"
                                                                     type="texto" id="DMontoDolar">
-                                                                    <button type="button" id="cargarDolar" class="btn btn-primary btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarDolar" class="btn btn-primary btn-lg"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
 
                                                             <td><input name="TasaTike[]"   type="texto"
@@ -686,9 +686,9 @@ text-overflow: ellipsis;
                                                             </td>
                                                             </th><input name="divisa[]" value="Peso"
                                                                 type="hidden">
-                                                            <td><input name="MontoDivisa[]"   class="decimal"
+                                                            <td class="tituloTabla"><input name="MontoDivisa[]"   class="decimal"
                                                                     type="texto" id="DMontoPeso">
-                                                                    <button type="button" id="cargarPeso" class="btn btn-info btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarPeso" class="btn btn-info btn-lg"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
                                                             <td><input name="TasaTike[]"   type="texto" readonly
                                                                     id="TasaPeso" value="{{ $tasaPeso->tasa }}">
@@ -698,7 +698,7 @@ text-overflow: ellipsis;
                                                                     onchange="sumar();"></td>
                                                             <td><input name="Veltos[]"   type="text" readonly
                                                                     id="RestaPeso"></td>
-                                                            <td class="tituloTabla"><div id="PeSubTotal" class=""></div></td>
+                                                            <td ><div id="PeSubTotal" class=""></div></td>
                                                         </tr>
                                                         <tr id="trE">
                                                             <td>
@@ -706,9 +706,9 @@ text-overflow: ellipsis;
                                                             </td>
                                                             </th><input name="divisa[]" value="Bolivar"
                                                                 type="hidden">
-                                                            <td><input name="MontoDivisa[]" class="decimal"
+                                                            <td class="tituloTabla"><input name="MontoDivisa[]" class="decimal"
                                                                     type="texto"   id="DMontoBolivar">
-                                                                    <button type="button" id="cargarBolivar" class="btn btn-warning btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarBolivar" class="btn btn-warning btn-lg"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                             </td>
                                                             <td><input name="TasaTike[]"   type="texto" readonly
                                                                     id="TasaBolivar"
@@ -727,9 +727,9 @@ text-overflow: ellipsis;
                                                             </td>
                                                             </th><input name="divisa[]" value="Punto"
                                                                 type="hidden">
-                                                            <td><input name="MontoDivisa[]" class="decimal"
+                                                            <td class="tituloTabla"><input name="MontoDivisa[]" class="decimal"
                                                                     type="texto"   id="DMontoPunto">
-                                                                    <button type="button" id="cargarPunto" class="btn btn-danger btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarPunto" class="btn btn-danger btn-lg"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                 </td>
                                                             <td>
                                                                 <input
@@ -752,9 +752,9 @@ text-overflow: ellipsis;
                                                             </td>
                                                             </th><input name="divisa[]" value="Transferencia"
                                                                 type="hidden">
-                                                            <td><input name="MontoDivisa[]" class="decimal"
+                                                            <td class="tituloTabla"><input name="MontoDivisa[]" class="decimal"
                                                                     class="" type="texto"   id="DMontoTrans">
-                                                                    <button type="button" id="cargarTrans" class="btn btn-success btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                    <button type="button" id="cargarTrans" class="btn btn-success btn-lg"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
                                                                 </td>
                                                             <td>
                                                                 <input
@@ -782,9 +782,9 @@ text-overflow: ellipsis;
                                                             <h4 id="ex" class="text-bold">TOTAL EXCEDENTE</h4>
                                                             <h4 id="r" class="text-bold">RESTA</h4>
                                                             <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
-                                                            <input id="monto_dejado" name="monto_dejado" type="text" value="">
-                                                            <input id="base_vuelto_monto_dejado" name="base_vuelto_monto_dejado" type="text" value="">
-                                                            <input id="monto_dejadoResta" name="monto_dejadoResta" type="text" value="">
+                                                            <input id="monto_dejado" name="monto_dejado" type="hidden" value="">
+                                                            <input id="base_vuelto_monto_dejado" name="base_vuelto_monto_dejado" type="hidden" value="">
+                                                            <input id="monto_dejadoResta" name="monto_dejadoResta" type="hidden" value="">
                                                             <input id="isVueltos" name="isVueltos" type="hidden" value="0">
                                                             <input id="cantidad" name="cantidad" type="hidden" value="">
                                                             <input id="num_servicio" name="num_servicio" type="hidden" value="{{$num_servicio}}">
@@ -961,17 +961,17 @@ text-overflow: ellipsis;
                                         <div class="panel-footer" id="guardar1">
                                             <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
                                                 >
-                                                <input id="restaPagos"name="restaPagos" value="0" type="text">
-                                                <input id="restaVueltos"name="restaVueltos" value="0" type="text">
+                                                <input id="restaPagos"name="restaPagos" value="0" type="hidden">
+                                                <input id="restaVueltos"name="restaVueltos" value="0" type="hidden">
                                                 <input name="tasaDolar" value="{{ $tasaDolar->tasa }}" type="hidden">
                                                 <input name="porDolar" value="{{ $tasaDolar->porcentaje_ganancia }}" type="hidden">
-                                                <input name="tasaPeso" value="{{ $tasaPeso->tasa }}" type="text">
+                                                <input name="tasaPeso" value="{{ $tasaPeso->tasa }}" type="hidden">
                                                 <input name="porPeso" value="{{ $tasaPeso->porcentaje_ganancia }}" type="hidden">
                                                 <input name="tasaTransPunto" value="{{ $tasaTransferenciaPunto->tasa }}" type="hidden">
                                                 <input name="porTransPunto" value="{{ $tasaTransferenciaPunto->porcentaje_ganancia }}" type="hidden">
                                                 <input name="tasaMixto" value="{{ $tasaMixto->tasa }}" type="hidden">
                                                 <input name="porMixto" value="{{ $tasaMixto->porcentaje_ganancia }}" type="hidden">
-                                                <input name="tasaEfectivo" value="{{ $tasaEfectivo->tasa }}" type="text">
+                                                <input name="tasaEfectivo" value="{{ $tasaEfectivo->tasa }}" type="hidden">
                                                 <input name="porEfectivo" value="{{ $tasaEfectivo->porcentaje_ganancia }}" type="hidden">
                                                 <input id="tasaDolarHabitacion" name="tasaDolarHabitacion" value="{{ $tasaDolarHabitacion->tasa }}" type="hidden">
                                                 <input name="porDolarHabitacion" value="{{ $tasaDolarHabitacion->porcentaje_ganancia }}" type="hidden">
@@ -1521,7 +1521,7 @@ console.log('Falta '+minutes);
                 }
                 // alert(RestaTotal.innerHTML);
 
-                $('#motoShow').html('$' + monto_dejadoR);
+                $('#motoShow').html('$' + parseFloat(monto_dejadoR));
                 validarPagoServicio = 1;
                 $('#precontadomodal').modal('show');
 

@@ -15,13 +15,22 @@ class Venta extends Model
     public function articulo_ventas(){
         return $this->hasMany(Articulo_venta::class);
     }
+    public function servicios_ventas(){
+        return $this->hasMany(Servicios_Ventas::class);
+    }
     public function pago_ventas(){
         return $this->hasMany(Pago_Venta::class);
+    }
+    public function pago_vueltos(){
+        return $this->hasMany(Pago_Vuelto::class);
     }
 
 
     public function caja(){
         return $this->belongsTo(Caja::class);
+    }
+    public function servicio(){
+        return $this->belongsTo(Servicio::class);
     }
 
     public function Persona(){
@@ -61,6 +70,7 @@ class Venta extends Model
         'ganancia_neta',
         'estado',
         'persona_id',
+        'servicio_id',
         'caja_id'
     ];
 

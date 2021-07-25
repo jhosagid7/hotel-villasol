@@ -34,6 +34,9 @@ class Servicio extends Model
     public function pago_ventas(){
         return $this->hasMany(Pago_Venta::class);
     }
+    public function ventas(){
+        return $this->hasMany(Venta::class);
+    }
 
     public function pago_vueltos(){
         return $this->hasMany(Pago_Vuelto::class);

@@ -1634,14 +1634,14 @@
                     <td>
                         @if ($venta->modo_pago)
                             @foreach ($cajas->pago_vueltos as $pagovuts)
-                            @if ($pagovuts->servicio_id == $venta->servicio_id && $pagovuts->Tipo == 'Consumo')
+                            @if ($pagovuts->servicio_id == $venta->servicio_id && $pagovuts->Tipo == 'Consumo' && $pagovuts->venta_id == $venta->id)
                                 {{ ' '.$pagovuts->Divisa.': '.floatval($pagovuts->MontoDivisa) ?? '0.00' }}
                             @endif
                             @endforeach
                         @endif
                         @if ($cajas->excedente_actual_valor)
                             @foreach ($cajas->excedente_actual_valor as $vtosDevueltos)
-                            @if ($vtosDevueltos->servicio_id == $venta->servicio_id && $vtosDevueltos->Estado == 'Devueltos' && $vtosDevueltos->Tipo == 'Consumo')
+                            @if ($vtosDevueltos->servicio_id == $venta->servicio_id && $vtosDevueltos->Estado == 'Devueltos' && $vtosDevueltos->Tipo == 'Consumo' && $vtosDevueltos->venta_id == $venta->id)
                                 @if ($vtosDevueltos->Divisa <> 'Dolar')
                                     <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.number_format($vtosDevueltos->MontoDivisa,2) ?? '' }}</b>
                                 @else
@@ -1656,12 +1656,24 @@
                     <td>{{ floatval($venta->total_venta) ?? '' }}</td>
 
                     @can('haveaccess', 'cajacosto.show')
-                    <td>{{ floatval($venta->ganancia_neta) ?? '' }}</td>
+                    <td>
+
+                        @if ($venta->modo_pago)
+                            @foreach ($cajas->pago_ventas as $pagoventas)
+                            @if ($pagoventas->servicio_id == $venta->servicio_id && $pagoventas->venta_id == $venta->id)
+                                @if (floatval($pagoventas->MontoDolarConsumo * $pagoventas->TasaTiket) > 0)
+                                    {{ ' '.$pagoventas->Divisa.': '.floatval($pagoventas->MontoDolarConsumo * $pagoventas->TasaTiket) ?? '0.00' }}
+                                @endif
+
+                            @endif
+                            @endforeach
+                        @endif
+                    </td>
                     @endcan
                     <td>
                         @if ($cajas->excedente_actual_valor)
                             @foreach ($cajas->excedente_actual_valor as $vtosPendtes)
-                            @if ($vtosPendtes->servicio_id == $venta->servicio_id && $vtosPendtes->Estado == 'Pendiente' && $vtosPendtes->Tipo == 'Consumo')
+                            @if ($vtosPendtes->servicio_id == $venta->servicio_id && $vtosPendtes->Estado == 'Pendiente' && $vtosPendtes->Tipo == 'Consumo' && $vtosPendtes->venta_id == $venta->id)
                             @if ($vtosPendtes->Divisa <> 'Dolar')
                                     <b class="text-bold">{{ ' '.$vtosPendtes->Divisa.': '.number_format(floatval($vtosPendtes->MontoDivisa),2,',','.') ?? '' }}</b>
                                 @else

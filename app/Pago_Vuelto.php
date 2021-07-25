@@ -8,11 +8,13 @@ class Pago_Vuelto extends Model
 {
     protected $fillabel = [
         'Tipo',
+        'tipo_vuelto',
         'Divisa',
         'MontoDivisa',
         'TasaTiket',
         'MontoDolar',
         'servicio_id',
+        'venta_id',
         'caja_id'
     ];
 
@@ -22,6 +24,10 @@ class Pago_Vuelto extends Model
 
     public function servicio(){
         return $this->belongsTo(Servicio::class);
+    }
+
+    public function venta(){
+        return $this->belongsTo(Venta::class);
     }
 
     public function cajas(){

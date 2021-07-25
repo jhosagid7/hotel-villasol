@@ -14,7 +14,8 @@ class Pago_Servicio extends Model
         'MontoDolarServicio',
         'Excedente',
         'Vueltos',
-        'servicio_id'
+        'servicio_id',
+        'caja_id'
     ];
 
 
@@ -23,5 +24,9 @@ class Pago_Servicio extends Model
 
     public function servicio(){
         return $this->belongsTo(Servicio::class);
+    }
+
+    public function caja(){
+        return $this->belongsTo(Caja::class);
     }
 }

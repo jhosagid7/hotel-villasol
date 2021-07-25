@@ -20,7 +20,8 @@ class Servicios_Ventas extends Model
     'estado_pago',
     'tipo_pago',
     'articulo_id',
-    'servicio_id'
+    'servicio_id',
+    'venta_id'
 
     ];
 
@@ -48,5 +49,7 @@ class Servicios_Ventas extends Model
     {
         return $this->belongsTo(Articulo::class);
     }
+
+
 
 }

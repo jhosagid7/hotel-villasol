@@ -483,8 +483,8 @@
                             <input name="direccion_cliente" type="hidden" value="{{ $habitacion[0]->direccion_cliente ?? '' }}">
                             <input name="telefono_cliente" type="hidden" value="{{ $habitacion[0]->telefono_cliente ?? '' }}">
                             <input name="cliente_id" type="hidden" value="{{ $habitacion[0]->persona_id ?? '' }}">
-                            <input name="limite_fecha" id="limite_fecha" type="text" value="{{ $cliente->limite_fecha ?? '' }}">
-                            <input name="limite_monto" id="limite_monto" type="text" value="{{ $cliente->limite_monto ?? '' }}">
+                            <input name="limite_fecha" id="limite_fecha" type="hidden" value="{{ $cliente->limite_fecha ?? '' }}">
+                            <input name="limite_monto" id="limite_monto" type="hidden" value="{{ $cliente->limite_monto ?? '' }}">
                             <input type="hidden" name="total_credito_pendiente" value="{{$credito->total_deuda ?? ''}}" id="total_credito_pendiente">
                             <input type="hidden" name="estado_credito" value="{{$credito->estado_credito ?? ''}}" id="estado_credito">
                             <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id ?? ''}}">
@@ -593,7 +593,7 @@
                                 @endif
 
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="form-group">
+                                    <div class="form-group hidden">
                                         <label for="tipo_comprobante">Tipo Comprobante</label>
                                         <select name="tipo_comprobante" class="form-control">
                                             <option value="Orden">Orden</option>
@@ -603,14 +603,14 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="form-group">
+                                    <div class="form-group hidden">
                                         <label for="serie_comprobante">Control Comprobante</label>
                                         <input readonly type="text" name="serie_comprobante" class="form-control"
                                     value="{{ old('serie_comprobante') }} {{ $num_comprobante ?? '' }}" placeholder="Control Comprobante...">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="form-group">
+                                    <div class="form-group hidden">
                                         <label for="num_comprobante">Número Comprobante</label>
                                         <input readonly type="text" name="num_comprobante" required class="form-control"
                                             value="{{ old('num_comprobante') }} {{ $serie_comprobante ?? '' }}" placeholder="Número Comprobante...">
@@ -1148,8 +1148,10 @@
                                                                         <input class="form-control" type="hidden" id="dispExcedente" name="dispExcedente" >
                                                                     </div> --}}
                                                                     <div id="Vueltosexcedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
-                                                                        <label for="VueltospagoConExcedente"><h2 class="text-blue">Vueltos pendientes: <b id="VueltosdispExcedenteShow">$.0.00</b></h2></label>
-                                                                        <input class="form-control" type="text" id="VueltospagoConExcedente" name="VueltospagoConExcedente" >
+                                                                        <label for="VueltospagoConExcedente"><h1 class="text-blue"><button type="button" id="cargarExcedente" class="btn btn-blue"> <i class="fa fa-money" aria-hidden="true"> <b>USAR VUELTOS PENDIENTES: </b> <b id="VueltosdispExcedenteShow">$.0.00</b></i></button><div class="col-xs-3">
+                                                                            <input class="form-control" type="text" id="VueltospagoConExcedente" name="VueltospagoConExcedente" readonly>
+                                                                        </div></h1></label>
+
                                                                         <input class="form-control" type="hidden" id="VueltosdispExcedente" name="VueltosdispExcedente" >
                                                                     </div>
                                                                     {{-- <div id="nocredito" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
@@ -1309,8 +1311,8 @@
                                                                                     <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}">
                                                                                     <input id="user_id" name="user_id" type="hidden" value="{{$UserId}}">
 
-                                                                                    <input id="base_vuelto_monto_dejado" name="base_vuelto_monto_dejado" type="text" value="">
-                                                                                    <input id="monto_dejadoResta" name="monto_dejadoResta" type="text" value="">
+                                                                                    <input id="base_vuelto_monto_dejado" name="base_vuelto_monto_dejado" type="hidden" value="">
+                                                                                    <input id="monto_dejadoResta" name="monto_dejadoResta" type="hidden" value="">
                                                                                 <th>
                                                                                     <h4 class="text-bold" id="spTotal">0.00</h4>
                                                                                     <h4 class="text-bold" id="Vueltosexcdt">0.00</h4>
@@ -1495,8 +1497,8 @@
                                                                         <input id="esCortesia" name="esCortesia"  value="{{ $cliente->isCortesia }}" type="hidden">
                                                                         <input id="esCredito" name="esCredito" value="{{ $cliente->isCredito }}" type="hidden">
 
-                                                                        <input id="vtosPendientes" name="vtosPendientes" value="{{ $cajas->excedenteCLiente ?? '' }}" type="text">
-                                                                        <input id="VueltosvtosPendientes" name="VueltosvtosPendientes" value="{{ $cajas->TotalSumaVueltosPendientesClienteDolar ?? '' }}" type="text">
+                                                                        <input id="vtosPendientes" name="vtosPendientes" value="{{ $cajas->excedenteCLiente ?? '' }}" type="hidden">
+                                                                        <input id="VueltosvtosPendientes" name="VueltosvtosPendientes" value="{{ $cajas->TotalSumaVueltosPendientesClienteDolar ?? '' }}" type="hidden">
                                                                         {{-- <button id="enviar" class="btn btn-primary btn-block"
                                                                             type="button">Guardar</button> --}}
                                                                     </div>
@@ -1638,6 +1640,8 @@
             var vcargarpto = 0;
             var vcargart = 0;
 
+            var vcarexcdt = 0;
+
 
             var vcargarV = 0;
             var vcargarpV = 0;
@@ -1672,6 +1676,7 @@
                 let RestaTtotalV = document.getElementById('RestaTtotalV');
                 let Vueltosexcdt = document.getElementById('Vueltosexcdt');
                 let monto_dejadoResta = $('#monto_dejadoResta').val();
+                let base_vuelto_monto_dejado = $('#base_vuelto_monto_dejado').val();
 
                 RestaTtotalCuenta = new Decimal(RestaTtotal.innerHTML);
                 RestaTtotalV = new Decimal(RestaTtotalV.innerHTML);
@@ -1688,9 +1693,9 @@
                     return false;
 
 
-                } 
+                }
 
-                if (PagoExcdntesss > PagoTtotal) {
+                if (PagoExcdntesss > PagoTtotal && base_vuelto_monto_dejado <= 0) {
                     alert('Cuando pagas con excedentes. Debe ingresar monto menor o igual a la deuda...');
                     if (VueltosvtosPendientes > 0) {
                         document.getElementById("VueltospagoConExcedente").focus();
@@ -1700,7 +1705,7 @@
                     return false;
 
 
-                } 
+                }
 
                 if (RestaTtotalV  > 0) {
                     alert('Estas dando mal el vuelto. No puede ser mayor a lo que resta...');
@@ -1712,10 +1717,10 @@
                     return false;
 
 
-                } 
-                
+                }
 
-                
+
+
                 // return false;
                 $("#form1").submit();
             });
@@ -3585,6 +3590,33 @@
                         $("#isVueltos").val('');
                         DMontoTrans();
                     });
+                    $("#cargarExcedente").on('click', function() {
+
+                        if(vcarexcdt == 0){
+                            let VueltosdispExcedente = $("#VueltosdispExcedente").val();
+                            // alert(VueltosdispExcedente);
+                            // $("#VueltosdispExcedenteShow").html('$'+VueltosdispExced.toFixed(2));
+                            let PagoTtotal = document.getElementById('PagoTtotal');
+                            // alert(PagoTtotalinnerHTML);
+                            if(parseFloat(VueltosdispExcedente) >= parseFloat(PagoTtotal.innerHTML)){
+                                // alert('mayor');
+                                $('#VueltospagoConExcedente').val(parseFloat(PagoTtotal.innerHTML));
+                                DMontoDolar();
+                            }else{
+                                // alert('menor');
+                                $('#VueltospagoConExcedente').val(parseFloat(VueltosdispExcedente));
+                                DMontoDolar();
+                            }
+
+                            vcarexcdt =1;
+                        }else{
+
+                            $('#VueltospagoConExcedente').val('');
+                            DMontoDolar();
+                            vcarexcdt = 0;
+                        }
+
+                    });
 
                     $("#pagoConExcedente").keyup(function() {
                         DMontoDolar();
@@ -4166,6 +4198,7 @@
                 DMontoBolivarV();
             }
         });
+
 
     // $("#cargarDolarV").on('click', function() {
     //     // alert('2');
