@@ -47,6 +47,8 @@ class RecepcionController extends Controller
 
 // return $horarios;
 
+// return $horarios;
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // este codigo maneja las fechas de los creditos vencidos
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -353,14 +355,14 @@ return response()->json($clientes);
      * @param  \App\Recepcion  $resepcion
      * @return \Illuminate\Http\Response
      */
-    public function show(Recepcion $resepcion)
-    {
-        //
-    }
+    // public function show(Recepcion $resepcion)
+    // {
+    //     //
+    // }
 
-    public function registrarHabitacion(Recepcion $resepcion){
-        return $request;
-    }
+    // public function registrarHabitacion(Recepcion $resepcion){
+    //     return $request;
+    // }
 
 
 }

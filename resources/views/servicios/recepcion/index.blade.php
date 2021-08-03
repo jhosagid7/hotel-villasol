@@ -4,6 +4,23 @@
 
 <style type="text/css">
     .bootstrap-select { width: 400px !important; }
+
+    /* .select2-selection__rendered {
+    line-height: 150px !important;
+}
+.select2-container .select2-selection--single {
+    height: 150px !important;
+}
+.select2-selection__arrow {
+    height: 150px !important;
+} */
+
+.select2-results__option {
+    height: 50px !important;
+    padding: 12px 12px;
+    /* user-select: none;
+    -webkit-user-select: none; */
+}
     </style>
 
 
@@ -26,18 +43,7 @@
                               @endforeach
 
 
-                            <li class="dropdown">
-                              <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                                Acción <span class="caret"></span>
-                              </a>
-                              <ul class="dropdown-menu">
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Action</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Another action</a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Something else here</a></li>
-                                <li role="presentation" class="divider"></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Separated link</a></li>
-                              </ul>
-                            </li>
+
                             <li class="pull-left header"><i class="fa fa-th"></i> @isset($title)
                                 {{$title}}
                                 @else
@@ -294,7 +300,7 @@
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span></button>
-                                                <h4 class="modal-title"><span class="fa fa-spinner"></span> SELECCIONE SERVICIO </h4>
+                                                <h4 class="modal-title"><span class="fa fa-spinner"></span> SELECCIONE SERVICIO</h4>
                                             </div>
                                             <div class="modal-body" style="background-color:#fff !important;">
 
@@ -329,10 +335,49 @@
                                                             <span class="input-group-addon">SERVICIOS</span>
                                                             {{-- <select id="segr_name" name="segr_name" data-size="2" data-width="100%" class="selectpicker" multiple data-value="{{segr_name}}" title="Seleccione Grupo de Servicio"> --}}
                                                               {{-- <option id="0" value="0">0</option> --}}
-                                                            <select   data-size="2" data-width="100%" palceholder="hola" data-id="{{$habitacion->cat->id}}" title="Seleccione Servicio" name="horario" id="horario" class="selval form-control select2">
+                                                            <select  data-size="2" data-width="100%" palceholder="hola" data-id="{{$habitacion->cat->id}}" title="Seleccione Servicio" name="horario" id="horario" class="selval form-control select2">
                                                                 <option value="0"></option>
                                                                 @foreach($horarios as $horario)
+                                                                @php
+                                                                    date_default_timezone_set('America/Caracas');
+                                                                    // $hora24 = date('H:i:s', $hora24);   date('H', strToTime($horario->restringir_hasta)) >= $hora && $hora <= date('H', strToTime($horario->restringir_desde))
+                                                                    $hora_actual = intval(date("H"));
+                                                                    // $desde = intval(date('H', strToTime($horario->restringir_desde)));
+                                                                    // $hasta = intval(date('H', strToTime($horario->restringir_hasta)));
+                                                                    $desde_diurno = [5,6,7,8,9,10,11,12,13,14,15,16,17,18];
+                                                                    $hasta_comercial = [17,18,19,20,21,22,23,00,1,2,3,4];
+
+                                                                    //este proceso controla las horas extras comencial
+                                                                @endphp
+                                                                    {{-- @if ($horario->tipo == 'DIURNO' && $hora == 05 || $hora == 06 || $hora == 07 || $hora == 08 || $hora == 09 || $hora == 10 || $hora == 11 || $hora == 12 || $hora == 13 || $hora == 14 || $hora == 15 || $hora == 16 || $hora == 17 || $hora == 18 || $hora == 19) --}}
+                                                                    {{-- @if ($horario->tipo == 'DIURNO' && $hora >= $desde && $hora <= $hasta) --}}
+                                                                    @if ($horario->tipo == 'DIURNO')
+                                                                        @if (in_array($hora_actual, $desde_diurno))
+                                                                            <option value="{{$horario->id}}">{{$horario->nombre}}</option>
+                                                                        @endif
+
+                                                                    @endif
+
+                                                                    {{-- @if ($horario->tipo == 'COMERCIAL' && $hora == 17 || $hora == 18 || $hora == 19 || $hora == 20 || $hora == 21 || $hora == 22 || $hora == 23 || $hora == 00 || $hora == 01 || $hora == 02 || $hora == 03 || $hora == 04 || $hora == 05) --}}
+                                                                    {{-- @if ($horario->tipo == 'COMERCIAL' && $hora >= $hasta && $hora <= $desde) --}}
+                                                                    {{-- @if ($horario->tipo == 'COMERCIAL' && $hora >= $hasta && $hora <= $desde) --}}
+                                                                    @if ($horario->tipo == 'COMERCIAL')
+                                                                        @if (in_array($hora_actual, $hasta_comercial))
+                                                                            <option value="{{$horario->id}}">{{$horario->nombre}}</option>
+                                                                        @endif
+
+                                                                    @else
+                                                                        @if ($horario->tipo == 'COMERCIAL')
+                                                                        {{-- <option value="{{$horario->id}}">{{$horario->nombre}} {{ $desde }} - {{ $hasta }}</option> --}}
+                                                                            {{-- <option value="{{$horario->id}}">{{$horario->nombre}}{{ date('H', strToTime($horario->restringir_desde)) .' - ' .date('H', strToTime($horario->restringir_hasta)) }}</option> --}}
+                                                                        @endif
+
+                                                                    @endif
+
+                                                                    @if ($horario->tipo == '24 HORAS')
                                                                         <option value="{{$horario->id}}">{{$horario->nombre}}</option>
+                                                                    @endif
+                                                                        {{-- <option value="{{$horario->id}}">{{$horario->nombre}}{{ date('H', strToTime($horario->restringir_desde)) .' - ' .date('H', strToTime($horario->restringir_hasta)) }}</option> --}}
                                                                     @endforeach
                                                                 </select>
                                                             <input class="text-black" id="tasaDolar" name="tasaDolar" value="{{$tasaDolarHabitacion->tasa}}" type="hidden">

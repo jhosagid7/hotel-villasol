@@ -331,12 +331,20 @@ class ExcedenteController extends Controller
                             $HistorialExcedente->user_id  = $user_id;
                             $HistorialExcedente->save();
 
-
+// return 'llego... '.$servicio_id;
                 // TODO Actualizamos la tabla excedentes__recibidos__caja__actuals para poner el estatus en Pagar por oficina
 
-                $upExcedentesRecibidosCajaActual = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)->first();
-                $upExcedentesRecibidosCajaActual->Estado = 'PagarOficina';
-                $upExcedentesRecibidosCajaActual->update();
+                $upExcedentesRecibidosCajaActual = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)->get();
+                foreach ($upExcedentesRecibidosCajaActual as $upExcedentesRecibidosCaja) {
+                    if($upExcedentesRecibidosCaja->Estado == 'Pendiente'){
+                        $upExcedentesRecibidosCajaData = Excedentes_Recibidos_Caja_Actual::findOrFail($upExcedentesRecibidosCaja->id);
+                    $upExcedentesRecibidosCajaData->Estado = 'PagarOficina';
+                    $upExcedentesRecibidosCajaData->update();
+                    }
+
+                }
+
+
 
                 DB::commit();
 

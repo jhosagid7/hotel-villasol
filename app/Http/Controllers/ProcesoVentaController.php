@@ -654,30 +654,30 @@ class ProcesoVentaController extends Controller
 
 
 
-                        // TODO Crear proceso que maneje el pago con vueltos pendiente
+                        // // TODO Crear proceso que maneje el pago con vueltos pendiente
 
-                        // TODO Consultamos la base de datos y sumamos el total de excedentes que tiene ese servicio
-                                    $TotalExcedenteData = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
-                                    ->where('caja_id',$request->get('caja_id'))
-                                    ->where('Estado','Pendiente')
-                                    ->select(DB::raw('SUM(MontoDolar) as totalExcedente'))
-                                    ->get();
-                                    $TotalExcedenteSumado = floatval($TotalExcedenteData[0]->totalExcedente);
+                        // // TODO Consultamos la base de datos y sumamos el total de excedentes que tiene ese servicio
+                        //             $TotalExcedenteData = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                        //             ->where('caja_id',$request->get('caja_id'))
+                        //             ->where('Estado','Pendiente')
+                        //             ->select(DB::raw('SUM(MontoDolar) as totalExcedente'))
+                        //             ->get();
+                        //             $TotalExcedenteSumado = floatval($TotalExcedenteData[0]->totalExcedente);
 
-                                    // return $TotalExcedente;
+                        //             // return $TotalExcedente;
 
 
-                        // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
-                        // $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)->first();
+                        // // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
+                        // // $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)->first();
 
-                        //realizamos la consulta en la base de datos y ordenamos los datos de menor a mayor sobre la columna MontoDolar
-                        //para que luego reste el pago con vueltos pendientes
-                         $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
-                         ->where('caja_id',$request
-                         ->get('caja_id'))
-                         ->where('Estado','Pendiente')
-                         ->orderBy('MontoDolar', 'ASC')
-                         ->get();
+                        // //realizamos la consulta en la base de datos y ordenamos los datos de menor a mayor sobre la columna MontoDolar
+                        // //para que luego reste el pago con vueltos pendientes
+                        //  $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                        //  ->where('caja_id',$request
+                        //  ->get('caja_id'))
+                        //  ->where('Estado','Pendiente')
+                        //  ->orderBy('MontoDolar', 'ASC')
+                        //  ->get();
 
                         // return $RestarVtossPtesToVtosPtes;
 
@@ -1578,6 +1578,7 @@ if($modo_pago == 'credito'){
                                                 $excdtsRecibidosCaja->MontoDolar = floatval($exc);
                                                 $excdtsRecibidosCaja->servicio_id = $servicio_id;
                                                 $excdtsRecibidosCaja->venta_id = $venta->id;
+                                                $excdtsRecibidosCaja->horas_extra_id = 0;
                                                 $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
                                                 $excdtsRecibidosCaja->save();
                                             }
@@ -1619,6 +1620,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = $venta->id;
+                                                        $Pago_Extras_Vueltos->horas_extra_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Extras_Vueltos->save();
 
@@ -1692,7 +1694,7 @@ if($modo_pago == 'credito'){
                                                     // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
 
                                                     $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
-                                                    $AgregarVtossPtesToVtosPtes->Tipo = 'Consumo';
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
                                                     $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
                                                     $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
                                                     $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($value * $RestarVtossPtes->TasaTiket);
@@ -1700,6 +1702,7 @@ if($modo_pago == 'credito'){
                                                     $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($value);
                                                     $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
                                                     $AgregarVtossPtesToVtosPtes->venta_id = $venta->id;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = 0;
                                                     $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
                                                     $AgregarVtossPtesToVtosPtes->save();
 
@@ -1797,7 +1800,7 @@ if($modo_pago == 'credito'){
                                                     echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
                                                     // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
                                                         $Pago_Consumo_Vueltos = new Pago_Vuelto();
-                                                        $Pago_Consumo_Vueltos->Tipo = 'Consumo';
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
                                                         $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
                                                         $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
                                                         $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
@@ -1805,6 +1808,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -1851,7 +1855,7 @@ if($modo_pago == 'credito'){
                                                     // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
 
                                                     $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
-                                                    $AgregarVtossPtesToVtosPtes->Tipo = 'Consumo';
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
                                                     $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
                                                     $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
                                                     $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($restk * $RestarVtossPtes->TasaTiket);
@@ -1859,6 +1863,7 @@ if($modo_pago == 'credito'){
                                                     $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($restk);
                                                     $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
                                                     $AgregarVtossPtesToVtosPtes->venta_id = $venta->id;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = 0;
                                                     $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
                                                     $AgregarVtossPtesToVtosPtes->save();
 
@@ -1956,7 +1961,7 @@ if($modo_pago == 'credito'){
                                                     echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
                                                     // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
                                                         $Pago_Consumo_Vueltos = new Pago_Vuelto();
-                                                        $Pago_Consumo_Vueltos->Tipo = 'Consumo';
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
                                                         $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
                                                         $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
                                                         $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
@@ -1964,6 +1969,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2051,7 +2057,7 @@ if($modo_pago == 'credito'){
                                                     // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
 
                                                     $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
-                                                    $AgregarVtossPtesToVtosPtes->Tipo = 'Consumo';
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
                                                     $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
                                                     $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
                                                     $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($value * $RestarVtossPtes->TasaTiket);
@@ -2059,6 +2065,7 @@ if($modo_pago == 'credito'){
                                                     $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($value);
                                                     $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
                                                     $AgregarVtossPtesToVtosPtes->venta_id = $venta->id;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = 0;
                                                     $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
                                                     $AgregarVtossPtesToVtosPtes->save();
 
@@ -2156,7 +2163,7 @@ if($modo_pago == 'credito'){
                                                     echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
                                                     // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
                                                         $Pago_Consumo_Vueltos = new Pago_Vuelto();
-                                                        $Pago_Consumo_Vueltos->Tipo = 'Consumo';
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
                                                         $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
                                                         $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
                                                         $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
@@ -2164,6 +2171,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2210,7 +2218,7 @@ if($modo_pago == 'credito'){
                                                     // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
 
                                                     $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
-                                                    $AgregarVtossPtesToVtosPtes->Tipo = 'Consumo';
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
                                                     $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
                                                     $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
                                                     $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($restk * $RestarVtossPtes->TasaTiket);
@@ -2218,6 +2226,7 @@ if($modo_pago == 'credito'){
                                                     $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($restk);
                                                     $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
                                                     $AgregarVtossPtesToVtosPtes->venta_id = $venta->id;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = 0;
                                                     $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
                                                     $AgregarVtossPtesToVtosPtes->save();
 
@@ -2315,7 +2324,7 @@ if($modo_pago == 'credito'){
                                                     echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
                                                     // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
                                                         $Pago_Consumo_Vueltos = new Pago_Vuelto();
-                                                        $Pago_Consumo_Vueltos->Tipo = 'Consumo';
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
                                                         $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
                                                         $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
                                                         $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
@@ -2323,6 +2332,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2514,6 +2524,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                 $excdtsRecibidosCaja->MontoDolar = floatval($exc);
                                                 $excdtsRecibidosCaja->servicio_id = $servicio_id;
                                                 $excdtsRecibidosCaja->venta_id = $venta->id;
+                                                $excdtsRecibidosCaja->horas_extra_id = 0;
                                                 $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
                                                 $excdtsRecibidosCaja->save();
                                             }
@@ -2555,6 +2566,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = $venta->id;
+                                                        $Pago_Extras_Vueltos->horas_extra_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Extras_Vueltos->save();
 
@@ -2603,12 +2615,13 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                             }
 
                             // return 'no';
-                        }else{
-
-
-                            return Redirect::back()
-                                ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
                         }
+                        // else{
+
+
+                        //     return Redirect::back()
+                        //         ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
+                        // }
 
 
                         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

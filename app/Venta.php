@@ -24,6 +24,9 @@ class Venta extends Model
     public function pago_vueltos(){
         return $this->hasMany(Pago_Vuelto::class);
     }
+    public function excedentes(){
+        return $this->hasMany(Excedentes_Recibidos_Caja_Actual::class);
+    }
 
 
     public function caja(){

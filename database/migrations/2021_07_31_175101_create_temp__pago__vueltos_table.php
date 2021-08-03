@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePagoVueltosTable extends Migration
+class CreateTempPagoVueltosTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,14 @@ class CreatePagoVueltosTable extends Migration
      */
     public function up()
     {
-        Schema::create('pago__vueltos', function (Blueprint $table) {
+        Schema::create('temp__pago__vueltos', function (Blueprint $table) {
             $table->id();
-            $table->enum('Tipo', ['Servicio', 'Consumo','Creditos','Horas_Extras'])->nullable();
-            $table->enum('tipo_vuelto', ['Vueltos_Pagos', 'Vueltos_Excedentes'])->nullable();
+            $table->enum('Tipo', ['Pendiente', 'Procesado'])->nullable();
             $table->string('Divisa', 20)->nullable();
             $table->decimal('MontoDivisa', 25, 8)->nullable();
             $table->decimal('TasaTiket', 25, 2)->nullable();
             $table->decimal('MontoDolar', 25, 8)->nullable();
             $table->foreignId('servicio_id')->references('id')->on('servicios');
-            $table->foreignId('venta_id')->references('id')->on('ventas');
-            $table->foreignId('horas_extra_id ')->references('id')->on('horas_extras');
             $table->foreignId('caja_id')->references('id')->on('cajas');
             $table->timestamps();
         });
@@ -36,6 +33,6 @@ class CreatePagoVueltosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('pago__vueltos');
+        Schema::dropIfExists('temp__pago__vueltos');
     }
 }

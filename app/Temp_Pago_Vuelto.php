@@ -4,17 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Pago_Extra extends Model
+class Temp_Pago_Vuelto extends Model
 {
     protected $fillabel = [
+        'Tipo',
         'Divisa',
         'MontoDivisa',
         'TasaTiket',
         'MontoDolar',
-        'MontoDolarHoraExctra',
-        'Excedente',
-        'Vueltos',
-        'horas_extra_id',
         'servicio_id',
         'caja_id'
     ];
@@ -25,10 +22,6 @@ class Pago_Extra extends Model
 
     public function servicio(){
         return $this->belongsTo(Servicio::class);
-    }
-
-    public function horas_extra(){
-        return $this->belongsTo(Horas_extra::class);
     }
 
     public function cajas(){

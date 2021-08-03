@@ -15,6 +15,7 @@ class Pago_Vuelto extends Model
         'MontoDolar',
         'servicio_id',
         'venta_id',
+        'horas_extra_id',
         'caja_id'
     ];
 

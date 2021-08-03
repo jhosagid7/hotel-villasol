@@ -275,7 +275,7 @@ class CheckoutController extends Controller
                     }
                     $excedenteCliente = Excedente::where('persona_id',$cliente->id)->first();
 
-                    // return $excedenteCliente;
+                    // return $excedentesPendientesCajas;
 
                     if($excedenteCliente){
                         $cajas->excedenteCLiente = $excedenteCliente->excedente;

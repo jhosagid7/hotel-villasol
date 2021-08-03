@@ -14,6 +14,8 @@ class Excedentes_Recibidos_Caja_Actual extends Model
         'TasaTiket',
         'MontoDolar',
         'servicio_id',
+        'venta_id',
+        'horas_extra_id',
         'caja_id'
     ];
 
@@ -27,5 +29,11 @@ class Excedentes_Recibidos_Caja_Actual extends Model
 
     public function servicio(){
         return $this->belongsTo(Servicio::class);
+    }
+    public function venta(){
+        return $this->belongsTo(Venta::class);
+    }
+    public function horas_extra(){
+        return $this->belongsTo(Horas_extra::class);
     }
 }

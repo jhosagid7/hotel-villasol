@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Caja;
+use App\Venta;
 use App\Credito;
 use App\Horario;
 use App\Persona;
@@ -20,12 +21,14 @@ use App\Pago_Credito;
 use App\Pago_Servicio;
 use App\Detalle_credito;
 use App\Servicios_Ventas;
+use App\Temp_Pago_Vuelto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Excedentes_Recibidos_Caja_Actual;
 use App\Http\Controllers\PrinterController;
+use App\Excedentes_Pendientes_Caja_Anterior;
 
 class ServicioController extends Controller
 {
@@ -843,6 +846,7 @@ class ServicioController extends Controller
                                                 $excdtsRecibidosCaja->MontoDolar = floatval($exc);
                                                 $excdtsRecibidosCaja->servicio_id = $servicio_id;
                                                 $excdtsRecibidosCaja->venta_id = 0;
+                                                $excdtsRecibidosCaja->horas_extra_id = 0;
                                                 $excdtsRecibidosCaja->caja_id = $caja_id;
                                                 $excdtsRecibidosCaja->save();
                                                 echo  'Excedentes_Recibidos_Caja_Actual Tipo: Servicio Estado: Pendiente Divisa: '.$p.' MontoDivisa: '.floatval($exc * $TasaT[$p]).' TasaTiket: '.$TasaT[$p].'  MontoDolar:  '.floatval($exc).'<br> ';
@@ -885,6 +889,7 @@ class ServicioController extends Controller
                                                         $Pago_Extras_Vueltos->MontoDolar = floatval($VMontoDolar[$cont]);
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = 0;
+                                                        $Pago_Extras_Vueltos->horas_extra_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $caja_id;
                                                         $Pago_Extras_Vueltos->save();
 
@@ -912,12 +917,13 @@ class ServicioController extends Controller
                             }
 
                             // return 'no';
-                        }else{
-
-
-                            return Redirect::back()
-                                ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
                         }
+                        // else{
+
+
+                        //     return Redirect::back()
+                        //         ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
+                        // }
 
 
                         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1663,139 +1669,139 @@ class ServicioController extends Controller
                         // return $bolivarDisponible;
 
 
-                        // TODO Crear proceso que maneje el pago con vueltos pendiente
+                        // // TODO Crear proceso que maneje el pago con vueltos pendiente
 
 
-                        // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
-                        $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->first();
-                        // return $RestarVtossPtesToVtosPtes;
+                        // // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
+                        // $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->first();
+                        // // return $RestarVtossPtesToVtosPtes;
 
-                        if ($RestarVtossPtesToVtosPtes) {
-                            $RestarVtossPtesToVtosPtes->MontoDivisa = $RestarVtossPtesToVtosPtes->MontoDivisa - ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
-                            $RestarVtossPtesToVtosPtes->MontoDolar = $RestarVtossPtesToVtosPtes->MontoDolar - $VueltospagoConExcedente;
-                            $RestarVtossPtesToVtosPtes->update();
-
-
-                            // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
-
-                            $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
-                            $AgregarVtossPtesToVtosPtes->Tipo = 'Horas_Extras';
-                            $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
-                            $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtesToVtosPtes->Divisa;
-                            $AgregarVtossPtesToVtosPtes->MontoDivisa = ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
-                            $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
-                            $AgregarVtossPtesToVtosPtes->MontoDolar = $VueltospagoConExcedente;
-                            $AgregarVtossPtesToVtosPtes->servicio_id = $id;
-                            $AgregarVtossPtesToVtosPtes->venta_id = 0;
-                            $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
-                            $AgregarVtossPtesToVtosPtes->save();
-
-                            // return $AgregarVtossPtesToVtosPtes->id;
-
-                            // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
-                            if($RestarVtossPtesToVtosPtes->MontoDolar == 0){
-                                Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtesToVtosPtes->id);
-                            }
-                        }
+                        // if ($RestarVtossPtesToVtosPtes) {
+                        //     $RestarVtossPtesToVtosPtes->MontoDivisa = $RestarVtossPtesToVtosPtes->MontoDivisa - ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
+                        //     $RestarVtossPtesToVtosPtes->MontoDolar = $RestarVtossPtesToVtosPtes->MontoDolar - $VueltospagoConExcedente;
+                        //     $RestarVtossPtesToVtosPtes->update();
 
 
-                        // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
-                        // $tasaPeso
-                        // $tasaTransferenciaPunto
-                        // $tasaEfectivo
+                        //     // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                        //     $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                        //     $AgregarVtossPtesToVtosPtes->Tipo = 'Horas_Extras';
+                        //     $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                        //     $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtesToVtosPtes->Divisa;
+                        //     $AgregarVtossPtesToVtosPtes->MontoDivisa = ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
+                        //     $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                        //     $AgregarVtossPtesToVtosPtes->MontoDolar = $VueltospagoConExcedente;
+                        //     $AgregarVtossPtesToVtosPtes->servicio_id = $id;
+                        //     $AgregarVtossPtesToVtosPtes->venta_id = 0;
+                        //     $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                        //     $AgregarVtossPtesToVtosPtes->save();
+
+                        //     // return $AgregarVtossPtesToVtosPtes->id;
+
+                        //     // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                        //     if($RestarVtossPtesToVtosPtes->MontoDolar == 0){
+                        //         Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtesToVtosPtes->id);
+                        //     }
+                        // }
+
+
+                        // // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                        // // $tasaPeso
+                        // // $tasaTransferenciaPunto
+                        // // $tasaEfectivo
 
                         $Restardivisa = '';
                         $RestarMontoDivisa = 0;
                         $RestarTasaTiket = 0;
                         $RestarMontoDolar = 0;
 
-                        $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
-                        // return $RestarVtossPtesToVtosPtesDevueltos;
+                        // $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                        // // return $RestarVtossPtesToVtosPtesDevueltos;
 
-                        if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
-                            // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
-                            if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
-                                // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
-                                if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
-                                    $Restardivisa = 'Dolar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * 1;
-                                    $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
-                                    $Restardivisa = 'Peso';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
-                                    $RestarTasaTiket = $tasaPeso->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
-                                    $Restardivisa = 'Bolivar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
-                                    $RestarTasaTiket = $tasaEfectivo->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }
-                                // return $RestarMontoDivisa;
-
-
-                            }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
-                                if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
-                                    $Restardivisa = 'Peso';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
-                                    $RestarTasaTiket = $tasaPeso->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
-                                    $Restardivisa = 'Dolar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * 1;
-                                    $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
-                                    $Restardivisa = 'Bolivar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
-                                    $RestarTasaTiket = $tasaEfectivo->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }
+                        // if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                        //     // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                        //     if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                        //         // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                        //         if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
+                        //             $Restardivisa = 'Dolar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * 1;
+                        //             $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
+                        //             $Restardivisa = 'Peso';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
+                        //             $RestarTasaTiket = $tasaPeso->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
+                        //             $Restardivisa = 'Bolivar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
+                        //             $RestarTasaTiket = $tasaEfectivo->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }
+                        //         // return $RestarMontoDivisa;
 
 
-
-                            }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
-                                if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
-                                    $Restardivisa = 'Bolivar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
-                                    $RestarTasaTiket = $tasaEfectivo->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
-                                    $Restardivisa = 'Peso';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
-                                    $RestarTasaTiket = $tasaPeso->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
-                                    $Restardivisa = 'Dolar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * 1;
-                                    $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }
-
-
-                            }
-                            // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
-                                $Pago_Extras_Vueltos = new Pago_Vuelto();
-                                $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
-                                $Pago_Extras_Vueltos->Divisa = $Restardivisa;
-                                $Pago_Extras_Vueltos->MontoDivisa = $RestarMontoDivisa;
-                                $Pago_Extras_Vueltos->TasaTiket = $RestarTasaTiket;
-                                $Pago_Extras_Vueltos->MontoDolar = $RestarMontoDolar;
-                                $Pago_Extras_Vueltos->servicio_id = $id;
-                                $Pago_Extras_Vueltos->venta_id = 0;
-                                $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
-                                $Pago_Extras_Vueltos->save();
-                         // REVIEW REVISAR
-                        }
-
-                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                        //         if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
+                        //             $Restardivisa = 'Peso';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
+                        //             $RestarTasaTiket = $tasaPeso->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
+                        //             $Restardivisa = 'Dolar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * 1;
+                        //             $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
+                        //             $Restardivisa = 'Bolivar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
+                        //             $RestarTasaTiket = $tasaEfectivo->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }
 
 
-                        // return $dolarDisponible;
-                        // return $pesoDisponible;
-                        // return $bolivarDisponible;
+
+                        //     }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                        //         if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
+                        //             $Restardivisa = 'Bolivar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
+                        //             $RestarTasaTiket = $tasaEfectivo->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
+                        //             $Restardivisa = 'Peso';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
+                        //             $RestarTasaTiket = $tasaPeso->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
+                        //             $Restardivisa = 'Dolar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * 1;
+                        //             $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }
+
+
+                        //     }
+                        //     // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                        //         $Pago_Extras_Vueltos = new Pago_Vuelto();
+                        //         $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
+                        //         $Pago_Extras_Vueltos->Divisa = $Restardivisa;
+                        //         $Pago_Extras_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                        //         $Pago_Extras_Vueltos->TasaTiket = $RestarTasaTiket;
+                        //         $Pago_Extras_Vueltos->MontoDolar = $RestarMontoDolar;
+                        //         $Pago_Extras_Vueltos->servicio_id = $id;
+                        //         $Pago_Extras_Vueltos->venta_id = 0;
+                        //         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
+                        //         $Pago_Extras_Vueltos->save();
+                        //  // REVIEW REVISAR
+                        // }
+
+                        // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+                        // // return $dolarDisponible;
+                        // // return $pesoDisponible;
+                        // // return $bolivarDisponible;
 
                         // TODO Se procede a unir el vuelto pagado que ahora es dinero contado con el dinero_dejado si lo hubiera para procesar el pago
                         if($monto_dejado > 0){
@@ -1953,10 +1959,7 @@ class ServicioController extends Controller
 
                         // }
 
-                        if($monto_dejado < $total_costo){
-                            $status = 'Falta pagar';
-                            $estado = 'Pendiente';
-                        }
+                        //
                     }
 
                     if($modo_pago == 'Contado-Excedente'){
@@ -1995,169 +1998,169 @@ class ServicioController extends Controller
                     $horasExtras->save();
 
 
-                    if($modo_pago == 'contado'){
+                    // if($modo_pago == 'contado'){
 
-                        if($monto_dejado > $total_costo){
-
-
-                            // dd($status);
-
-                            $exced = $monto_dejado - $total_costo;
-                            $excedMontoDolar = $monto_dejado - $total_costo;
-
-                            if ($tipo_pago == 'Dolar') {
-                                $tasaTiket = $request->get('tasaDolar');
-                                $exced = $exced * $tasaTiket;
-                                $divisaExced = 'Dolar';
-                            }
-
-                            if ($tipo_pago == 'Peso') {
-                                $tasaTiket = $request->get('tasaPeso');
-                                $exced = $exced * $tasaTiket;
-                                $divisaExced = 'Peso';
-                            }
-
-                            if ($tipo_pago == 'Trans/Punto') {
-                                // return 'Trans/Punto';
-                                $numPunto = $request->get('num_Punto');
-                                // return empty($numPunto);
-                                $numTrans = $request->get('num_Trans');
-                                // return $numTrans;
-                                $numPuntoTrans = '';
-                                if (empty($numPunto) && !empty($numTrans)) {
-                                    // return 'p=null y t=si';
-                                    $numPuntoTrans = $numTrans;
-                                }
-
-                                if (!empty($numPunto) && empty($numTrans)) {
-                                    // return 'p=si y t=null';
-                                    $numPuntoTrans = $numPunto;
-                                }
-
-                                if (!empty($numPunto) && !empty($numTrans)) {
-                                    // return 'p=si y t=si';
-                                    $numPuntoTrans = $numPunto. ' - ' .$numTrans;
-                                }
-
-                                if (empty($numPunto) && empty($numTrans)) {
-                                    // return 'p=null y t=null';
-                                    $numPuntoTrans = 'S/N - S/N';
-                                }
-                                // return $numPuntoTrans;
-
-                                $tasaTiket = $numPuntoTrans;
-                                $exced = $exced * $request->get('tasaTransPunto');
-                                $divisaExced = 'Trans/Punto';
-                            }
-                            // BUG   revisar el metodo mixto
-
-                            // if ($tipo_pago == 'Mixto') {
-
-                            //     // return 'MIxto';
-                            //     // $exced = $exced * $request->get('tasaMixto');
-                            //     // $divisaExced = 'Dolar';
-
-                            //     $MontoDivisaM = $request->get('MontoDivisa');
-                            //     $divisaM = $request->get('divisa');
-                            //     $TasaTikeM = $request->get('TasaTike');
-                            //     $MontoDolarM = $request->get('MontoDolar');
-                            //     $MontoDivisaM = array_filter($MontoDivisaM);
-
-                            //     // TODO Comvertimos la variable $MontoDolarM en un array y buscamos el valor mas alto
-
-                            //     $MontoDolarMax = array_filter($MontoDolarM);
-
-                            //     // return $MontoDolarM;
-                            //     $valorMax = max($MontoDolarMax);
-                            //     // return $valorMax . ' excedente es '. $exced;
-
-                            //     foreach($MontoDivisaM as $key => $val) {
-                            //         // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
-                            //         if($MontoDolarM[$key] == $valorMax){
-                            //             // return 'MIxto';
-                            //             // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
-
-                            //             $resta = $MontoDolarM[$key] - $exced;
-
-                            //             if ($resta >= 0) {
-                            //                 return $resta;
-                            //             }else{
-
-                            //                 $textos = $MontoDolarMax;
-                            //                 // return $textos;
-
-                            //                 if (($clave = array_search($valorMax, $textos)) !== false) {
-                            //                     unset($textos[$clave]);
-                            //                     return $textos;
-                            //                 }
-                            //             }
-
-                            //             $divisaExced=$divisaM[$key];
-                            //             $MontoDolar = $MontoDolarM[$key];
-                            //             $exced = $exced * $TasaTikeM;
+                    //     if($monto_dejado > $total_costo){
 
 
-                            //         }
-                            //         $ValorMaximo = $MontoDolarM[$key];
-                            //     $divisa[]=$divisaM[$key];
-                            //     $MontoDolar[]=$MontoDolarM[$key];
-                            //     }
-                            // }
+                    //         // dd($status);
 
-                            if ($tipo_pago == 'Efectivo') {
-                                $tasaTiket = $request->get('tasaEfectivo');
-                                $exced = $exced * $tasaTiket;
-                                $divisaExced = 'Bolivar';
-                            }
+                    //         $exced = $monto_dejado - $total_costo;
+                    //         $excedMontoDolar = $monto_dejado - $total_costo;
+
+                    //         if ($tipo_pago == 'Dolar') {
+                    //             $tasaTiket = $request->get('tasaDolar');
+                    //             $exced = $exced * $tasaTiket;
+                    //             $divisaExced = 'Dolar';
+                    //         }
+
+                    //         if ($tipo_pago == 'Peso') {
+                    //             $tasaTiket = $request->get('tasaPeso');
+                    //             $exced = $exced * $tasaTiket;
+                    //             $divisaExced = 'Peso';
+                    //         }
+
+                    //         if ($tipo_pago == 'Trans/Punto') {
+                    //             // return 'Trans/Punto';
+                    //             $numPunto = $request->get('num_Punto');
+                    //             // return empty($numPunto);
+                    //             $numTrans = $request->get('num_Trans');
+                    //             // return $numTrans;
+                    //             $numPuntoTrans = '';
+                    //             if (empty($numPunto) && !empty($numTrans)) {
+                    //                 // return 'p=null y t=si';
+                    //                 $numPuntoTrans = $numTrans;
+                    //             }
+
+                    //             if (!empty($numPunto) && empty($numTrans)) {
+                    //                 // return 'p=si y t=null';
+                    //                 $numPuntoTrans = $numPunto;
+                    //             }
+
+                    //             if (!empty($numPunto) && !empty($numTrans)) {
+                    //                 // return 'p=si y t=si';
+                    //                 $numPuntoTrans = $numPunto. ' - ' .$numTrans;
+                    //             }
+
+                    //             if (empty($numPunto) && empty($numTrans)) {
+                    //                 // return 'p=null y t=null';
+                    //                 $numPuntoTrans = 'S/N - S/N';
+                    //             }
+                    //             // return $numPuntoTrans;
+
+                    //             $tasaTiket = $numPuntoTrans;
+                    //             $exced = $exced * $request->get('tasaTransPunto');
+                    //             $divisaExced = 'Trans/Punto';
+                    //         }
+                    //         // BUG   revisar el metodo mixto
+
+                    //         // if ($tipo_pago == 'Mixto') {
+
+                    //         //     // return 'MIxto';
+                    //         //     // $exced = $exced * $request->get('tasaMixto');
+                    //         //     // $divisaExced = 'Dolar';
+
+                    //         //     $MontoDivisaM = $request->get('MontoDivisa');
+                    //         //     $divisaM = $request->get('divisa');
+                    //         //     $TasaTikeM = $request->get('TasaTike');
+                    //         //     $MontoDolarM = $request->get('MontoDolar');
+                    //         //     $MontoDivisaM = array_filter($MontoDivisaM);
+
+                    //         //     // TODO Comvertimos la variable $MontoDolarM en un array y buscamos el valor mas alto
+
+                    //         //     $MontoDolarMax = array_filter($MontoDolarM);
+
+                    //         //     // return $MontoDolarM;
+                    //         //     $valorMax = max($MontoDolarMax);
+                    //         //     // return $valorMax . ' excedente es '. $exced;
+
+                    //         //     foreach($MontoDivisaM as $key => $val) {
+                    //         //         // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
+                    //         //         if($MontoDolarM[$key] == $valorMax){
+                    //         //             // return 'MIxto';
+                    //         //             // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
+
+                    //         //             $resta = $MontoDolarM[$key] - $exced;
+
+                    //         //             if ($resta >= 0) {
+                    //         //                 return $resta;
+                    //         //             }else{
+
+                    //         //                 $textos = $MontoDolarMax;
+                    //         //                 // return $textos;
+
+                    //         //                 if (($clave = array_search($valorMax, $textos)) !== false) {
+                    //         //                     unset($textos[$clave]);
+                    //         //                     return $textos;
+                    //         //                 }
+                    //         //             }
+
+                    //         //             $divisaExced=$divisaM[$key];
+                    //         //             $MontoDolar = $MontoDolarM[$key];
+                    //         //             $exced = $exced * $TasaTikeM;
 
 
-                            $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
-                            $excdtsRecibidosCaja->Tipo = 'Horas_Extras';
-                            $excdtsRecibidosCaja->Estado = 'Pendiente';
-                            $excdtsRecibidosCaja->Divisa = $divisaExced;
-                            $excdtsRecibidosCaja->TasaTiket = $tasaTiket;
-                            $excdtsRecibidosCaja->MontoDivisa = $exced;
-                            $excdtsRecibidosCaja->MontoDolar = $excedMontoDolar;
-                            $excdtsRecibidosCaja->servicio_id = $id;
-                            $excdtsRecibidosCaja->venta_id = 0;
-                            $excdtsRecibidosCaja->caja_id = $request->get('caja_id');
-                            $excdtsRecibidosCaja->save();
+                    //         //         }
+                    //         //         $ValorMaximo = $MontoDolarM[$key];
+                    //         //     $divisa[]=$divisaM[$key];
+                    //         //     $MontoDolar[]=$MontoDolarM[$key];
+                    //         //     }
+                    //         // }
 
-                            $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-                            // return $ifCliente;
-
-                            // TODO definir que hacer con los excedentes si pasan a nuevo
+                    //         if ($tipo_pago == 'Efectivo') {
+                    //             $tasaTiket = $request->get('tasaEfectivo');
+                    //             $exced = $exced * $tasaTiket;
+                    //             $divisaExced = 'Bolivar';
+                    //         }
 
 
-                            // if($ifCliente){
-                            //     // return 'si';
+                    //         $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
+                    //         $excdtsRecibidosCaja->Tipo = 'Horas_Extras';
+                    //         $excdtsRecibidosCaja->Estado = 'Pendiente';
+                    //         $excdtsRecibidosCaja->Divisa = $divisaExced;
+                    //         $excdtsRecibidosCaja->TasaTiket = $tasaTiket;
+                    //         $excdtsRecibidosCaja->MontoDivisa = $exced;
+                    //         $excdtsRecibidosCaja->MontoDolar = $excedMontoDolar;
+                    //         $excdtsRecibidosCaja->servicio_id = $id;
+                    //         $excdtsRecibidosCaja->venta_id = 0;
+                    //         $excdtsRecibidosCaja->caja_id = $request->get('caja_id');
+                    //         $excdtsRecibidosCaja->save();
 
-                            //     $upExcedente = Excedente::findOrFail($ifCliente->id);
-                            //     $upExcedente->excedente = $upExcedente->excedente + $exced;
-                            //     $upExcedente->update();
-                            // }else{
-                            //     // return 'no';
-                            //     // $excedente = new Excedente;
-                            //     // $excedente->nombre_cliente = $request->get('nombre');
-                            //     // $excedente->cedula_cliente = $request->get('num_documento');
-                            //     // $excedente->direccion_cliente = $request->get('direccion');
-                            //     // $excedente->telefono_cliente = $request->get('telefono');
-                            //     // $excedente->excedente = $exced;
-                            //     // $excedente->persona_id = $request->get('cliente_id');
-                            //     // $excedente->save();
+                    //         $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
+                    //         // return $ifCliente;
 
-
-                            //     $prexcedente = new Prexcedente;
-                            //     $prexcedente->excedente = $exced;
-                            //     $prexcedente->servicio_id = $servicio->id;
-                            //     $prexcedente->save();
-                            // }
+                    //         // TODO definir que hacer con los excedentes si pasan a nuevo
 
 
+                    //         // if($ifCliente){
+                    //         //     // return 'si';
 
-                        }
+                    //         //     $upExcedente = Excedente::findOrFail($ifCliente->id);
+                    //         //     $upExcedente->excedente = $upExcedente->excedente + $exced;
+                    //         //     $upExcedente->update();
+                    //         // }else{
+                    //         //     // return 'no';
+                    //         //     // $excedente = new Excedente;
+                    //         //     // $excedente->nombre_cliente = $request->get('nombre');
+                    //         //     // $excedente->cedula_cliente = $request->get('num_documento');
+                    //         //     // $excedente->direccion_cliente = $request->get('direccion');
+                    //         //     // $excedente->telefono_cliente = $request->get('telefono');
+                    //         //     // $excedente->excedente = $exced;
+                    //         //     // $excedente->persona_id = $request->get('cliente_id');
+                    //         //     // $excedente->save();
 
-                    }
+
+                    //         //     $prexcedente = new Prexcedente;
+                    //         //     $prexcedente->excedente = $exced;
+                    //         //     $prexcedente->servicio_id = $servicio->id;
+                    //         //     $prexcedente->save();
+                    //         // }
+
+
+
+                    //     }
+
+                    // }
 
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2177,85 +2180,85 @@ class ServicioController extends Controller
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                    if($modo_pago == 'Contado-Excedente'){
+                    // if($modo_pago == 'Contado-Excedente'){
 
 
 
 
-                        // dd($status);
+                    //     // dd($status);
 
-                        $restarExced = $request->get('pagoConExcedente');
+                    //     $restarExced = $request->get('pagoConExcedente');
 
-                        $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-                        // return $ifCliente;
+                    //     $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
+                    //     // return $ifCliente;
 
-                        if($ifCliente){
-                            // return 'si';
+                    //     if($ifCliente){
+                    //         // return 'si';
 
-                            $upExcedente = Excedente::findOrFail($ifCliente->id);
-                            $upExcedente->excedente = $upExcedente->excedente - $restarExced;
-                            $upExcedente->update();
-                        }
-                        // else{
-                            // return 'no';
-                            // $excedente = new Excedente;
-                            // $excedente->nombre_cliente = $request->get('nombre');
-                            // $excedente->cedula_cliente = $request->get('num_documento');
-                            // $excedente->direccion_cliente = $request->get('direccion');
-                            // $excedente->telefono_cliente = $request->get('telefono');
-                            // $excedente->excedente = $exced;
-                            // $excedente->persona_id = $request->get('cliente_id');
-                            // $excedente->save();
-
-
-                        //     $prexcedente = new Prexcedente;
-                        //     $prexcedente->excedente = $exced;
-                        //     $prexcedente->servicio_id = $servicio->id;
-                        //     $prexcedente->save();
-                        // }
+                    //         $upExcedente = Excedente::findOrFail($ifCliente->id);
+                    //         $upExcedente->excedente = $upExcedente->excedente - $restarExced;
+                    //         $upExcedente->update();
+                    //     }
+                    //     // else{
+                    //         // return 'no';
+                    //         // $excedente = new Excedente;
+                    //         // $excedente->nombre_cliente = $request->get('nombre');
+                    //         // $excedente->cedula_cliente = $request->get('num_documento');
+                    //         // $excedente->direccion_cliente = $request->get('direccion');
+                    //         // $excedente->telefono_cliente = $request->get('telefono');
+                    //         // $excedente->excedente = $exced;
+                    //         // $excedente->persona_id = $request->get('cliente_id');
+                    //         // $excedente->save();
 
 
-                    }
-
-                    if($modo_pago == 'Excedente'){
-
-
-
-
-                        // dd($status);
-
-                        $restarExced = $request->get('pagoConExcedente');
-
-                        $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-                        // return $ifCliente;
-
-                        if($ifCliente){
-                            // return 'si';
-
-                            $upExcedente = Excedente::findOrFail($ifCliente->id);
-                            $upExcedente->excedente = $upExcedente->excedente - $restarExced;
-                            $upExcedente->update();
-                        }
-                        // else{
-                            // return 'no';
-                            // $excedente = new Excedente;
-                            // $excedente->nombre_cliente = $request->get('nombre');
-                            // $excedente->cedula_cliente = $request->get('num_documento');
-                            // $excedente->direccion_cliente = $request->get('direccion');
-                            // $excedente->telefono_cliente = $request->get('telefono');
-                            // $excedente->excedente = $exced;
-                            // $excedente->persona_id = $request->get('cliente_id');
-                            // $excedente->save();
+                    //     //     $prexcedente = new Prexcedente;
+                    //     //     $prexcedente->excedente = $exced;
+                    //     //     $prexcedente->servicio_id = $servicio->id;
+                    //     //     $prexcedente->save();
+                    //     // }
 
 
-                        //     $prexcedente = new Prexcedente;
-                        //     $prexcedente->excedente = $exced;
-                        //     $prexcedente->servicio_id = $servicio->id;
-                        //     $prexcedente->save();
-                        // }
+                    // }
+
+                    // if($modo_pago == 'Excedente'){
 
 
-                    }
+
+
+                    //     // dd($status);
+
+                    //     $restarExced = $request->get('pagoConExcedente');
+
+                    //     $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
+                    //     // return $ifCliente;
+
+                    //     if($ifCliente){
+                    //         // return 'si';
+
+                    //         $upExcedente = Excedente::findOrFail($ifCliente->id);
+                    //         $upExcedente->excedente = $upExcedente->excedente - $restarExced;
+                    //         $upExcedente->update();
+                    //     }
+                    //     // else{
+                    //         // return 'no';
+                    //         // $excedente = new Excedente;
+                    //         // $excedente->nombre_cliente = $request->get('nombre');
+                    //         // $excedente->cedula_cliente = $request->get('num_documento');
+                    //         // $excedente->direccion_cliente = $request->get('direccion');
+                    //         // $excedente->telefono_cliente = $request->get('telefono');
+                    //         // $excedente->excedente = $exced;
+                    //         // $excedente->persona_id = $request->get('cliente_id');
+                    //         // $excedente->save();
+
+
+                    //     //     $prexcedente = new Prexcedente;
+                    //     //     $prexcedente->excedente = $exced;
+                    //     //     $prexcedente->servicio_id = $servicio->id;
+                    //     //     $prexcedente->save();
+                    //     // }
+
+
+                    // }
 
                     if($modo_pago == 'credito'){
 
@@ -2392,322 +2395,1545 @@ class ServicioController extends Controller
                     }
 
 
+                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        // TODO creamos metodo para realizar el pago cuando se paga con dinero contable viene en la variable base_vuelto_monto_dejado
+                        // primero validamos si exciste un pago hecho.
+
+                        $montoBase = $request->get('base_vuelto_monto_dejado');
+                        $montoResta = $request->get('monto_dejadoResta');
+                        $montoPendiente = $request->get('VueltospagoConExcedente');
+                        $total_venta = $request->get('total_costo');
+
+
+                        $montoBase = floatval($montoBase);
+                        $montoPendiente = floatval($montoPendiente);
+                        $montoResta = floatval($montoResta);
+                        $total_venta = floatval($total_venta);
+
+                        $opS = $montoBase + $montoPendiente;
+
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            //validamos si el monto pagado es mayor a 0 sea que lo paguen con montoBase o con montoPendiente y que el tipo de pago sea contado
+                        if($opS > 0 && $modo_pago == 'contado'){
+                            // return $opS;
+                            //validamos que el monto pagado sea mayor o igual al total de la venta
+                            if($opS >= $total_venta){
+                                // return 'si';
+                                // calculamos excedente si el valor pagado es mayor a la venta
+                                // $MontoDolarR = $request->get('MontoDolar');
+                                // return $montoD;
+                                //validamos si montobase es mayor y montopendiente es menor... lo que significa esto es que estamos reciviendo una moneda nueva
+                                if($montoBase > 0 && $montoPendiente <= 0){
+                                    // return 'pagado con plata nueva = montoBase';
+                                    //metodo para procesar pago con dinero nuevo
+                                    $montoD = [];
+                                    $montoDiv = [];
+                                    $TasaT = [];
+
+                                    // $prueba[]= ['Divisa' => $divisaVueltos[$key], 'MontoDivisa' => $MontoDivisaVueltos[$key], 'TasaTiket' => $TasaTikeVueltos[$key], 'MontoDolar' => $MontoDolarVueltos[$key]];
+                                    $MontoDivisa = $request->get('MontoDivisa');
+                                    $divisa = $request->get('divisa');
+                                    $TasaTike = $request->get('TasaTike');
+                                    $MontoDolar = $request->get('MontoDolar');
+
+                                    $MontoDolar = array_filter($MontoDolar);
+
+                                    foreach($MontoDolar as $key => $val) {
+
+                                        $DivisaArray[$divisa[$key]] = $divisa[$key];
+                                        $montoDivisaArray[$divisa[$key]] = $MontoDivisa[$key];
+                                        $TasaTikeArray[$divisa[$key]]= $TasaTike[$key];
+                                        $montoDolarArray[$divisa[$key]]= $MontoDolar[$key];
+                                    }
+
+                                    // return $request;
+                                    $restk = $total_venta;
+                                    $totalVuelto = $montoResta;
+                                    // echo  'total vuelto '.$totalVuelto.'<br>';
+                                    // return $opS;
+                                    //  $re[] = '';
+                                    asort($montoDolarArray);
+                                    foreach ($montoDolarArray as $key => $val) {
+                                        if($val > 0){
+                                            $montoD[$key]= $val;
+                                            $montoDiv[$key]= $montoDivisaArray[$key];
+                                            $TasaT[$key]= $TasaTikeArray[$key];
+                                        }
+                                    }
+                                    // return $montoDiv;
+                                    $x = $opS;
+                                    $residuo = 0;
+                                    $exc = 0;
+                                    foreach ($montoD as $p => $value) {
+
+                                        if(round($value,6) == round($restk,6)){
+                                            // echo 'igual <br> ';
+                                            // echo 'value '.$value.' <br> ';
+                                            // echo 'restk '.$restk.' <br> ';
+                                            $restk = $restk - $value;
+                                            $x = floatval($x - $value);
+                                            $restk = floatval($restk);
+                                            echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+                                            $Pago_Extra = new Pago_Extra();
+                                            $Pago_Extra->Divisa = $p;
+                                            $Pago_Extra->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Extra->TasaTiket = $TasaT[$p];
+                                            $Pago_Extra->MontoDolar = floatval($value);
+                                            $Pago_Extra->MontoDolarHoraExctra = floatval($value);
+                                            $Pago_Extra->Excedente = 0;
+                                            $Pago_Extra->Vueltos = 0;
+                                            $Pago_Extra->horas_extra_id = $horasExtras->id;
+                                            $Pago_Extra->servicio_id = $servicio_id;
+                                            $Pago_Extra->caja_id = $request->get('caja_id');
+                                            $Pago_Extra->save();
+
+                                            // echo 'excd '. 0 .' <br> ';
+                                            // echo 'vueltos '. 0 .' <br> ';
+                                            // echo $restk.' <br> ';
+                                            $residuo = $restk;
+
+
+                                        }else if (round($value,6) < round($restk,6)){
+
+                                            // echo 'value '.$value.' <br> ';
+                                            // echo 'restk '.$restk.' <br> ';
+                                            // echo 'menor <br> ';
+                                            $restk = $restk - $value;
+                                            echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+                                            $Pago_Extra = new Pago_Extra();
+                                            $Pago_Extra->Divisa = $p;
+                                            $Pago_Extra->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Extra->TasaTiket = $TasaT[$p];
+                                            $Pago_Extra->MontoDolar = floatval($value);
+                                            $Pago_Extra->MontoDolarHoraExctra = floatval($value);
+                                            $Pago_Extra->Excedente = 0;
+                                            $Pago_Extra->Vueltos = 0;
+                                            $Pago_Extra->horas_extra_id = $horasExtras->id;
+                                            $Pago_Extra->servicio_id = $servicio_id;
+                                            $Pago_Extra->caja_id = $request->get('caja_id');
+                                            $Pago_Extra->save();
+
+                                            // echo 'excd '. 0 .' <br> ';
+                                            // echo 'vueltos '. 0 .' <br> ';
+                                            // echo $restk.' <br> ';
+                                            $residuo = $restk;
+                                        }else if (round($value,6) > round($restk,6)){
+                                            // echo 'value '.$value.' <br> ';
+                                            // echo 'restk '.$restk.' <br> ';
+                                            $residuo = $restk;
+                                            $restk =   $value - $restk;
+                                            // $vuel = $totalVuelto;
+                                            // return $restk;
+                                            // if($totalVuelto > 0){
+                                                if (round($totalVuelto,6) > round($restk,6)) {
+                                                    // $totalVuelto = $totalVuelto - $restk;
+                                                    $exc = $restk;
+                                                    $vuel = 0;
+                                                }
+                                                if (round($totalVuelto,6) < round($restk,6)) {
+
+                                                    echo '$totalVuelto: '.$totalVuelto;
+                                                    $exc = $restk - $totalVuelto;
+                                                    $vuel = $totalVuelto;
+                                                    $totalVuelto = 0;
+                                                    // $residuo = 0;
+                                                }
+                                                // }
+                                                if (round($totalVuelto,6) == round($restk,6)) {
+                                                    $exc = 0;
+                                                    $vuel = $totalVuelto;
+                                                    $totalVuelto = 0;
+                                                }
+                                            echo 'mayor <br> ';
+                                            echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($residuo).'  excedente:  '.$exc.' vueltos: '.$vuel.'<br> ';
+                                            $Pago_Extra = new Pago_Extra();
+                                            $Pago_Extra->Divisa = $p;
+                                            $Pago_Extra->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Extra->TasaTiket = $TasaT[$p];
+                                            $Pago_Extra->MontoDolar = floatval($value);
+                                            $Pago_Extra->MontoDolarHoraExctra = floatval($residuo);
+                                            $Pago_Extra->Excedente = $exc;
+                                            $Pago_Extra->Vueltos = $vuel;
+                                            $Pago_Extra->horas_extra_id = $horasExtras->id;
+                                            $Pago_Extra->servicio_id = $servicio_id;
+                                            $Pago_Extra->caja_id = $request->get('caja_id');
+                                            $Pago_Extra->save();
+
+                                            if($exc > 0){
+                                                $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
+                                                $excdtsRecibidosCaja->Tipo = 'Horas_Extras';
+                                                $excdtsRecibidosCaja->Estado = 'Pendiente';
+                                                $excdtsRecibidosCaja->Divisa = $p;
+                                                $excdtsRecibidosCaja->MontoDivisa = floatval($exc * $TasaT[$p]);
+                                                $excdtsRecibidosCaja->TasaTiket = $TasaT[$p];
+                                                $excdtsRecibidosCaja->MontoDolar = floatval($exc);
+                                                $excdtsRecibidosCaja->servicio_id = $servicio_id;
+                                                $excdtsRecibidosCaja->venta_id = 0;
+                                                $excdtsRecibidosCaja->horas_extra_id = $horasExtras->id;
+                                                $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
+                                                $excdtsRecibidosCaja->save();
+                                            }
+
+                                            if($vuel > 0){
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
+
+                                                // $isVuelos = $request->get('isVueltos');
+
+                                                if($montoResta > 0 || $montoResta != null){
+                                                    $MontoDivisaVueltos = $request->get('MontoDivisaV');
+                                                    $divisaVueltos = $request->get('divisaV');
+                                                    $TasaTikeVueltos = $request->get('TasaTikeV');
+                                                    $MontoDolarVueltos = $request->get('MontoDolarV');
+
+                                                    $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
+
+                                                    foreach($MontoDivisaVueltos as $key => $val) {
+
+                                                        $Vdivisa[]=$divisaVueltos[$key];
+                                                        $VMontoDivisa[]=$MontoDivisaVueltos[$key];
+                                                        $VTasaTiket[]=$TasaTikeVueltos[$key];
+                                                        $VMontoDolar[]=$MontoDolarVueltos[$key];
+                                                    }
+                                                    // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                                                    //creamos un contador
+                                                    $cont = 0;
+
+                                                    //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                                                    while ($cont < count($VMontoDolar)) {
+                                                        $Pago_Extras_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
+                                                        $Pago_Extras_Vueltos->tipo_vuelto = 'Vueltos_Pago';
+                                                        $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
+                                                        $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
+                                                        $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
+                                                        $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
+                                                        $Pago_Extras_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Extras_Vueltos->venta_id = 0;
+                                                        $Pago_Extras_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Extras_Vueltos->save();
+
+                                                        $cont = $cont+1;
+                                                    }
+
+                                                }
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            }
+                                            echo 'excd '.$exc.' <br> ';
+                                            echo 'vueltos '.$vuel.' <br> ';
+                                            echo $restk.' <br> ';
+                                        }
+
+                                    }
+                                // validamos  si montopendiente es mayor y montobase es menor... lo que significa esto es que estamos reciviendo una moneda pendiente
+                                }else if($montoPendiente > 0 && $montoBase <= 0){
+                                    // return 'pagado con plata pendiente = montoPendiente';
+                                    //metodo para procesar pago con dinero con pendiente
+
+                                    // TODO consultamos la tabla excedentes recibidos en caja para traer los excedentes que tenga asociados este servicio
+                                    // y así porder realizar el pago del consumo con los vueltos pendientes
+
+                                    // TODO Consultamos la base de datos y sumamos el total de excedentes que tiene ese servicio
+                                    $TotalExcedenteData = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                                    ->where('caja_id',$request->get('caja_id'))
+                                    ->where('Estado','Pendiente')
+                                    ->select(DB::raw('SUM(MontoDolar) as totalExcedente'))
+                                    ->get();
+                                    $TotalExcedenteSumado = floatval($TotalExcedenteData[0]->totalExcedente);
+
+                                    // return $TotalExcedente;
+
+                                    //realizamos la consulta en la base de datos y ordenamos los datos de menor a mayor sobre la columna MontoDolar
+                                    //para que luego reste el pago con vueltos pendientes
+                                    $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                                    ->where('caja_id',$request
+                                    ->get('caja_id'))
+                                    ->where('Estado','Pendiente')
+                                    ->orderBy('MontoDolar', 'ASC')
+                                    ->get();
+
+                                    // return $request;
+                                    $restk = $total_venta;
+                                    $totalVuelto = $montoResta;
+
+                                    $x = $opS;
+                                    $residuo = 0;
+                                    $exc = 0;
+                                    foreach ($RestarVtossPtesToVtosPtes as $vueltosData => $val) {
+                                        if(round($restk,6) > 0){
+
+
+                                            $value = floatval($val->MontoDolar);
+                                            $p = $val->Divisa;
+                                            $montoDiv = $val->MontoDivisa;
+                                            $TasaT = $val->TasaTiket;
+
+                                            if (round($value,6) <= round($restk,6)){
+                                                echo 'Resta: '. $restk . '<br>';
+                                                $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($val->id);
+
+                                                if ($RestarVtossPtes) {
+                                                    $RestarVtossPtes->MontoDivisa = $RestarVtossPtes->MontoDivisa - ($value * $RestarVtossPtes->TasaTiket);
+                                                    $RestarVtossPtes->MontoDolar = $RestarVtossPtes->MontoDolar - $value;
+                                                    $RestarVtossPtes->update();
+
+                                                echo  'Actualizar tabla Excedente_Recibidos => divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.($RestarVtossPtes->MontoDivisa).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($RestarVtossPtes->MontoDolar).'<br> ';
+
+                                                    // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                                                    $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
+                                                    $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                                                    $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($value * $RestarVtossPtes->TasaTiket);
+                                                    $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtes->TasaTiket;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($value);
+                                                    $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                                                    $AgregarVtossPtesToVtosPtes->venta_id = 0;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = $horasExtras->id;
+                                                    $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                                    $AgregarVtossPtesToVtosPtes->save();
+
+                                                    // return $AgregarVtossPtesToVtosPtes->id;
+
+                                                    // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                                    if($RestarVtossPtes->MontoDolar == 0){
+                                                        Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtes->id);
+                                                    }
+
+
+
+                                                }
+                                                echo 'menor o igual <br> ';
+                                                echo  'Agretar registro nuevo en la tabla Excedente_Recibidos => Tipo: Consumo Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($value * $RestarVtossPtes->TasaTiket).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($value).'<br> ';
+                                                // return 'Finalizo...';
+                                                // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                                                // $tasaPeso
+                                                // $tasaTransferenciaPunto
+                                                // $tasaEfectivo
+
+                                                $Restardivisa = '';
+                                                $RestarMontoDivisa = 0;
+                                                $RestarTasaTiket = 0;
+                                                $RestarMontoDolar = 0;
+
+                                                $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                                                // return $RestarVtossPtesToVtosPtesDevueltos;
+
+                                                if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                                                    // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                                                    if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                                                        // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                                                        if ($dolarDisponible >=  $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+                                                        // return $RestarMontoDivisa;
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                                                        if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                                                        if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+                                                    }
+
+                                                    echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
+                                                    // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                        $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                        $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
+                                                        $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos->TasaTiket = $RestarTasaTiket;
+                                                        $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
+                                                        $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Consumo_Vueltos->venta_id = 0;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Consumo_Vueltos->save();
+
+                                                        $tipo_pago = $Restardivisa;
+                                                    // REVIEW REVISAR
+
+                                                    $Pago_Extra = new Pago_Extra();
+                                                    $Pago_Extra->Divisa = $Restardivisa;
+                                                    $Pago_Extra->MontoDivisa = $RestarMontoDivisa;
+                                                    $Pago_Extra->TasaTiket = $RestarTasaTiket;
+                                                    $Pago_Extra->MontoDolar = floatval($RestarMontoDolar);
+                                                    $Pago_Extra->MontoDolarHoraExctra = floatval($RestarMontoDolar);
+                                                    $Pago_Extra->Excedente = 0;
+                                                    $Pago_Extra->Vueltos = 0;
+                                                    $Pago_Extra->horas_extra_id = $horasExtras->id;
+                                                    $Pago_Extra->servicio_id = $servicio_id;
+                                                    $Pago_Extra->caja_id = $request->get('caja_id');
+                                                    $Pago_Extra->save();
+                                                    // $restk = 0;
+                                                    echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
+                                                    $restk = $restk - $value;
+                                                }
+                                                echo 'Resta: ' . $restk . ' <br> ';
+                                                // return 'Finalizo';
+                                                // return '<';
+
+
+
+
+                                            }else if (round($value,6) > round($restk,6)){
+                                                echo 'Resta: '. $restk . '<br>';
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($val->id);
+
+                                                if ($RestarVtossPtes) {
+                                                    $RestarVtossPtes->MontoDivisa = $RestarVtossPtes->MontoDivisa - ($restk * $RestarVtossPtes->TasaTiket);
+                                                    $RestarVtossPtes->MontoDolar = $RestarVtossPtes->MontoDolar - $restk;
+                                                    $RestarVtossPtes->update();
+
+                                                echo  'Actualizar tabla Excedente_Recibidos => divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.($RestarVtossPtes->MontoDivisa).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($RestarVtossPtes->MontoDolar).'<br> ';
+
+                                                    // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                                                    $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
+                                                    $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                                                    $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($restk * $RestarVtossPtes->TasaTiket);
+                                                    $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtes->TasaTiket;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($restk);
+                                                    $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                                                    $AgregarVtossPtesToVtosPtes->venta_id = 0;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = $horasExtras->id;
+                                                    $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                                    $AgregarVtossPtesToVtosPtes->save();
+
+                                                    // return $AgregarVtossPtesToVtosPtes->id;
+
+                                                    // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                                    if($RestarVtossPtes->MontoDolar == 0){
+                                                        Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtes->id);
+                                                    }
+
+
+
+                                                }
+                                                echo 'mayor <br> ';
+                                                echo  'Agretar registro nuevo en la tabla Excedente_Recibidos => Tipo: Consumo Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($restk * $RestarVtossPtes->TasaTiket).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($restk).'<br> ';
+                                                // return 'Finalizo...';
+                                                // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                                                // $tasaPeso
+                                                // $tasaTransferenciaPunto
+                                                // $tasaEfectivo
+
+                                                $Restardivisa = '';
+                                                $RestarMontoDivisa = 0;
+                                                $RestarTasaTiket = 0;
+                                                $RestarMontoDolar = 0;
+
+                                                $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                                                // return $RestarVtossPtesToVtosPtesDevueltos;
+
+                                                if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                                                    // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                                                    if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                                                        // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                                                        if ($dolarDisponible >=  $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+                                                        // return $RestarMontoDivisa;
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                                                        if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                                                        if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+                                                    }
+
+                                                    echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
+                                                    // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                        $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                        $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
+                                                        $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos->TasaTiket = $RestarTasaTiket;
+                                                        $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
+                                                        $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Consumo_Vueltos->venta_id = 0;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Consumo_Vueltos->save();
+
+                                                        $tipo_pago = $Restardivisa;
+                                                // REVIEW REVISAR
+
+                                                    $Pago_Extra = new Pago_Extra();
+                                                    $Pago_Extra->Divisa = $Restardivisa;
+                                                    $Pago_Extra->MontoDivisa = $RestarMontoDivisa;
+                                                    $Pago_Extra->TasaTiket = $RestarTasaTiket;
+                                                    $Pago_Extra->MontoDolar = floatval($RestarMontoDolar);
+                                                    $Pago_Extra->MontoDolarHoraExctra = floatval($RestarMontoDolar);
+                                                    $Pago_Extra->Excedente = 0;
+                                                    $Pago_Extra->Vueltos = 0;
+                                                    $Pago_Extra->horas_extra_id = $horasExtras->id;
+                                                    $Pago_Extra->servicio_id = $servicio_id;
+                                                    $Pago_Extra->caja_id = $request->get('caja_id');
+                                                    $Pago_Extra->save();
+                                                    $restk = 0;
+                                                    echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
+                                                }
+                                                echo 'Resta: ' . $restk . ' <br> ';
+                                                // return 'Finalizo';
+                                                // return '>';
+                                                // echo 'excd '.$exc.' <br> ';
+                                                // echo 'vueltos '.$vuel.' <br> ';
+                                                // echo $restk.' <br> ';
+                                            }
+                                        }
+                                    }
+
+// return 'Finalizo';
+
+
+                                }else if($montoBase > 0 && $montoPendiente > 0){
+                                    // metodo para procesar la venta con dinero nuevo y pendiente
+                                    // return 'pagado con plata nueva y pendiente = montoBase y montoPendiente';
+                                    // metodo para procesar la venta con dinero nuevo y pendiente
+                                    // TODO Consultamos la base de datos y sumamos el total de excedentes que tiene ese servicio
+                                    $TotalExcedenteData = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                                    ->where('caja_id',$request->get('caja_id'))
+                                    ->where('Estado','Pendiente')
+                                    ->select(DB::raw('SUM(MontoDolar) as totalExcedente'))
+                                    ->get();
+                                    $TotalExcedenteSumado = floatval($TotalExcedenteData[0]->totalExcedente);
+
+                                    // return $TotalExcedente;
+
+                                    //realizamos la consulta en la base de datos y ordenamos los datos de menor a mayor sobre la columna MontoDolar
+                                    //para que luego reste el pago con vueltos pendientes
+                                    $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                                    ->where('caja_id',$request
+                                    ->get('caja_id'))
+                                    ->where('Estado','Pendiente')
+                                    ->orderBy('MontoDolar', 'ASC')
+                                    ->get();
+
+                                    // return $request;
+                                    $restk = $total_venta;
+                                    $totalVuelto = $montoResta;
+
+                                    $x = $opS;
+                                    $residuo = 0;
+                                    $exc = 0;
+                                    foreach ($RestarVtossPtesToVtosPtes as $vueltosData => $val) {
+                                        if(round($restk,6) > 0){
+
+
+                                            $value = floatval($val->MontoDolar);
+                                            $p = $val->Divisa;
+                                            $montoDiv = $val->MontoDivisa;
+                                            $TasaT = $val->TasaTiket;
+
+                                            if (round($value,6) <= round($restk,6)){
+                                                echo 'Resta: '. $restk . '<br>';
+                                                $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($val->id);
+
+                                                if ($RestarVtossPtes) {
+                                                    $RestarVtossPtes->MontoDivisa = $RestarVtossPtes->MontoDivisa - ($value * $RestarVtossPtes->TasaTiket);
+                                                    $RestarVtossPtes->MontoDolar = $RestarVtossPtes->MontoDolar - $value;
+                                                    $RestarVtossPtes->update();
+
+                                                echo  'Actualizar tabla Excedente_Recibidos => divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.($RestarVtossPtes->MontoDivisa).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($RestarVtossPtes->MontoDolar).'<br> ';
+
+                                                    // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                                                    $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
+                                                    $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                                                    $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($value * $RestarVtossPtes->TasaTiket);
+                                                    $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtes->TasaTiket;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($value);
+                                                    $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                                                    $AgregarVtossPtesToVtosPtes->venta_id = 0;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = $horasExtras->id;
+                                                    $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                                    $AgregarVtossPtesToVtosPtes->save();
+
+                                                    // return $AgregarVtossPtesToVtosPtes->id;
+
+                                                    // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                                    if($RestarVtossPtes->MontoDolar == 0){
+                                                        Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtes->id);
+                                                    }
+
+
+
+                                                }
+                                                echo 'menor o igual <br> ';
+                                                echo  'Agretar registro nuevo en la tabla Excedente_Recibidos => Tipo: Consumo Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($value * $RestarVtossPtes->TasaTiket).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($value).'<br> ';
+                                                // return 'Finalizo...';
+                                                // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                                                // $tasaPeso
+                                                // $tasaTransferenciaPunto
+                                                // $tasaEfectivo
+
+                                                $Restardivisa = '';
+                                                $RestarMontoDivisa = 0;
+                                                $RestarTasaTiket = 0;
+                                                $RestarMontoDolar = 0;
+
+                                                $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                                                // return $RestarVtossPtesToVtosPtesDevueltos;
+
+                                                if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                                                    // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                                                    if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                                                        // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                                                        if ($dolarDisponible >=  $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+                                                        // return $RestarMontoDivisa;
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                                                        if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                                                        if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+                                                    }
+
+                                                    echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
+                                                    // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                        $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                        $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
+                                                        $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos->TasaTiket = $RestarTasaTiket;
+                                                        $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
+                                                        $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Consumo_Vueltos->venta_id = 0;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Consumo_Vueltos->save();
+
+                                                        $tipo_pago = $Restardivisa;
+                                                // REVIEW REVISAR
+
+                                                    $Pago_Extra = new Pago_Extra();
+                                                    $Pago_Extra->Divisa = $Restardivisa;
+                                                    $Pago_Extra->MontoDivisa = $RestarMontoDivisa;
+                                                    $Pago_Extra->TasaTiket = $RestarTasaTiket;
+                                                    $Pago_Extra->MontoDolar = floatval($RestarMontoDolar);
+                                                    $Pago_Extra->MontoDolarHoraExctra = floatval($RestarMontoDolar);
+                                                    $Pago_Extra->Excedente = 0;
+                                                    $Pago_Extra->Vueltos = 0;
+                                                    $Pago_Extra->horas_extra_id = $horasExtras->id;
+                                                    $Pago_Extra->servicio_id = $servicio_id;
+                                                    $Pago_Extra->caja_id = $request->get('caja_id');
+                                                    $Pago_Extra->save();
+                                                    // $restk = 0;
+                                                    echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
+                                                    $restk = $restk - $value;
+                                                }
+                                                echo 'Resta: ' . $restk . ' <br> ';
+                                                // return 'Finalizo';
+                                                // return '<';
+
+
+
+
+                                            }else if (round($value,6) > round($restk,6)){
+                                                echo 'Resta: '. $restk . '<br>';
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($val->id);
+
+                                                if ($RestarVtossPtes) {
+                                                    $RestarVtossPtes->MontoDivisa = $RestarVtossPtes->MontoDivisa - ($restk * $RestarVtossPtes->TasaTiket);
+                                                    $RestarVtossPtes->MontoDolar = $RestarVtossPtes->MontoDolar - $restk;
+                                                    $RestarVtossPtes->update();
+
+                                                echo  'Actualizar tabla Excedente_Recibidos => divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.($RestarVtossPtes->MontoDivisa).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($RestarVtossPtes->MontoDolar).'<br> ';
+
+                                                    // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                                                    $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
+                                                    $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                                                    $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($restk * $RestarVtossPtes->TasaTiket);
+                                                    $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtes->TasaTiket;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($restk);
+                                                    $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                                                    $AgregarVtossPtesToVtosPtes->venta_id = 0;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = $horasExtras->id;
+                                                    $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                                    $AgregarVtossPtesToVtosPtes->save();
+
+                                                    // return $AgregarVtossPtesToVtosPtes->id;
+
+                                                    // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                                    if($RestarVtossPtes->MontoDolar == 0){
+                                                        Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtes->id);
+                                                    }
+
+
+
+                                                }
+                                                echo 'mayor <br> ';
+                                                echo  'Agretar registro nuevo en la tabla Excedente_Recibidos => Tipo: Consumo Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($restk * $RestarVtossPtes->TasaTiket).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($restk).'<br> ';
+                                                // return 'Finalizo...';
+                                                // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                                                // $tasaPeso
+                                                // $tasaTransferenciaPunto
+                                                // $tasaEfectivo
+
+                                                $Restardivisa = '';
+                                                $RestarMontoDivisa = 0;
+                                                $RestarTasaTiket = 0;
+                                                $RestarMontoDolar = 0;
+
+                                                $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                                                // return $RestarVtossPtesToVtosPtesDevueltos;
+
+                                                if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                                                    // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                                                    if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                                                        // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                                                        if ($dolarDisponible >=  $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+                                                        // return $RestarMontoDivisa;
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                                                        if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                                                        if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+                                                    }
+
+                                                    echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
+                                                    // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                        $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                        $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
+                                                        $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos->TasaTiket = $RestarTasaTiket;
+                                                        $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
+                                                        $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Consumo_Vueltos->venta_id = 0;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Consumo_Vueltos->save();
+
+                                                        $tipo_pago = $Restardivisa;
+                                                // REVIEW REVISAR
+
+                                                    $Pago_Extra = new Pago_Extra();
+                                                    $Pago_Extra->Divisa = $Restardivisa;
+                                                    $Pago_Extra->MontoDivisa = $RestarMontoDivisa;
+                                                    $Pago_Extra->TasaTiket = $RestarTasaTiket;
+                                                    $Pago_Extra->MontoDolar = floatval($RestarMontoDolar);
+                                                    $Pago_Extra->MontoDolarHoraExctra = floatval($RestarMontoDolar);
+                                                    $Pago_Extra->Excedente = 0;
+                                                    $Pago_Extra->Vueltos = 0;
+                                                    $Pago_Extra->horas_extra_id = $horasExtras->id;
+                                                    $Pago_Extra->servicio_id = $servicio_id;
+                                                    $Pago_Extra->caja_id = $request->get('caja_id');
+                                                    $Pago_Extra->save();
+                                                    $restk = 0;
+                                                    echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
+                                                }
+                                                echo 'Resta: ' . $restk . ' <br> ';
+                                                // return 'Finalizo';
+                                                // return '>';
+                                                // echo 'excd '.$exc.' <br> ';
+                                                // echo 'vueltos '.$vuel.' <br> ';
+                                                // echo $restk.' <br> ';
+                                            }
+                                        }
+                                    }
+echo 'pase a dinero efectivo <br>';
+                                    if (round($restk,6) > 0 || round($montoBase,6) > 0) {
+                                        // return $restk;
+                                        // return 'pagado con plata nueva = montoBase';
+                                    //metodo para procesar pago con dinero nuevo
+                                        $montoD = [];
+                                        $montoDiv = [];
+                                        $TasaT = [];
+                                    // $prueba[]= ['Divisa' => $divisaVueltos[$key], 'MontoDivisa' => $MontoDivisaVueltos[$key], 'TasaTiket' => $TasaTikeVueltos[$key], 'MontoDolar' => $MontoDolarVueltos[$key]];
+                                    $MontoDivisa = $request->get('MontoDivisa');
+                                    $divisa = $request->get('divisa');
+                                    $TasaTike = $request->get('TasaTike');
+                                    $MontoDolar = $request->get('MontoDolar');
+
+                                    $MontoDolar = array_filter($MontoDolar);
+
+                                    foreach($MontoDolar as $key => $val) {
+
+                                        $DivisaArray[$divisa[$key]] = $divisa[$key];
+                                        $montoDivisaArray[$divisa[$key]] = $MontoDivisa[$key];
+                                        $TasaTikeArray[$divisa[$key]]= $TasaTike[$key];
+                                        $montoDolarArray[$divisa[$key]]= $MontoDolar[$key];
+                                    }
+
+                                    // return $montoDivisaArray;
+                                    // $restk = $total_venta;
+                                    $totalVuelto = $montoResta;
+                                    // echo  'total vuelto '.$totalVuelto.'<br>';
+                                    // return $opS;
+                                    //  $re[] = '';
+                                    asort($montoDolarArray);
+                                    foreach ($montoDolarArray as $key => $val) {
+                                        if($val > 0){
+                                            $montoD[$key]= $val;
+                                            $montoDiv[$key]= $montoDivisaArray[$key];
+                                            $TasaT[$key]= $TasaTikeArray[$key];
+                                        }
+                                    }
+                                    // return $montoDiv;
+                                    // return $request;
+                                    $x = $opS;
+                                    $residuo = 0;
+                                    $exc = 0;
+                                    foreach ($montoD as $p => $value) {
+                                        echo 'value del for '.$value.'<br>';
+                                        if(round($value,6) == round($restk,6)){
+                                            echo 'value =='.$value.' <br> ';
+                                            // echo 'igual <br> ';
+                                            // echo 'value '.$value.' <br> ';
+                                            // echo 'restk '.$restk.' <br> ';
+                                            $restk = $restk - $value;
+                                            $x = floatval($x - $value);
+                                            $restk = floatval($restk);
+                                            echo  'pago con dinero divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+                                            $Pago_Extra = new Pago_Extra();
+                                            $Pago_Extra->Divisa = $p;
+                                            $Pago_Extra->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Extra->TasaTiket = $TasaT[$p];
+                                            $Pago_Extra->MontoDolar = floatval($value);
+                                            $Pago_Extra->MontoDolarHoraExctra = floatval($value);
+                                            $Pago_Extra->Excedente = 0;
+                                            $Pago_Extra->Vueltos = 0;
+                                            $Pago_Extra->horas_extra_id = $horasExtras->id;
+                                            $Pago_Extra->servicio_id = $servicio_id;
+                                            $Pago_Extra->caja_id = $request->get('caja_id');
+                                            $Pago_Extra->save();
+
+                                            // echo 'excd '. 0 .' <br> ';
+                                            // echo 'vueltos '. 0 .' <br> ';
+                                            // echo $restk.' <br> ';
+                                            $residuo = $restk;
+
+
+                                        }else if (round($value,6) < round($restk,6)){
+echo 'value <'.$value.' - '.$restk.' <br> ';
+                                            // echo 'value '.$value.' <br> ';
+                                            // echo 'restk '.$restk.' <br> ';
+                                            // echo 'menor <br> ';
+                                            $restk = $restk - $value;
+                                            echo  'pago con dinero  divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+                                            $Pago_Extra = new Pago_Extra();
+                                            $Pago_Extra->Divisa = $p;
+                                            $Pago_Extra->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Extra->TasaTiket = $TasaT[$p];
+                                            $Pago_Extra->MontoDolar = floatval($value);
+                                            $Pago_Extra->MontoDolarHoraExctra = floatval($value);
+                                            $Pago_Extra->Excedente = 0;
+                                            $Pago_Extra->Vueltos = 0;
+                                            $Pago_Extra->horas_extra_id = $horasExtras->id;
+                                            $Pago_Extra->servicio_id = $servicio_id;
+                                            $Pago_Extra->caja_id = $request->get('caja_id');
+                                            $Pago_Extra->save();
+                                            // echo 'excd '. 0 .' <br> ';
+                                            // echo 'vueltos '. 0 .' <br> ';
+                                            // echo $restk.' <br> ';
+                                            $residuo = $restk;
+                                        }else if (round($value,6) > round($restk,6)){
+
+                                            echo 'value >'.$value.' <br> ';
+                                            echo 'value '.$value.' <br> ';
+                                            echo 'restk '.$restk.' <br> ';
+                                            $residuo = $restk;
+
+                                            if(round($restk,6) <= 0){
+                                                $restk =   $value - $restk;
+                                                $r = $restk;
+                                                $restk = 0;
+                                            }else{
+                                                $restk =   $value - $restk;
+                                                $r = $restk;
+                                            }
+                                            // $restk =   $value - $restk;
+                                            // $vuel = $totalVuelto;
+                                            // return $restk;
+                                            // if($totalVuelto > 0){
+                                                if (round($totalVuelto,6) > round($r,6)) {
+                                                    // $totalVuelto = $totalVuelto - $restk;
+                                                    $exc = $r;
+                                                    $vuel = 0;
+                                                }
+                                                if (round($totalVuelto,6) < round($r,6)) {
+
+                                                    echo '$totalVuelto: '.$totalVuelto;
+                                                    $exc = $r - $totalVuelto;
+                                                    $vuel = $totalVuelto;
+                                                    $totalVuelto = 0;
+                                                    // $residuo = 0;
+                                                }
+                                                // }
+                                                if (round($totalVuelto,6) == round($r,6)) {
+                                                    $exc = 0;
+                                                    $vuel = $totalVuelto;
+                                                    $totalVuelto = 0;
+                                                }
+                                            echo 'mayor <br> ';
+                                            echo  'pago con dinero  divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($residuo).'  excedente:  '.$exc.' vueltos: '.$vuel.'<br> ';
+
+                                            $Pago_Extra = new Pago_Extra();
+                                            $Pago_Extra->Divisa = $p;
+                                            $Pago_Extra->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Extra->TasaTiket = $TasaT[$p];
+                                            $Pago_Extra->MontoDolar = floatval($value);
+                                            $Pago_Extra->MontoDolarHoraExctra = floatval($residuo);
+                                            $Pago_Extra->Excedente = $exc;
+                                            $Pago_Extra->Vueltos = $vuel;
+                                            $Pago_Extra->horas_extra_id = $horasExtras->id;
+                                            $Pago_Extra->servicio_id = $servicio_id;
+                                            $Pago_Extra->caja_id = $request->get('caja_id');
+                                            $Pago_Extra->save();
+
+                                            if($exc > 0){
+                                                $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
+                                                $excdtsRecibidosCaja->Tipo = 'Horas_Extras';
+                                                $excdtsRecibidosCaja->Estado = 'Pendiente';
+                                                $excdtsRecibidosCaja->Divisa = $p;
+                                                $excdtsRecibidosCaja->MontoDivisa = floatval($exc * $TasaT[$p]);
+                                                $excdtsRecibidosCaja->TasaTiket = $TasaT[$p];
+                                                $excdtsRecibidosCaja->MontoDolar = floatval($exc);
+                                                $excdtsRecibidosCaja->servicio_id = $servicio_id;
+                                                $excdtsRecibidosCaja->venta_id = 0;
+                                                $excdtsRecibidosCaja->horas_extra_id = $horasExtras->id;
+                                                $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
+                                                $excdtsRecibidosCaja->save();
+                                            }
+
+                                            if($vuel > 0){
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
+
+                                                // $isVuelos = $request->get('isVueltos');
+
+                                                if($montoResta > 0 || $montoResta != null){
+                                                    $MontoDivisaVueltos = $request->get('MontoDivisaV');
+                                                    $divisaVueltos = $request->get('divisaV');
+                                                    $TasaTikeVueltos = $request->get('TasaTikeV');
+                                                    $MontoDolarVueltos = $request->get('MontoDolarV');
+
+                                                    $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
+
+                                                    foreach($MontoDivisaVueltos as $key => $val) {
+
+                                                        $Vdivisa[]=$divisaVueltos[$key];
+                                                        $VMontoDivisa[]=$MontoDivisaVueltos[$key];
+                                                        $VTasaTiket[]=$TasaTikeVueltos[$key];
+                                                        $VMontoDolar[]=$MontoDolarVueltos[$key];
+                                                    }
+                                                    // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                                                    //creamos un contador
+                                                    $cont = 0;
+
+                                                    //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                                                    while ($cont < count($VMontoDolar)) {
+                                                        $Pago_Extras_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
+                                                        $Pago_Extras_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                        $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
+                                                        $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
+                                                        $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
+                                                        $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
+                                                        $Pago_Extras_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Extras_Vueltos->venta_id = 0;
+                                                        $Pago_Extras_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Extras_Vueltos->save();
+
+                                                        $cont = $cont+1;
+                                                    }
+
+                                                }
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            }
+                                            // echo 'excd '.$exc.' <br> ';
+                                            // echo 'vueltos '.$vuel.' <br> ';
+                                            // echo $restk.' <br> ';
+                                        }
+
+                                    }
+                                // validamos  si montopendiente es mayor y montobase es menor... lo que significa esto es que estamos reciviendo una moneda pendiente
+                                    }
+
+
+
+
+                                }
+
+                                //verificamos cuantos pagos hay en la tabla pagos ventas para saber si el pago fue mixto de ser así actualizamos
+                                //la tabla ventas y la tabla servicios venas a mixto
+
+                                $cantidadPagos = Pago_Extra::where('horas_extra_id', $horasExtras->id)->get();
+
+                                $cantVentas = count($cantidadPagos);
+
+                                if($cantVentas >= 2){
+                                    $actualizarVentasToMixto = Horas_extra::findOrfail($horasExtras->id);
+                                    $actualizarVentasToMixto->tipo_pago = 'Mixto';
+                                    $actualizarVentasToMixto->update();
+
+
+                                }
+// return 'Finalizo';
+
+                            }else{
+                                return Redirect::back()
+                                ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
+                            }
+
+                            // return 'no';
+                        }
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 
                     if($modo_pago == 'contado' || $modo_pago == 'Contado-Excedente'){
-                        $MontoDivisaR = $request->get('MontoDivisa');
-                        $divisaR = $request->get('divisa');
-                        $TasaTikeR = $request->get('TasaTike');
-                        $MontoDolarR = $request->get('MontoDolar');
-                        $VeltosR = $request->get('Veltos');
-                        // return 'estoy en contado';
-                        $MontoDivisaR = array_filter($MontoDivisaR);
+                        // $MontoDivisaR = $request->get('MontoDivisa');
+                        // $divisaR = $request->get('divisa');
+                        // $TasaTikeR = $request->get('TasaTike');
+                        // $MontoDolarR = $request->get('MontoDolar');
+                        // $VeltosR = $request->get('Veltos');
+                        // // return 'estoy en contado';
+                        // $MontoDivisaR = array_filter($MontoDivisaR);
 
-                        if(count($MontoDivisaR) > 0){
-                            // return 'estoy en MontoDivisaR';
+                        // if(count($MontoDivisaR) > 0){
+                        //     // return 'estoy en MontoDivisaR';
 
-                            // return count($MontoDivisaR);
+                        //     // return count($MontoDivisaR);
 
-                            foreach($MontoDivisaR as $key => $val) {
+                        //     foreach($MontoDivisaR as $key => $val) {
 
 
-                                $divisa[]=$divisaR[$key];
-                                $MontoDivisa[]=$MontoDivisaR[$key];
-                                $TasaTiket[]=$TasaTikeR[$key];
-                                $MontoDolar[]=$MontoDolarR[$key];
-                                $Vueltos[]=$VeltosR[$key];
+                        //         $divisa[]=$divisaR[$key];
+                        //         $MontoDivisa[]=$MontoDivisaR[$key];
+                        //         $TasaTiket[]=$TasaTikeR[$key];
+                        //         $MontoDolar[]=$MontoDolarR[$key];
+                        //         $Vueltos[]=$VeltosR[$key];
 
-                                if($monto_dejado == $total_costo){
-                                    $Vueltos[]=$VeltosR[$key];
-                                    // return 'igual';
+                        //         if($monto_dejado == $total_costo){
+                        //             $Vueltos[]=$VeltosR[$key];
+                        //             // return 'igual';
 
-                                }else{
+                        //         }else{
 
-                                    $Vueltos[]=$VeltosR[$key] - $VeltosR[$key];
-                                    // return $Vueltos;
-                                    $isVuelos = $request->get('isVueltos');
+                        //             $Vueltos[]=$VeltosR[$key] - $VeltosR[$key];
+                        //             // return $Vueltos;
+                        //             $isVuelos = $request->get('isVueltos');
 
 
-                                if(!$isVuelos > 0 || !$isVuelos != null){
-                                    $Vueltos[$key] = 0;
-                                    // return $Vueltos;
+                        //         if(!$isVuelos > 0 || !$isVuelos != null){
+                        //             $Vueltos[$key] = 0;
+                        //             // return $Vueltos;
 
-                                }
+                        //         }
 
-                                }
+                        //         }
 
 
-                            }
-                            // return $request;
+                        //     }
+                        //     // return $request;
 
 
 
-                            // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                            //creamos un contador
-                            $cont = 0;
+                        //     // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                        //     //creamos un contador
+                        //     $cont = 0;
 
 
-                            //realizamos el pago en la tabla Pagos Extras
-                            while ($cont < count($MontoDolar)) {
-                                // return 'estoy en MontoDolar '.$divisa[$cont];
-                                $Pago_Extra = new Pago_Extra();
-                                $Pago_Extra->Divisa = $divisa[$cont];
-                                $Pago_Extra->MontoDivisa = $MontoDivisa[$cont];
-                                $Pago_Extra->TasaTiket = $TasaTiket[$cont];
-                                $Pago_Extra->MontoDolar = $MontoDolar[$cont];
-                                $Pago_Extra->Vueltos = $Vueltos[$cont];
-                                $Pago_Extra->horas_extra_id = $horasExtras->id;
-                                $Pago_Extra->servicio_id = $id;
-                                $Pago_Extra->caja_id = $request->get('caja_id');
-                                $Pago_Extra->save();
+                        //     //realizamos el pago en la tabla Pagos Extras
+                        //     while ($cont < count($MontoDolar)) {
+                        //         // return 'estoy en MontoDolar '.$divisa[$cont];
+                        //         $Pago_Extra = new Pago_Extra();
+                        //         $Pago_Extra->Divisa = $divisa[$cont];
+                        //         $Pago_Extra->MontoDivisa = $MontoDivisa[$cont];
+                        //         $Pago_Extra->TasaTiket = $TasaTiket[$cont];
+                        //         $Pago_Extra->MontoDolar = $MontoDolar[$cont];
+                        //         $Pago_Extra->Vueltos = $Vueltos[$cont];
+                        //         $Pago_Extra->horas_extra_id = $horasExtras->id;
+                        //         $Pago_Extra->servicio_id = $id;
+                        //         $Pago_Extra->caja_id = $request->get('caja_id');
+                        //         $Pago_Extra->save();
 
-                                $cont = $cont+1;
-                            }
+                        //         $cont = $cont+1;
+                        //     }
 
-                            // return 'estoy en contado';
+                        //     // return 'estoy en contado';
 
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos para eso usamos una bandera llamad isVuelto
-                            //que debemos pasar por la vista
+                        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos para eso usamos una bandera llamad isVuelto
+                        //     //que debemos pasar por la vista
 
-                            $isVuelos = $request->get('isVueltos');
+                        //     $isVuelos = $request->get('isVueltos');
 
-                            if($isVuelos > 0 || $isVuelos != null){
+                        //     if($isVuelos > 0 || $isVuelos != null){
 
 
 
 
-                                $MontoDivisaVueltos = $request->get('MontoDivisaV');
-                                $divisaVueltos = $request->get('divisaV');
-                                $TasaTikeVueltos = $request->get('TasaTikeV');
-                                $MontoDolarVueltos = $request->get('MontoDolarV');
+                        //         $MontoDivisaVueltos = $request->get('MontoDivisaV');
+                        //         $divisaVueltos = $request->get('divisaV');
+                        //         $TasaTikeVueltos = $request->get('TasaTikeV');
+                        //         $MontoDolarVueltos = $request->get('MontoDolarV');
 
 
-                                $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
+                        //         $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
 
 
-                                foreach($MontoDivisaVueltos as $key => $val) {
+                        //         foreach($MontoDivisaVueltos as $key => $val) {
 
 
-                                    $Vdivisa[]=$divisaVueltos[$key];
-                                    $VMontoDivisa[]=$MontoDivisaVueltos[$key];
-                                    $VTasaTiket[]=$TasaTikeVueltos[$key];
-                                    $VMontoDolar[]=$MontoDolarVueltos[$key];
+                        //             $Vdivisa[]=$divisaVueltos[$key];
+                        //             $VMontoDivisa[]=$MontoDivisaVueltos[$key];
+                        //             $VTasaTiket[]=$TasaTikeVueltos[$key];
+                        //             $VMontoDolar[]=$MontoDolarVueltos[$key];
 
 
 
 
 
-                                }
+                        //         }
 
 
 
 
-                                // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                                //creamos un contador
-                                $cont = 0;
+                        //         // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                        //         //creamos un contador
+                        //         $cont = 0;
 
 
-                                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                                while ($cont < count($VMontoDolar)) {
+                        //         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                        //         while ($cont < count($VMontoDolar)) {
 
 
-                                    $Pago_Extras_Vueltos = new Pago_Vuelto();
-                                    $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
-                                    $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
-                                    $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
-                                    $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
-                                    $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
-                                    $Pago_Extras_Vueltos->servicio_id = $id;
-                                    $Pago_Extras_Vueltos->venta_id = 0;
-                                    $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
-                                    $Pago_Extras_Vueltos->save();
+                        //             $Pago_Extras_Vueltos = new Pago_Vuelto();
+                        //             $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
+                        //             $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
+                        //             $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
+                        //             $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
+                        //             $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
+                        //             $Pago_Extras_Vueltos->servicio_id = $id;
+                        //             $Pago_Extras_Vueltos->venta_id = 0;
+                        //             $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
+                        //             $Pago_Extras_Vueltos->save();
 
-                                    $cont = $cont+1;
-                                }
+                        //             $cont = $cont+1;
+                        //         }
 
-                            }
-                            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     }
+                        //     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                            // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
-                            // de lo contrario solo registra el dinero dejado de contado.
-                            // REVIEW  resuelto (revizar si esta resuelto)
+                        //     // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
+                        //     // de lo contrario solo registra el dinero dejado de contado.
+                        //     // REVIEW  resuelto (revizar si esta resuelto)
 
-                            if($VueltospagoConExcedente > 0){
-                                // return 'estoy en '.$VueltospagoConExcedente;
-                                // $Restardivisa = '';
-                                // $RestarMontoDivisa = 0;
-                                // $RestarTasaTiket = 0;
-                                // $RestarMontoDolar = 0;
+                        //     if($VueltospagoConExcedente > 0){
+                        //         // return 'estoy en '.$VueltospagoConExcedente;
+                        //         // $Restardivisa = '';
+                        //         // $RestarMontoDivisa = 0;
+                        //         // $RestarTasaTiket = 0;
+                        //         // $RestarMontoDolar = 0;
 
-                                // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
-                                //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
-                                // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
-                                //con dos divisas
+                        //         // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
+                        //         //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
+                        //         // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
+                        //         //con dos divisas
 
-                                $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Extras_Vueltos->id);
-                                // return $pagoVueltos;
+                        //         $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Extras_Vueltos->id);
+                        //         // return $pagoVueltos;
 
-                                if ($pagoVueltos) {
+                        //         if ($pagoVueltos) {
 
-                                    // return $Pago_Extra->id;
-                                    $UdatePagoServiciosConVtosPendientes = Pago_Extra::findOrFail($Pago_Extra->id);
-                                    // return $UdatePagoServiciosConVtosPendientes;
-                                    if ($UdatePagoServiciosConVtosPendientes->Divisa == $pagoVueltos->Divisa) {
-                                        $UdatePagoServiciosConVtosPendientes->MontoDivisa = $UdatePagoServiciosConVtosPendientes->MontoDivisa + $pagoVueltos->MontoDivisa;
-                                        $UdatePagoServiciosConVtosPendientes->MontoDolar = $UdatePagoServiciosConVtosPendientes->MontoDolar + $pagoVueltos->MontoDolar;
-                                        // return $UdatePagoServiciosConVtosPendientes->MontoDivisa;
-                                        $UdatePagoServiciosConVtosPendientes->update();
-                                    }else{
-                                        $Pago_Extra = new Pago_Extra();
-                                        $Pago_Extra->Divisa = $pagoVueltos->Divisa;
-                                        $Pago_Extra->MontoDivisa = $pagoVueltos->MontoDivisa;
-                                        $Pago_Extra->TasaTiket = $pagoVueltos->TasaTiket;
-                                        $Pago_Extra->MontoDolar = $pagoVueltos->MontoDolar;
-                                        $Pago_Extra->Vueltos = 0;
-                                        $Pago_Extra->horas_extra_id = $horasExtras->id;
-                                        $Pago_Extra->servicio_id = $id;
-                                        $Pago_Extra->caja_id = $request->get('caja_id');
-                                        $Pago_Extra->save();
-                                    }
+                        //             // return $Pago_Extra->id;
+                        //             $UdatePagoServiciosConVtosPendientes = Pago_Extra::findOrFail($Pago_Extra->id);
+                        //             // return $UdatePagoServiciosConVtosPendientes;
+                        //             if ($UdatePagoServiciosConVtosPendientes->Divisa == $pagoVueltos->Divisa) {
+                        //                 $UdatePagoServiciosConVtosPendientes->MontoDivisa = $UdatePagoServiciosConVtosPendientes->MontoDivisa + $pagoVueltos->MontoDivisa;
+                        //                 $UdatePagoServiciosConVtosPendientes->MontoDolar = $UdatePagoServiciosConVtosPendientes->MontoDolar + $pagoVueltos->MontoDolar;
+                        //                 // return $UdatePagoServiciosConVtosPendientes->MontoDivisa;
+                        //                 $UdatePagoServiciosConVtosPendientes->update();
+                        //             }else{
+                        //                 $Pago_Extra = new Pago_Extra();
+                        //                 $Pago_Extra->Divisa = $pagoVueltos->Divisa;
+                        //                 $Pago_Extra->MontoDivisa = $pagoVueltos->MontoDivisa;
+                        //                 $Pago_Extra->TasaTiket = $pagoVueltos->TasaTiket;
+                        //                 $Pago_Extra->MontoDolar = $pagoVueltos->MontoDolar;
+                        //                 $Pago_Extra->Vueltos = 0;
+                        //                 $Pago_Extra->horas_extra_id = $horasExtras->id;
+                        //                 $Pago_Extra->servicio_id = $id;
+                        //                 $Pago_Extra->caja_id = $request->get('caja_id');
+                        //                 $Pago_Extra->save();
+                        //             }
 
 
-                                }
+                        //         }
 
-                                // // TODO Ahora actualizamos la tabla Excedentes_Recibidos_Caja_Actual para pasar el dinero pendiente si lo hay al nuevo servicio
-                                // //que se creo porque de lo contrario se perderia el vuelto pendiente
+                        //         // // TODO Ahora actualizamos la tabla Excedentes_Recibidos_Caja_Actual para pasar el dinero pendiente si lo hay al nuevo servicio
+                        //         // //que se creo porque de lo contrario se perderia el vuelto pendiente
 
-                                // // TODO verificamos si exciste un vuelto pendiente con el id del servicio que cerramos $id
+                        //         // // TODO verificamos si exciste un vuelto pendiente con el id del servicio que cerramos $id
 
 
-                                //     $PasarVtossPtesToNextServ = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('Estado','Pendiente')->first();
-                                //     if ($PasarVtossPtesToNextServ) {
-                                //         $PasarVtossPtesToNextServ->servicio_id = $servicio->id;
-                                //         $PasarVtossPtesToNextServ->update();
-                                //     }
+                        //         //     $PasarVtossPtesToNextServ = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('Estado','Pendiente')->first();
+                        //         //     if ($PasarVtossPtesToNextServ) {
+                        //         //         $PasarVtossPtesToNextServ->servicio_id = $servicio->id;
+                        //         //         $PasarVtossPtesToNextServ->update();
+                        //         //     }
 
 
 
 
-                            }
+                        //     }
 
 
-                        }else{
-                            // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
-                            // de lo contrario solo registra el dinero dejado de contado.
-                            // return 'estoy en else';
-                            if($VueltospagoConExcedente > 0){
+                        // }else{
+                        //     // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
+                        //     // de lo contrario solo registra el dinero dejado de contado.
+                        //     // return 'estoy en else';
+                        //     if($VueltospagoConExcedente > 0){
 
-                                // $Restardivisa = '';
-                                // $RestarMontoDivisa = 0;
-                                // $RestarTasaTiket = 0;
-                                // $RestarMontoDolar = 0;
+                        //         // $Restardivisa = '';
+                        //         // $RestarMontoDivisa = 0;
+                        //         // $RestarTasaTiket = 0;
+                        //         // $RestarMontoDolar = 0;
 
-                                // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
-                                //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
-                                // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
-                                //con dos divisas
+                        //         // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
+                        //         //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
+                        //         // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
+                        //         //con dos divisas
 
-                                $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Extras_Vueltos->id);
-                                // return $RestarVtossPtesToVtosPtesDevueltos;
+                        //         $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Extras_Vueltos->id);
+                        //         // return $RestarVtossPtesToVtosPtesDevueltos;
 
 
 
-                                if ($pagoVueltos) {
-                                    $isVuelos = $request->get('isVueltos');
+                        //         if ($pagoVueltos) {
+                        //             $isVuelos = $request->get('isVueltos');
 
-                                    $Pago_Extra = new Pago_Extra();
-                                    $Pago_Extra->Divisa = $pagoVueltos->Divisa;
-                                    $Pago_Extra->MontoDivisa = $pagoVueltos->MontoDivisa;
-                                    $Pago_Extra->TasaTiket = $pagoVueltos->TasaTiket;
-                                    $Pago_Extra->MontoDolar = $pagoVueltos->MontoDolar;
-                                    $Pago_Extra->Vueltos = -$isVuelos;
-                                    $Pago_Extra->horas_extra_id = $horasExtras->id;
-                                    $Pago_Extra->servicio_id = $id;
-                                    $Pago_Extra->caja_id = $request->get('caja_id');
-                                    $Pago_Extra->save();
+                        //             $Pago_Extra = new Pago_Extra();
+                        //             $Pago_Extra->Divisa = $pagoVueltos->Divisa;
+                        //             $Pago_Extra->MontoDivisa = $pagoVueltos->MontoDivisa;
+                        //             $Pago_Extra->TasaTiket = $pagoVueltos->TasaTiket;
+                        //             $Pago_Extra->MontoDolar = $pagoVueltos->MontoDolar;
+                        //             $Pago_Extra->Vueltos = -$isVuelos;
+                        //             $Pago_Extra->horas_extra_id = $horasExtras->id;
+                        //             $Pago_Extra->servicio_id = $id;
+                        //             $Pago_Extra->caja_id = $request->get('caja_id');
+                        //             $Pago_Extra->save();
 
 
 
-                                }
+                        //         }
 
-                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
+                        //         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //         // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
 
-                                $isVuelos = $request->get('isVueltos');
+                        //         $isVuelos = $request->get('isVueltos');
 
-                                if($isVuelos > 0 || $isVuelos != null){
+                        //         if($isVuelos > 0 || $isVuelos != null){
 
 
 
 
-                                    $MontoDivisaVueltos = $request->get('MontoDivisaV');
-                                    $divisaVueltos = $request->get('divisaV');
-                                    $TasaTikeVueltos = $request->get('TasaTikeV');
-                                    $MontoDolarVueltos = $request->get('MontoDolarV');
+                        //             $MontoDivisaVueltos = $request->get('MontoDivisaV');
+                        //             $divisaVueltos = $request->get('divisaV');
+                        //             $TasaTikeVueltos = $request->get('TasaTikeV');
+                        //             $MontoDolarVueltos = $request->get('MontoDolarV');
 
 
-                                    $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
+                        //             $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
 
 
-                                    foreach($MontoDivisaVueltos as $key => $val) {
+                        //             foreach($MontoDivisaVueltos as $key => $val) {
 
 
-                                        $Vdivisa[]=$divisaVueltos[$key];
-                                        $VMontoDivisa[]=$MontoDivisaVueltos[$key];
-                                        $VTasaTiket[]=$TasaTikeVueltos[$key];
-                                        $VMontoDolar[]=$MontoDolarVueltos[$key];
+                        //                 $Vdivisa[]=$divisaVueltos[$key];
+                        //                 $VMontoDivisa[]=$MontoDivisaVueltos[$key];
+                        //                 $VTasaTiket[]=$TasaTikeVueltos[$key];
+                        //                 $VMontoDolar[]=$MontoDolarVueltos[$key];
 
 
 
 
 
-                                    }
+                        //             }
 
 
 
 
-                                    // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                                    //creamos un contador
-                                    $cont = 0;
+                        //             // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                        //             //creamos un contador
+                        //             $cont = 0;
 
 
-                                    //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                                    while ($cont < count($VMontoDolar)) {
+                        //             //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                        //             while ($cont < count($VMontoDolar)) {
 
 
-                                        $Pago_Extras_Vueltos = new Pago_Vuelto();
-                                        $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
-                                        $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
-                                        $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
-                                        $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
-                                        $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
-                                        $Pago_Extras_Vueltos->servicio_id = $id;
-                                        $Pago_Extras_Vueltos->venta_id = 0;
-                                        $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
-                                        $Pago_Extras_Vueltos->save();
+                        //                 $Pago_Extras_Vueltos = new Pago_Vuelto();
+                        //                 $Pago_Extras_Vueltos->Tipo = 'Horas_Extras';
+                        //                 $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
+                        //                 $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
+                        //                 $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
+                        //                 $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
+                        //                 $Pago_Extras_Vueltos->servicio_id = $id;
+                        //                 $Pago_Extras_Vueltos->venta_id = 0;
+                        //                 $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
+                        //                 $Pago_Extras_Vueltos->save();
 
-                                        $cont = $cont+1;
-                                    }
+                        //                 $cont = $cont+1;
+                        //             }
 
-                                }
-                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //         }
+                        //         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 
 
 
-                            }
+                        //     }
 
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        }
+                        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // }
 
 
                     }
@@ -2797,8 +4023,31 @@ class ServicioController extends Controller
 
                         $base_vuelto_monto_dejado = $request->get('base_vuelto_monto_dejado');
                         $monto_dejado = $request->get('monto_dejado');
+                        $modo_pago = $request->get('modo_pago');
 
                         $resta = $monto_dejadoResta - $base_vuelto_monto_dejado;
+
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        // TODO creamos metodo para realizar el pago cuando se paga con dinero contable viene en la variable base_vuelto_monto_dejado
+                        // primero validamos si exciste un pago hecho.
+
+                        $montoBase = $request->get('base_vuelto_monto_dejado');
+                        $montoResta = $request->get('monto_dejadoResta');
+                        $montoPendiente = $request->get('VueltospagoConExcedente');
+                        // $total_venta = $request->get('total_venta');
+
+
+                        $montoBase = floatval($montoBase);
+                        $montoPendiente = floatval($montoPendiente);
+                        $montoResta = floatval($montoResta);
+                        // $total_venta = floatval($total_venta);
+
+                        $opS = $montoBase + $montoPendiente;
+
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                         //                         if($base_vuelto_monto_dejado > 0){
                         // return 'es mayor';
@@ -2806,9 +4055,9 @@ class ServicioController extends Controller
                         //                             return 'es menor';
                         //                         }
 
-                        // return $request;
+                        // return $opS;
 
-                        if($VueltospagoConExcedente > 0 ){
+                        if($opS > 0 && $modo_pago == 'contado'){
 
                             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2855,24 +4104,41 @@ class ServicioController extends Controller
                                         $excdtsRecibidosCaja->caja_id = $request->get('caja_id');
                                         $excdtsRecibidosCaja->save();
 
+
+                                        echo  'Agregamos tabla excedente divisa: '.$Vdivisa[$cont].' montoDivisa: '.$VMontoDivisa[$cont].' tasaTiket: '.$VTasaTiket[$cont].' montoDolar: '.floatval($VMontoDolar[$cont]).' montoDolarConsumo: '.floatval($VMontoDolar[$cont]).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+                                            $Pago_Servicio = new Pago_Servicio();
+                                            $Pago_Servicio->Divisa = $Vdivisa[$cont];
+                                            $Pago_Servicio->MontoDivisa = $VMontoDivisa[$cont];
+                                            $Pago_Servicio->TasaTiket = $VTasaTiket[$cont];
+                                            $Pago_Servicio->MontoDolar = floatval($VMontoDolar[$cont]);
+                                            $Pago_Servicio->MontoDolarServicio = floatval($VMontoDolar[$cont]);
+                                            $Pago_Servicio->Excedente = 0;
+                                            $Pago_Servicio->Vueltos = 0;
+                                            $Pago_Servicio->servicio_id = $id;
+                                            $Pago_Servicio->caja_id = $request->get('caja_id');
+                                            $Pago_Servicio->save();
+                                            echo  'Agregamos pagos servicios divisa: '.$Vdivisa[$cont].' montoDivisa: '.$VMontoDivisa[$cont].' tasaTiket: '.$VTasaTiket[$cont].' montoDolar: '.floatval($VMontoDolar[$cont]).' montoDolarConsumo: '.floatval($VMontoDolar[$cont]).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+
+
+                                            if($Pago_Servicio->id){
+                                                $actualizarServicioToMixto = Servicio::findOrfail($id);
+                                                $actualizarServicioToMixto->dinero_dejado = $actualizarServicioToMixto->dinero_dejado + $VMontoDolar[$cont];
+                                                $actualizarServicioToMixto->excedente_nuevo = $actualizarServicioToMixto->excedente_nuevo + $VMontoDolar[$cont];
+                                                $actualizarServicioToMixto->tipo_pago = 'Mixto';
+                                                $actualizarServicioToMixto->update();
+
+
+                                            }
+
                                         $cont = $cont+1;
                                     }
                                 }
-
-
-
-                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                // Aquí llenamos la tabla Excedente_Recibidos_Caja_Acatual con la divisa que deja el cliente para acompletar el vuelto
-
-
-
                             }
 
                              ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos para eso usamos una bandera llamad isVuelto
-                            //que debemos pasar por la vista
 
                             $isVuelos = $request->get('isVueltos');
 
@@ -2916,8 +4182,8 @@ class ServicioController extends Controller
                                 while ($cont < count($VMontoDolarv)) {
 
 
-                                    $Pago_Consumo_Vueltos = new Pago_Vuelto();
-                                    $Pago_Consumo_Vueltos->Tipo = 'Servicio';
+                                    $Pago_Consumo_Vueltos = new Temp_Pago_Vuelto();
+                                    $Pago_Consumo_Vueltos->Tipo = 'Pendiente';
                                     $Pago_Consumo_Vueltos->Divisa = $Vdivisav[$cont];
                                     $Pago_Consumo_Vueltos->MontoDivisa = $VMontoDivisav[$cont];
                                     $Pago_Consumo_Vueltos->TasaTiket = $VTasaTiketv[$cont];
@@ -2935,229 +4201,656 @@ class ServicioController extends Controller
                             }
                             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                    // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
-                                    $Pago_Vuelto_Cuenta = Pago_Vuelto::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->get();
-                                    $total_Pago_Vuelto_Cuenta = 0;
-                                    // return $Pago_Vuelto_Cuenta;
+
+
+                        $totalResta = $montoResta;
+
+                            // return 'totalResta '.$totalResta;
+                            $pg = 0;
+                            while ($totalResta > 0) {
+
+                                $TotalExcedenteData = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)
+                                    ->where('caja_id',$request->get('caja_id'))
+                                    ->where('Estado','Pendiente')
+                                    ->select(DB::raw('SUM(MontoDolar) as totalExcedente'))
+                                    ->get();
+                                    $TotalExcedenteSumado = floatval($TotalExcedenteData[0]->totalExcedente);
+
+                                        // return $TotalExcedente;
+
+                                //realizamos la consulta en la base de datos y ordenamos los datos de menor a mayor sobre la columna MontoDolar
+                                //para que luego reste el pago con vueltos pendientes
+                                $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)
+                                    ->where('caja_id',$request->get('caja_id'))
+                                    ->where('Estado','Pendiente')
+                                    ->orderBy('MontoDolar', 'ASC')
+                                    ->get();
+
+
+                                $TotalVueltoTempSumados = Temp_Pago_Vuelto::where('servicio_id',$id)
+                                    ->where('caja_id',$request->get('caja_id'))
+                                    ->where('Tipo','Pendiente')
+                                    ->select(DB::raw('SUM(MontoDolar) as totalVueltosTemp'))
+                                    ->get();
+                                    $TotalVueltoTempSumado = floatval($TotalVueltoTempSumados[0]->totalVueltosTemp);
+
+                                        // return $TotalExcedente;
+
+                                //realizamos la consulta en la base de datos y ordenamos los datos de menor a mayor sobre la columna MontoDolar
+                                //para que luego reste el pago con vueltos pendientes
+                                
+
+                                    if($totalResta <= $TotalExcedenteSumado){
+
+                                        foreach($RestarVtossPtesToVtosPtes as $RestarExcedentesPtes){
+
+                                            $TotalVueltoTemps = Temp_Pago_Vuelto::where('servicio_id',$id)
+                                            ->where('caja_id',$request->get('caja_id'))
+                                            ->where('Tipo','Pendiente')
+                                            ->orderBy('MontoDolar', 'ASC')
+                                            ->get();
+
+                                            $D = $RestarExcedentesPtes->MontoDolar;
+                                            foreach ($TotalVueltoTemps as $TotalVueltoTemp) {
+                                                if($totalResta > 0){
+                                                //     if($pg > 0){
+                                                //         $pv = $pg;
+                                                //     }else{
+                                                //         $pv = $TotalVueltoTemp->MontoDolar;
+                                                //     }
+
+                                                    // return ' pv'.$pv.' '.$D;
+
+                                                    $pv = $TotalVueltoTemp->MontoDolar;
+
+                                                    if($pv == $D && $totalResta > 0 && $D > 0){
+                                                        echo "<br><br><br>pago $pv deuda $D resta $totalResta<br><br><br>";
+                                                        $deuda = $D;
+                                                        $pg = $pv;
+                                                        $op = $pv - $deuda;
+                                                        $D = $op;
+                                                        $totalResta = $totalResta - $pv;
+
+                                                        echo "resta $totalResta<br><br><br>";
+
+                                                        //ingresamos en la tabla vueltos
+                                                        echo  'Guardamos vueltos Tipo: '.$RestarExcedentesPtes->Tipo.' tipo_vuelto: Vueltos_Excedentes divisa: '.$TotalVueltoTemp->Divisa.' montoDivisa: '.$TotalVueltoTemp->MontoDivisa.' tasaTiket: '.$TotalVueltoTemp->TasaTiket.' montoDolar: '.floatval($pg).' servicio_id : '.$id.'  venta_id:  '. $RestarExcedentesPtes->venta_id .' horas_extra_id: '. $RestarExcedentesPtes->horas_extra_id .' caja_id: '.$RestarExcedentesPtes->caja_id.' <br> ';
 
 
 
+                                                        //eliminamos el retistro de la tabla temp_pagos_vueltos
+                                                        echo "$totalResta eliminamos el id: $TotalVueltoTemp->id dela tabla temp_pagos_vueltos <br>";
+                                                        
+                                                        //Actualizamos la tabla excedentes_actuals con estado devuelto
 
-                                    $mayorVuelto = $Pago_Vuelto_Cuenta[0];
+                                                        echo "actualizamos el estado a devuelto <br>";
+                                                        
+                                                        $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
 
-                                    foreach ($Pago_Vuelto_Cuenta as $keyVueltos) {
+                                                    if ($RestarVtossPtes) {
+                                                        $RestarVtossPtes->Estado = 'Devueltos';
+                                                        $RestarVtossPtes->update();
 
-                                        $total_Pago_Vuelto_Cuenta += $keyVueltos->MontoDolar;
-
-                                        if($mayorVuelto > $keyVueltos){ $mayorVuelto = $keyVueltos;	}
-                                    }
-                                    // return $total_Pago_Vuelto_Cuenta;
-
-                                    // while ($total_Pago_Vuelto_Cuenta > 0) {
-                                        # code...
-
-
-                                    // return $mayorVuelto;
-
-                                    // TODO Crear proceso que maneje el pago con vueltos pendiente
-
-
-                                    // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
-                                    $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->where('Estado','Pendiente')->get();
-                                    // return $RestarVtossPtesToVtosPtes;
-
-                                    $totalExcedenteSumado = 0;
+                                                    }
+                                                    echo 'igual <br> ';
+                                                    echo  'Actualizar registro  en la tabla Excedente_Recibidos => Tipo: '.$RestarVtossPtes->Tipo.' Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($TotalVueltoTemp->MontoDivisa).' tasaTiket: '.$TotalVueltoTemp->TasaTiket.' montoDolar: '.floatval($TotalVueltoTemp->MontoDdolar).'<br> ';
+                                                    $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
+                                                    $D = 0;
 
 
+                                                    $Pago_Vueltos = new Pago_Vuelto();
+                                                    $Pago_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                    $Pago_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                    $Pago_Vueltos->Divisa = $TotalVueltoTemp->Divisa;
+                                                    $Pago_Vueltos->MontoDivisa = $pv * $TotalVueltoTemp->TasaTiket;
+                                                    $Pago_Vueltos->TasaTiket = $TotalVueltoTemp->TasaTiket;
+                                                    $Pago_Vueltos->MontoDolar = $pv;
+                                                    $Pago_Vueltos->servicio_id = $id;
+                                                    $Pago_Vueltos->venta_id = $RestarVtossPtes->venta_id;
+                                                    $Pago_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                    $Pago_Vueltos->caja_id = $request->get('caja_id');
+                                                    $Pago_Vueltos->save();
+                                                    
+                                                    Temp_Pago_Vuelto::destroy($TotalVueltoTemp->id);
 
+                                                    }else if(round($pv,6) < round($D,6) && $totalResta > 0 && $D > 0){
+                                                        echo "<br><br><br>pago $pv deuda $D resta $totalResta<br><br><br>";
+                                                        $totalResta = $totalResta - $pv;
+                                                        $op = $D - $pv;
 
-                                    $mayor=$RestarVtossPtesToVtosPtes[0];
-                                    // return $mayor;
+                                                        echo "menor pago $pv  debia $D cantPago 0";
+                                                        $D = $op;
+                                                        echo "cantDeuda $D resta $totalResta <br>";
+                                                        echo "resta $totalResta<br><br><br>";
 
-                                    foreach ($RestarVtossPtesToVtosPtes as $key) {
+                                                        $RestarVtossTemp = Temp_Pago_Vuelto::findOrFail($TotalVueltoTemp->id);
 
-                                        $totalExcedenteSumado += $key->MontoDolar;
-
-                                        if($mayor>$key){ $mayor=$key;	}
-                                    }
-                                    $monto_dejadoResta = floatval($monto_dejadoResta);
-                                    $totalExcedenteSumado = floatval($totalExcedenteSumado);
-                                    // return $totalExcedenteSumado .' '.$monto_dejadoResta;
-
-                                    // return 'Excedente: '.$totalExcedenteSumado.' Vueltos: '.$total_Pago_Vuelto_Cuenta;
-
-
-                                    // TODO pregutamos si el vulto pagado es menor o = al total de excedente a apagar para en primer lugar
-                                    // si es menor lo que hacemos es restarle al excedente de mayor cantidad el sobrante
-                                    // ejemplo: supangamos que tenemos dos registros con excedente uno vale 4 y en pesos otro 6 y en dolar
-                                    // si la suma total de excedente vale 10 y vueltos es 2 entonces 10 - 2 = 8. se le resta al registro de excedente
-                                    // de mayor cantidad suponiendo que es 6 en dolar entronces serian 6 - 2 = 4 todos los demas registros quedarían igual
-                                    // y el registro que era de valor 6 quedaría en 4 y se crearía un nuevo registro con el valor de 2 pero devuelto.
-                                    // Ahora si la suma total de los vueltos pagados es igual a la suma total de los excedentes entonces signica que
-                                    //pago la totalidad y se procede solo a cambiar el estatus de pendiente a devueltos.
-
-                                    // TODO Preguntamos si $totalExcedenteSumado es == a $total_Pago_Vuelto_Cuenta para solo cambiar el estatus a devueltos
-                                    //en la  tabal Excedentes_Recibidos_Caja_Actual
-
-                                    // return 'Bien';
-
-                                    if ($totalExcedenteSumado == $monto_dejadoResta) {
-                                        // return 'igual';
-                                        $RestarVtossPtesTo = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->where('Estado','Pendiente')->get();
-
-
-                                        foreach ($RestarVtossPtesTo as $restaVueltosTo ) {
-                                            if ($restaVueltosTo) {
-                                                // return $restaVueltosTo->id;
-                                                $UpdateDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($restaVueltosTo->id);
-                                                $UpdateDevueltos->Estado = 'Devueltos';
-                                                $UpdateDevueltos->update();
-
-                                            }
-                                        }
-                                        // return 'Bienss';
-                                        $total_Pago_Vuelto_Cuenta = 0;
-                                    }
-                                    // return 'mal';
-
-                                    if ($totalExcedenteSumado > $monto_dejadoResta && $monto_dejadoResta > 0 ) {
-                                        // return 'aquí';
-                                        // $montoResta = $totalExcedenteSumado - $total_Pago_Vuelto_Cuenta;
-                                        // return $montoResta;
-
-                                        // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
-                                        $RestarVtos = Excedentes_Recibidos_Caja_Actual::findOrFail($mayor->id);
-
-                                        if ($RestarVtos->MontoDolar >= $monto_dejadoResta) {
-                                            // return 'Bien';
-
-                                            if ($RestarVtos) {
-                                                $RestarVtos->MontoDivisa = $RestarVtos->MontoDivisa - ($monto_dejadoResta * $RestarVtos->TasaTiket);
-                                                $RestarVtos->MontoDolar = $RestarVtos->MontoDolar - $monto_dejadoResta;
-                                                $RestarVtos->update();
-
-
-                                                // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
-
-                                                $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
-                                                $AgregarVtossPtesToVtosPtes->Tipo = 'servicio';
-                                                $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
-                                                $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtos->Divisa;
-                                                $AgregarVtossPtesToVtosPtes->MontoDivisa = ($monto_dejadoResta * $RestarVtos->TasaTiket);
-                                                $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtos->TasaTiket;
-                                                $AgregarVtossPtesToVtosPtes->MontoDolar = $monto_dejadoResta;
-                                                $AgregarVtossPtesToVtosPtes->servicio_id = $id;
-                                                $AgregarVtossPtesToVtosPtes->venta_id = 0;
-                                                $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
-                                                $AgregarVtossPtesToVtosPtes->save();
-
-                                                // return $AgregarVtossPtesToVtosPtes->id;
-
-                                                // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
-                                                if($RestarVtos->MontoDolar == 0){
-                                                    Excedentes_Recibidos_Caja_Actual::destroy($RestarVtos->id);
-                                                }
-                                            }
-
-                                            $total_Pago_Vuelto_Cuenta = 0;
-                                        }else if ($RestarVtos->MontoDolar < $monto_dejadoResta) {
-                                            // return 'Bien mal ff';
-                                            //consultamos la tabla Excedentes recibidos en caja actual para restarle el vuelto
-
-
-                                            $resta_actual = $isVuelos;
-                                            $valor = $resta_actual;
-                                            $resto = 0;
-
-
-                                            while ($valor > 0) {
-
-                                                // return 'cero';
-
-                                                $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->where('Estado','Pendiente')->get();
-
-                                                foreach ($RestarVtossPtesToVtosPtes as $key) {
-                                                    $resto = $key->MontoDolar - $resta_actual;
-                                                    $valor = $resto;
-                                                    // $resto = $resta_actual - $key->MontoDolar;
-                                                    // return $resto;
-
-                                                    if($resto < 0 ){
-                                                        // return 'menos';
-
-                                                        $UpdateDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($key->id);
-                                                        $UpdateDevueltos->Estado = 'Devueltos';
-                                                        $UpdateDevueltos->update();
-
-                                                        $resto = $resta_actual - $key->MontoDolar;
-                                                        $valor = $resto;
-                                                        $resta_actual = $resto;
-
-                                                        // return $resto;
-
-                                                    }else {
-                                                        // return 'mas';
-
-                                                        $RestarVtos = Excedentes_Recibidos_Caja_Actual::findOrFail($key->id);
-                                                        if ($RestarVtos) {
-
-                                                            if($RestarVtos->MontoDolar > $resto){
-                                                                $valor = 0;
-                                                                // return $RestarVtos->TasaTiket;
-                                                                // if($RestarVtos->Divisa == 'Dolar'){
-
-                                                                // }
-
-                                                                $RestarVtos->Estado = 'Devueltos';
-                                                                $RestarVtos->MontoDivisa = $RestarVtos->MontoDivisa - ($resto * $RestarVtos->TasaTiket);
-                                                                $RestarVtos->MontoDolar = $RestarVtos->MontoDolar - $resto;
-                                                                $RestarVtos->update();
-
-
-                                                                // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
-
-                                                                $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
-                                                                $AgregarVtossPtesToVtosPtes->Tipo = 'servicio';
-                                                                $AgregarVtossPtesToVtosPtes->Estado = 'Pendiente';
-                                                                $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtos->Divisa;
-                                                                $AgregarVtossPtesToVtosPtes->MontoDivisa = ($resto * $RestarVtos->TasaTiket);
-                                                                $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtos->TasaTiket;
-                                                                $AgregarVtossPtesToVtosPtes->MontoDolar = $resto;
-                                                                $AgregarVtossPtesToVtosPtes->servicio_id = $id;
-                                                                $AgregarVtossPtesToVtosPtes->venta_id = 0;
-                                                                $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
-                                                                $AgregarVtossPtesToVtosPtes->save();
-
-                                                                // return $AgregarVtossPtesToVtosPtes->id;
-                                                            }
-                                                            if($RestarVtos->MontoDolar == $resto){
-                                                                $valor = 0;
-                                                                // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
-                                                                if($RestarVtossPtesToVtosPtes->MontoDolar == 0){
-                                                                    Excedentes_Recibidos_Caja_Actual::destroy($RestarVtos->id);
-                                                                }
-                                                            }
+                                                        if ($RestarVtossTemp) {
+                                                            $RestarVtossTemp->MontoDivisa = $RestarVtossTemp->MontoDivisa - ($pv * $RestarVtossTemp->TasaTiket);
+                                                            $RestarVtossTemp->MontoDolar = $RestarVtossTemp->MontoDolar - $pv;
+                                                            $RestarVtossTemp->update();
                                                         }
+
+                                                        if($RestarVtossTemp->MontoDivisa == 0){
+                                                        Temp_Pago_Vuelto::destroy($TotalVueltoTemp->id);
+                                                        }
+
+
+                                                        
+
+
+                                                     echo "actualizamos el estado a devuelto <br>";
+                                                        
+                                                        $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
+
+                                                    if ($RestarVtossPtes) {
+                                                        $RestarVtossPtes->MontoDivisa = $RestarVtossPtes->MontoDivisa - ($pv * $RestarVtossPtes->TasaTiket);
+                                                        $RestarVtossPtes->MontoDolar = $RestarVtossPtes->MontoDolar - $pv;
+                                                        $RestarVtossPtes->update();
+
+                                                        $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                                        $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
+                                                        $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                                                        $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
+                                                        $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($pv * $RestarVtossPtes->TasaTiket);
+                                                        $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtes->TasaTiket;
+                                                        $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($pv);
+                                                        $AgregarVtossPtesToVtosPtes->servicio_id = $id;
+                                                        $AgregarVtossPtesToVtosPtes->venta_id = $RestarVtossPtes->venta_id;
+                                                        $AgregarVtossPtesToVtosPtes->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                        $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                                        $AgregarVtossPtesToVtosPtes->save();
+
+                                                    // return $AgregarVtossPtesToVtosPtes->id;
+
+                                                    // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                                    if($RestarVtossPtes->MontoDolar == 0){
+                                                        Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtes->id);
+                                                    }
+
+                                                    }
+                                                    echo 'menor <br> ';
+                                                    echo  'Actualizar registro  en la tabla Excedente_Recibidos => Tipo: '.$RestarVtossPtes->Tipo.' Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($TotalVueltoTemp->MontoDivisa).' tasaTiket: '.$TotalVueltoTemp->TasaTiket.' montoDolar: '.floatval($TotalVueltoTemp->MontoDdolar).'<br> ';
+                                                    
+                                                    $Pago_Vueltos = new Pago_Vuelto();
+                                                    $Pago_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                    $Pago_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                    $Pago_Vueltos->Divisa = $TotalVueltoTemp->Divisa;
+                                                    $Pago_Vueltos->MontoDivisa = $pv * $RestarVtossTemp->TasaTiket;
+                                                    $Pago_Vueltos->TasaTiket = $RestarVtossTemp->TasaTiket;
+                                                    $Pago_Vueltos->MontoDolar = $pv;
+                                                    $Pago_Vueltos->servicio_id = $id;
+                                                    $Pago_Vueltos->venta_id = $RestarVtossPtes->venta_id;
+                                                    $Pago_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                    $Pago_Vueltos->caja_id = $request->get('caja_id');
+                                                    $Pago_Vueltos->save();
+                                                    
+                                                    
+                                                    $RestarVtossPtess = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarVtossPtes->id);
+                                                    $D = $RestarVtossPtess->MontoDolar;
+
+                                                    }else if(round($pv,6) > round($D,6) && $totalResta > 0 && $D > 0){
+                                                        echo "<br><br><br>pago $pv deuda $D resta $totalResta<br><br><br>";
+                                                        $op = $pv - $D;
+                                                        $pg = $op;
+                                                        $totalResta = $totalResta - $D;
+                                                        echo "pago $D mayor a la deuda $D quedo $pg resta $totalResta <br>";
+                                                        echo "resta $totalResta<br><br><br>";
+                                                        
+                                                        $RestarVtossTemp = Temp_Pago_Vuelto::findOrFail($TotalVueltoTemp->id);
+
+                                                        if ($RestarVtossTemp) {
+                                                            $RestarVtossTemp->MontoDivisa = $RestarVtossTemp->MontoDivisa - ($D * $RestarVtossTemp->TasaTiket);
+                                                            $RestarVtossTemp->MontoDolar = $RestarVtossTemp->MontoDolar - $D;
+                                                            $RestarVtossTemp->update();
+                                                        }
+
+                                                        $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
+
+                                                    if ($RestarVtossPtes) {
+                                                        $RestarVtossPtes->Estado = 'Devueltos';
+                                                        $RestarVtossPtes->update();
+
+                                                    }
+
+                                                    $Pago_Vueltos = new Pago_Vuelto();
+                                                    $Pago_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                    $Pago_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                    $Pago_Vueltos->Divisa = $TotalVueltoTemp->Divisa;
+                                                    $Pago_Vueltos->MontoDivisa = $D * $RestarVtossTemp->TasaTiket;
+                                                    $Pago_Vueltos->TasaTiket = $RestarVtossTemp->TasaTiket;
+                                                    $Pago_Vueltos->MontoDolar = $D;
+                                                    $Pago_Vueltos->servicio_id = $id;
+                                                    $Pago_Vueltos->venta_id = $RestarVtossPtes->venta_id;
+                                                    $Pago_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                    $Pago_Vueltos->caja_id = $request->get('caja_id');
+                                                    $Pago_Vueltos->save();
+                                                    echo 'igual <br> ';
+                                                    echo  'Actualizar registro  en la tabla Excedente_Recibidos => Tipo: '.$RestarVtossPtes->Tipo.' Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($TotalVueltoTemp->MontoDivisa).' tasaTiket: '.$TotalVueltoTemp->TasaTiket.' montoDolar: '.floatval($TotalVueltoTemp->MontoDdolar).'<br> ';
+                                                    $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
+                                                    $D = 0;
                                                     }
                                                 }
-
+                                                echo "<br><br> Iteracion...<br><br>";
 
                                             }
-
-
+                                            echo "<br><br> Iteracion excedente...<br><br>";
                                         }
-
+                                        
                                     }
-
-
-                                // }
-
-
-
-                                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+                                   
+                                // return 'Finalizado...while';
+                            }
+                            // return 'Finalizado...salio del while';
                         }
+
+                        // return 'Finalizado...salio de ops';
+                        // if($VueltospagoConExcedente > 0 && 1 == 2 ){
+
+                        //     // $datos = Excedentes_Recibidos_Caja_Actual::get();
+                        //     // // return $datos;
+
+                        //     // $excdentes = [
+                        //     //     [
+                        //     //         'Tipo'=> 'Cunsumo',
+                        //     //         'Divisa'=> 'Dolar',
+                        //     //         'MontoDolar'=>1.33
+                        //     //     ],
+                        //     //     [
+                        //     //         'Tipo'=> 'Servicio',
+                        //     //         'Divisa'=> 'Dolar',
+                        //     //         'MontoDolar'=>6.67
+                        //     //     ]
+
+                        //     //     ];
+
+                        //     //     foreach ($excdentes as $excdente => $valor) {
+                        //     //         $excdenter[$excdente] = $valor;
+
+                        //     //         // echo $excdenter[$excdente]['MontoDolar']. '<br>';
+
+                        //     //         $deuda = $excdenter[$excdente]['MontoDolar'];
+                        //     //         // echo $deuda. '<br>';
+                        //     //         if($deuda > 0){
+
+                        //     //         }
+                        //     //     }
+
+                        //     // return $excdente;
+
+
+
+
+
+                        //     // return 'Finalizo...';
+
+                        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     // Aquí llenamos la tabla Excedente_Recibidos_Caja_Acatual con la divisa que deja el cliente para acompletar el vuelto
+
+                        //     // $isVuelos = $request->get('isVueltos');
+
+                        //     if($base_vuelto_monto_dejado > 0){
+                        //         // return 'mayor a 0 ' . $resta;
+                        //         $MontoDivisa = $request->get('MontoDivisa');
+                        //         $divisa = $request->get('divisa');
+                        //         $TasaTiket = $request->get('TasaTike');
+                        //         $MontoDolar = $request->get('MontoDolar');
+
+                        //         $MontoDivisa = array_filter($MontoDivisa);
+
+                        //         // return $MontoDivisa;
+                        //         if(count($MontoDivisa)){
+                        //             foreach($MontoDivisa as $key => $val) {
+
+
+                        //                 $Vdivisa[]=$divisa[$key];
+                        //                 $VMontoDivisa[]=$MontoDivisa[$key];
+                        //                 $VTasaTiket[]=$TasaTiket[$key];
+                        //                 $VMontoDolar[]=$MontoDolar[$key];
+
+                        //             }
+
+                        //             $cont = 0;
+                        //             // return 'mayor a 0 ' . $resta;
+
+                        //             while ($cont < count($VMontoDolar)) {
+
+
+                        //                 $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
+                        //                 $excdtsRecibidosCaja->Tipo = 'Servicio';
+                        //                 $excdtsRecibidosCaja->Estado = 'Pendiente';
+                        //                 $excdtsRecibidosCaja->Divisa = $Vdivisa[$cont];
+                        //                 $excdtsRecibidosCaja->TasaTiket = $VTasaTiket[$cont];
+                        //                 $excdtsRecibidosCaja->MontoDivisa = $VMontoDivisa[$cont];
+                        //                 $excdtsRecibidosCaja->MontoDolar = $VMontoDolar[$cont];
+                        //                 $excdtsRecibidosCaja->servicio_id = $id;
+                        //                 $excdtsRecibidosCaja->venta_id = 0;
+                        //                 $excdtsRecibidosCaja->caja_id = $request->get('caja_id');
+                        //                 $excdtsRecibidosCaja->save();
+
+
+                        //                 echo  'Agregamos tabla excedente divisa: '.$Vdivisa[$cont].' montoDivisa: '.$VMontoDivisa[$cont].' tasaTiket: '.$VTasaTiket[$cont].' montoDolar: '.floatval($VMontoDolar[$cont]).' montoDolarConsumo: '.floatval($VMontoDolar[$cont]).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+                        //                     $Pago_Servicio = new Pago_Servicio();
+                        //                     $Pago_Servicio->Divisa = $Vdivisa[$cont];
+                        //                     $Pago_Servicio->MontoDivisa = $VMontoDivisa[$cont];
+                        //                     $Pago_Servicio->TasaTiket = $VTasaTiket[$cont];
+                        //                     $Pago_Servicio->MontoDolar = floatval($VMontoDolar[$cont]);
+                        //                     $Pago_Servicio->MontoDolarServicio = floatval($VMontoDolar[$cont]);
+                        //                     $Pago_Servicio->Excedente = 0;
+                        //                     $Pago_Servicio->Vueltos = 0;
+                        //                     $Pago_Servicio->servicio_id = $id;
+                        //                     $Pago_Servicio->caja_id = $request->get('caja_id');
+                        //                     $Pago_Servicio->save();
+                        //                     echo  'Agregamos pagos servicios divisa: '.$Vdivisa[$cont].' montoDivisa: '.$VMontoDivisa[$cont].' tasaTiket: '.$VTasaTiket[$cont].' montoDolar: '.floatval($VMontoDolar[$cont]).' montoDolarConsumo: '.floatval($VMontoDolar[$cont]).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+
+
+                        //                     if($Pago_Servicio->id){
+                        //                         $actualizarServicioToMixto = Servicio::findOrfail($id);
+                        //                         $actualizarServicioToMixto->dinero_dejado = $actualizarServicioToMixto->dinero_dejado + $VMontoDolar[$cont];
+                        //                         $actualizarServicioToMixto->excedente_nuevo = $actualizarServicioToMixto->excedente_nuevo + $VMontoDolar[$cont];
+                        //                         $actualizarServicioToMixto->tipo_pago = 'Mixto';
+                        //                         $actualizarServicioToMixto->update();
+
+
+                        //                     }
+
+                        //                 $cont = $cont+1;
+                        //             }
+                        //         }
+                        //     }
+
+                        //      ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos para eso usamos una bandera llamad isVuelto
+                        //     //que debemos pasar por la vista
+
+                        //     $isVuelos = $request->get('isVueltos');
+
+                        //     if($isVuelos > 0 || $isVuelos != null){
+
+
+
+
+                        //         $MontoDivisaVueltos = $request->get('MontoDivisaV');
+                        //         $divisaVueltos = $request->get('divisaV');
+                        //         $TasaTikeVueltos = $request->get('TasaTikeV');
+                        //         $MontoDolarVueltos = $request->get('MontoDolarV');
+
+
+                        //         $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
+
+
+                        //         foreach($MontoDivisaVueltos as $key => $val) {
+
+
+                        //             $Vdivisav[]=$divisaVueltos[$key];
+                        //             $VMontoDivisav[]=$MontoDivisaVueltos[$key];
+                        //             $VTasaTiketv[]=$TasaTikeVueltos[$key];
+                        //             $VMontoDolarv[]=$MontoDolarVueltos[$key];
+
+
+
+
+
+                        //         }
+
+
+
+
+                        //         // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                        //         //creamos un contador
+                        //         $cont = 0;
+
+
+                        //         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                        //         while ($cont < count($VMontoDolarv)) {
+
+
+                        //             $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                        //             $Pago_Consumo_Vueltos->Tipo = 'Servicio';
+                        //             $Pago_Consumo_Vueltos->Divisa = $Vdivisav[$cont];
+                        //             $Pago_Consumo_Vueltos->MontoDivisa = $VMontoDivisav[$cont];
+                        //             $Pago_Consumo_Vueltos->TasaTiket = $VTasaTiketv[$cont];
+                        //             $Pago_Consumo_Vueltos->MontoDolar = $VMontoDolarv[$cont];
+                        //             $Pago_Consumo_Vueltos->servicio_id = $id;
+                        //             $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                        //             $Pago_Consumo_Vueltos->save();
+
+                        //             $cont = $cont+1;
+                        //         }
+
+
+                        //             // return $RestarVtossPtesToVtosPtes;
+
+                        //     }
+                        //     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //             // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
+                        //             $Pago_Vuelto_Cuenta = Pago_Vuelto::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->get();
+                        //             $total_Pago_Vuelto_Cuenta = 0;
+                        //             // return $Pago_Vuelto_Cuenta;
+
+
+
+
+                        //             $mayorVuelto = $Pago_Vuelto_Cuenta[0];
+
+                        //             foreach ($Pago_Vuelto_Cuenta as $keyVueltos) {
+
+                        //                 $total_Pago_Vuelto_Cuenta += $keyVueltos->MontoDolar;
+
+                        //                 if($mayorVuelto > $keyVueltos){ $mayorVuelto = $keyVueltos;	}
+                        //             }
+                        //             // return $total_Pago_Vuelto_Cuenta;
+
+                        //             // while ($total_Pago_Vuelto_Cuenta > 0) {
+                        //                 # code...
+
+
+                        //             // return $mayorVuelto;
+
+                        //             // TODO Crear proceso que maneje el pago con vueltos pendiente
+
+
+                        //             // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
+                        //             $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->where('Estado','Pendiente')->get();
+                        //             // return $RestarVtossPtesToVtosPtes;
+
+                        //             $totalExcedenteSumado = 0;
+
+
+
+
+                        //             $mayor=$RestarVtossPtesToVtosPtes[0];
+                        //             // return $mayor;
+
+                        //             foreach ($RestarVtossPtesToVtosPtes as $key) {
+
+                        //                 $totalExcedenteSumado += $key->MontoDolar;
+
+                        //                 if($mayor>$key){ $mayor=$key;	}
+                        //             }
+                        //             $monto_dejadoResta = floatval($monto_dejadoResta);
+                        //             $totalExcedenteSumado = floatval($totalExcedenteSumado);
+                        //             // return $totalExcedenteSumado .' '.$monto_dejadoResta;
+
+                        //             // return 'Excedente: '.$totalExcedenteSumado.' Vueltos: '.$total_Pago_Vuelto_Cuenta;
+
+
+                        //             // TODO pregutamos si el vulto pagado es menor o = al total de excedente a apagar para en primer lugar
+                        //             // si es menor lo que hacemos es restarle al excedente de mayor cantidad el sobrante
+                        //             // ejemplo: supangamos que tenemos dos registros con excedente uno vale 4 y en pesos otro 6 y en dolar
+                        //             // si la suma total de excedente vale 10 y vueltos es 2 entonces 10 - 2 = 8. se le resta al registro de excedente
+                        //             // de mayor cantidad suponiendo que es 6 en dolar entronces serian 6 - 2 = 4 todos los demas registros quedarían igual
+                        //             // y el registro que era de valor 6 quedaría en 4 y se crearía un nuevo registro con el valor de 2 pero devuelto.
+                        //             // Ahora si la suma total de los vueltos pagados es igual a la suma total de los excedentes entonces signica que
+                        //             //pago la totalidad y se procede solo a cambiar el estatus de pendiente a devueltos.
+
+                        //             // TODO Preguntamos si $totalExcedenteSumado es == a $total_Pago_Vuelto_Cuenta para solo cambiar el estatus a devueltos
+                        //             //en la  tabal Excedentes_Recibidos_Caja_Actual
+
+                        //             // return 'Bien';
+
+                        //             if ($totalExcedenteSumado == $monto_dejadoResta) {
+                        //                 // return 'igual';
+                        //                 $RestarVtossPtesTo = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->where('Estado','Pendiente')->get();
+
+
+                        //                 foreach ($RestarVtossPtesTo as $restaVueltosTo ) {
+                        //                     if ($restaVueltosTo) {
+                        //                         // return $restaVueltosTo->id;
+                        //                         $UpdateDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($restaVueltosTo->id);
+                        //                         $UpdateDevueltos->Estado = 'Devueltos';
+                        //                         $UpdateDevueltos->update();
+
+                        //                     }
+                        //                 }
+                        //                 // return 'Bienss';
+                        //                 $total_Pago_Vuelto_Cuenta = 0;
+                        //             }
+                        //             // return 'mal';
+
+                        //             if ($totalExcedenteSumado > $monto_dejadoResta && $monto_dejadoResta > 0 ) {
+                        //                 // return 'aquí';
+                        //                 // $montoResta = $totalExcedenteSumado - $total_Pago_Vuelto_Cuenta;
+                        //                 // return $montoResta;
+
+                        //                 // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
+                        //                 $RestarVtos = Excedentes_Recibidos_Caja_Actual::findOrFail($mayor->id);
+
+                        //                 if ($RestarVtos->MontoDolar >= $monto_dejadoResta) {
+                        //                     // return 'Bien';
+
+                        //                     if ($RestarVtos) {
+                        //                         $RestarVtos->MontoDivisa = $RestarVtos->MontoDivisa - ($monto_dejadoResta * $RestarVtos->TasaTiket);
+                        //                         $RestarVtos->MontoDolar = $RestarVtos->MontoDolar - $monto_dejadoResta;
+                        //                         $RestarVtos->update();
+
+
+                        //                         // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                        //                         $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                        //                         $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtos->MontoDivisa;
+                        //                         $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                        //                         $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtos->Divisa;
+                        //                         $AgregarVtossPtesToVtosPtes->MontoDivisa = ($monto_dejadoResta * $RestarVtos->TasaTiket);
+                        //                         $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtos->TasaTiket;
+                        //                         $AgregarVtossPtesToVtosPtes->MontoDolar = $monto_dejadoResta;
+                        //                         $AgregarVtossPtesToVtosPtes->servicio_id = $id;
+                        //                         $AgregarVtossPtesToVtosPtes->venta_id = 0;
+                        //                         $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                        //                         $AgregarVtossPtesToVtosPtes->save();
+
+                        //                         // return $AgregarVtossPtesToVtosPtes->id;
+
+                        //                         // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                        //                         if($RestarVtos->MontoDolar == 0){
+                        //                             Excedentes_Recibidos_Caja_Actual::destroy($RestarVtos->id);
+                        //                         }
+                        //                     }
+
+                        //                     $total_Pago_Vuelto_Cuenta = 0;
+                        //                 }else if ($RestarVtos->MontoDolar < $monto_dejadoResta) {
+                        //                     // return 'Bien mal ff';
+                        //                     //consultamos la tabla Excedentes recibidos en caja actual para restarle el vuelto
+
+
+                        //                     $resta_actual = $isVuelos;
+                        //                     $valor = $resta_actual;
+                        //                     $resto = 0;
+
+
+                        //                     while ($valor > 0) {
+
+                        //                         // return 'cero';
+
+                        //                         $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('caja_id',$request->get('caja_id'))->where('Estado','Pendiente')->get();
+
+                        //                         foreach ($RestarVtossPtesToVtosPtes as $key) {
+                        //                             $resto = $key->MontoDolar - $resta_actual;
+                        //                             $valor = $resto;
+                        //                             // $resto = $resta_actual - $key->MontoDolar;
+                        //                             // return $resto;
+
+                        //                             if($resto < 0 ){
+                        //                                 // return 'menos';
+
+                        //                                 $UpdateDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($key->id);
+                        //                                 $UpdateDevueltos->Estado = 'Devueltos';
+                        //                                 $UpdateDevueltos->update();
+
+                        //                                 $resto = $resta_actual - $key->MontoDolar;
+                        //                                 $valor = $resto;
+                        //                                 $resta_actual = $resto;
+
+                        //                                 // return $resto;
+
+                        //                             }else {
+                        //                                 // return 'mas';
+
+                        //                                 $RestarVtos = Excedentes_Recibidos_Caja_Actual::findOrFail($key->id);
+                        //                                 if ($RestarVtos) {
+
+                        //                                     if($RestarVtos->MontoDolar > $resto){
+                        //                                         $valor = 0;
+                        //                                         // return $RestarVtos->TasaTiket;
+                        //                                         // if($RestarVtos->Divisa == 'Dolar'){
+
+                        //                                         // }
+
+                        //                                         $RestarVtos->Estado = 'Devueltos';
+                        //                                         $RestarVtos->MontoDivisa = $RestarVtos->MontoDivisa - ($resto * $RestarVtos->TasaTiket);
+                        //                                         $RestarVtos->MontoDolar = $RestarVtos->MontoDolar - $resto;
+                        //                                         $RestarVtos->update();
+
+
+                        //                                         // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                        //                                         $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                        //                                         $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtos->MontoDivisa;
+                        //                                         $AgregarVtossPtesToVtosPtes->Estado = 'Pendiente';
+                        //                                         $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtos->Divisa;
+                        //                                         $AgregarVtossPtesToVtosPtes->MontoDivisa = ($resto * $RestarVtos->TasaTiket);
+                        //                                         $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtos->TasaTiket;
+                        //                                         $AgregarVtossPtesToVtosPtes->MontoDolar = $resto;
+                        //                                         $AgregarVtossPtesToVtosPtes->servicio_id = $id;
+                        //                                         $AgregarVtossPtesToVtosPtes->venta_id = 0;
+                        //                                         $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                        //                                         $AgregarVtossPtesToVtosPtes->save();
+
+                        //                                         // return $AgregarVtossPtesToVtosPtes->id;
+                        //                                     }
+                        //                                     if($RestarVtos->MontoDolar == $resto){
+                        //                                         $valor = 0;
+                        //                                         // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                        //                                         if($RestarVtossPtesToVtosPtes->MontoDolar == 0){
+                        //                                             Excedentes_Recibidos_Caja_Actual::destroy($RestarVtos->id);
+                        //                                         }
+                        //                                     }
+                        //                                 }
+                        //                             }
+                        //                         }
+
+
+                        //                     }
+
+
+                        //                 }
+
+                        //             }
+
+
+                        //         // }
+
+
+
+                        //             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        //             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        // }
                         // return 'no entro ' . $monto_dejadoResta;
                     }
 
@@ -3166,7 +4859,8 @@ class ServicioController extends Controller
                 }catch(\Exception $e)
                 {
 
-                    // dd($e);
+                    dd($e);
+
                     DB::rollback();
                     // if (isset($MontoDolarR)) {
 
@@ -3182,7 +4876,7 @@ class ServicioController extends Controller
             } else if ($bandera == 'cambiarHabitacion') {
                 // return 'no';
 
-                // return $bandera;
+                // return $request;
 
                 try{
 
@@ -3212,19 +4906,19 @@ class ServicioController extends Controller
                     $pagoConExcedente = $request->get('pagoConExcedente');
                     $nuevo_excedente = 0;
 
-                    if($pagoConExcedente > 0){
+                    // if($pagoConExcedente > 0){
 
-                        if($monto_dejado == 0){
-                            $modo_pago = 'Excedente';
-                        }
+                    //     if($monto_dejado == 0){
+                    //         $modo_pago = 'Excedente';
+                    //     }
 
-                        if($monto_dejado > 0){
-                            $modo_pago = 'Contado-Excedente';
-                        }
+                    //     if($monto_dejado > 0){
+                    //         $modo_pago = 'Contado-Excedente';
+                    //     }
 
-                    }else{
-                        $modo_pago = $request->get('modo_pago');
-                    }
+                    // }else{
+                    //     $modo_pago = $request->get('modo_pago');
+                    // }
 
                     $horarios = Horario::findOrFail($request->get('horario_id'));
                     // return $horarios;
@@ -3249,25 +4943,13 @@ class ServicioController extends Controller
 
 
 
-
-
-
-
-
-
-                        // return 'fecha inicial '.$fechaS.' fecha final '.$fecha_salida;
-
-
-
-
-
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     // TODO metodo para pagar con vueltos pendientes
                     // TODO Method to pay with pending returns
 
                     $VueltospagoConExcedente = $request->get('VueltospagoConExcedente');
-
+                    // return $VueltospagoConExcedente;
                     if($VueltospagoConExcedente > 0){
 
                         // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
@@ -3612,6 +5294,51 @@ class ServicioController extends Controller
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        foreach ($cajas->pago_extras as $pagoext ) {
+
+                            if ($pagoext->Divisa == 'Dolar') {
+                                $cajas->SumaTotalDolarPagoExtra = $cajas->SumaTotalDolarPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Peso') {
+                                $cajas->SumaTotalPesoPagoExtra = $cajas->SumaTotalPesoPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Bolivar') {
+                                $cajas->SumaTotalBolivarPagoExtra = $cajas->SumaTotalBolivarPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Punto') {
+                                $cajas->SumaTotalPuntoPagoExtra = $cajas->SumaTotalPuntoPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }elseif ($pagoext->Divisa == 'Transferencia') {
+                                $cajas->SumaTotalTransferenciaPagoExtra = $cajas->SumaTotalTransferenciaPagoExtra + ($pagoext->MontoDivisa - $pagoext->Vueltos * -1);
+                            }
+
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        $excedentesPendientes = Excedentes_Recibidos_Caja_Actual::where('Estado','Pendiente')->get();
+                        if ($excedentesPendientes) {
+
+
+                            foreach ($excedentesPendientes as $excdPendientes ) {
+                                // return $excdPendientes->Divisa;
+                                if ($excdPendientes->Divisa == 'Dolar') {
+                                    $cajas->SumaTotalDolarExcedentesPendientes = $cajas->SumaTotalDolarExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                    // return $cajas->SumaTotalDolarExcedentesPendientes;
+                                }elseif ($excdPendientes->Divisa == 'Peso') {
+                                    $cajas->SumaTotalPesoExcedentesPendientes = $cajas->SumaTotalPesoExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Bolivar') {
+                                    $cajas->SumaTotalBolivarExcedentesPendientes = $cajas->SumaTotalBolivarExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Punto') {
+                                    $cajas->SumaTotalPuntoExcedentesPendientes = $cajas->SumaTotalPuntoExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }elseif ($excdPendientes->Divisa == 'Transferencia') {
+                                    $cajas->SumaTotalTransferenciaExcedentesPendientes = $cajas->SumaTotalTransferenciaExcedentesPendientes + ($excdPendientes->MontoDivisa);
+                                }
+
+                            }
+                        }
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         foreach ($cajas->pago_vueltos as $pagoV ) {
@@ -3632,49 +5359,200 @@ class ServicioController extends Controller
 
                         }
 
+                        // return $cajas->SumaTotalDolarExcedentesPendientes;
+
+
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        // TODO Ahora le agregamos caja chica
 
                         // return 'algo';
-                        $dolarDisponible = (($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante) - $cajas->SumaTotalDolarVueltos);
+                        $dolarDisponible = ($cajas->SumaTotalDolarExcedentesPendientes + $cajas->SumaTotalDolarPagoExtra + $cajas->monto_dolar + ($cajas->SumaTotalDolarCredConsumo + $cajas->SumaTotalDolarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoDolarDivisa) + ($cajas->SumaTotalDolarServ + $cajas->SumaTotalDolar) + ($cajas->SumaVueltosDevueltosDolarDivisa + $cajas->SumaTotalDolarServDflotante) - $cajas->SumaTotalDolarVueltos);
                         // return $dolarDisponible;
-                        $pesoDisponible = (($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante) - $cajas->SumaTotalPesoVueltos);
+                        $pesoDisponible = ($cajas->SumaTotalPesoExcedentesPendientes + $cajas->SumaTotalPesoPagoExtra + $cajas->monto_peso + ($cajas->SumaTotalPesoCredConsumo + $cajas->SumaTotalPesoCredServicio) + ($cajas->SumaVueltosExcedenteNuevoPesoDivisa) + ($cajas->SumaTotalPesoServ + $cajas->SumaTotalPeso) + ($cajas->SumaVueltosDevueltosPesoDivisa + $cajas->SumaTotalPesoServDflotante) - $cajas->SumaTotalPesoVueltos);
                         // return $pesoDisponible;
-                        $bolivarDisponible = (($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante) - $cajas->SumaTotalBolivarVueltos);
+                        $bolivarDisponible = ($cajas->SumaTotalBolivarExcedentesPendientes + $cajas->SumaTotalBolivarPagoExtra + $cajas->monto_bolivar + ($cajas->SumaTotalBolivarCredConsumo + $cajas->SumaTotalBolivarCredServicio) + ($cajas->SumaVueltosExcedenteNuevoBolivarDivisa) + ($cajas->SumaTotalBolivarServ + $cajas->SumaTotalBolivar) + ($cajas->SumaVueltosDevueltosBolivarDivisa + $cajas->SumaTotalBolivarServDflotante) - $cajas->SumaTotalBolivarVueltos);
                         // return $bolivarDisponible;
 
 
-                        // TODO Crear proceso que maneje el pago con vueltos pendiente
 
 
-                        // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
-                        $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->first();
 
 
-                        if ($RestarVtossPtesToVtosPtes) {
-                            $RestarVtossPtesToVtosPtes->MontoDivisa = $RestarVtossPtesToVtosPtes->MontoDivisa - ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
-                            $RestarVtossPtesToVtosPtes->MontoDolar = $RestarVtossPtesToVtosPtes->MontoDolar - $VueltospagoConExcedente;
-                            $RestarVtossPtesToVtosPtes->update();
+
+                        // // TODO Crear proceso que maneje el pago con vueltos pendiente
+
+                        // // TODO Consultamos la base de datos y sumamos el total de excedentes que tiene ese servicio
+                        //             $TotalExcedenteData = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                        //             ->where('caja_id',$request->get('caja_id'))
+                        //             ->where('Estado','Pendiente')
+                        //             ->select(DB::raw('SUM(MontoDolar) as totalExcedente'))
+                        //             ->get();
+                        //             $TotalExcedenteSumado = floatval($TotalExcedenteData[0]->totalExcedente);
+
+                        //             // return $TotalExcedente;
 
 
-                            // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+                        // // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual para actualizar el registro y restar los vueltos pendientes
+                        // // $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)->first();
 
-                            $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
-                            $AgregarVtossPtesToVtosPtes->Tipo = 'Servicio';
-                            $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
-                            $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtesToVtosPtes->Divisa;
-                            $AgregarVtossPtesToVtosPtes->MontoDivisa = ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
-                            $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
-                            $AgregarVtossPtesToVtosPtes->MontoDolar = $VueltospagoConExcedente;
-                            $AgregarVtossPtesToVtosPtes->servicio_id = $id;
-                            $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
-                            $AgregarVtossPtesToVtosPtes->save();
+                        // //realizamos la consulta en la base de datos y ordenamos los datos de menor a mayor sobre la columna MontoDolar
+                        // //para que luego reste el pago con vueltos pendientes
+                        //  $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                        //  ->where('caja_id',$request
+                        //  ->get('caja_id'))
+                        //  ->where('Estado','Pendiente')
+                        //  ->orderBy('MontoDolar', 'ASC')
+                        //  ->get();
 
-                            // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
-                            if($RestarVtossPtesToVtosPtes->MontoDolar == 0){
-                                Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtesToVtosPtes->id);
-                            }
-                        }
+                        // return $RestarVtossPtesToVtosPtes;
+
+
+                        // return $TasaT;
+                                    // $restk = $total_venta;
+
+                                    // // return $restk;
+                                    // $excedenteMonto = 0;
+                                    // $x = $opS;
+                                    // echo $restk. '<br> ';
+                                    // foreach ($RestarVtossPtesToVtosPtes as $key) {
+
+                                    //     // if($restk > 0){
+
+                                    //     $restk = $restk - $key->MontoDolar;
+                                    //     // return $restk;
+                                    //     $x = floatval($x - $key->MontoDolar);
+                                    //     $restk = floatval($restk);
+                                    //     if($restk > 0){
+                                    //         $excedenteMonto = 0;
+
+                                    //         echo $restk.' menos: '.$key->MontoDolar. '<br> ';
+                                            // echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '.$excedenteMonto.' <br> ';
+                                            // echo $restk.' <br> ';
+
+                                            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// return 'ya';
+                                            // if ($RestarVtossPtesToVtosPtes) {
+                                            //     $RestarVtossPtesToVtosPtes->MontoDivisa = $RestarVtossPtesToVtosPtes->MontoDivisa - ($key->MontoDolar * $$key->TasaTiket);
+                                            //     $RestarVtossPtesToVtosPtes->MontoDolar = $RestarVtossPtesToVtosPtes->MontoDolar - $key->MontoDolar;
+                                            //     $RestarVtossPtesToVtosPtes->update();
+
+
+                                            //     // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                                            //     $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                            //     $AgregarVtossPtesToVtosPtes->Tipo = 'Consumo';
+                                            //     $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                                            //     $AgregarVtossPtesToVtosPtes->Divisa = $key->Divisa;
+                                            //     $AgregarVtossPtesToVtosPtes->MontoDivisa = ($key->MontoDolar * $key->TasaTiket);
+                                            //     $AgregarVtossPtesToVtosPtes->TasaTiket = $key->TasaTiket;
+                                            //     $AgregarVtossPtesToVtosPtes->MontoDolar = $key->MontoDolar;
+                                            //     $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                                            //     $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                            //     $AgregarVtossPtesToVtosPtes->save();
+
+                                            //     // return $AgregarVtossPtesToVtosPtes->id;
+
+                                            //     // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                            //     if($RestarVtossPtesToVtosPtes->MontoDolar == 0){
+                                            //         Excedentes_Recibidos_Caja_Actual::destroy($key->id);
+                                            //     }
+                                            // }
+                                            // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            // ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                            // $Pago_Venta = new Pago_Venta();
+                                            // $Pago_Venta->Divisa = $p;
+                                            // $Pago_Venta->MontoDivisa = $montoDiv[$p];
+                                            // $Pago_Venta->TasaTiket = $TasaT[$p];
+                                            // $Pago_Venta->MontoDolar = floatval($value);
+                                            // $Pago_Venta->MontoDolarConsumo = floatval($value);
+                                            // $Pago_Venta->Excedente = $excedenteMonto;
+                                            // $Pago_Venta->Vueltos = 0;///////////////////////////////////////////ojo/////////////////////////////////////////
+                                            // $Pago_Venta->servicio_id = $servicio_id;
+                                            // $Pago_Venta->caja_id = $request->get('caja_id');
+                                            // $Pago_Venta->venta_id = $venta->id;
+                                            // $Pago_Venta->save();
+
+
+                                        // }
+//                                         if($restk <= 0){
+// // return 'menor a 0';
+//                                             if ($montoResta > 0) {
+//                                                 $vv = ($restk * -1) - $montoResta;
+//                                                 $vv7 = floatval($key->MontoDolar) - floatval($key->MontoDolar - ($restk * -1)) - $montoResta;
+//                                             }else{
+//                                                 $vv = $restk;
+//                                                 $vv7 = floatval($key->MontoDolar) - floatval($key->MontoDolar - ($restk * -1));
+//                                             }
+//                                             echo $restk.' menosss: '.$key->MontoDolar. '<br> ';
+                                            // $Pago_Venta = new Pago_Venta();
+                                            // $Pago_Venta->Divisa = $p;
+                                            // $Pago_Venta->MontoDivisa = $montoDiv[$p];
+                                            // $Pago_Venta->TasaTiket = $TasaT[$p];
+                                            // $Pago_Venta->MontoDolar = floatval($value);
+                                            // $Pago_Venta->MontoDolarConsumo = floatval($value - ($restk * -1));
+                                            // $Pago_Venta->Excedente = $vv7;
+                                            // $Pago_Venta->Vueltos = $montoResta;
+                                            // $Pago_Venta->servicio_id = $servicio_id;
+                                            // $Pago_Venta->caja_id = $request->get('caja_id');
+                                            // $Pago_Venta->venta_id = $venta->id;
+                                            // $Pago_Venta->save();
+
+                                            // if($vv7 > 0){
+                                                // $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
+                                                // $excdtsRecibidosCaja->Tipo = 'Consumo';
+                                                // $excdtsRecibidosCaja->Estado = 'Pendiente';
+                                                // $excdtsRecibidosCaja->Divisa = $p;
+                                                // $excdtsRecibidosCaja->MontoDivisa = floatval($vv7 * $TasaT[$p]);
+                                                // $excdtsRecibidosCaja->TasaTiket = $TasaT[$p];
+                                                // $excdtsRecibidosCaja->MontoDolar = floatval($vv7);
+                                                // $excdtsRecibidosCaja->servicio_id = $servicio_id;
+                                                // $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
+                                                // $excdtsRecibidosCaja->save();
+                                            // }
+
+                                                    // $x = $x - floatval($value - ($restk * -1));
+
+                                                // echo  ' divisa: '.$p.' = montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value - ($restk * -1)).'  excedentesss:  '.$vv7.' => '.$montoExcedente.' vueltos: '.$montoResta.'<br> ';
+                                                // echo $restk.' <br> ';
+                                            // }
+
+                                                // unset($prueba2[$p]);
+                                            // }
+
+                                    // }
+// return 'finalizo';
+                                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        // if ($RestarVtossPtesToVtosPtes) {
+                        //     $RestarVtossPtesToVtosPtes->MontoDivisa = $RestarVtossPtesToVtosPtes->MontoDivisa - ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
+                        //     $RestarVtossPtesToVtosPtes->MontoDolar = $RestarVtossPtesToVtosPtes->MontoDolar - $VueltospagoConExcedente;
+                        //     // $RestarVtossPtesToVtosPtes->update();
+
+
+                        //     // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                        //     $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                        //     $AgregarVtossPtesToVtosPtes->Tipo = 'Consumo';
+                        //     $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                        //     $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtesToVtosPtes->Divisa;
+                        //     $AgregarVtossPtesToVtosPtes->MontoDivisa = ($VueltospagoConExcedente * $RestarVtossPtesToVtosPtes->TasaTiket);
+                        //     $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                        //     $AgregarVtossPtesToVtosPtes->MontoDolar = $VueltospagoConExcedente;
+                        //     $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                        //     $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                        //     // $AgregarVtossPtesToVtosPtes->save();
+
+                        //     // return $AgregarVtossPtesToVtosPtes->id;
+
+                        //     // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                        //     if($RestarVtossPtesToVtosPtes->MontoDolar == 0){
+                        //         Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtesToVtosPtes->id);
+                        //     }
+                        // }
 
 
                         // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
@@ -3687,84 +5565,92 @@ class ServicioController extends Controller
                         $RestarTasaTiket = 0;
                         $RestarMontoDolar = 0;
 
-                        $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
-                        // return $RestarVtossPtesToVtosPtesDevueltos;
+                        // $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                        // // return $RestarVtossPtesToVtosPtesDevueltos;
 
-                        if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                        // if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                        //     // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                        //     if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                        //         // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                        //         if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
+                        //             $Restardivisa = 'Dolar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * 1;
+                        //             $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
 
-                            if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
-                                if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
-                                    $Restardivisa = 'Dolar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * 1;
-                                    $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
-                                    $Restardivisa = 'Peso';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
-                                    $RestarTasaTiket = $tasaPeso->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
-                                    $Restardivisa = 'Bolivar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
-                                    $RestarTasaTiket = $tasaEfectivo->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }
-
-
-
-                            }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
-                                if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
-                                    $Restardivisa = 'Peso';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
-                                    $RestarTasaTiket = $tasaPeso->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
-                                    $Restardivisa = 'Dolar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * 1;
-                                    $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
-                                    $Restardivisa = 'Bolivar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
-                                    $RestarTasaTiket = $tasaEfectivo->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }
+                        //         }else if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
+                        //             $Restardivisa = 'Peso';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
+                        //             $RestarTasaTiket = $tasaPeso->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
+                        //             $Restardivisa = 'Bolivar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
+                        //             $RestarTasaTiket = $tasaEfectivo->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }
+                        //         // return $RestarMontoDivisa;
 
 
-
-                            }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
-                                if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
-                                    $Restardivisa = 'Bolivar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
-                                    $RestarTasaTiket = $tasaEfectivo->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
-                                    $Restardivisa = 'Peso';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
-                                    $RestarTasaTiket = $tasaPeso->tasa;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }else if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
-                                    $Restardivisa = 'Dolar';
-                                    $RestarMontoDivisa = $VueltospagoConExcedente * 1;
-                                    $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
-                                    $RestarMontoDolar = $VueltospagoConExcedente;
-                                }
-
-
-                            }
-                                $Pago_Servicio_Vueltos = new Pago_Vuelto();
-                                $Pago_Servicio_Vueltos->Tipo = 'Servicio';
-                                $Pago_Servicio_Vueltos->Divisa = $Restardivisa;
-                                $Pago_Servicio_Vueltos->MontoDivisa = $RestarMontoDivisa;
-                                $Pago_Servicio_Vueltos->TasaTiket = $RestarTasaTiket;
-                                $Pago_Servicio_Vueltos->MontoDolar = $RestarMontoDolar;
-                                $Pago_Servicio_Vueltos->servicio_id = $id;
-                                $Pago_Servicio_Vueltos->caja_id = $request->get('caja_id');
-                                $Pago_Servicio_Vueltos->save();
-
-                        }
+                        //     }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                        //         if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
+                        //             $Restardivisa = 'Peso';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
+                        //             $RestarTasaTiket = $tasaPeso->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
+                        //             $Restardivisa = 'Dolar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * 1;
+                        //             $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
+                        //             $Restardivisa = 'Bolivar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
+                        //             $RestarTasaTiket = $tasaEfectivo->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }
 
 
+
+                        //     }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                        //         if ($bolivarDisponible >= ($VueltospagoConExcedente * $tasaEfectivo->tasa)) {
+                        //             $Restardivisa = 'Bolivar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaEfectivo->tasa;
+                        //             $RestarTasaTiket = $tasaEfectivo->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($pesoDisponible >= ($VueltospagoConExcedente * $tasaPeso->tasa)) {
+                        //             $Restardivisa = 'Peso';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * $tasaPeso->tasa;
+                        //             $RestarTasaTiket = $tasaPeso->tasa;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }else if ($dolarDisponible >= ($VueltospagoConExcedente * 1)) {
+                        //             $Restardivisa = 'Dolar';
+                        //             $RestarMontoDivisa = $VueltospagoConExcedente * 1;
+                        //             $RestarTasaTiket = $RestarVtossPtesToVtosPtes->TasaTiket;
+                        //             $RestarMontoDolar = $VueltospagoConExcedente;
+                        //         }
+
+
+                        //     }
+                        //     // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                        //         $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                        //         $Pago_Consumo_Vueltos->Tipo = 'Consumo';
+                        //         $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
+                        //         $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                        //         $Pago_Consumo_Vueltos->TasaTiket = $RestarTasaTiket;
+                        //         $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
+                        //         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                        //         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                        //         // $Pago_Consumo_Vueltos->save();
+
+                        //         $tipo_pago = $Restardivisa;
+                        //  // REVIEW REVISAR
+                        // }
+
+
+
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
                         // return $dolarDisponible;
@@ -3772,7 +5658,7 @@ class ServicioController extends Controller
                         // return $bolivarDisponible;
 
                         // TODO Se procede a unir el vuelto pagado que ahora es dinero contado con el dinero_dejado si lo hubiera para procesar el pago
-                        if($monto_dejado > 0){
+                        if($monto_dejado > 0){ // $opS > 0
                             $modo_pago = 'contado';
                             $status = 'Pagado';
                             $monto_dejado = $VueltospagoConExcedente + $monto_dejado;
@@ -3800,28 +5686,10 @@ class ServicioController extends Controller
                         $status = 'Pagado';
                         $modo_pago = $request->get('modo_pago');
                     }
-                    // TODO Actualizamos el servicio principal o el servicio donde se genero el primer pago (D/vueltos)
-
-
-                    // return $monto_dejado;
-
-                    // TODO Fin de metodo para pagar con vueltos pendientes
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                    // $vueltosPendientesProceso = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->get();
-
-                    // foreach ($vueltosPendientesProceso as $key) {
-                    //     # code...
-                    // }
-
-                    // return $vueltosPendientesProceso;
-                    // return array_filter($request->get('MontoDivisa'));
 
 
                     if($modo_pago == 'cambio'){
@@ -3831,10 +5699,9 @@ class ServicioController extends Controller
 
                     }
 
-
                     if($modo_pago == 'cortesia'){
                         $status = 'Exonerado';
-                        $estado = 'Aceptada';
+
                         $tipo_pago = 'Exonerado';
 
                     }
@@ -3842,109 +5709,81 @@ class ServicioController extends Controller
                     if($modo_pago == 'credito'){
 
                         $status = 'Falta pagar';
-                        $estado = 'Aceptada';
+
                         $tipo_pago = 'No pagado';
                     }
 
-
-
-                    // if($modo_pago == 'contado'){
-
-                    //     if($monto_dejado == $total_costo){
-                    //         $status = 'Pagado';
-                    //         $estado = 'Aceptada';
-                    //     }
-
-                    //     if($monto_dejado > $total_costo){
-                    //         $status = 'Pagado';
-                    //         $estado = 'Aceptada';
-                    //         // dd($status);
-
-                    //         $exced = $monto_dejado - $total_costo;
-
-                    //         $excedente = new Excedente;
-                    //         $excedente->nombre_cliente = $request->get('nombre');
-                    //         $excedente->cedula_cliente = $request->get('num_documento');
-                    //         $excedente->direccion_cliente = $request->get('direccion');
-                    //         $excedente->telefono_cliente = $request->get('telefono');
-                    //         $excedente->excedente = $exced;
-                    //         $excedente->persona_id = $request->get('cliente_id');
-                    //         $excedente->save();
-                    //     }
-
-                    //     if($monto_dejado < $total_costo){
-                    //         $status = 'Falta pagar';
-                    //         $estado = 'Pendiente';
-                    //     }
-                    // }
-
-                    if($modo_pago == 'contado'){
-
-                        if($monto_dejado == $total_costo){
-                            $status = 'Pagado';
-
-                        }
-
-                        if($monto_dejado > $total_costo){
-                            $status = 'Pagado';
-                            $nuevo_excedente = $monto_dejado - $total_costo;
-
-                        }
-
-                        // if($monto_dejado > $total_costo){
-
-
-                        //     // dd($status);
-
-                        //     $exced = $monto_dejado - $total_costo;
-
-                        //     $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-                        //     // return $ifCliente;
-
-                        //     if($ifCliente){
-                        //         // return 'si';
-
-                        //         $upExcedente = Excedente::findOrFail($ifCliente->id);
-                        //         $upExcedente->excedente = $upExcedente->excedente + $exced;
-                        //         $upExcedente->update();
-                        //     }else{
-                        //         // return 'no';
-                        //         // $excedente = new Excedente;
-                        //         // $excedente->nombre_cliente = $request->get('nombre');
-                        //         // $excedente->cedula_cliente = $request->get('num_documento');
-                        //         // $excedente->direccion_cliente = $request->get('direccion');
-                        //         // $excedente->telefono_cliente = $request->get('telefono');
-                        //         // $excedente->excedente = $exced;
-                        //         // $excedente->persona_id = $request->get('cliente_id');
-                        //         // $excedente->save();
-
-
-                        //         $prexcedente = new Prexcedente;
-                        //         $prexcedente->excedente = $exced;
-                        //         $prexcedente->persona_id = $request->get('cliente_id');
-                        //         $prexcedente->save();
-                        //     }
-
-                        // }
-
-                        if($monto_dejado < $total_costo){
-                            $status = 'Falta pagar';
-                            $estado = 'Pendiente';
-                        }
-                    }
-
-                    if($modo_pago == 'Contado-Excedente'){
-                        $status = 'Pagado';
-                    }
-
-                    if($modo_pago == 'Excedente'){
-                        $status = 'Pagado';
-                    }
+            
 
 
 
+            if($modo_pago == 'contado'){
 
-                    $servicio = new Servicio;
+                if($monto_dejado == $total_costo){
+                    $status = 'Pagado';
+
+                }
+
+                if($monto_dejado > $total_costo){
+                    $status = 'Pagado';
+                    $nuevo_excedente = $monto_dejado - $total_costo;
+
+                }
+
+                // if($monto_dejado > $total_costo){
+
+
+                //     // dd($status);
+
+                //     $exced = $monto_dejado - $total_costo;
+
+                //     $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
+                //     // return $ifCliente;
+
+                //     if($ifCliente){
+                //         // return 'si';
+
+                //         $upExcedente = Excedente::findOrFail($ifCliente->id);
+                //         $upExcedente->excedente = $upExcedente->excedente + $exced;
+                //         $upExcedente->update();
+                //     }else{
+                //         // return 'no';
+                //         // $excedente = new Excedente;
+                //         // $excedente->nombre_cliente = $request->get('nombre');
+                //         // $excedente->cedula_cliente = $request->get('num_documento');
+                //         // $excedente->direccion_cliente = $request->get('direccion');
+                //         // $excedente->telefono_cliente = $request->get('telefono');
+                //         // $excedente->excedente = $exced;
+                //         // $excedente->persona_id = $request->get('cliente_id');
+                //         // $excedente->save();
+
+
+                //         $prexcedente = new Prexcedente;
+                //         $prexcedente->excedente = $exced;
+                //         $prexcedente->persona_id = $request->get('cliente_id');
+                //         $prexcedente->save();
+                //     }
+
+                // }
+
+                if($monto_dejado < $total_costo){
+                    $status = 'Falta pagar';
+                    $estado = 'Pendiente';
+                }
+            }
+
+            if($modo_pago == 'Contado-Excedente'){
+                $status = 'Pagado';
+            }
+
+            if($modo_pago == 'Excedente'){
+                $status = 'Pagado';
+            }
+
+
+// return $modo_pago;
+
+            $servicio = new Servicio;
                     $servicio->num_servicio = $request->get('num_servicio').'/'.$request->get('num_servicio_vieja');
                     $servicio->operador = $request->get('operador');
                     $servicio->status_servicio = 'Iniciado';
@@ -3996,699 +5835,1804 @@ class ServicioController extends Controller
                     $servicio->save();
 
 
-                    if($modo_pago == 'contado'){
 
-                        if($monto_dejado > $total_costo){
+            // if($modo_pago == 'contado'){
 
+            //     if($monto_dejado > $total_costo){
+            //         // return 'aquí dentro '. $tipo_pago;
 
-                            // dd($status);
+            //         // dd($status);
 
-                            $exced = $monto_dejado - $total_costo;
-                            $excedMontoDolar = $monto_dejado - $total_costo;
+            //         $exced = $monto_dejado - $total_costo;
+            //         $excedMontoDolar = $monto_dejado - $total_costo;
 
-                            if ($tipo_pago == 'Dolar') {
-                                $tasaTiket = $request->get('tasaDolar');
-                                $exced = $exced * $tasaTiket;
-                                $divisaExced = 'Dolar';
-                            }
+            //         if ($tipo_pago == 'Dolar') {
+            //             $tasaTiket = $request->get('tasaDolar');
+            //             $exced = $exced * $tasaTiket;
+            //             $divisaExced = 'Dolar';
+            //         }
 
-                            if ($tipo_pago == 'Peso') {
-                                $tasaTiket = $request->get('tasaPeso');
-                                $exced = $exced * $tasaTiket;
-                                $divisaExced = 'Peso';
-                            }
+            //         if ($tipo_pago == 'Peso') {
+            //             $tasaTiket = $request->get('tasaPeso');
+            //             $exced = $exced * $tasaTiket;
+            //             $divisaExced = 'Peso';
+            //         }
 
-                            if ($tipo_pago == 'Trans/Punto') {
-                                // return 'Trans/Punto';
-                                $numPunto = $request->get('num_Punto');
-                                // return empty($numPunto);
-                                $numTrans = $request->get('num_Trans');
-                                // return $numTrans;
-                                $numPuntoTrans = '';
-                                if (empty($numPunto) && !empty($numTrans)) {
-                                    // return 'p=null y t=si';
-                                    $numPuntoTrans = $numTrans;
-                                }
+            //         if ($tipo_pago == 'Trans/Punto') {
+            //             // return 'Trans/Punto';
+            //             $numPunto = $request->get('num_Punto');
+            //             // return empty($numPunto);
+            //             $numTrans = $request->get('num_Trans');
+            //             // return $numTrans;
+            //             $numPuntoTrans = '';
+            //             if (empty($numPunto) && !empty($numTrans)) {
+            //                 // return 'p=null y t=si';
+            //                 $numPuntoTrans = $numTrans;
+            //             }
 
-                                if (!empty($numPunto) && empty($numTrans)) {
-                                    // return 'p=si y t=null';
-                                    $numPuntoTrans = $numPunto;
-                                }
+            //             if (!empty($numPunto) && empty($numTrans)) {
+            //                 // return 'p=si y t=null';
+            //                 $numPuntoTrans = $numPunto;
+            //             }
 
-                                if (!empty($numPunto) && !empty($numTrans)) {
-                                    // return 'p=si y t=si';
-                                    $numPuntoTrans = $numPunto. ' - ' .$numTrans;
-                                }
+            //             if (!empty($numPunto) && !empty($numTrans)) {
+            //                 // return 'p=si y t=si';
+            //                 $numPuntoTrans = $numPunto. ' - ' .$numTrans;
+            //             }
 
-                                if (empty($numPunto) && empty($numTrans)) {
-                                    // return 'p=null y t=null';
-                                    $numPuntoTrans = 'S/N - S/N';
-                                }
-                                // return $numPuntoTrans;
+            //             if (empty($numPunto) && empty($numTrans)) {
+            //                 // return 'p=null y t=null';
+            //                 $numPuntoTrans = 'S/N - S/N';
+            //             }
+            //             // return $numPuntoTrans;
 
-                                $tasaTiket = $numPuntoTrans;
-                                $exced = $exced * $request->get('tasaTransPunto');
-                                $divisaExced = 'Trans/Punto';
-                            }
-                            // BUG   revisar el metodo mixto
+            //             $tasaTiket = $numPuntoTrans;
+            //             $exced = $exced * $request->get('tasaTransPunto');
+            //             $divisaExced = 'Trans/Punto';
+            //         }
+            //         // BUG   revisar el metodo mixto
 
-                            // if ($tipo_pago == 'Mixto') {
+            //         // if ($tipo_pago == 'Mixto') {
 
-                            //     // return 'MIxto';
-                            //     // $exced = $exced * $request->get('tasaMixto');
-                            //     // $divisaExced = 'Dolar';
+            //         //     // return 'MIxto';
+            //         //     // $exced = $exced * $request->get('tasaMixto');
+            //         //     // $divisaExced = 'Dolar';
 
-                            //     $MontoDivisaM = $request->get('MontoDivisa');
-                            //     $divisaM = $request->get('divisa');
-                            //     $TasaTikeM = $request->get('TasaTike');
-                            //     $MontoDolarM = $request->get('MontoDolar');
-                            //     $MontoDivisaM = array_filter($MontoDivisaM);
+            //         //     $MontoDivisaM = $request->get('MontoDivisa');
+            //         //     $divisaM = $request->get('divisa');
+            //         //     $TasaTikeM = $request->get('TasaTike');
+            //         //     $MontoDolarM = $request->get('MontoDolar');
+            //         //     $MontoDivisaM = array_filter($MontoDivisaM);
 
-                            //     // TODO Comvertimos la variable $MontoDolarM en un array y buscamos el valor mas alto
+            //         //     // TODO Comvertimos la variable $MontoDolarM en un array y buscamos el valor mas alto
 
-                            //     $MontoDolarMax = array_filter($MontoDolarM);
+            //         //     $MontoDolarMax = array_filter($MontoDolarM);
 
-                            //     // return $MontoDolarM;
-                            //     $valorMax = max($MontoDolarMax);
-                            //     // return $valorMax . ' excedente es '. $exced;
+            //         //     // return $MontoDolarM;
+            //         //     $valorMax = max($MontoDolarMax);
+            //         //     // return $valorMax . ' excedente es '. $exced;
 
-                            //     foreach($MontoDivisaM as $key => $val) {
-                            //         // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
-                            //         if($MontoDolarM[$key] == $valorMax){
-                            //             // return 'MIxto';
-                            //             // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
+            //         //     foreach($MontoDivisaM as $key => $val) {
+            //         //         // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
+            //         //         if($MontoDolarM[$key] == $valorMax){
+            //         //             // return 'MIxto';
+            //         //             // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
 
-                            //             $resta = $MontoDolarM[$key] - $exced;
+            //         //             $resta = $MontoDolarM[$key] - $exced;
 
-                            //             if ($resta >= 0) {
-                            //                 return $resta;
-                            //             }else{
+            //         //             if ($resta >= 0) {
+            //         //                 return $resta;
+            //         //             }else{
 
-                            //                 $textos = $MontoDolarMax;
-                            //                 // return $textos;
+            //         //                 $textos = $MontoDolarMax;
+            //         //                 // return $textos;
 
-                            //                 if (($clave = array_search($valorMax, $textos)) !== false) {
-                            //                     unset($textos[$clave]);
-                            //                     return $textos;
-                            //                 }
-                            //             }
+            //         //                 if (($clave = array_search($valorMax, $textos)) !== false) {
+            //         //                     unset($textos[$clave]);
+            //         //                     return $textos;
+            //         //                 }
+            //         //             }
 
-                            //             $divisaExced=$divisaM[$key];
-                            //             $MontoDolar = $MontoDolarM[$key];
-                            //             $exced = $exced * $TasaTikeM;
-
-
-                            //         }
-                            //         $ValorMaximo = $MontoDolarM[$key];
-                            //     $divisa[]=$divisaM[$key];
-                            //     $MontoDolar[]=$MontoDolarM[$key];
-                            //     }
-                            // }
-
-                            if ($tipo_pago == 'Efectivo') {
-                                $tasaTiket = $request->get('tasaEfectivo');
-                                $exced = $exced * $tasaTiket;
-                                $divisaExced = 'Bolivar';
-                            }
+            //         //             $divisaExced=$divisaM[$key];
+            //         //             $MontoDolar = $MontoDolarM[$key];
+            //         //             $exced = $exced * $TasaTikeM;
 
 
-                            $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
-                            $excdtsRecibidosCaja->Tipo = 'Servicio';
-                            $excdtsRecibidosCaja->Estado = 'Pendiente';
-                            $excdtsRecibidosCaja->Divisa = $divisaExced;
-                            $excdtsRecibidosCaja->TasaTiket = $tasaTiket;
-                            $excdtsRecibidosCaja->MontoDivisa = $exced;
-                            $excdtsRecibidosCaja->MontoDolar = $excedMontoDolar;
-                            $excdtsRecibidosCaja->servicio_id = $servicio->id;
-                            $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
-                            $excdtsRecibidosCaja->save();
+            //         //         }
+            //         //         $ValorMaximo = $MontoDolarM[$key];
+            //         //     $divisa[]=$divisaM[$key];
+            //         //     $MontoDolar[]=$MontoDolarM[$key];
+            //         //     }
+            //         // }
 
-                            $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-                            // return $ifCliente;
-
-                            // TODO definir que hacer con los excedentes si pasan a nuevo
+            //         if ($tipo_pago == 'Efectivo') {
+            //             $tasaTiket = $request->get('tasaEfectivo');
+            //             $exced = $exced * $tasaTiket;
+            //             $divisaExced = 'Bolivar';
+            //         }
 
 
-                            // if($ifCliente){
-                            //     // return 'si';
+            //         $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
+            //         $excdtsRecibidosCaja->Tipo = 'Servicio';
+            //         $excdtsRecibidosCaja->Estado = 'Pendiente';
+            //         $excdtsRecibidosCaja->Divisa = $divisaExced;
+            //         $excdtsRecibidosCaja->TasaTiket = $tasaTiket;
+            //         $excdtsRecibidosCaja->MontoDivisa = $exced;
+            //         $excdtsRecibidosCaja->MontoDolar = $excedMontoDolar;
+            //         $excdtsRecibidosCaja->servicio_id = $servicio->id;
+            //         $excdtsRecibidosCaja->venta_id = 0;
+            //         $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
+            //         $excdtsRecibidosCaja->save();
 
-                            //     $upExcedente = Excedente::findOrFail($ifCliente->id);
-                            //     $upExcedente->excedente = $upExcedente->excedente + $exced;
-                            //     $upExcedente->update();
-                            // }else{
-                            //     // return 'no';
-                            //     // $excedente = new Excedente;
-                            //     // $excedente->nombre_cliente = $request->get('nombre');
-                            //     // $excedente->cedula_cliente = $request->get('num_documento');
-                            //     // $excedente->direccion_cliente = $request->get('direccion');
-                            //     // $excedente->telefono_cliente = $request->get('telefono');
-                            //     // $excedente->excedente = $exced;
-                            //     // $excedente->persona_id = $request->get('cliente_id');
-                            //     // $excedente->save();
+            //         $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
+            //         // return $ifCliente;
 
-
-                            //     $prexcedente = new Prexcedente;
-                            //     $prexcedente->excedente = $exced;
-                            //     $prexcedente->servicio_id = $servicio->id;
-                            //     $prexcedente->save();
-                            // }
+            //         // TODO definir que hacer con los excedentes si pasan a nuevo
 
 
+            //         // if($ifCliente){
+            //         //     // return 'si';
 
+            //         //     $upExcedente = Excedente::findOrFail($ifCliente->id);
+            //         //     $upExcedente->excedente = $upExcedente->excedente + $exced;
+            //         //     $upExcedente->update();
+            //         // }else{
+            //         //     // return 'no';
+            //         //     // $excedente = new Excedente;
+            //         //     // $excedente->nombre_cliente = $request->get('nombre');
+            //         //     // $excedente->cedula_cliente = $request->get('num_documento');
+            //         //     // $excedente->direccion_cliente = $request->get('direccion');
+            //         //     // $excedente->telefono_cliente = $request->get('telefono');
+            //         //     // $excedente->excedente = $exced;
+            //         //     // $excedente->persona_id = $request->get('cliente_id');
+            //         //     // $excedente->save();
+
+
+            //         //     $prexcedente = new Prexcedente;
+            //         //     $prexcedente->excedente = $exced;
+            //         //     $prexcedente->servicio_id = $servicio->id;
+            //         //     $prexcedente->save();
+            //         // }
+
+
+
+            //     }
+
+            // }
+
+            // if($modo_pago == 'Contado-Excedente'){
+
+
+
+
+            //         // dd($status);
+
+            //         $restarExced = $request->get('pagoConExcedente');
+
+            //         $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
+            //         // return $ifCliente;
+
+            //         if($ifCliente){
+            //             // return 'si';
+
+            //             $upExcedente = Excedente::findOrFail($ifCliente->id);
+            //             $upExcedente->excedente = $upExcedente->excedente - $restarExced;
+            //             $upExcedente->update();
+            //         }
+            //         // else{
+            //             // return 'no';
+            //             // $excedente = new Excedente;
+            //             // $excedente->nombre_cliente = $request->get('nombre');
+            //             // $excedente->cedula_cliente = $request->get('num_documento');
+            //             // $excedente->direccion_cliente = $request->get('direccion');
+            //             // $excedente->telefono_cliente = $request->get('telefono');
+            //             // $excedente->excedente = $exced;
+            //             // $excedente->persona_id = $request->get('cliente_id');
+            //             // $excedente->save();
+
+
+            //         //     $prexcedente = new Prexcedente;
+            //         //     $prexcedente->excedente = $exced;
+            //         //     $prexcedente->servicio_id = $servicio->id;
+            //         //     $prexcedente->save();
+            //         // }
+
+
+            // }
+
+        //     if($modo_pago == 'Excedente'){
+
+
+
+
+        //         // dd($status);
+
+        //         $restarExced = $request->get('pagoConExcedente');
+
+        //         $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
+        //         // return $ifCliente;
+
+        //         if($ifCliente){
+        //             // return 'si';
+
+        //             $upExcedente = Excedente::findOrFail($ifCliente->id);
+        //             $upExcedente->excedente = $upExcedente->excedente - $restarExced;
+        //             $upExcedente->update();
+        //         }
+        //         // else{
+        //             // return 'no';
+        //             // $excedente = new Excedente;
+        //             // $excedente->nombre_cliente = $request->get('nombre');
+        //             // $excedente->cedula_cliente = $request->get('num_documento');
+        //             // $excedente->direccion_cliente = $request->get('direccion');
+        //             // $excedente->telefono_cliente = $request->get('telefono');
+        //             // $excedente->excedente = $exced;
+        //             // $excedente->persona_id = $request->get('cliente_id');
+        //             // $excedente->save();
+
+
+        //         //     $prexcedente = new Prexcedente;
+        //         //     $prexcedente->excedente = $exced;
+        //         //     $prexcedente->servicio_id = $servicio->id;
+        //         //     $prexcedente->save();
+        //         // }
+
+
+        // }
+
+            if($modo_pago == 'credito'){
+
+
+
+                $fecha_vencimiento = Carbon::now();
+                $fecha_vencimiento->addDays($request->get('limite_fecha'));
+                $fecha_vencimiento->toDateString();
+
+
+                $deuda_actual = Credito::where('persona_id',$request->get('cliente_id'))->first();
+                // return $deuda_actual;
+                if ($deuda_actual) {
+
+                    if ($deuda_actual->total_deuda == 0) {
+                        // return 'La deuda es menor a 0 '.$deuda_actual->total_deuda.'';
+
+                        $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
+                        // return $fecha_limite_pago;
+                        $upCredito = Credito::findOrFail($deuda_actual->id);
+
+                        $upCredito->total_factura = 1;
+                        $upCredito->total_deuda = $total_costo;
+                        $upCredito->fecha_limite_pago = $fecha_vencimiento;
+                        $upCredito->update();
+
+
+                        $detalleCredito = new Detalle_credito;
+                        $detalleCredito->numero_factura = $request->get('num_servicio');
+                        $detalleCredito->tipo_operacion = 'Servicio';
+                        $detalleCredito->operacion_id = $servicio->id;
+                        $detalleCredito->monto = $total_costo;
+                        $detalleCredito->estado_pago = 'Pendiente';
+                        $detalleCredito->estado_credito = 'Vigente';
+                        $detalleCredito->tipo_pago = 'Crédito';
+                        $detalleCredito->fecha_emision = $myTime->toDateString();
+                        $detalleCredito->fecha_vencimiento = $fecha_vencimiento;
+                        $detalleCredito->fecha_pago = null;
+                        $detalleCredito->persona_id = $request->get('cliente_id');
+                        $detalleCredito->credito_id = $upCredito->id ;
+                        $detalleCredito->caja_id = $request->get('caja_id');
+                        $detalleCredito->save();
+
+
+                    } else {
+                        // return 'La deuda es mayor a 0 '.$deuda_actual->total_deuda.'';
+
+                        $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
+                        // return $fecha_limite_pago;
+                        $upCredito = Credito::findOrFail($deuda_actual->id);
+
+                        $upCredito->total_factura = $upCredito->total_factura + 1;
+                        $upCredito->total_deuda = $upCredito->total_deuda + $total_costo;
+                        $upCredito->fecha_limite_pago = $fecha_limite_pago->fecha_vencimiento;
+                        $upCredito->update();
+
+
+                        $detalleCredito = new Detalle_credito;
+                        $detalleCredito->numero_factura = $request->get('num_servicio');
+                        $detalleCredito->tipo_operacion = 'Servicio';
+                        $detalleCredito->operacion_id = $servicio->id;
+                        $detalleCredito->monto = $total_costo;
+                        $detalleCredito->estado_pago = 'Pendiente';
+                        $detalleCredito->estado_credito = 'Vigente';
+                        $detalleCredito->tipo_pago = 'Crédito';
+                        $detalleCredito->fecha_emision = $myTime->toDateString();
+                        $detalleCredito->fecha_vencimiento = $fecha_vencimiento;
+                        $detalleCredito->fecha_pago = null;
+                        $detalleCredito->persona_id = $request->get('cliente_id');
+                        $detalleCredito->credito_id = $upCredito->id ;
+                        $detalleCredito->caja_id = $request->get('caja_id');
+                        $detalleCredito->save();
                         }
 
-                    }
-
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                    // TODO Ahora actualizamos la tabla Excedentes_Recibidos_Caja_Actual para pasar el dinero pendiente si lo hay al nuevo servicio
-                    //que se creo porque de lo contrario se perderia el vuelto pendiente
-
-                    // TODO verificamos si exciste un vuelto pendiente con el id del servicio que cerramos $id
-
-
-                    $PasarVtossPtesToNextServ = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('Estado','Pendiente')->first();
-                    if ($PasarVtossPtesToNextServ) {
-                        $PasarVtossPtesToNextServ->servicio_id = $servicio->id;
-                        $PasarVtossPtesToNextServ->update();
-                    }
-
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                    if($modo_pago == 'Contado-Excedente'){
 
 
 
 
-                        // dd($status);
+                } else {
+                    $fecha_vencimiento_pago = Carbon::now();
+                    $fecha_vencimiento_pago->addDays($request->get('limite_fecha'));
+                    $fecha_vencimiento_pago->toDateString();
 
-                        $restarExced = $request->get('pagoConExcedente');
+                    $credito = new Credito;
+                    $credito->nombre_cliente = $request->get('nombre');
+                    $credito->cedula_cliente = $request->get('num_documento');
+                    $credito->direccion_cliente = $request->get('direccion');
+                    $credito->telefono_cliente = $request->get('telefono');
+                    $credito->total_factura = 1;
+                    $credito->total_deuda = $total_costo;
+                    $credito->fecha_limite_pago = $fecha_vencimiento_pago;
+                    $credito->estado_credito = 'Activo';
+                    $credito->persona_id = $request->get('cliente_id');
+                    $credito->user_id = Auth::user()->id;
+                    $credito->save();
 
-                        $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-                        // return $ifCliente;
 
-                        if($ifCliente){
-                            // return 'si';
+                    $detalleCredito = new Detalle_credito;
+                    $detalleCredito->numero_factura = $request->get('num_servicio');
+                    $detalleCredito->tipo_operacion = 'Servicio';
+                    $detalleCredito->operacion_id = $servicio->id;
+                    $detalleCredito->monto = $total_costo;
+                    $detalleCredito->estado_pago = 'Pendiente';
+                    $detalleCredito->estado_credito = 'Vigente';
+                    $detalleCredito->tipo_pago = 'Credito';
+                    $detalleCredito->fecha_emision = $myTime->toDateTimeString();
+                    $detalleCredito->fecha_vencimiento = $fecha_vencimiento_pago;
+                    $detalleCredito->fecha_pago = null;
+                    $detalleCredito->persona_id = $request->get('cliente_id');
+                    $detalleCredito->credito_id = $credito->id ;
+                    $detalleCredito->caja_id = $request->get('caja_id');
+                    $detalleCredito->save();
+                }
 
-                            $upExcedente = Excedente::findOrFail($ifCliente->id);
-                            $upExcedente->excedente = $upExcedente->excedente - $restarExced;
-                            $upExcedente->update();
+
+
+
+            }
+
+
+            if($modo_pago == 'cortesia'){
+
+                $exon = $total_costo;
+
+                    $cortesia = new Cortesia;
+                    $cortesia->nombre_cliente = $request->get('nombre');
+                    $cortesia->cedula_cliente = $request->get('num_documento');
+                    $cortesia->direccion_cliente = $request->get('direccion');
+                    $cortesia->telefono_cliente = $request->get('telefono');
+                    $cortesia->exonerado = $exon;
+                    $cortesia->persona_id = $request->get('cliente_id');
+                    $cortesia->servicio_id = $servicio->id;
+                    $cortesia->save();
+            }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                        // TODO creamos metodo para realizar el pago cuando se paga con dinero contable viene en la variable base_vuelto_monto_dejado
+                        // primero validamos si exciste un pago hecho.
+
+                        $montoBase = $request->get('base_vuelto_monto_dejado');
+                        $montoResta = $request->get('monto_dejadoResta');
+                        $total_venta = $request->get('total_costo');
+                        $montoPendiente = $request->get('VueltospagoConExcedente');
+                        
+                        $montoPendiente = floatval($montoPendiente);
+                        $montoBase = floatval($montoBase);
+                        $montoResta = floatval($montoResta);
+                        $total_venta = floatval($total_venta);
+
+                        $servicio_id = $servicio->id;
+                        $caja_id = $request->get('caja_id');
+
+                        $opS = $montoBase + $montoPendiente;
+                        // return "id_vieja: $id  id_nueva: $servicio_id ";
+
+                        $PasarVtossPtesToNextServ = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('Estado','Pendiente')->first();
+                        if ($PasarVtossPtesToNextServ) {
+                            $PasarVtossPtesToNextServ->servicio_id = $servicio->id;
+                            $PasarVtossPtesToNextServ->update();
+                        }
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            //validamos si el monto pagado es mayor a 0 sea que lo paguen con montoBase o con montoPendiente y que el tipo de pago sea contado
+                        if($opS > 0 && $modo_pago == 'contado'){
+                            // return $opS;
+                            //validamos que el monto pagado sea mayor o igual al total de la venta
+                            if($opS >= $total_venta){
+                                // return 'si';
+                                // calculamos excedente si el valor pagado es mayor a la venta
+                                // $MontoDolarR = $request->get('MontoDolar');
+                                // return $montoD;
+                                //validamos si montobase es mayor y montopendiente es menor... lo que significa esto es que estamos reciviendo una moneda nueva
+                                if($montoBase > 0 && $montoPendiente <= 0){
+                                    // return 'pagado con plata nueva = montoBase';
+                                    //metodo para procesar pago con dinero nuevo
+                                    $montoD = [];
+                                    $montoDiv = [];
+                                    $TasaT = [];
+
+                                    // $prueba[]= ['Divisa' => $divisaVueltos[$key], 'MontoDivisa' => $MontoDivisaVueltos[$key], 'TasaTiket' => $TasaTikeVueltos[$key], 'MontoDolar' => $MontoDolarVueltos[$key]];
+                                    $MontoDivisa = $request->get('MontoDivisa');
+                                    $divisa = $request->get('divisa');
+                                    $TasaTike = $request->get('TasaTike');
+                                    $MontoDolar = $request->get('MontoDolar');
+
+                                    $MontoDolar = array_filter($MontoDolar);
+
+                                    foreach($MontoDolar as $key => $val) {
+
+                                        $DivisaArray[$divisa[$key]] = $divisa[$key];
+                                        $montoDivisaArray[$divisa[$key]] = $MontoDivisa[$key];
+                                        $TasaTikeArray[$divisa[$key]]= $TasaTike[$key];
+                                        $montoDolarArray[$divisa[$key]]= $MontoDolar[$key];
+                                    }
+
+                                    // return $request;
+                                    $restk = $total_venta;
+                                    $totalVuelto = $montoResta;
+                                    // echo  'total vuelto '.$totalVuelto.'<br>';
+                                    // return $opS;
+                                    //  $re[] = '';
+                                    asort($montoDolarArray);
+                                    foreach ($montoDolarArray as $key => $val) {
+                                        if($val > 0){
+                                            $montoD[$key]= $val;
+                                            $montoDiv[$key]= $montoDivisaArray[$key];
+                                            $TasaT[$key]= $TasaTikeArray[$key];
+                                        }
+                                    }
+                                    // return $montoDiv;
+                                    $x = $opS;
+                                    $residuo = 0;
+                                    $exc = 0;
+                                    foreach ($montoD as $p => $value) {
+
+                                        if(round($value,6) == round($restk,6)){
+                                            // echo 'igual <br> ';
+                                            // echo 'value '.$value.' <br> ';
+                                            // echo 'restk '.$restk.' <br> ';
+                                            $restk = $restk - $value;
+                                            $x = floatval($x - $value);
+                                            $restk = floatval($restk);
+                                            echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+                                            $Pago_Servicio = new Pago_Servicio();
+                                            $Pago_Servicio->Divisa = $p;
+                                            $Pago_Servicio->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Servicio->TasaTiket = $TasaT[$p];
+                                            $Pago_Servicio->MontoDolar = floatval($value);
+                                            $Pago_Servicio->MontoDolarServicio = floatval($value);
+                                            $Pago_Servicio->Excedente = 0;
+                                            $Pago_Servicio->Vueltos = 0;
+                                            $Pago_Servicio->servicio_id = $servicio_id;
+                                            $Pago_Servicio->caja_id = $caja_id;
+                                            $Pago_Servicio->save();
+
+                                            
+
+                                            // echo 'excd '. 0 .' <br> ';
+                                            // echo 'vueltos '. 0 .' <br> ';
+                                            // echo $restk.' <br> ';
+                                            $residuo = $restk;
+
+
+                                        }else if (round($value,6) < round($restk,6)){
+
+                                            // echo 'value '.$value.' <br> ';
+                                            // echo 'restk '.$restk.' <br> ';
+                                            // echo 'menor <br> ';
+                                            $restk = $restk - $value;
+                                            echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+
+                                            $Pago_Servicio = new Pago_Servicio();
+                                            $Pago_Servicio->Divisa = $p;
+                                            $Pago_Servicio->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Servicio->TasaTiket = $TasaT[$p];
+                                            $Pago_Servicio->MontoDolar = floatval($value);
+                                            $Pago_Servicio->MontoDolarServicio = floatval($value);
+                                            $Pago_Servicio->Excedente = 0;
+                                            $Pago_Servicio->Vueltos = 0;
+                                            $Pago_Servicio->servicio_id = $servicio_id;
+                                            $Pago_Servicio->caja_id = $caja_id;
+                                            $Pago_Servicio->save();
+
+                                            
+                                            // echo 'excd '. 0 .' <br> ';
+                                            // echo 'vueltos '. 0 .' <br> ';
+                                            // echo $restk.' <br> ';
+                                            $residuo = $restk;
+                                        }else if (round($value,6) > round($restk,6)){
+                                            // echo 'value '.$value.' <br> ';
+                                            // echo 'restk '.$restk.' <br> ';
+                                            $residuo = $restk;
+                                            $restk =   $value - $restk;
+                                            // $vuel = $totalVuelto;
+                                            // return $restk;
+                                            // if($totalVuelto > 0){
+                                                if (round($totalVuelto,6) > round($restk,6)) {
+                                                    // $totalVuelto = $totalVuelto - $restk;
+                                                    $exc = $restk;
+                                                    $vuel = 0;
+                                                }
+                                                if (round($totalVuelto,6) < round($restk,6)) {
+
+                                                    echo '$totalVuelto: '.$totalVuelto;
+                                                    $exc = $restk - $totalVuelto;
+                                                    $vuel = $totalVuelto;
+                                                    $totalVuelto = 0;
+                                                    // $residuo = 0;
+                                                }
+                                                // }
+                                                if (round($totalVuelto,6) == round($restk,6)) {
+                                                    $exc = 0;
+                                                    $vuel = $totalVuelto;
+                                                    $totalVuelto = 0;
+                                                }
+                                            echo 'mayor <br> ';
+                                            echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($residuo).'  excedente:  '.$exc.' vueltos: '.$vuel.'<br> ';
+                                            
+                                            $Pago_Servicio = new Pago_Servicio();
+                                            $Pago_Servicio->Divisa = $p;
+                                            $Pago_Servicio->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Servicio->TasaTiket = $TasaT[$p];
+                                            $Pago_Servicio->MontoDolar = floatval($value);
+                                            $Pago_Servicio->MontoDolarServicio = floatval($residuo);
+                                            $Pago_Servicio->Excedente = $exc;
+                                            $Pago_Servicio->Vueltos = $vuel;
+                                            $Pago_Servicio->servicio_id = $servicio_id;
+                                            $Pago_Servicio->caja_id = $caja_id;
+                                            $Pago_Servicio->save();
+
+                                            
+
+                                            if($exc > 0){
+                                                $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
+                                                $excdtsRecibidosCaja->Tipo = 'Servicio';
+                                                $excdtsRecibidosCaja->Estado = 'Pendiente';
+                                                $excdtsRecibidosCaja->Divisa = $p;
+                                                $excdtsRecibidosCaja->MontoDivisa = floatval($exc * $TasaT[$p]);
+                                                $excdtsRecibidosCaja->TasaTiket = $TasaT[$p];
+                                                $excdtsRecibidosCaja->MontoDolar = floatval($exc);
+                                                $excdtsRecibidosCaja->servicio_id = $servicio_id;
+                                                $excdtsRecibidosCaja->venta_id = 0;
+                                                $excdtsRecibidosCaja->horas_extra_id = 0;
+                                                $excdtsRecibidosCaja->caja_id = $caja_id;
+                                                $excdtsRecibidosCaja->save();
+                                                echo  'Excedentes_Recibidos_Caja_Actual Tipo: Servicio Estado: Pendiente Divisa: '.$p.' MontoDivisa: '.floatval($exc * $TasaT[$p]).' TasaTiket: '.$TasaT[$p].'  MontoDolar:  '.floatval($exc).'<br> ';
+                                            }
+
+                                            if($vuel > 0){
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
+
+                                                // $isVuelos = $request->get('isVueltos');
+
+                                                if($montoResta > 0 || $montoResta != null){
+                                                    $MontoDivisaVueltos = $request->get('MontoDivisaV');
+                                                    $divisaVueltos = $request->get('divisaV');
+                                                    $TasaTikeVueltos = $request->get('TasaTikeV');
+                                                    $MontoDolarVueltos = $request->get('MontoDolarV');
+
+                                                    $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
+
+                                                    foreach($MontoDivisaVueltos as $key => $val) {
+
+                                                        $Vdivisa[]=$divisaVueltos[$key];
+                                                        $VMontoDivisa[]=$MontoDivisaVueltos[$key];
+                                                        $VTasaTiket[]=$TasaTikeVueltos[$key];
+                                                        $VMontoDolar[]=$MontoDolarVueltos[$key];
+                                                    }
+                                                    // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                                                    //creamos un contador
+                                                    $cont = 0;
+
+                                                    //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                                                    while ($cont < count($VMontoDolar)) {
+                                                        $Pago_Extras_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Extras_Vueltos->Tipo = 'Servicio';
+                                                        $Pago_Extras_Vueltos->tipo_vuelto = 'Vueltos_Pago';
+                                                        $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
+                                                        $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
+                                                        $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
+                                                        $Pago_Extras_Vueltos->MontoDolar = floatval($VMontoDolar[$cont]);
+                                                        $Pago_Extras_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Extras_Vueltos->venta_id = 0;
+                                                        $Pago_Extras_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Extras_Vueltos->caja_id = $caja_id;
+                                                        $Pago_Extras_Vueltos->save();
+
+                                                        echo  'Pago_Vuelto Tipo: Consumo  Divisa: '.$Vdivisa[$cont].' MontoDivisa: '.$VMontoDivisa[$cont].' TasaTiket: '.$VTasaTiket[$cont].' MontoDolar: '.floatval($VMontoDolar[$cont]).'<br> ';
+                                                        $cont = $cont+1;
+                                                    }
+
+                                                }
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            }
+                                            echo 'excd '.$exc.' <br> ';
+                                            echo 'vueltos '.$vuel.' <br> ';
+                                            echo $restk.' <br> ';
+                                        }
+
+                                    }
+                                // validamos  si montopendiente es mayor y montobase es menor... lo que significa esto es que estamos reciviendo una moneda pendiente
+                                }else if($montoPendiente > 0 && $montoBase <= 0){
+                                    // return 'pagado con plata pendiente = montoPendiente';
+                                    //metodo para procesar pago con dinero con pendiente
+                                    
+
+                                    // TODO consultamos la tabla excedentes recibidos en caja para traer los excedentes que tenga asociados este servicio
+                                    // y así porder realizar el pago del consumo con los vueltos pendientes
+
+                                    // TODO Consultamos la base de datos y sumamos el total de excedentes que tiene ese servicio
+                                    $TotalExcedenteData = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                                    ->where('caja_id',$request->get('caja_id'))
+                                    ->where('Estado','Pendiente')
+                                    ->select(DB::raw('SUM(MontoDolar) as totalExcedente'))
+                                    ->get();
+                                    $TotalExcedenteSumado = floatval($TotalExcedenteData[0]->totalExcedente);
+
+                                    // return $TotalExcedente;
+
+                                    //realizamos la consulta en la base de datos y ordenamos los datos de menor a mayor sobre la columna MontoDolar
+                                    //para que luego reste el pago con vueltos pendientes
+                                    $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                                    ->where('caja_id',$request
+                                    ->get('caja_id'))
+                                    ->where('Estado','Pendiente')
+                                    ->orderBy('MontoDolar', 'ASC')
+                                    ->get();
+
+                                    // return $request;
+                                    $restk = $total_venta;
+                                    $totalVuelto = $montoResta;
+
+                                    $x = $opS;
+                                    $residuo = 0;
+                                    $exc = 0;
+                                    foreach ($RestarVtossPtesToVtosPtes as $vueltosData => $val) {
+                                        if(round($restk,6) > 0){
+
+
+                                            $value = floatval($val->MontoDolar);
+                                            $p = $val->Divisa;
+                                            $montoDiv = $val->MontoDivisa;
+                                            $TasaT = $val->TasaTiket;
+
+                                            if (round($value,6) <= round($restk,6)){
+                                                echo 'Resta: '. $restk . '<br>';
+                                                $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($val->id);
+
+                                                if ($RestarVtossPtes) {
+                                                    $RestarVtossPtes->MontoDivisa = $RestarVtossPtes->MontoDivisa - ($value * $RestarVtossPtes->TasaTiket);
+                                                    $RestarVtossPtes->MontoDolar = $RestarVtossPtes->MontoDolar - $value;
+                                                    $RestarVtossPtes->update();
+
+                                                echo  'Actualizar tabla Excedente_Recibidos => divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.($RestarVtossPtes->MontoDivisa).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($RestarVtossPtes->MontoDolar).'<br> ';
+
+                                                    // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                                                    $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
+                                                    $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                                                    $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($value * $RestarVtossPtes->TasaTiket);
+                                                    $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtes->TasaTiket;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($value);
+                                                    $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                                                    $AgregarVtossPtesToVtosPtes->venta_id = $RestarVtossPtes->venta_id;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                    $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                                    $AgregarVtossPtesToVtosPtes->save();
+
+                                                    // return $AgregarVtossPtesToVtosPtes->id;
+
+                                                    // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                                    if($RestarVtossPtes->MontoDolar == 0){
+                                                        Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtes->id);
+                                                    }
+
+
+
+                                                }
+                                                echo 'menor o igual <br> ';
+                                                echo  'Agretar registro nuevo en la tabla Excedente_Recibidos => Tipo: Consumo Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($value * $RestarVtossPtes->TasaTiket).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($value).'<br> ';
+                                                // return 'Finalizo...';
+                                                // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                                                // $tasaPeso
+                                                // $tasaTransferenciaPunto
+                                                // $tasaEfectivo
+
+                                                $Restardivisa = '';
+                                                $RestarMontoDivisa = 0;
+                                                $RestarTasaTiket = 0;
+                                                $RestarMontoDolar = 0;
+
+                                                $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                                                // return $RestarVtossPtesToVtosPtesDevueltos;
+
+                                                if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                                                    // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                                                    if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                                                        // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                                                        if ($dolarDisponible >=  $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+                                                        // return $RestarMontoDivisa;
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                                                        if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                                                        if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+                                                    }
+
+                                                    echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
+                                                    // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                        $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                        $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
+                                                        $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos->TasaTiket = $RestarTasaTiket;
+                                                        $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
+                                                        $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Consumo_Vueltos->venta_id = $RestarVtossPtes->venta_id;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                        $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Consumo_Vueltos->save();
+
+                                                        $tipo_pago = $Restardivisa;
+                                                // REVIEW REVISAR
+
+                                                    $Pago_Servicio = new Pago_Servicio();
+                                                    $Pago_Servicio->Divisa = $Restardivisa;
+                                                    $Pago_Servicio->MontoDivisa = $RestarMontoDivisa;
+                                                    $Pago_Servicio->TasaTiket = $RestarTasaTiket;
+                                                    $Pago_Servicio->MontoDolar = floatval($RestarMontoDolar);
+                                                    $Pago_Servicio->MontoDolarServicio = floatval($RestarMontoDolar);
+                                                    $Pago_Servicio->Excedente = 0;
+                                                    $Pago_Servicio->Vueltos = 0;
+                                                    $Pago_Servicio->servicio_id = $servicio_id;
+                                                    $Pago_Servicio->caja_id = $caja_id;
+                                                    $Pago_Servicio->save();
+
+                                                
+                                                    // $restk = 0;
+                                                    echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
+                                                    $restk = $restk - $value;
+                                                }
+                                                echo 'Resta: ' . $restk . ' <br> ';
+                                                // return 'Finalizo';
+                                                // return '<';
+
+
+
+
+                                            }else if (round($value,6) > round($restk,6)){
+                                                echo 'Resta: '. $restk . '<br>';
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($val->id);
+
+                                                if ($RestarVtossPtes) {
+                                                    $RestarVtossPtes->MontoDivisa = $RestarVtossPtes->MontoDivisa - ($restk * $RestarVtossPtes->TasaTiket);
+                                                    $RestarVtossPtes->MontoDolar = $RestarVtossPtes->MontoDolar - $restk;
+                                                    $RestarVtossPtes->update();
+
+                                                echo  'Actualizar tabla Excedente_Recibidos => divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.($RestarVtossPtes->MontoDivisa).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($RestarVtossPtes->MontoDolar).'<br> ';
+
+                                                    // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                                                    $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
+                                                    $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                                                    $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($restk * $RestarVtossPtes->TasaTiket);
+                                                    $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtes->TasaTiket;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($restk);
+                                                    $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                                                    $AgregarVtossPtesToVtosPtes->venta_id = $RestarVtossPtes->venta_id;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                    $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                                    $AgregarVtossPtesToVtosPtes->save();
+
+                                                    // return $AgregarVtossPtesToVtosPtes->id;
+
+                                                    // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                                    if($RestarVtossPtes->MontoDolar == 0){
+                                                        Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtes->id);
+                                                    }
+
+
+
+                                                }
+                                                echo 'mayor <br> ';
+                                                echo  'Agretar registro nuevo en la tabla Excedente_Recibidos => Tipo: Consumo Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($restk * $RestarVtossPtes->TasaTiket).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($restk).'<br> ';
+                                                // return 'Finalizo...';
+                                                // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                                                // $tasaPeso
+                                                // $tasaTransferenciaPunto
+                                                // $tasaEfectivo
+
+                                                $Restardivisa = '';
+                                                $RestarMontoDivisa = 0;
+                                                $RestarTasaTiket = 0;
+                                                $RestarMontoDolar = 0;
+
+                                                $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                                                // return $RestarVtossPtesToVtosPtesDevueltos;
+
+                                                if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                                                    // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                                                    if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                                                        // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                                                        if ($dolarDisponible >=  $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+                                                        // return $RestarMontoDivisa;
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                                                        if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                                                        if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+                                                    }
+
+                                                    echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
+                                                    // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                        $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                        $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
+                                                        $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos->TasaTiket = $RestarTasaTiket;
+                                                        $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
+                                                        $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Consumo_Vueltos->venta_id = $RestarVtossPtes->venta_id;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                        $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Consumo_Vueltos->save();
+
+                                                        $tipo_pago = $Restardivisa;
+                                                // REVIEW REVISAR
+
+                                                    $Pago_Servicio = new Pago_Servicio();
+                                                    $Pago_Servicio->Divisa = $Restardivisa;
+                                                    $Pago_Servicio->MontoDivisa = $RestarMontoDivisa;
+                                                    $Pago_Servicio->TasaTiket = $RestarTasaTiket;
+                                                    $Pago_Servicio->MontoDolar = floatval($RestarMontoDolar);
+                                                    $Pago_Servicio->MontoDolarServicio = floatval($RestarMontoDolar);
+                                                    $Pago_Servicio->Excedente = 0;
+                                                    $Pago_Servicio->Vueltos = 0;
+                                                    $Pago_Servicio->servicio_id = $servicio_id;
+                                                    $Pago_Servicio->caja_id = $caja_id;
+                                                    $Pago_Servicio->save();
+
+                                                
+                                                    $restk = 0;
+                                                    echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
+                                                }
+                                                echo 'Resta: ' . $restk . ' <br> ';
+                                                // return 'Finalizo';
+                                                // return '>';
+                                                // echo 'excd '.$exc.' <br> ';
+                                                // echo 'vueltos '.$vuel.' <br> ';
+                                                // echo $restk.' <br> ';
+                                            }
+                                        }
+                                    }
+
+// return 'Finalizo';
+
+
+                                }else if($montoBase > 0 && $montoPendiente > 0){
+                                    // metodo para procesar la venta con dinero nuevo y pendiente
+                                    // return 'pagado con plata nueva y pendiente = montoBase y montoPendiente';
+                                    // metodo para procesar la venta con dinero nuevo y pendiente
+                                    // TODO Consultamos la base de datos y sumamos el total de excedentes que tiene ese servicio
+                                    $TotalExcedenteData = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                                    ->where('caja_id',$request->get('caja_id'))
+                                    ->where('Estado','Pendiente')
+                                    ->select(DB::raw('SUM(MontoDolar) as totalExcedente'))
+                                    ->get();
+                                    $TotalExcedenteSumado = floatval($TotalExcedenteData[0]->totalExcedente);
+
+                                    // return $TotalExcedente;
+
+                                    //realizamos la consulta en la base de datos y ordenamos los datos de menor a mayor sobre la columna MontoDolar
+                                    //para que luego reste el pago con vueltos pendientes
+                                    $RestarVtossPtesToVtosPtes = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$servicio_id)
+                                    ->where('caja_id',$request
+                                    ->get('caja_id'))
+                                    ->where('Estado','Pendiente')
+                                    ->orderBy('MontoDolar', 'ASC')
+                                    ->get();
+
+                                    // return $request;
+                                    $restk = $total_venta;
+                                    $totalVuelto = $montoResta;
+
+                                    $x = $opS;
+                                    $residuo = 0;
+                                    $exc = 0;
+                                    foreach ($RestarVtossPtesToVtosPtes as $vueltosData => $val) {
+                                        if(round($restk,6) > 0){
+
+
+                                            $value = floatval($val->MontoDolar);
+                                            $p = $val->Divisa;
+                                            $montoDiv = $val->MontoDivisa;
+                                            $TasaT = $val->TasaTiket;
+
+                                            if (round($value,6) <= round($restk,6)){
+                                                echo 'Resta: '. $restk . '<br>';
+                                                $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($val->id);
+
+                                                if ($RestarVtossPtes) {
+                                                    $RestarVtossPtes->MontoDivisa = $RestarVtossPtes->MontoDivisa - ($value * $RestarVtossPtes->TasaTiket);
+                                                    $RestarVtossPtes->MontoDolar = $RestarVtossPtes->MontoDolar - $value;
+                                                    $RestarVtossPtes->update();
+
+                                                echo  'Actualizar tabla Excedente_Recibidos => divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.($RestarVtossPtes->MontoDivisa).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($RestarVtossPtes->MontoDolar).'<br> ';
+
+                                                    // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                                                    $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
+                                                    $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                                                    $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($value * $RestarVtossPtes->TasaTiket);
+                                                    $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtes->TasaTiket;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($value);
+                                                    $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                                                    $AgregarVtossPtesToVtosPtes->venta_id = $RestarVtossPtes->venta_id;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                    $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                                    $AgregarVtossPtesToVtosPtes->save();
+
+                                                    // return $AgregarVtossPtesToVtosPtes->id;
+
+                                                    // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                                    if($RestarVtossPtes->MontoDolar == 0){
+                                                        Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtes->id);
+                                                    }
+
+
+
+                                                }
+                                                echo 'menor o igual <br> ';
+                                                echo  'Agretar registro nuevo en la tabla Excedente_Recibidos => Tipo: Consumo Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($value * $RestarVtossPtes->TasaTiket).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($value).'<br> ';
+                                                // return 'Finalizo...';
+                                                // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                                                // $tasaPeso
+                                                // $tasaTransferenciaPunto
+                                                // $tasaEfectivo
+
+                                                $Restardivisa = '';
+                                                $RestarMontoDivisa = 0;
+                                                $RestarTasaTiket = 0;
+                                                $RestarMontoDolar = 0;
+
+                                                $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                                                // return $RestarVtossPtesToVtosPtesDevueltos;
+
+                                                if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                                                    // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                                                    if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                                                        // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                                                        if ($dolarDisponible >=  $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+                                                        // return $RestarMontoDivisa;
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                                                        if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                                                        if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+                                                    }
+
+                                                    echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
+                                                    // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                        $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                        $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
+                                                        $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos->TasaTiket = $RestarTasaTiket;
+                                                        $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
+                                                        $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Consumo_Vueltos->venta_id = $RestarVtossPtes->venta_id;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                        $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Consumo_Vueltos->save();
+
+                                                        $tipo_pago = $Restardivisa;
+                                                // REVIEW REVISAR
+
+                                                    $Pago_Servicio = new Pago_Servicio();
+                                                    $Pago_Servicio->Divisa = $Restardivisa;
+                                                    $Pago_Servicio->MontoDivisa = $RestarMontoDivisa;
+                                                    $Pago_Servicio->TasaTiket = $RestarTasaTiket;
+                                                    $Pago_Servicio->MontoDolar = floatval($RestarMontoDolar);
+                                                    $Pago_Servicio->MontoDolarServicio = floatval($RestarMontoDolar);
+                                                    $Pago_Servicio->Excedente = 0;
+                                                    $Pago_Servicio->Vueltos = 0;
+                                                    $Pago_Servicio->servicio_id = $servicio_id;
+                                                    $Pago_Servicio->caja_id = $caja_id;
+                                                    $Pago_Servicio->save();
+
+                                                
+                                                    // $restk = 0;
+                                                    echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
+                                                    $restk = $restk - $value;
+                                                }
+                                                echo 'Resta: ' . $restk . ' <br> ';
+                                                // return 'Finalizo';
+                                                // return '<';
+
+
+
+
+                                            }else if (round($value,6) > round($restk,6)){
+                                                echo 'Resta: '. $restk . '<br>';
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($val->id);
+
+                                                if ($RestarVtossPtes) {
+                                                    $RestarVtossPtes->MontoDivisa = $RestarVtossPtes->MontoDivisa - ($restk * $RestarVtossPtes->TasaTiket);
+                                                    $RestarVtossPtes->MontoDolar = $RestarVtossPtes->MontoDolar - $restk;
+                                                    $RestarVtossPtes->update();
+
+                                                echo  'Actualizar tabla Excedente_Recibidos => divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.($RestarVtossPtes->MontoDivisa).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($RestarVtossPtes->MontoDolar).'<br> ';
+
+                                                    // TODO Ir a la tabla Excedentes_Recibidos_Caja_Actual y crear un registro nuevo con el monto pagado pero con estatus Devueltos flotantes en la misma divisa
+
+                                                    $AgregarVtossPtesToVtosPtes = new Excedentes_Recibidos_Caja_Actual();
+                                                    $AgregarVtossPtesToVtosPtes->Tipo = $RestarVtossPtes->Tipo;
+                                                    $AgregarVtossPtesToVtosPtes->Estado = 'Devueltos';
+                                                    $AgregarVtossPtesToVtosPtes->Divisa = $RestarVtossPtes->Divisa;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDivisa = floatval($restk * $RestarVtossPtes->TasaTiket);
+                                                    $AgregarVtossPtesToVtosPtes->TasaTiket = $RestarVtossPtes->TasaTiket;
+                                                    $AgregarVtossPtesToVtosPtes->MontoDolar = floatval($restk);
+                                                    $AgregarVtossPtesToVtosPtes->servicio_id = $servicio_id;
+                                                    $AgregarVtossPtesToVtosPtes->venta_id = $RestarVtossPtes->venta_id;
+                                                    $AgregarVtossPtesToVtosPtes->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                    $AgregarVtossPtesToVtosPtes->caja_id = $request->get('caja_id');
+                                                    $AgregarVtossPtesToVtosPtes->save();
+
+                                                    // return $AgregarVtossPtesToVtosPtes->id;
+
+                                                    // TODO verificar si despues de la actualizacion el registro que en 0 si es así procedemos a borrarlo de lo contrario se deja quieto
+                                                    if($RestarVtossPtes->MontoDolar == 0){
+                                                        Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtes->id);
+                                                    }
+
+
+
+                                                }
+                                                echo 'mayor <br> ';
+                                                echo  'Agretar registro nuevo en la tabla Excedente_Recibidos => Tipo: Consumo Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($restk * $RestarVtossPtes->TasaTiket).' tasaTiket: '.$RestarVtossPtes->TasaTiket.' montoDolar: '.floatval($restk).'<br> ';
+                                                // return 'Finalizo...';
+                                                // TODO Verificar que tengamos liquidez en esa divisa para dar vueltos y se procesa
+                                                // $tasaPeso
+                                                // $tasaTransferenciaPunto
+                                                // $tasaEfectivo
+
+                                                $Restardivisa = '';
+                                                $RestarMontoDivisa = 0;
+                                                $RestarTasaTiket = 0;
+                                                $RestarMontoDolar = 0;
+
+                                                $RestarVtossPtesToVtosPtesDevueltos = Excedentes_Recibidos_Caja_Actual::findOrFail($AgregarVtossPtesToVtosPtes->id);
+                                                // return $RestarVtossPtesToVtosPtesDevueltos;
+
+                                                if ($RestarVtossPtesToVtosPtesDevueltos->Estado == 'Devueltos') {
+                                                    // return $RestarVtossPtesToVtosPtesDevueltos->Estado;
+                                                    if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Dolar'){
+                                                        // return $dolarDisponible . ' - ' .$VueltospagoConExcedente * 1;
+                                                        if ($dolarDisponible >=  $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+                                                        // return $RestarMontoDivisa;
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Peso'){
+                                                        if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+
+                                                    }else if($RestarVtossPtesToVtosPtesDevueltos->Divisa == 'Bolivar'){
+                                                        if ($bolivarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa)) {
+                                                            $Restardivisa = 'Bolivar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaEfectivo->tasa;
+                                                            $RestarTasaTiket = $tasaEfectivo->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($pesoDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa)) {
+                                                            $Restardivisa = 'Peso';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaPeso->tasa;
+                                                            $RestarTasaTiket = $tasaPeso->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }else if ($dolarDisponible >= ($RestarVtossPtesToVtosPtesDevueltos->MontoDolar * 1)) {
+                                                            $Restardivisa = 'Dolar';
+                                                            $RestarMontoDivisa = $RestarVtossPtesToVtosPtesDevueltos->MontoDolar * $tasaDolar->tasa;
+                                                            $RestarTasaTiket = $tasaDolar->tasa;
+                                                            $RestarMontoDolar = floatval($RestarVtossPtesToVtosPtesDevueltos->MontoDolar);
+                                                        }
+
+
+                                                    }
+
+                                                    echo  'Agregar registros en la tabla Pago_Vuelto => Tipo: Consumo divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).'<br> ';
+                                                    // return 'estoy en new Pago_Vuelto '.$RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Consumo_Vueltos->Tipo = $RestarVtossPtes->Tipo;
+                                                        $Pago_Consumo_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                        $Pago_Consumo_Vueltos->Divisa = $Restardivisa;
+                                                        $Pago_Consumo_Vueltos->MontoDivisa = $RestarMontoDivisa;
+                                                        $Pago_Consumo_Vueltos->TasaTiket = $RestarTasaTiket;
+                                                        $Pago_Consumo_Vueltos->MontoDolar = $RestarMontoDolar;
+                                                        $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Consumo_Vueltos->venta_id = $RestarVtossPtes->venta_id;
+                                                        $Pago_Consumo_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                        $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Consumo_Vueltos->save();
+
+                                                        $tipo_pago = $Restardivisa;
+                                                // REVIEW REVISAR
+
+                                                    $Pago_Servicio = new Pago_Servicio();
+                                                    $Pago_Servicio->Divisa = $Restardivisa;
+                                                    $Pago_Servicio->MontoDivisa = $RestarMontoDivisa;
+                                                    $Pago_Servicio->TasaTiket = $RestarTasaTiket;
+                                                    $Pago_Servicio->MontoDolar = floatval($RestarMontoDolar);
+                                                    $Pago_Servicio->MontoDolarServicio = floatval($RestarMontoDolar);
+                                                    $Pago_Servicio->Excedente = 0;
+                                                    $Pago_Servicio->Vueltos = 0;
+                                                    $Pago_Servicio->servicio_id = $servicio_id;
+                                                    $Pago_Servicio->caja_id = $caja_id;
+                                                    $Pago_Servicio->save();
+
+                                                
+                                                    $restk = 0;
+                                                    echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
+                                                }
+                                                echo 'Resta: ' . $restk . ' <br> ';
+                                                // return 'Finalizo';
+                                                // return '>';
+                                                // echo 'excd '.$exc.' <br> ';
+                                                // echo 'vueltos '.$vuel.' <br> ';
+                                                // echo $restk.' <br> ';
+                                            }
+                                        }
+                                    }
+echo 'pase a dinero efectivo <br>';
+                                    if (round($restk,6) > 0 || round($montoBase,6) > 0) {
+                                        // return $restk;
+                                        // return 'pagado con plata nueva = montoBase';
+                                    //metodo para procesar pago con dinero nuevo
+                                        $montoD = [];
+                                        $montoDiv = [];
+                                        $TasaT = [];
+                                    // $prueba[]= ['Divisa' => $divisaVueltos[$key], 'MontoDivisa' => $MontoDivisaVueltos[$key], 'TasaTiket' => $TasaTikeVueltos[$key], 'MontoDolar' => $MontoDolarVueltos[$key]];
+                                    $MontoDivisa = $request->get('MontoDivisa');
+                                    $divisa = $request->get('divisa');
+                                    $TasaTike = $request->get('TasaTike');
+                                    $MontoDolar = $request->get('MontoDolar');
+
+                                    $MontoDolar = array_filter($MontoDolar);
+
+                                    foreach($MontoDolar as $key => $val) {
+
+                                        $DivisaArray[$divisa[$key]] = $divisa[$key];
+                                        $montoDivisaArray[$divisa[$key]] = $MontoDivisa[$key];
+                                        $TasaTikeArray[$divisa[$key]]= $TasaTike[$key];
+                                        $montoDolarArray[$divisa[$key]]= $MontoDolar[$key];
+                                    }
+
+                                    // return $montoDivisaArray;
+                                    // $restk = $total_venta;
+                                    $totalVuelto = $montoResta;
+                                    // echo  'total vuelto '.$totalVuelto.'<br>';
+                                    // return $opS;
+                                    //  $re[] = '';
+                                    asort($montoDolarArray);
+                                    foreach ($montoDolarArray as $key => $val) {
+                                        if($val > 0){
+                                            $montoD[$key]= $val;
+                                            $montoDiv[$key]= $montoDivisaArray[$key];
+                                            $TasaT[$key]= $TasaTikeArray[$key];
+                                        }
+                                    }
+                                    // return $montoDiv;
+                                    // return $request;
+                                    $x = $opS;
+                                    $residuo = 0;
+                                    $exc = 0;
+                                    foreach ($montoD as $p => $value) {
+                                        echo 'value del for '.$value.'<br>';
+                                        if(round($value,6) == round($restk,6)){
+                                            echo 'value =='.$value.' <br> ';
+                                            // echo 'igual <br> ';
+                                            // echo 'value '.$value.' <br> ';
+                                            // echo 'restk '.$restk.' <br> ';
+                                            $restk = $restk - $value;
+                                            $x = floatval($x - $value);
+                                            $restk = floatval($restk);
+                                            echo  'pago con dinero divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+                                            $Pago_Servicio = new Pago_Servicio();
+                                            $Pago_Servicio->Divisa = $p;
+                                            $Pago_Servicio->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Servicio->TasaTiket = $TasaT[$p];
+                                            $Pago_Servicio->MontoDolar = floatval($value);
+                                            $Pago_Servicio->MontoDolarServicio = floatval($value);
+                                            $Pago_Servicio->Excedente = 0;
+                                            $Pago_Servicio->Vueltos = 0;
+                                            $Pago_Servicio->servicio_id = $servicio_id;
+                                            $Pago_Servicio->caja_id = $caja_id;
+                                            $Pago_Servicio->save();
+
+                                            
+
+                                            // echo 'excd '. 0 .' <br> ';
+                                            // echo 'vueltos '. 0 .' <br> ';
+                                            // echo $restk.' <br> ';
+                                            $residuo = $restk;
+
+
+                                        }else if (round($value,6) < round($restk,6)){
+echo 'value <'.$value.' - '.$restk.' <br> ';
+                                            // echo 'value '.$value.' <br> ';
+                                            // echo 'restk '.$restk.' <br> ';
+                                            // echo 'menor <br> ';
+                                            $restk = $restk - $value;
+                                            echo  'pago con dinero  divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($value).'  excedente:  '. 0 .' vueltos: '. 0 .'<br> ';
+
+                                            $Pago_Servicio = new Pago_Servicio();
+                                            $Pago_Servicio->Divisa = $p;
+                                            $Pago_Servicio->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Servicio->TasaTiket = $TasaT[$p];
+                                            $Pago_Servicio->MontoDolar = floatval($value);
+                                            $Pago_Servicio->MontoDolarServicio = floatval($value);
+                                            $Pago_Servicio->Excedente = 0;
+                                            $Pago_Servicio->Vueltos = 0;
+                                            $Pago_Servicio->servicio_id = $servicio_id;
+                                            $Pago_Servicio->caja_id = $caja_id;
+                                            $Pago_Servicio->save();
+
+                                            
+                                            // echo 'excd '. 0 .' <br> ';
+                                            // echo 'vueltos '. 0 .' <br> ';
+                                            // echo $restk.' <br> ';
+                                            $residuo = $restk;
+                                        }else if (round($value,6) > round($restk,6)){
+
+                                            echo 'value >'.$value.' <br> ';
+                                            echo 'value '.$value.' <br> ';
+                                            echo 'restk '.$restk.' <br> ';
+                                            $residuo = $restk;
+
+                                            if(round($restk,6) <= 0){
+                                                $restk =   $value - $restk;
+                                                $r = $restk;
+                                                $restk = 0;
+                                            }else{
+                                                $restk =   $value - $restk;
+                                                $r = $restk;
+                                            }
+                                            // $restk =   $value - $restk;
+                                            // $vuel = $totalVuelto;
+                                            // return $restk;
+                                            // if($totalVuelto > 0){
+                                                if (round($totalVuelto,6) > round($r,6)) {
+                                                    // $totalVuelto = $totalVuelto - $restk;
+                                                    $exc = $r;
+                                                    $vuel = 0;
+                                                }
+                                                if (round($totalVuelto,6) < round($r,6)) {
+
+                                                    echo '$totalVuelto: '.$totalVuelto;
+                                                    $exc = $r - $totalVuelto;
+                                                    $vuel = $totalVuelto;
+                                                    $totalVuelto = 0;
+                                                    // $residuo = 0;
+                                                }
+                                                // }
+                                                if (round($totalVuelto,6) == round($r,6)) {
+                                                    $exc = 0;
+                                                    $vuel = $totalVuelto;
+                                                    $totalVuelto = 0;
+                                                }
+                                            echo 'mayor <br> ';
+                                            echo  'pago con dinero  divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($residuo).'  excedente:  '.$exc.' vueltos: '.$vuel.'<br> ';
+                                            
+                                            $Pago_Servicio = new Pago_Servicio();
+                                            $Pago_Servicio->Divisa = $p;
+                                            $Pago_Servicio->MontoDivisa = $montoDiv[$p];
+                                            $Pago_Servicio->TasaTiket = $TasaT[$p];
+                                            $Pago_Servicio->MontoDolar = floatval($value);
+                                            $Pago_Servicio->MontoDolarServicio = floatval($residuo);
+                                            $Pago_Servicio->Excedente = $exc;
+                                            $Pago_Servicio->Vueltos = $vuel;
+                                            $Pago_Servicio->servicio_id = $servicio_id;
+                                            $Pago_Servicio->caja_id = $caja_id;
+                                            $Pago_Servicio->save();
+
+                                            
+
+                                            if($exc > 0){
+                                                $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
+                                                $excdtsRecibidosCaja->Tipo = 'Servicio';
+                                                $excdtsRecibidosCaja->Estado = 'Pendiente';
+                                                $excdtsRecibidosCaja->Divisa = $p;
+                                                $excdtsRecibidosCaja->MontoDivisa = floatval($exc * $TasaT[$p]);
+                                                $excdtsRecibidosCaja->TasaTiket = $TasaT[$p];
+                                                $excdtsRecibidosCaja->MontoDolar = floatval($exc);
+                                                $excdtsRecibidosCaja->servicio_id = $servicio_id;
+                                                $excdtsRecibidosCaja->venta_id = 0;
+                                                $excdtsRecibidosCaja->horas_extra_id = 0;
+                                                $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
+                                                $excdtsRecibidosCaja->save();
+                                            }
+
+                                            if($vuel > 0){
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
+
+                                                // $isVuelos = $request->get('isVueltos');
+
+                                                if($montoResta > 0 || $montoResta != null){
+                                                    $MontoDivisaVueltos = $request->get('MontoDivisaV');
+                                                    $divisaVueltos = $request->get('divisaV');
+                                                    $TasaTikeVueltos = $request->get('TasaTikeV');
+                                                    $MontoDolarVueltos = $request->get('MontoDolarV');
+
+                                                    $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
+
+                                                    foreach($MontoDivisaVueltos as $key => $val) {
+
+                                                        $Vdivisa[]=$divisaVueltos[$key];
+                                                        $VMontoDivisa[]=$MontoDivisaVueltos[$key];
+                                                        $VTasaTiket[]=$TasaTikeVueltos[$key];
+                                                        $VMontoDolar[]=$MontoDolarVueltos[$key];
+                                                    }
+                                                    // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                                                    //creamos un contador
+                                                    $cont = 0;
+
+                                                    //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                                                    while ($cont < count($VMontoDolar)) {
+                                                        $Pago_Extras_Vueltos = new Pago_Vuelto();
+                                                        $Pago_Extras_Vueltos->Tipo = 'Servicio';
+                                                        $Pago_Extras_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
+                                                        $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
+                                                        $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
+                                                        $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
+                                                        $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
+                                                        $Pago_Extras_Vueltos->servicio_id = $servicio_id;
+                                                        $Pago_Extras_Vueltos->venta_id = 0;
+                                                        $Pago_Extras_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
+                                                        $Pago_Extras_Vueltos->save();
+
+                                                        $cont = $cont+1;
+                                                    }
+
+                                                }
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                                            }
+                                            // echo 'excd '.$exc.' <br> ';
+                                            // echo 'vueltos '.$vuel.' <br> ';
+                                            // echo $restk.' <br> ';
+                                        }
+
+                                    }
+                                // validamos  si montopendiente es mayor y montobase es menor... lo que significa esto es que estamos reciviendo una moneda pendiente
+                                    }
+
+
+
+
+                                }
+
+                                //verificamos cuantos pagos hay en la tabla pagos ventas para saber si el pago fue mixto de ser así actualizamos
+                                //la tabla ventas y la tabla servicios venas a mixto
+
+                                $cantidadPagos = Pago_Servicio::where('servicio_id', $servicio_id)->get();
+
+                                $cantServicios = count($cantidadPagos);
+
+                                if($cantServicios >= 2){
+                                    $actualizarVentasToMixto = Servicio::findOrfail($servicio_id);
+                                    $actualizarVentasToMixto->tipo_pago = 'Mixto';
+                                    $actualizarVentasToMixto->update();
+
+                                    
+                                }
+// return 'Finalizo';
+
+                            }else{
+                                return Redirect::back()
+                                ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
+                            }
+
+                            // return 'no';
                         }
                         // else{
-                            // return 'no';
-                            // $excedente = new Excedente;
-                            // $excedente->nombre_cliente = $request->get('nombre');
-                            // $excedente->cedula_cliente = $request->get('num_documento');
-                            // $excedente->direccion_cliente = $request->get('direccion');
-                            // $excedente->telefono_cliente = $request->get('telefono');
-                            // $excedente->excedente = $exced;
-                            // $excedente->persona_id = $request->get('cliente_id');
-                            // $excedente->save();
 
 
-                        //     $prexcedente = new Prexcedente;
-                        //     $prexcedente->excedente = $exced;
-                        //     $prexcedente->servicio_id = $servicio->id;
-                        //     $prexcedente->save();
+                        //     return Redirect::back()
+                        //         ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
                         // }
 
 
-                    }
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-                    if($modo_pago == 'Excedente'){
+// return 'Finalizo...';
 
 
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-                        // dd($status);
 
-                        $restarExced = $request->get('pagoConExcedente');
 
-                        $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-                        // return $ifCliente;
 
-                        if($ifCliente){
-                            // return 'si';
+            if($modo_pago == 'contado' || $modo_pago == 'Contado-Excedente'){
 
-                            $upExcedente = Excedente::findOrFail($ifCliente->id);
-                            $upExcedente->excedente = $upExcedente->excedente - $restarExced;
-                            $upExcedente->update();
-                        }
-                        // else{
-                            // return 'no';
-                            // $excedente = new Excedente;
-                            // $excedente->nombre_cliente = $request->get('nombre');
-                            // $excedente->cedula_cliente = $request->get('num_documento');
-                            // $excedente->direccion_cliente = $request->get('direccion');
-                            // $excedente->telefono_cliente = $request->get('telefono');
-                            // $excedente->excedente = $exced;
-                            // $excedente->persona_id = $request->get('cliente_id');
-                            // $excedente->save();
+                // /////////////////////////////////////////////////////////////////////////////////////////////////
+                // // TODO ingresamos los datos en la tabla Pago_Servicio////////////////////////////////////////////
+                // $MontoDivisaR = $request->get('MontoDivisa');
+                // $divisaR = $request->get('divisa');
+                // $TasaTikeR = $request->get('TasaTike');
+                // $MontoDolarR = $request->get('MontoDolar');
+                // $VeltosR = $request->get('Veltos');
 
+                // $MontoDivisaR = array_filter($MontoDivisaR);
 
-                        //     $prexcedente = new Prexcedente;
-                        //     $prexcedente->excedente = $exced;
-                        //     $prexcedente->servicio_id = $servicio->id;
-                        //     $prexcedente->save();
-                        // }
 
+                // foreach($MontoDivisaR as $key => $val) {
 
-                    }
 
-                    if($modo_pago == 'credito'){
+                //     $divisa[]=$divisaR[$key];
+                //     $MontoDivisa[]=$MontoDivisaR[$key];
+                //     $TasaTiket[]=$TasaTikeR[$key];
+                //     $MontoDolar[]=$MontoDolarR[$key];
+                //     if($monto_dejado == $total_costo){
+                //         $Vueltos[]=$VeltosR[$key];
 
+                //     }else{
+                //         $Vueltos[]=$VeltosR[$key] - $VeltosR[$key];
 
+                //     }
 
-                        $fecha_vencimiento = Carbon::now();
-                        $fecha_vencimiento->addDays($request->get('limite_fecha'));
-                        $fecha_vencimiento->toDateString();
 
+                // }
 
-                        $deuda_actual = Credito::where('persona_id',$request->get('cliente_id'))->first();
-                        // return $deuda_actual;
-                        if ($deuda_actual) {
-
-                            if ($deuda_actual->total_deuda == 0) {
-                                // return 'La deuda es menor a 0 '.$deuda_actual->total_deuda.'';
 
-                                $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
-                                // return $fecha_limite_pago;
-                                $upCredito = Credito::findOrFail($deuda_actual->id);
 
-                                $upCredito->total_factura = 1;
-                                $upCredito->total_deuda = $total_costo;
-                                $upCredito->fecha_limite_pago = $fecha_vencimiento;
-                                $upCredito->update();
 
+                // // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                // //creamos un contador
+                // $cont = 0;
 
-                                $detalleCredito = new Detalle_credito;
-                                $detalleCredito->numero_factura = $request->get('num_servicio');
-                                $detalleCredito->tipo_operacion = 'Servicio';
-                                $detalleCredito->operacion_id = $servicio->id;
-                                $detalleCredito->monto = $total_costo;
-                                $detalleCredito->estado_pago = 'Pendiente';
-                                $detalleCredito->estado_credito = 'Vigente';
-                                $detalleCredito->tipo_pago = 'Crédito';
-                                $detalleCredito->fecha_emision = $myTime->toDateString();
-                                $detalleCredito->fecha_vencimiento = $fecha_vencimiento;
-                                $detalleCredito->fecha_pago = null;
-                                $detalleCredito->persona_id = $request->get('cliente_id');
-                                $detalleCredito->credito_id = $upCredito->id ;
-                                $detalleCredito->caja_id = $request->get('caja_id');
-                                $detalleCredito->save();
 
+                // //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                // while ($cont < count($MontoDolar)) {
 
-                            } else {
-                                // return 'La deuda es mayor a 0 '.$deuda_actual->total_deuda.'';
 
-                                $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
-                                // return $fecha_limite_pago;
-                                $upCredito = Credito::findOrFail($deuda_actual->id);
+                //     $Pago_Servicio = new Pago_Servicio();
+                //     $Pago_Servicio->Divisa = $divisa[$cont];
+                //     $Pago_Servicio->MontoDivisa = $MontoDivisa[$cont];
+                //     $Pago_Servicio->TasaTiket = $TasaTiket[$cont];
+                //     $Pago_Servicio->MontoDolar = $MontoDolar[$cont];
+                //     $Pago_Servicio->MontoDolarServicio = $request->get('total_costo');
+                //     $Pago_Servicio->Excedente = $request->get('restaVueltos');
+                //     $Pago_Servicio->Vueltos = $request->get('monto_dejadoResta');
+                //     $Pago_Servicio->servicio_id = $servicio->id;
+                //     $Pago_Servicio->caja_id = $request->get('caja_id');;
+                //     $Pago_Servicio->save();
 
-                                $upCredito->total_factura = $upCredito->total_factura + 1;
-                                $upCredito->total_deuda = $upCredito->total_deuda + $total_costo;
-                                $upCredito->fecha_limite_pago = $fecha_limite_pago->fecha_vencimiento;
-                                $upCredito->update();
+                //     $cont = $cont+1;
+                // }
 
+                // // TODO Fin de ingreso en la tabla Pago_Servicio //////////////////////////////////////////////////
+                // //////////////////////////////////////////////////////////////////////////////////////////////////
 
-                                $detalleCredito = new Detalle_credito;
-                                $detalleCredito->numero_factura = $request->get('num_servicio');
-                                $detalleCredito->tipo_operacion = 'Servicio';
-                                $detalleCredito->operacion_id = $servicio->id;
-                                $detalleCredito->monto = $total_costo;
-                                $detalleCredito->estado_pago = 'Pendiente';
-                                $detalleCredito->estado_credito = 'Vigente';
-                                $detalleCredito->tipo_pago = 'Crédito';
-                                $detalleCredito->fecha_emision = $myTime->toDateString();
-                                $detalleCredito->fecha_vencimiento = $fecha_vencimiento;
-                                $detalleCredito->fecha_pago = null;
-                                $detalleCredito->persona_id = $request->get('cliente_id');
-                                $detalleCredito->credito_id = $upCredito->id ;
-                                $detalleCredito->caja_id = $request->get('caja_id');
-                                $detalleCredito->save();
-                            }
+                // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
 
+                // $isVuelos = $request->get('isVueltos');
 
+                // if($isVuelos > 0 || $isVuelos != null){
 
 
 
-                        } else {
-                            $fecha_vencimiento_pago = Carbon::now();
-                            $fecha_vencimiento_pago->addDays($request->get('limite_fecha'));
-                            $fecha_vencimiento_pago->toDateString();
 
-                            $credito = new Credito;
-                            $credito->nombre_cliente = $request->get('nombre');
-                            $credito->cedula_cliente = $request->get('num_documento');
-                            $credito->direccion_cliente = $request->get('direccion');
-                            $credito->telefono_cliente = $request->get('telefono');
-                            $credito->total_factura = 1;
-                            $credito->total_deuda = $total_costo;
-                            $credito->fecha_limite_pago = $fecha_vencimiento_pago;
-                            $credito->estado_credito = 'Activo';
-                            $credito->persona_id = $request->get('cliente_id');
-                            $credito->user_id = Auth::user()->id;
-                            $credito->save();
+                //     $MontoDivisaVueltos = $request->get('MontoDivisaV');
+                //     $divisaVueltos = $request->get('divisaV');
+                //     $TasaTikeVueltos = $request->get('TasaTikeV');
+                //     $MontoDolarVueltos = $request->get('MontoDolarV');
 
 
-                            $detalleCredito = new Detalle_credito;
-                            $detalleCredito->numero_factura = $request->get('num_servicio');
-                            $detalleCredito->tipo_operacion = 'Servicio';
-                            $detalleCredito->operacion_id = $servicio->id;
-                            $detalleCredito->monto = $total_costo;
-                            $detalleCredito->estado_pago = 'Pendiente';
-                            $detalleCredito->estado_credito = 'Vigente';
-                            $detalleCredito->tipo_pago = 'Credito';
-                            $detalleCredito->fecha_emision = $myTime->toDateTimeString();
-                            $detalleCredito->fecha_vencimiento = $fecha_vencimiento_pago;
-                            $detalleCredito->fecha_pago = null;
-                            $detalleCredito->persona_id = $request->get('cliente_id');
-                            $detalleCredito->credito_id = $credito->id ;
-                            $detalleCredito->caja_id = $request->get('caja_id');
-                            $detalleCredito->save();
-                        }
+                //     $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
 
 
+                //     foreach($MontoDivisaVueltos as $key => $val) {
 
 
-                    }
+                //         $Vdivisa[]=$divisaVueltos[$key];
+                //         $VMontoDivisa[]=$MontoDivisaVueltos[$key];
+                //         $VTasaTiket[]=$TasaTikeVueltos[$key];
+                //         $VMontoDolar[]=$MontoDolarVueltos[$key];
 
 
-                    if($modo_pago == 'cortesia'){
 
-                        $exon = $total_costo;
 
-                            $cortesia = new Cortesia;
-                            $cortesia->nombre_cliente = $request->get('nombre');
-                            $cortesia->cedula_cliente = $request->get('num_documento');
-                            $cortesia->direccion_cliente = $request->get('direccion');
-                            $cortesia->telefono_cliente = $request->get('telefono');
-                            $cortesia->exonerado = $exon;
-                            $cortesia->persona_id = $request->get('cliente_id');
-                            $cortesia->servicio_id = $servicio->id;
-                            $cortesia->save();
-                    }
 
+                //     }
 
 
 
 
-                    if($modo_pago == 'contado' || $modo_pago == 'Contado-Excedente'){
-                        $MontoDivisaR = $request->get('MontoDivisa');
-                        $divisaR = $request->get('divisa');
-                        $TasaTikeR = $request->get('TasaTike');
-                        $MontoDolarR = $request->get('MontoDolar');
-                        $VeltosR = $request->get('Veltos');
+                //     // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
+                //     //creamos un contador
+                //     $cont = 0;
 
-                        $MontoDivisaR = array_filter($MontoDivisaR);
 
-                        if(count($MontoDivisaR) > 0){
+                //     //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                //     while ($cont < count($VMontoDolar)) {
 
 
-                            // return count($MontoDivisaR);
+                //         $Pago_Servicio = new Pago_Vuelto();
+                //         $Pago_Servicio->Tipo = 'Servicio';
+                //         $Pago_Servicio->Divisa = $Vdivisa[$cont];
+                //         $Pago_Servicio->MontoDivisa = $VMontoDivisa[$cont];
+                //         $Pago_Servicio->TasaTiket = $VTasaTiket[$cont];
+                //         $Pago_Servicio->MontoDolar = $VMontoDolar[$cont];
+                //         $Pago_Servicio->servicio_id = $servicio->id;
+                //         $Pago_Servicio->caja_id = $request->get('caja_id');
+                //         $Pago_Servicio->save();
 
-                            foreach($MontoDivisaR as $key => $val) {
+                //         $cont = $cont+1;
+                //     }
 
 
-                                $divisa[]=$divisaR[$key];
-                                $MontoDivisa[]=$MontoDivisaR[$key];
-                                $TasaTiket[]=$TasaTikeR[$key];
-                                $MontoDolar[]=$MontoDolarR[$key];
-                                $Vueltos[]=$VeltosR[$key];
 
-                                if($monto_dejado == $total_costo){
-                                    $Vueltos[]=$VeltosR[$key];
+                //     // // TODO Ahora vamos a actualizar la tabla Pago_Servicios en su campo vueltos para evitar el problema de registrar
+                //     // //vueltos incorrectamente cuando se pagaba por medio del modo mixto
 
-                                }else{
-                                    $Vueltos[]=$VeltosR[$key] - $VeltosR[$key];
+                //     // //consultamos la tabla pago_servicios donde el id se el mismo del servicio que registramos para actualizar el campo
+                //     // //vueltos ejeplo: si pagan 10 en dolares la tabla servicio solo registra los 10 dolares pero el campo vueltos
+                //     // // queda en 0 luego se consulta la tabla vueltos y si dieron vueltos en dolares actualiza el campo vueltos donde
+                //     // //divisa sea igual a dolar esto se hace para corregir el error que presentava cuando se pagaba en modo mixto con
+                //     // // varias modedas.
 
-                                }
+                //     // $revisarServicios = Pago_Servicio::where('servicio_id', $servicio->id)->get();
+                //     // // return $revisarServicios;
+                //     // if(count($revisarServicios)){
+                //     //     // return $revisarServicios;
 
-                            }
+                //     //     foreach ($revisarServicios as $servicioReg) {
+                //     //         // return $servicioReg;
+                //     //         //Actializamos la tabla Pago_Servicios donde el id servicio sea igual al id recibido y el campo divisa
+                //     //         //sea igual alcampo divisa de la tabla pagos vuelos para ello consultamos la tabla vueltos
 
+                //     //         $vueltoReg = Pago_Vuelto::where('servicio_id', $servicio->id)->where('Divisa', $servicioReg->Divisa)->get();
+                //     //         if(count($vueltoReg)){
+                //     //             // return $vueltoReg[0]->MontoDivisa;
+                //     //             $upDateVueltos = Pago_Servicio::findOrFail($servicioReg->id);
+                //     //             $upDateVueltos->Vueltos = -$vueltoReg[0]->MontoDivisa;;
+                //     //             $upDateVueltos->update();
+                //     //         }
 
+                //     //     }
+                //     // }
+                // }
 
-
-                            // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                            //creamos un contador
-                            $cont = 0;
-
-
-                            //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                            while ($cont < count($MontoDolar)) {
-
-                                $Pago_Servicio = new Pago_Servicio();
-                                $Pago_Servicio->Divisa = $divisa[$cont];
-                                $Pago_Servicio->MontoDivisa = $MontoDivisa[$cont];
-                                $Pago_Servicio->TasaTiket = $TasaTiket[$cont];
-                                $Pago_Servicio->MontoDolar = $MontoDolar[$cont];
-                                $Pago_Servicio->Vueltos = $Vueltos[$cont];
-                                $Pago_Servicio->servicio_id = $servicio->id;
-                                $Pago_Servicio->save();
-
-                                $cont = $cont+1;
-                            }
-
-
-
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos para eso usamos una bandera llamad isVuelto
-                            //que debemos pasar por la vista
-
-                            $isVuelos = $request->get('isVueltos');
-
-                            if($isVuelos > 0 || $isVuelos != null){
-
-
-
-
-                                $MontoDivisaVueltos = $request->get('MontoDivisaV');
-                                $divisaVueltos = $request->get('divisaV');
-                                $TasaTikeVueltos = $request->get('TasaTikeV');
-                                $MontoDolarVueltos = $request->get('MontoDolarV');
-
-
-                                $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
-
-
-                                foreach($MontoDivisaVueltos as $key => $val) {
-
-
-                                    $Vdivisa[]=$divisaVueltos[$key];
-                                    $VMontoDivisa[]=$MontoDivisaVueltos[$key];
-                                    $VTasaTiket[]=$TasaTikeVueltos[$key];
-                                    $VMontoDolar[]=$MontoDolarVueltos[$key];
-
-
-
-
-
-                                }
-
-
-
-
-                                // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                                //creamos un contador
-                                $cont = 0;
-
-
-                                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                                while ($cont < count($VMontoDolar)) {
-
-
-                                    $Pago_Servicio = new Pago_Vuelto();
-                                    $Pago_Servicio->Tipo = 'Servicio';
-                                    $Pago_Servicio->Divisa = $Vdivisa[$cont];
-                                    $Pago_Servicio->MontoDivisa = $VMontoDivisa[$cont];
-                                    $Pago_Servicio->TasaTiket = $VTasaTiket[$cont];
-                                    $Pago_Servicio->MontoDolar = $VMontoDolar[$cont];
-                                    $Pago_Servicio->servicio_id = $servicio->id;
-                                    $Pago_Servicio->caja_id = $request->get('caja_id');
-                                    $Pago_Servicio->save();
-
-                                    $cont = $cont+1;
-                                }
-
-                            }
-                            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                            // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
-                            // de lo contrario solo registra el dinero dejado de contado.
-                            // REVIEW  resuelto (revizar si esta resuelto)
-
-                            if($VueltospagoConExcedente > 0){
-
-                                $Restardivisa = '';
-                                $RestarMontoDivisa = 0;
-                                $RestarTasaTiket = 0;
-                                $RestarMontoDolar = 0;
-
-                                // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
-                                //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
-                                // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
-                                //con dos divisas
-
-                                $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Servicio_Vueltos->id);
-                                // return $RestarVtossPtesToVtosPtesDevueltos;
-
-                                if ($pagoVueltos) {
-
-                                    $UdatePagoServiciosConVtosPendientes = Pago_Servicio::findOrFail($Pago_Servicio->id);
-
-                                    if ($UdatePagoServiciosConVtosPendientes->Divisa == $pagoVueltos->Divisa) {
-                                        $UdatePagoServiciosConVtosPendientes->MontoDivisa = $UdatePagoServiciosConVtosPendientes->MontoDivisa + $pagoVueltos->MontoDivisa;
-                                        $UdatePagoServiciosConVtosPendientes->MontoDolar = $UdatePagoServiciosConVtosPendientes->MontoDolar + $pagoVueltos->MontoDolar;
-                                        $UdatePagoServiciosConVtosPendientes->update();
-                                    }else{
-                                        $Pago_Servicio = new Pago_Servicio();
-                                        $Pago_Servicio->Divisa = $pagoVueltos->Divisa;
-                                        $Pago_Servicio->MontoDivisa = $pagoVueltos->MontoDivisa;
-                                        $Pago_Servicio->TasaTiket = $pagoVueltos->TasaTiket;
-                                        $Pago_Servicio->MontoDolar = $pagoVueltos->MontoDolar;
-                                        $Pago_Servicio->Vueltos = 0;
-                                        $Pago_Servicio->servicio_id = $servicio->id;
-                                        $Pago_Servicio->save();
-                                    }
-
-
-                                }
-
-                                // // TODO Ahora actualizamos la tabla Excedentes_Recibidos_Caja_Actual para pasar el dinero pendiente si lo hay al nuevo servicio
-                                // //que se creo porque de lo contrario se perderia el vuelto pendiente
-
-                                // // TODO verificamos si exciste un vuelto pendiente con el id del servicio que cerramos $id
-
-
-                                //     $PasarVtossPtesToNextServ = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('Estado','Pendiente')->first();
-                                //     if ($PasarVtossPtesToNextServ) {
-                                //         $PasarVtossPtesToNextServ->servicio_id = $servicio->id;
-                                //         $PasarVtossPtesToNextServ->update();
-                                //     }
-
-
-
-
-                            }
-
-
-                        }else{
-                            // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
-                            // de lo contrario solo registra el dinero dejado de contado.
-
-                            if($VueltospagoConExcedente > 0){
-
-                                $Restardivisa = '';
-                                $RestarMontoDivisa = 0;
-                                $RestarTasaTiket = 0;
-                                $RestarMontoDolar = 0;
-
-                                // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
-                                //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
-                                // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
-                                //con dos divisas
-
-                                $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Servicio_Vueltos->id);
-                                // return $RestarVtossPtesToVtosPtesDevueltos;
-
-
-
-                                if ($pagoVueltos) {
-                                    $isVuelos = $request->get('isVueltos');
-
-                                    $Pago_Servicio = new Pago_Servicio();
-                                    $Pago_Servicio->Divisa = $pagoVueltos->Divisa;
-                                    $Pago_Servicio->MontoDivisa = $pagoVueltos->MontoDivisa;
-                                    $Pago_Servicio->TasaTiket = $pagoVueltos->TasaTiket;
-                                    $Pago_Servicio->MontoDolar = $pagoVueltos->MontoDolar;
-                                    $Pago_Servicio->Vueltos = -$isVuelos;
-                                    $Pago_Servicio->servicio_id = $servicio->id;
-                                    $Pago_Servicio->save();
-
-
-
-                                }
-
-                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
-
-                                $isVuelos = $request->get('isVueltos');
-
-                                if($isVuelos > 0 || $isVuelos != null){
-
-
-
-
-                                    $MontoDivisaVueltos = $request->get('MontoDivisaV');
-                                    $divisaVueltos = $request->get('divisaV');
-                                    $TasaTikeVueltos = $request->get('TasaTikeV');
-                                    $MontoDolarVueltos = $request->get('MontoDolarV');
-
-
-                                    $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
-
-
-                                    foreach($MontoDivisaVueltos as $key => $val) {
-
-
-                                        $Vdivisa[]=$divisaVueltos[$key];
-                                        $VMontoDivisa[]=$MontoDivisaVueltos[$key];
-                                        $VTasaTiket[]=$TasaTikeVueltos[$key];
-                                        $VMontoDolar[]=$MontoDolarVueltos[$key];
-
-
-
-
-
-                                    }
-
-
-
-
-                                    // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                                    //creamos un contador
-                                    $cont = 0;
-
-
-                                    //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                                    while ($cont < count($VMontoDolar)) {
-
-
-                                        $Pago_Servicio = new Pago_Vuelto();
-                                        $Pago_Servicio->Tipo = 'Servicio';
-                                        $Pago_Servicio->Divisa = $Vdivisa[$cont];
-                                        $Pago_Servicio->MontoDivisa = $VMontoDivisa[$cont];
-                                        $Pago_Servicio->TasaTiket = $VTasaTiket[$cont];
-                                        $Pago_Servicio->MontoDolar = $VMontoDolar[$cont];
-                                        $Pago_Servicio->servicio_id = $servicio->id;
-                                        $Pago_Servicio->caja_id = $request->get('caja_id');
-                                        $Pago_Servicio->save();
-
-                                        $cont = $cont+1;
-                                    }
-
-                                }
-                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-                            }
-
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        }
-
-
-                    }
+                // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            }
 
                     // TODO Este codigo se ejecuta solo si escogieron la misma habitacion que esta en uso en otras palabras
                     //si solo estan cambiando de servicio y no de habitacion
