@@ -63,6 +63,11 @@ class Caja extends Model
         return $this->hasMany(Pago_Vuelto::class);
     }
 
+    public function pago_vueltos_credito()
+    {
+        return $this->hasMany(Pago_Vuelto::class);
+    }
+
     public function horas_extras(){
         return $this->hasMany(Horas_extra::class);
     }
@@ -138,6 +143,11 @@ class Caja extends Model
     public function pago_creditos()
     {
         return $this->hasManyThrough(Pago_Credito::class, Detalle_credito::class);
+    }
+
+    public function pago_credito()
+    {
+        return $this->hasMany(Pago_Credito::class);
     }
 
     public function detalle_pago_oficina(){

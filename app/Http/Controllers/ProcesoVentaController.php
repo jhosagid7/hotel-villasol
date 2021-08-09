@@ -1621,6 +1621,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = $venta->id;
                                                         $Pago_Extras_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Extras_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Extras_Vueltos->save();
 
@@ -1809,6 +1810,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -1970,6 +1972,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2172,6 +2175,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2333,6 +2337,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2567,6 +2572,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = $venta->id;
                                                         $Pago_Extras_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Extras_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Extras_Vueltos->save();
 

@@ -22,4 +22,7 @@ class Pago_Credito extends Model
     public function detalle_credito(){
         return $this->belongsTo(detalle_credito::class);
     }
+    public function cajas(){
+        return $this->belongsTo(Caja::class);
+    }
 }

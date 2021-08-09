@@ -67,7 +67,7 @@
 }
     </style> --}}
 </head>
-<body class="hold-transition skin-blue sidebar-mini fixed">
+<body class="hold-transition skin-blue sidebar-mini  fixed">{{-- sidebar-collapse --}}
 <!-- Site wrapper -->
 <div class="wrapper">
 

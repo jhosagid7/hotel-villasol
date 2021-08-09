@@ -2160,33 +2160,35 @@ var procesoPagoPendientealida = 0;
 
         });
 
-        $("#imprimirBoleta").click(function() {
-            let valorDeuda = $('#total').val();
+        $(document).ready(function(){
+            $("#imprimirBoleta").click(function() {
+                let valorDeuda = $('#total').val();
 
-            // return false;
-            if(valorDeuda > 0){
-            // alert(valorDeuda);
-            // return false;
-                $("#pagoPendienteBtn").click();
-                // console.log('tienes deuda pendiente'+$valorDeuda);
-                return false;
-            }
+                // return false;
+                if(valorDeuda > 0){
+                // alert(valorDeuda);
+                // return false;
+                    $("#pagoPendienteBtn").click();
+                    // console.log('tienes deuda pendiente'+$valorDeuda);
+                    return false;
+                }
 
-            if (VueltosvtosPendientes > 0) {
-                // alert(VueltosvtosPendientes);
-                $("#modalPagoPendienteOpcionesBtn").click();
-                $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
-
-
-
-
-                return false;
-            }
-                $("#form1").submit();
-                return false;
+                if (VueltosvtosPendientes > 0) {
+                    // alert(VueltosvtosPendientes);
+                    $("#modalPagoPendienteOpcionesBtn").click();
+                    $("#countVueltosPendientes").html('$'+ VueltosvtosPendientes);
 
 
 
+
+                    return false;
+                }
+                    $("#form1").submit();
+                    return false;
+
+
+
+            });
         });
 
 

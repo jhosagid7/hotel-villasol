@@ -890,6 +890,7 @@ class ServicioController extends Controller
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = 0;
                                                         $Pago_Extras_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Extras_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $caja_id;
                                                         $Pago_Extras_Vueltos->save();
 
@@ -2620,6 +2621,7 @@ class ServicioController extends Controller
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = 0;
                                                         $Pago_Extras_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Extras_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Extras_Vueltos->save();
 
@@ -2808,6 +2810,7 @@ class ServicioController extends Controller
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = 0;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2969,6 +2972,7 @@ class ServicioController extends Controller
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = 0;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -3171,6 +3175,7 @@ class ServicioController extends Controller
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = 0;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -3332,6 +3337,7 @@ class ServicioController extends Controller
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = 0;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -3567,6 +3573,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = 0;
                                                         $Pago_Extras_Vueltos->horas_extra_id = $horasExtras->id;
+                                                        $Pago_Extras_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Extras_Vueltos->save();
 
@@ -4238,7 +4245,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
 
                                 //realizamos la consulta en la base de datos y ordenamos los datos de menor a mayor sobre la columna MontoDolar
                                 //para que luego reste el pago con vueltos pendientes
-                                
+
 
                                     if($totalResta <= $TotalExcedenteSumado){
 
@@ -4280,11 +4287,11 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
 
                                                         //eliminamos el retistro de la tabla temp_pagos_vueltos
                                                         echo "$totalResta eliminamos el id: $TotalVueltoTemp->id dela tabla temp_pagos_vueltos <br>";
-                                                        
+
                                                         //Actualizamos la tabla excedentes_actuals con estado devuelto
 
                                                         echo "actualizamos el estado a devuelto <br>";
-                                                        
+
                                                         $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
 
                                                     if ($RestarVtossPtes) {
@@ -4308,9 +4315,10 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                     $Pago_Vueltos->servicio_id = $id;
                                                     $Pago_Vueltos->venta_id = $RestarVtossPtes->venta_id;
                                                     $Pago_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                    $Pago_Vueltos->detalle_credito_id = 0;
                                                     $Pago_Vueltos->caja_id = $request->get('caja_id');
                                                     $Pago_Vueltos->save();
-                                                    
+
                                                     Temp_Pago_Vuelto::destroy($TotalVueltoTemp->id);
 
                                                     }else if(round($pv,6) < round($D,6) && $totalResta > 0 && $D > 0){
@@ -4336,11 +4344,11 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         }
 
 
-                                                        
+
 
 
                                                      echo "actualizamos el estado a devuelto <br>";
-                                                        
+
                                                         $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
 
                                                     if ($RestarVtossPtes) {
@@ -4371,7 +4379,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                     }
                                                     echo 'menor <br> ';
                                                     echo  'Actualizar registro  en la tabla Excedente_Recibidos => Tipo: '.$RestarVtossPtes->Tipo.' Estado: Devueltos divisa: '.$RestarVtossPtes->Divisa.' montoDivisa: '.floatval($TotalVueltoTemp->MontoDivisa).' tasaTiket: '.$TotalVueltoTemp->TasaTiket.' montoDolar: '.floatval($TotalVueltoTemp->MontoDdolar).'<br> ';
-                                                    
+
                                                     $Pago_Vueltos = new Pago_Vuelto();
                                                     $Pago_Vueltos->Tipo = $RestarVtossPtes->Tipo;
                                                     $Pago_Vueltos->tipo_vuelto = 'Vueltos_Excedentes';
@@ -4382,10 +4390,11 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                     $Pago_Vueltos->servicio_id = $id;
                                                     $Pago_Vueltos->venta_id = $RestarVtossPtes->venta_id;
                                                     $Pago_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                    $Pago_Vueltos->detalle_credito_id = 0;
                                                     $Pago_Vueltos->caja_id = $request->get('caja_id');
                                                     $Pago_Vueltos->save();
-                                                    
-                                                    
+
+
                                                     $RestarVtossPtess = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarVtossPtes->id);
                                                     $D = $RestarVtossPtess->MontoDolar;
 
@@ -4396,7 +4405,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $totalResta = $totalResta - $D;
                                                         echo "pago $D mayor a la deuda $D quedo $pg resta $totalResta <br>";
                                                         echo "resta $totalResta<br><br><br>";
-                                                        
+
                                                         $RestarVtossTemp = Temp_Pago_Vuelto::findOrFail($TotalVueltoTemp->id);
 
                                                         if ($RestarVtossTemp) {
@@ -4423,6 +4432,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                     $Pago_Vueltos->servicio_id = $id;
                                                     $Pago_Vueltos->venta_id = $RestarVtossPtes->venta_id;
                                                     $Pago_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                    $Pago_Vueltos->detalle_credito_id = 0;
                                                     $Pago_Vueltos->caja_id = $request->get('caja_id');
                                                     $Pago_Vueltos->save();
                                                     echo 'igual <br> ';
@@ -4436,9 +4446,9 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                             }
                                             echo "<br><br> Iteracion excedente...<br><br>";
                                         }
-                                        
+
                                     }
-                                   
+
                                 // return 'Finalizado...while';
                             }
                             // return 'Finalizado...salio del while';
@@ -5713,7 +5723,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                         $tipo_pago = 'No pagado';
                     }
 
-            
+
 
 
 
@@ -6226,7 +6236,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                         $montoResta = $request->get('monto_dejadoResta');
                         $total_venta = $request->get('total_costo');
                         $montoPendiente = $request->get('VueltospagoConExcedente');
-                        
+
                         $montoPendiente = floatval($montoPendiente);
                         $montoBase = floatval($montoBase);
                         $montoResta = floatval($montoResta);
@@ -6321,7 +6331,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                             $Pago_Servicio->caja_id = $caja_id;
                                             $Pago_Servicio->save();
 
-                                            
+
 
                                             // echo 'excd '. 0 .' <br> ';
                                             // echo 'vueltos '. 0 .' <br> ';
@@ -6350,7 +6360,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                             $Pago_Servicio->caja_id = $caja_id;
                                             $Pago_Servicio->save();
 
-                                            
+
                                             // echo 'excd '. 0 .' <br> ';
                                             // echo 'vueltos '. 0 .' <br> ';
                                             // echo $restk.' <br> ';
@@ -6384,7 +6394,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                 }
                                             echo 'mayor <br> ';
                                             echo  ' divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($residuo).'  excedente:  '.$exc.' vueltos: '.$vuel.'<br> ';
-                                            
+
                                             $Pago_Servicio = new Pago_Servicio();
                                             $Pago_Servicio->Divisa = $p;
                                             $Pago_Servicio->MontoDivisa = $montoDiv[$p];
@@ -6397,7 +6407,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                             $Pago_Servicio->caja_id = $caja_id;
                                             $Pago_Servicio->save();
 
-                                            
+
 
                                             if($exc > 0){
                                                 $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
@@ -6453,6 +6463,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = 0;
                                                         $Pago_Extras_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Extras_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $caja_id;
                                                         $Pago_Extras_Vueltos->save();
 
@@ -6474,7 +6485,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                 }else if($montoPendiente > 0 && $montoBase <= 0){
                                     // return 'pagado con plata pendiente = montoPendiente';
                                     //metodo para procesar pago con dinero con pendiente
-                                    
+
 
                                     // TODO consultamos la tabla excedentes recibidos en caja para traer los excedentes que tenga asociados este servicio
                                     // y así porder realizar el pago del consumo con los vueltos pendientes
@@ -6643,6 +6654,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $RestarVtossPtes->venta_id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -6661,7 +6673,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                     $Pago_Servicio->caja_id = $caja_id;
                                                     $Pago_Servicio->save();
 
-                                                
+
                                                     // $restk = 0;
                                                     echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
                                                     $restk = $restk - $value;
@@ -6805,6 +6817,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $RestarVtossPtes->venta_id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -6823,7 +6836,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                     $Pago_Servicio->caja_id = $caja_id;
                                                     $Pago_Servicio->save();
 
-                                                
+
                                                     $restk = 0;
                                                     echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
                                                 }
@@ -7008,6 +7021,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $RestarVtossPtes->venta_id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -7026,7 +7040,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                     $Pago_Servicio->caja_id = $caja_id;
                                                     $Pago_Servicio->save();
 
-                                                
+
                                                     // $restk = 0;
                                                     echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
                                                     $restk = $restk - $value;
@@ -7170,6 +7184,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $RestarVtossPtes->venta_id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = $RestarVtossPtes->horas_extra_id;
+                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -7188,7 +7203,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                     $Pago_Servicio->caja_id = $caja_id;
                                                     $Pago_Servicio->save();
 
-                                                
+
                                                     $restk = 0;
                                                     echo  'Agregar registros en la tabla Pago_Venta => divisa: '.$Restardivisa.' montoDivisa: '.($RestarMontoDivisa).' tasaTiket: '.$RestarTasaTiket.' montoDolar: '.floatval($RestarMontoDolar).' MontoDolarConsumo: '.floatval($RestarMontoDolar).' Excedente: '.floatval(0).' Vueltos: '.floatval(0).'<br> ';
                                                 }
@@ -7268,7 +7283,7 @@ echo 'pase a dinero efectivo <br>';
                                             $Pago_Servicio->caja_id = $caja_id;
                                             $Pago_Servicio->save();
 
-                                            
+
 
                                             // echo 'excd '. 0 .' <br> ';
                                             // echo 'vueltos '. 0 .' <br> ';
@@ -7296,7 +7311,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                             $Pago_Servicio->caja_id = $caja_id;
                                             $Pago_Servicio->save();
 
-                                            
+
                                             // echo 'excd '. 0 .' <br> ';
                                             // echo 'vueltos '. 0 .' <br> ';
                                             // echo $restk.' <br> ';
@@ -7341,7 +7356,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                 }
                                             echo 'mayor <br> ';
                                             echo  'pago con dinero  divisa: '.$p.' montoDivisa: '.$montoDiv[$p].' tasaTiket: '.$TasaT[$p].' montoDolar: '.floatval($value).' montoDolarConsumo: '.floatval($residuo).'  excedente:  '.$exc.' vueltos: '.$vuel.'<br> ';
-                                            
+
                                             $Pago_Servicio = new Pago_Servicio();
                                             $Pago_Servicio->Divisa = $p;
                                             $Pago_Servicio->MontoDivisa = $montoDiv[$p];
@@ -7354,7 +7369,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                             $Pago_Servicio->caja_id = $caja_id;
                                             $Pago_Servicio->save();
 
-                                            
+
 
                                             if($exc > 0){
                                                 $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
@@ -7409,6 +7424,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = 0;
                                                         $Pago_Extras_Vueltos->horas_extra_id = 0;
+                                                        $Pago_Extras_Vueltos->detalle_credito_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Extras_Vueltos->save();
 
@@ -7445,7 +7461,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                     $actualizarVentasToMixto->tipo_pago = 'Mixto';
                                     $actualizarVentasToMixto->update();
 
-                                    
+
                                 }
 // return 'Finalizo';
 

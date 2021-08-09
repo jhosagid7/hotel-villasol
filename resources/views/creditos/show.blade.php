@@ -152,7 +152,7 @@
                                     <th><br><h4><b>Total deuda: </b></h4></th>
 
                                 <th><br><h4 id="total"><b>$. {{$total_deuda}}</b></h4></th>
-                                <th><br><br><a id="modalPago" href="#" onClick="selFactura({{floatval($total_deuda) ?? ''}},{{ $credito->id ?? ''}},'todas');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Pagar Todo</a></th>
+                                {{-- <th><br><br><a id="modalPago" href="#" onClick="selFactura({{floatval($total_deuda) ?? ''}},{{ $credito->id ?? ''}},'todas');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Pagar Todo</a></th> --}}
                                 </tfoot>
                             </tbody>
                         </table>
@@ -734,7 +734,50 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
     $(document).ready(function() {
         $("#enviar").on('click', function() {
-            $("#form1").submit();
+            event.preventDefault();
+
+            let restaTotalV = document.getElementById('RestaTtotalV');
+            let spTotalV = document.getElementById('spTotalV');
+            let RestaTtotal = document.getElementById('RestaTtotal');
+            RestaTtotalCuenta = new Decimal(RestaTtotal.innerHTML);
+            restaTotalV = new Decimal(restaTotalV.innerHTML);
+            spTotalV = new Decimal(spTotalV.innerHTML);
+
+            if (RestaTtotalCuenta > 0) {
+                alert('Debe ingresar monto para pagar la deuda...');
+                if (VueltosvtosPendientes > 0) {
+                    document.getElementById("VueltospagoConExcedente").focus();
+                }else{
+                    document.getElementById("DMontoDolar").focus();
+                }
+                return false;
+            }
+
+            if(RestaTtotalCuenta > 0 && spTotalV == 0){
+                alert('Debe especificar un monto para regresar los vueltos restante...');
+                document.getElementById("DMontoDolarV").focus();
+                return false;
+            }
+            if (restaTotalV > 0) {
+                alert('Los vueltos deben ser igual a la cantidad total de la deuda...');
+                document.getElementById("DMontoDolarV").focus();
+                return false;
+            }
+
+            if (restaTotalV < 0) {
+                alert('Los vueltos no pueden ser menor a la cantidad total de la deuda...');
+                document.getElementById("DMontoDolarV").focus();
+                return false;
+            }
+
+
+
+            if (restaTotalV == 0) {
+                // alert('Los ');
+                $("#form1").submit();
+            }
+
+            // $("#form1").submit();
         });
 
         $("#contado").on('click', function() {
@@ -958,7 +1001,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
     });
 
     function numDecimal(valor){
-        let result = Number(valor).toFixed(3);
+        let result = Number(valor).toFixed(6);
 
         return result;
     }
@@ -1770,7 +1813,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
         }
     };
     function numDecimalExp(valor){
-        let result = Number((valor)).toFixed(3);
+        let result = Number((valor)).toFixed(6);
         return result;
     }
 
@@ -1803,7 +1846,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
             // precio_compra = precio_compra/1000
 
         // alert('por kilo '+precio_compra);
-            // c]antidad.classList.add('readonly');
+            // cantidad.classList.add('readonly');
 
 
 
@@ -2431,12 +2474,17 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
         var valor           = PagoTtotal.innerHTML;
         var valor_restar    = spTotal.innerHTML;
         var resta           = numDecimal(valor -valor_restar);
+
+        valor = parseFloat(valor);
+        valor_restar = parseFloat(valor_restar);
+        resta = parseFloat(resta);
+        resta = new Decimal(resta);
         // var valorV           = PagoTtotalV.innerHTML;
         // var valor_restarV    = spTotalV.innerHTML;
         // var restaV           = numDecimal(valorV -valor_restarV);
 
         RestaTotal.innerHTML = numDecimal(resta); //se llena el campo resta
-        resta = new Decimal(resta);
+
 
 
 // alert(resta):
@@ -2457,8 +2505,8 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
 
             if (resta.lessThan(Decimal(0))) {
-            alert('El monto pagado supera el monto a pagar');
-            return false;
+            // alert('El monto pagado supera el monto a pagar');
+            // return false;
             $("#monto_dejadoResta").val(0.00);
             $("#DMontoDolarV").val('');
             $("#DMontoPesoV").val('');
@@ -2550,9 +2598,9 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
         });
         // alert(total_suma);
         let result = new Decimal(total_suma);
-        document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(2));
-        $('#monto_dejado').val(result.toFixed(2));
-        $('#base_vuelto_monto_dejado').val(result.toFixed(2));
+        document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(6));
+        $('#monto_dejado').val(result.toFixed(6));
+        $('#base_vuelto_monto_dejado').val(result.toFixed(6));
 
 
 
@@ -2707,28 +2755,260 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
         }
 
+    // function DMontoDolar(){
+    //          // alert('clic');
+    //         let Mdolar      = parseFloat($("#DMontoDolar").val());
+    //         // let Mdolar = 0;
+    //         if (isNaN(Mdolar)) {
+    //             Mdolar = 0;
+    //         } else {
+    //             Mdolar      = parseFloat($("#DMontoDolar").val());
+    //         }
+
+    //         let Tdolar      = tasaD;
+    //         let Tpeso       = tasaP;
+    //         let Tbolivar    = tasaTP;
+    //         let Tpunto      = tasaM;
+    //         let Ttrans      = tasaE;
+
+    //         Mdolar      = new Decimal(Mdolar);
+    //         Tdolar      = new Decimal(Tdolar);
+    //         Tpeso       = new Decimal(Tpeso);
+    //         Tbolivar    = new Decimal(Tbolivar);
+    //         Tpunto      = new Decimal(Tpunto);
+    //         Ttrans      = new Decimal(Ttrans);
+
+    //         // Mdolar.toFixed(6)
+
+    //         // DsupTotal = Mdolar * Tdolar;
+    //         DsupTotal = new Decimal(Mdolar).mul(Tdolar);
+    //         // alert(DsupTotal.toFixed());
+    //         $("#DolarToDolar").val(DsupTotal.toFixed(6));
+    //         $("#DsubTotal").html(DsupTotal.toFixed(6));
+
+    //         sumar();
+    //         resta();
+    //         const Resta     = document.getElementById('RestaTtotal');
+    //         var valor       = new Decimal(Resta.innerHTML);
+
+    //         // var RmultD      = valor * Tdolar;
+    //         var RmultD      = new Decimal(valor).mul(Tdolar);
+    //         $("#RestaDolar").val(RmultD.toFixed(6));
+    //         // var RmultP      = valor * Tpeso;
+    //         var RmultP      = new Decimal(valor).mul(Tpeso);
+    //         $("#RestaPeso").val(RmultP.toFixed(2));
+    //         // var RmultB      = valor * Tbolivar;
+    //         var RmultB      = new Decimal(valor).mul(Tbolivar);
+    //         $("#RestaBolivar").val(RmultB.toFixed(2));
+    //         // var RmultPu     = valor * Tpunto;
+    //         var RmultPu      = new Decimal(valor).mul(Tpunto);
+    //         $("#RestaPunto").val(RmultPu.toFixed(2));
+    //         // var RmultT      = valor * Ttrans;
+    //         var RmultT      = new Decimal(valor).mul(Ttrans);
+    //         $("#RestaTrans").val(RmultT.toFixed(2));
+
+    //     }
+
+    //     function DMontoPeso(){
+    //         // Mpeso       = $("#DMontoPeso").val();
+    //         // Tdolar      = $("#TasaDolar").val();
+    //         // Tpeso       = $("#TasaPeso").val();
+    //         // Tbolivar    = $("#TasaBolivar").val();
+    //         // Tpunto      = $("#TasaPunto").val();
+    //         // Ttrans      = $("#TasaTrans").val();
+
+    //         let Mpeso      = parseFloat($("#DMontoPeso").val());
+    //         // let Mdolar = 0;
+    //         if (isNaN(Mpeso)) {
+    //             Mpeso = 0;
+    //         } else {
+    //             Mpeso      = parseFloat($("#DMontoPeso").val());
+    //         }
+
+    //         let Tdolar      = tasaD;
+    //         let Tpeso       = tasaP;
+    //         let Tbolivar    = tasaTP;
+    //         let Tpunto      = tasaM;
+    //         let Ttrans      = tasaE;
+
+    //         Mpeso      = new Decimal(Mpeso);
+    //         Tdolar      = new Decimal(Tdolar);
+    //         Tpeso       = new Decimal(Tpeso);
+    //         Tbolivar    = new Decimal(Tbolivar);
+    //         Tpunto      = new Decimal(Tpunto);
+    //         Ttrans      = new Decimal(Ttrans);
+
+    //         // PsupTotal = Mpeso / Tpeso;
+    //         PsupTotal = new Decimal(Mpeso).div(Tpeso)
+    //         $("#PesoToDolar").val(PsupTotal.toFixed(6));
+    //         $("#PeSubTotal").html(PsupTotal.toFixed(6));
+    //         $("#RestaPeso").val();
+    //         sumar();
+    //         resta();
+    //         const Resta = document.getElementById('RestaTtotal');
+    //         // var valor   = Resta.innerHTML;
+    //         var valor       = new Decimal(Resta.innerHTML);
+    //         // var RmultD  = valor * Tdolar;
+    //         var RmultD      = new Decimal(valor).mul(Tdolar);
+    //         $("#RestaDolar").val(RmultD.toFixed(6));
+    //         // var RmultP  = valor * Tpeso;
+    //         var RmultP      = new Decimal(valor).mul(Tpeso);
+    //         $("#RestaPeso").val(RmultP.toFixed(2));
+    //         // var RmultB  = valor * Tbolivar;
+    //         var RmultB      = new Decimal(valor).mul(Tbolivar);
+    //         $("#RestaBolivar").val(RmultB.toFixed(2));
+    //         // var RmultPu = valor * Tpunto;
+    //         var RmultPu      = new Decimal(valor).mul(Tpunto);
+    //         $("#RestaPunto").val(RmultPu.toFixed(2));
+    //         // var RmultT = valor * Ttrans;
+    //         var RmultT      = new Decimal(valor).mul(Ttrans);
+    //         $("#RestaTrans").val(RmultT.toFixed(2));
+    //     }
+
+    //     function DMontoBolivar(){
+    //         Mbolivar = $("#DMontoBolivar").val();
+    //         Tdolar   = $("#TasaDolar").val();
+    //         Tpeso    = $("#TasaPeso").val();
+    //         Tbolivar = $("#TasaBolivar").val();
+    //         Tpunto   = $("#TasaPunto").val();
+    //         Ttrans   = $("#TasaTrans").val();
+
+    //         peso = $("#RestaPeso").val();
+    //         // 10767280  alert(Mpeso);
+    //         BsupTotal = Mbolivar / Tbolivar;
+    //         $("#BolivarToDolar").val(BsupTotal.toFixed(6));
+    //         $("#BoSubTotal").html(BsupTotal.toFixed(6));
+    //         $("#RestaBolivar").val();
+    //         sumar();
+    //         resta();
+    //         const Resta = document.getElementById('RestaTtotal');
+    //         var valor = Resta.innerHTML;
+    //         var RmultD = valor * Tdolar;
+    //         $("#RestaDolar").val(RmultD.toFixed(6));
+    //         var RmultP = valor * Tpeso;
+    //         $("#RestaPeso").val(RmultP.toFixed(2));
+    //         var RmultB = valor * Tbolivar;
+    //         $("#RestaBolivar").val(RmultB.toFixed(2));
+    //         var RmultPu = valor * Tpunto;
+    //         $("#RestaPunto").val(RmultPu.toFixed(2));
+    //         var RmultT = valor * Ttrans;
+    //         $("#RestaTrans").val(RmultT.toFixed(2));
+    //     }
+
+    //     function DMontoPunto(){
+    //         MPunto = $("#DMontoPunto").val();
+    //         Tdolar = $("#TasaDolar").val();
+    //         Tpeso = $("#TasaPeso").val();
+    //         Tbolivar = $("#TasaBolivar").val();
+    //         Tpunto = $("#TasaPunto").val();
+    //         Ttrans = $("#TasaTrans").val();
+
+    //         peso = $("#RestaPeso").val();
+    //         // 10767280  alert(Mpeso);
+    //         PusupTotal = MPunto / Tpunto;
+    //         $("#PuntoToDolar").val(PusupTotal.toFixed(6));
+    //         $("#PuSubTotal").html(PusupTotal.toFixed(6));
+    //         $("#RestaPunto").val();
+    //         sumar();
+    //         resta();
+    //         const Resta = document.getElementById('RestaTtotal');
+    //         var valor = Resta.innerHTML;
+    //         var RmultD = valor * Tdolar;
+    //         $("#RestaDolar").val(RmultD.toFixed(6));
+    //         var RmultP = valor * Tpeso;
+    //         $("#RestaPeso").val(RmultP.toFixed(2));
+    //         var RmultB = valor * Tbolivar;
+    //         $("#RestaBolivar").val(RmultB.toFixed(2));
+    //         var RmultPu = valor * Tpunto;
+    //         $("#RestaPunto").val(RmultPu.toFixed(2));
+    //         var RmultT = valor * Ttrans;
+    //         $("#RestaTrans").val(RmultT.toFixed(2));
+    //     }
+
+    //     function DMontoTrans(){
+    //         Mtrans = $("#DMontoTrans").val();
+    //         Tdolar = $("#TasaDolar").val();
+    //         Tpeso = $("#TasaPeso").val();
+    //         Tbolivar = $("#TasaBolivar").val();
+    //         Tpunto = $("#TasaPunto").val();
+    //         Ttrans = $("#TasaTrans").val();
+
+    //         peso = $("#RestaPeso").val();
+    //         // 10767280  alert(Mpeso);
+    //         TsupTotal = Mtrans / Ttrans;
+    //         $("#TransToDolar").val(TsupTotal.toFixed(6));
+    //         $("#TrSubTotal").html(TsupTotal.toFixed(6));
+    //         $("#RestaTrans").val();
+    //         sumar();
+    //         resta();
+    //         const Resta = document.getElementById('RestaTtotal');
+    //         var valor = Resta.innerHTML;
+    //         var RmultD = valor * Tdolar;
+    //         $("#RestaDolar").val(RmultD.toFixed(6));
+    //         var RmultP = valor * Tpeso;
+    //         $("#RestaPeso").val(RmultP.toFixed(2));
+    //         var RmultB = valor * Tbolivar;
+    //         $("#RestaBolivar").val(RmultB.toFixed(2));
+    //         var RmultPu = valor * Tpunto;
+    //         $("#RestaPunto").val(RmultPu.toFixed(2));
+    //         var RmultT = valor * Ttrans;
+    //         $("#RestaTrans").val(RmultT.toFixed(2));
+
+    //     }
+
     $(document).ready(function() {
 
 
-        $("#DMontoDolar").keyup(function() {
-            DMontoDolar();
-        });
+        // $("#DMontoDolar").keyup(function() {
+        //     DMontoDolar();
+        // });
 
-        $("#DMontoPeso").keyup(function() {
-            DMontoPeso();
-        });
+        // $("#DMontoPeso").keyup(function() {
+        //     DMontoPeso();
+        // });
 
-        $("#DMontoBolivar").keyup(function() {
-            DMontoBolivar();
-        });
+        // $("#DMontoBolivar").keyup(function() {
+        //     DMontoBolivar();
+        // });
 
-        $("#DMontoPunto").keyup(function() {
-            DMontoPunto();
-        });
+        // $("#DMontoPunto").keyup(function() {
+        //     DMontoPunto();
+        // });
 
-        $("#DMontoTrans").keyup(function() {
-            DMontoTrans();
-        });
+        // $("#DMontoTrans").keyup(function() {
+        //     DMontoTrans();
+        // });
+
+                    var aprovMontoDolar = 0;
+                    $("#DMontoDolar").keyup(function() {
+                        aprovMontoDolar = 1;
+                        $("#isVueltos").val('');
+                        DMontoDolar();
+                    });
+
+                    $("#DMontoPeso").keyup(function() {
+                        aprovMontoDolar = 1;
+                        $("#isVueltos").val('');
+                        DMontoPeso();
+                    });
+
+                    $("#DMontoBolivar").keyup(function() {
+                        aprovMontoDolar = 1;
+                        $("#isVueltos").val('');
+                        DMontoBolivar();
+                    });
+
+                    $("#DMontoPunto").keyup(function() {
+                        aprovMontoDolar = 1;
+                        $("#isVueltos").val('');
+                        DMontoPunto();
+                    });
+
+                    $("#DMontoTrans").keyup(function() {
+                        aprovMontoDolar = 1;
+                        $("#isVueltos").val('');
+                        DMontoTrans();
+                    });
 
 
 
@@ -2871,7 +3151,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 // let rmdresult = new Decimal(rmd);
                 let rmdresult = new Decimal(tsV);
                 // $('#monto_dejado').val(rmdresult.toFixed(2));
-                $('#monto_dejadoResta').val(rmdresult.toFixed(2));
+                $('#monto_dejadoResta').val(rmdresult.toFixed(6));
 
                 }
                 let montoBase = $('#base_vuelto_monto_dejado').val();
@@ -2884,12 +3164,12 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 let r = x.sub(y)                  // '0.2'
                 // console.log(r.toFixed(2));
 
-                $('#monto_dejado').val(r.toFixed(2));
+                $('#monto_dejado').val(r.toFixed(6));
 
 
                 // $('#monto_dejado').val(rmdresult.toFixed(2));
                 let result = new Decimal(total_sumaV);
-                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
+                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(6));
 
 
             }
@@ -2898,83 +3178,215 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    function DMontoDolarV(){
-                     // alert('clic');
-                     MdolarV      = $("#DMontoDolarV").val();
-                    TdolarV      = $("#TasaDolarV").val();
-                    TpesoV       = $("#TasaPesoV").val();
-                    TbolivarV    = $("#TasaBolivarV").val();
+    // function DMontoDolarV(){
+    //                  // alert('clic');
+    //                  MdolarV      = $("#DMontoDolarV").val();
+    //                 TdolarV      = $("#TasaDolarV").val();
+    //                 TpesoV       = $("#TasaPesoV").val();
+    //                 TbolivarV    = $("#TasaBolivarV").val();
 
 
-                    DsupTotalV = MdolarV * TdolarV;
-                    $("#DolarToDolarV").val(DsupTotalV);
-                    $("#DsubTotalV").html(DsupTotalV);
+    //                 DsupTotalV = MdolarV * TdolarV;
+    //                 $("#DolarToDolarV").val(DsupTotalV);
+    //                 $("#DsubTotalV").html(DsupTotalV);
 
-                    sumarV();
-                    restaV();
-                    const RestaV     = document.getElementById('RestaTtotalV');
-                    var valorV       = RestaV.innerHTML;
-                    var RmultDV      = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV);
-                    var RmultPV      = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV);
-                    var RmultBV      = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV);
+    //                 sumarV();
+    //                 restaV();
+    //                 const RestaV     = document.getElementById('RestaTtotalV');
+    //                 var valorV       = RestaV.innerHTML;
+    //                 var RmultDV      = valorV * TdolarV;
+    //                 $("#RestaDolarV").val(RmultDV);
+    //                 var RmultPV      = valorV * TpesoV;
+    //                 $("#RestaPesoV").val(RmultPV);
+    //                 var RmultBV      = valorV * TbolivarV;
+    //                 $("#RestaBolivarV").val(RmultBV);
 
 
-                }
+    //             }
+
+    //             function DMontoPesoV(){
+    //                 MpesoV       = $("#DMontoPesoV").val();
+    //                 TdolarV      = $("#TasaDolarV").val();
+    //                 TpesoV      = $("#TasaPesoV").val();
+    //                 TbolivarV   = $("#TasaBolivarV").val();
+
+
+    //                 PsupTotalV = MpesoV / TpesoV;
+    //                 $("#PesoToDolarV").val(PsupTotalV);
+    //                 $("#PeSubTotalV").html(PsupTotalV);
+    //                 $("#RestaPesoV").val();
+    //                 sumarV();
+    //                 restaV();
+    //                 const RestaV = document.getElementById('RestaTtotalV');
+    //                 var valorV   = RestaV.innerHTML;
+    //                 var RmultDV  = valorV * TdolarV;
+    //                 $("#RestaDolarV").val(RmultDV);
+    //                 var RmultPV  = valorV * TpesoV;
+    //                 $("#RestaPesoV").val(RmultPV);
+    //                 var RmultBV  = valorV * TbolivarV;
+    //                 $("#RestaBolivarV").val(RmultBV);
+
+
+    //             }
+
+                // function DMontoBolivarV(){
+                //     MbolivarV = $("#DMontoBolivarV").val();
+                //     TdolarV   = $("#TasaDolarV").val();
+                //     TpesoV    = $("#TasaPesoV").val();
+                //     TbolivarV = $("#TasaBolivarV").val();
+
+
+                //     pesoV = $("#RestaPesoV").val();
+                //     // 10767280  alert(Mpeso);
+                //     BsupTotalV = MbolivarV / TbolivarV;
+                //     $("#BolivarToDolarV").val(BsupTotalV);
+                //     $("#BoSubTotalV").html(BsupTotalV);
+                //     $("#RestaBolivarV").val();
+                //     sumarV();
+                //     restaV();
+                //     const RestaV = document.getElementById('RestaTtotalV');
+                //     var valorV = RestaV.innerHTML;
+                //     var RmultDV = valorV * TdolarV;
+                //     $("#RestaDolarV").val(RmultDV);
+                //     var RmultPV = valorV * TpesoV;
+                //     $("#RestaPesoV").val(RmultPV);
+                //     var RmultBV = valorV * TbolivarV;
+                //     $("#RestaBolivarV").val(RmultBV);
+
+
+                // }
+
+                function DMontoDolarV(){
+            // alert('clic');
+            MdolarV      = $("#DMontoDolarV").val();
+            TdolarV      = $("#TasaDolarV").val();
+            TpesoV       = $("#TasaPesoV").val();
+            TbolivarV    = $("#TasaBolivarV").val();
+
+
+            DsupTotalV = MdolarV * TdolarV;
+            $("#DolarToDolarV").val(DsupTotalV.toFixed(6));
+            $("#DsubTotalV").html(DsupTotalV.toFixed(6));
+
+            sumarV();
+            restaV();
+            const RestaV     = document.getElementById('RestaTtotalV');
+            var valorV       = RestaV.innerHTML;
+            var RmultDV      = valorV * TdolarV;
+            $("#RestaDolarV").val(RmultDV.toFixed(6));
+            var RmultPV      = valorV * TpesoV;
+            $("#RestaPesoV").val(RmultPV.toFixed(2));
+            var RmultBV      = valorV * TbolivarV;
+            $("#RestaBolivarV").val(RmultBV.toFixed(2));
+
+
+        }
+
+        function DMontoPesoV(){
+            MpesoV       = $("#DMontoPesoV").val();
+            TdolarV      = $("#TasaDolarV").val();
+            TpesoV      = $("#TasaPesoV").val();
+            TbolivarV   = $("#TasaBolivarV").val();
+
+
+            PsupTotalV = MpesoV / TpesoV;
+            $("#PesoToDolarV").val(PsupTotalV.toFixed(6));
+            $("#PeSubTotalV").html(PsupTotalV.toFixed(6));
+            $("#RestaPesoV").val();
+            sumarV();
+            restaV();
+            const RestaV = document.getElementById('RestaTtotalV');
+            var valorV   = RestaV.innerHTML;
+            var RmultDV  = valorV * TdolarV;
+            $("#RestaDolarV").val(RmultDV.toFixed(6));
+            var RmultPV  = valorV * TpesoV;
+            $("#RestaPesoV").val(RmultPV.toFixed(2));
+            var RmultBV  = valorV * TbolivarV;
+            $("#RestaBolivarV").val(RmultBV.toFixed(2));
+
+
+        }
+
+                // function DMontoPesoV(){
+                //     MpesoV       = $("#DMontoPesoV").val();
+                //     TdolarV      = $("#TasaDolarV").val();
+                //     TpesoV      = $("#TasaPesoV").val();
+                //     TbolivarV   = $("#TasaBolivarV").val();
+
+
+                //     PsupTotalV = MpesoV / TpesoV;
+                //     $("#PesoToDolarV").val(PsupTotalV);
+                //     $("#PeSubTotalV").html(PsupTotalV);
+                //     $("#RestaPesoV").val();
+                //     sumarV();
+                //     restaV();
+                //     const RestaV = document.getElementById('RestaTtotalV');
+                //     var valorV   = RestaV.innerHTML;
+                //     var RmultDV  = valorV * TdolarV;
+                //     $("#RestaDolarV").val(RmultDV);
+                //     var RmultPV  = valorV * TpesoV;
+                //     $("#RestaPesoV").val(RmultPV);
+                //     var RmultBV  = valorV * TbolivarV;
+                //     $("#RestaBolivarV").val(RmultBV);
+
+
+                // }
 
                 function DMontoPesoV(){
-                    MpesoV       = $("#DMontoPesoV").val();
-                    TdolarV      = $("#TasaDolarV").val();
-                    TpesoV      = $("#TasaPesoV").val();
-                    TbolivarV   = $("#TasaBolivarV").val();
+            MpesoV       = $("#DMontoPesoV").val();
+            TdolarV      = $("#TasaDolarV").val();
+            TpesoV      = $("#TasaPesoV").val();
+            TbolivarV   = $("#TasaBolivarV").val();
 
 
-                    PsupTotalV = MpesoV / TpesoV;
-                    $("#PesoToDolarV").val(PsupTotalV);
-                    $("#PeSubTotalV").html(PsupTotalV);
-                    $("#RestaPesoV").val();
-                    sumarV();
-                    restaV();
-                    const RestaV = document.getElementById('RestaTtotalV');
-                    var valorV   = RestaV.innerHTML;
-                    var RmultDV  = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV);
-                    var RmultPV  = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV);
-                    var RmultBV  = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV);
+            PsupTotalV = MpesoV / TpesoV;
+            $("#PesoToDolarV").val(PsupTotalV.toFixed(6));
+            $("#PeSubTotalV").html(PsupTotalV.toFixed(6));
+            $("#RestaPesoV").val();
+            sumarV();
+            restaV();
+            const RestaV = document.getElementById('RestaTtotalV');
+            var valorV   = RestaV.innerHTML;
+            var RmultDV  = valorV * TdolarV;
+            $("#RestaDolarV").val(RmultDV.toFixed(6));
+            var RmultPV  = valorV * TpesoV;
+            $("#RestaPesoV").val(RmultPV.toFixed(2));
+            var RmultBV  = valorV * TbolivarV;
+            $("#RestaBolivarV").val(RmultBV.toFixed(2));
 
 
-                }
+        }
 
                 function DMontoBolivarV(){
-                    MbolivarV = $("#DMontoBolivarV").val();
-                    TdolarV   = $("#TasaDolarV").val();
-                    TpesoV    = $("#TasaPesoV").val();
-                    TbolivarV = $("#TasaBolivarV").val();
+            MbolivarV = $("#DMontoBolivarV").val();
+            TdolarV   = $("#TasaDolarV").val();
+            TpesoV    = $("#TasaPesoV").val();
+            TbolivarV = $("#TasaBolivarV").val();
 
 
-                    pesoV = $("#RestaPesoV").val();
-                    // 10767280  alert(Mpeso);
-                    BsupTotalV = MbolivarV / TbolivarV;
-                    $("#BolivarToDolarV").val(BsupTotalV);
-                    $("#BoSubTotalV").html(BsupTotalV);
-                    $("#RestaBolivarV").val();
-                    sumarV();
-                    restaV();
-                    const RestaV = document.getElementById('RestaTtotalV');
-                    var valorV = RestaV.innerHTML;
-                    var RmultDV = valorV * TdolarV;
-                    $("#RestaDolarV").val(RmultDV);
-                    var RmultPV = valorV * TpesoV;
-                    $("#RestaPesoV").val(RmultPV);
-                    var RmultBV = valorV * TbolivarV;
-                    $("#RestaBolivarV").val(RmultBV);
+            pesoV = $("#RestaPesoV").val();
+            // 10767280  alert(Mpeso);
+            BsupTotalV = MbolivarV / TbolivarV;
+            $("#BolivarToDolarV").val(BsupTotalV.toFixed(6));
+            $("#BoSubTotalV").html(BsupTotalV.toFixed(6));
+            $("#RestaBolivarV").val();
+            sumarV();
+            restaV();
+            const RestaV = document.getElementById('RestaTtotalV');
+            var valorV = RestaV.innerHTML;
+            var RmultDV = valorV * TdolarV;
+            $("#RestaDolarV").val(RmultDV.toFixed(6));
+            var RmultPV = valorV * TpesoV;
+            $("#RestaPesoV").val(RmultPV.toFixed(2));
+            var RmultBV = valorV * TbolivarV;
+            $("#RestaBolivarV").val(RmultBV.toFixed(2));
 
 
-                }
+        }
+
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -3012,7 +3424,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     $("#cargarDolarV").on('click', function() {
-        // alert('2');
+            // alert('2');
             if(vcargarV == 0){
                 // alert('0');
                 vcargarV = 1;
@@ -3020,7 +3432,8 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 vcargarbV = 0;
 
 
-
+                $("#isVueltos").val('');
+                // $("#monto_dejadoResta").val(0.00);
                 $("#DMontoPesoV").val('');
                 DMontoPesoV();
                 $("#DMontoBolivarV").val('');
@@ -3037,6 +3450,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 vcargarV = 0;
                 $("#monto_dejadoResta").val(0.00);
                 $("#DMontoDolarV").val('');
+                $("#isVueltos").val('');
                 DMontoDolarV();
             }
         });
@@ -3048,7 +3462,8 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 vcargarV = 0;
                 vcargarbV = 0;
 
-
+                $("#isVueltos").val('');
+                // $("#monto_dejadoResta").val(0.00);
 
 
                 $("#DMontoDolarV").val('');
@@ -3064,6 +3479,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 vcargarpV = 0;
                 $("#monto_dejadoResta").val(0.00);
                 $("#DMontoPesoV").val('');
+                $("#isVueltos").val('');
                 DMontoPesoV();
             }
         });
@@ -3074,6 +3490,7 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 vcargarV = 0;
                 vcargarpV = 0;
 
+                $("#isVueltos").val('');
 
 
 
@@ -3090,9 +3507,93 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
                 vcargarbV = 0;
                 $("#monto_dejadoResta").val(0.00);
                 $("#DMontoBolivarV").val('');
+                $("#isVueltos").val('');
                 DMontoBolivarV();
             }
         });
+
+    // $("#cargarDolarV").on('click', function() {
+    //     // alert('2');
+    //         if(vcargarV == 0){
+    //             // alert('0');
+    //             vcargarV = 1;
+    //             vcargarpV = 0;
+    //             vcargarbV = 0;
+
+
+
+    //             $("#DMontoPesoV").val('');
+    //             DMontoPesoV();
+    //             $("#DMontoBolivarV").val('');
+    //             DMontoBolivarV();
+
+    //             let RdV    = document.getElementById('RestaDolarV').value;
+
+    //             RdV = -1 * RdV;
+    //             // alert('valor = '+RdV);
+    //             $("#DMontoDolarV").val(RdV);
+    //             DMontoDolarV();
+    //         }else{
+    //             // alert('1');
+    //             vcargarV = 0;
+    //             $("#monto_dejadoResta").val(0.00);
+    //             $("#DMontoDolarV").val('');
+    //             DMontoDolarV();
+    //         }
+    //     });
+
+    //     $("#cargarPesoV").on('click', function() {
+
+    //         if(vcargarpV == 0){
+    //             vcargarpV = 1;
+    //             vcargarV = 0;
+    //             vcargarbV = 0;
+
+
+
+
+    //             $("#DMontoDolarV").val('');
+    //             DMontoDolarV();
+    //             $("#DMontoBolivarV").val('');
+    //             DMontoBolivarV();
+    //             let RpV    = document.getElementById('RestaPesoV').value;
+
+    //             RpV = -1 * RpV;
+    //             $("#DMontoPesoV").val(RpV);
+    //             DMontoPesoV();
+    //         }else{
+    //             vcargarpV = 0;
+    //             $("#monto_dejadoResta").val(0.00);
+    //             $("#DMontoPesoV").val('');
+    //             DMontoPesoV();
+    //         }
+    //     });
+
+    //     $("#cargarBolivarV").on('click', function() {
+    //         if(vcargarbV == 0){
+    //             vcargarbV = 1;
+    //             vcargarV = 0;
+    //             vcargarpV = 0;
+
+
+
+
+    //             $("#DMontoPesoV").val('');
+    //             DMontoPesoV();
+    //             $("#DMontoDolarV").val('');
+    //             DMontoDolarV();
+    //             let RbV    = document.getElementById('RestaBolivarV').value;
+
+    //             RbV = -1 * RbV;
+    //             $("#DMontoBolivarV").val(RbV);
+    //             DMontoBolivarV();
+    //         }else{
+    //             vcargarbV = 0;
+    //             $("#monto_dejadoResta").val(0.00);
+    //             $("#DMontoBolivarV").val('');
+    //             DMontoBolivarV();
+    //         }
+    //     });
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 </script>

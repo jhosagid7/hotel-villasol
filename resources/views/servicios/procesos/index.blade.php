@@ -993,21 +993,22 @@ text-overflow: ellipsis;
                         </div>
 
             </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-                <div class=""
-                id="guardar">
+            <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
+            <div class="" id="guardar">
                 <button id="enviar" class="btn btn-outline" type="button"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
             </div>
-                {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
-              </div>
-            </form>
+            {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
             </div>
+            </form>
+    </div>
             {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 
 
-<div class="modal fade bs-example-modal-xm" id="precontadomodal" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog modal-lg modal-warning">
+
+            <div class="modal fade bs-example-modal-xm" id="precontadomodal" role="dialog" aria-labelledby="myModalLabel">
+
+                <div class="modal-dialog modal-lg modal-warning">
       <div class="modal-dialog">
         <div class="modal-content">
 

@@ -3787,7 +3787,7 @@
                 // let rmdresult = new Decimal(rmd);
                 let rmdresult = new Decimal(tsV);
                 // $('#monto_dejado').val(rmdresult.toFixed(2));
-                $('#monto_dejadoResta').val(rmdresult.toFixed(2));
+                $('#monto_dejadoResta').val(rmdresult.toFixed(6));
 
                 }
                 let montoBase = $('#base_vuelto_monto_dejado').val();
@@ -3800,12 +3800,12 @@
                 let r = x.sub(y)                  // '0.2'
                 // console.log(r.toFixed(2));
 
-                $('#monto_dejado').val(r.toFixed(2));
+                $('#monto_dejado').val(r.toFixed(6));
 
 
                 // $('#monto_dejado').val(rmdresult.toFixed(2));
                 let result = new Decimal(total_sumaV);
-                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(2));
+                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(6));
 
 
             }
