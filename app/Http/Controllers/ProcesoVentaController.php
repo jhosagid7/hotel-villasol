@@ -261,7 +261,7 @@ class ProcesoVentaController extends Controller
 
                             if ($credPagados->user_id == $cajas->user_id){
 
-                                $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                $validarPagosCreditos = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                 if (count($validarPagosCreditos)) {
                                     foreach ($validarPagosCreditos as $credPagadosCaja ) {
                                         if ($credPagadosCaja->Divisa == 'Dolar') {
@@ -280,7 +280,7 @@ class ProcesoVentaController extends Controller
 
                                 if ($credPagados->tipo_operacion == 'Consumo'){
 
-                                    $validarPagosCreditosConsumo = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                    $validarPagosCreditosConsumo = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                     if (count($validarPagosCreditosConsumo)) {
                                         foreach ($validarPagosCreditosConsumo as $credPagadosCajaConsumo ) {
                                             if ($credPagadosCajaConsumo->Divisa == 'Dolar') {
@@ -303,7 +303,7 @@ class ProcesoVentaController extends Controller
 
                                 if ($credPagados->tipo_operacion == 'Servicio'){
 
-                                    $validarPagosCreditosServicio = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                    $validarPagosCreditosServicio = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                     if (count($validarPagosCreditosServicio)) {
                                         foreach ($validarPagosCreditosServicio as $credPagadosCajaServicio ) {
                                             if ($credPagadosCajaServicio->Divisa == 'Dolar') {
@@ -327,7 +327,7 @@ class ProcesoVentaController extends Controller
 
                             }else{
 
-                                $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                $validarPagosCreditos = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                 if (count($validarPagosCreditos)) {
                                     foreach ($validarPagosCreditos as $credPagadosOficina ) {
                                         if ($credPagadosOficina->Divisa == 'Dolar') {
@@ -1621,7 +1621,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = $venta->id;
                                                         $Pago_Extras_Vueltos->horas_extra_id = 0;
-                                                        $Pago_Extras_Vueltos->detalle_credito_id = 0;
+                                                        $Pago_Extras_Vueltos->detalle__creditos__pagado_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Extras_Vueltos->save();
 
@@ -1810,7 +1810,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = 0;
-                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
+                                                        $Pago_Consumo_Vueltos->detalle__creditos__pagado_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -1972,7 +1972,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = 0;
-                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
+                                                        $Pago_Consumo_Vueltos->detalle__creditos__pagado_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2175,7 +2175,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = 0;
-                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
+                                                        $Pago_Consumo_Vueltos->detalle__creditos__pagado_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2337,7 +2337,7 @@ if($modo_pago == 'credito'){
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = $venta->id;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = 0;
-                                                        $Pago_Consumo_Vueltos->detalle_credito_id = 0;
+                                                        $Pago_Consumo_Vueltos->detalle__creditos__pagado_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2572,7 +2572,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = $venta->id;
                                                         $Pago_Extras_Vueltos->horas_extra_id = 0;
-                                                        $Pago_Extras_Vueltos->detalle_credito_id = 0;
+                                                        $Pago_Extras_Vueltos->detalle__creditos__pagado_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Extras_Vueltos->save();
 
@@ -3334,7 +3334,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
 
                             if ($credPagados->user_id == $cajas->user_id){
 
-                                $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                $validarPagosCreditos = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                 if (count($validarPagosCreditos)) {
                                     foreach ($validarPagosCreditos as $credPagadosCaja ) {
                                         if ($credPagadosCaja->Divisa == 'Dolar') {
@@ -3353,7 +3353,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
 
                                 if ($credPagados->tipo_operacion == 'Consumo'){
 
-                                    $validarPagosCreditosConsumo = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                    $validarPagosCreditosConsumo = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                     if (count($validarPagosCreditosConsumo)) {
                                         foreach ($validarPagosCreditosConsumo as $credPagadosCajaConsumo ) {
                                             if ($credPagadosCajaConsumo->Divisa == 'Dolar') {
@@ -3376,7 +3376,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
 
                                 if ($credPagados->tipo_operacion == 'Servicio'){
 
-                                    $validarPagosCreditosServicio = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                    $validarPagosCreditosServicio = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                     if (count($validarPagosCreditosServicio)) {
                                         foreach ($validarPagosCreditosServicio as $credPagadosCajaServicio ) {
                                             if ($credPagadosCajaServicio->Divisa == 'Dolar') {
@@ -3400,7 +3400,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
 
                             }else{
 
-                                $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                $validarPagosCreditos = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                 if (count($validarPagosCreditos)) {
                                     foreach ($validarPagosCreditos as $credPagadosOficina ) {
                                         if ($credPagadosOficina->Divisa == 'Dolar') {

@@ -16,6 +16,7 @@ class Pago_Vuelto extends Model
         'servicio_id',
         'venta_id',
         'horas_extra_id',
+        'detalle__creditos__pagado_id',
         'caja_id'
     ];
 
@@ -31,6 +32,9 @@ class Pago_Vuelto extends Model
         return $this->belongsTo(Venta::class);
     }
 
+    public function detalle_creditos_pagado(){
+        return $this->belongsTo(Detalle_Creditos_Pagado::class);
+    }
     public function cajas(){
         return $this->belongsTo(Caja::class);
     }

@@ -17,7 +17,7 @@ class CreatePreciosTable extends Migration
             $table->id();
             $table->foreignId('horario_id')->references('id')->on('horarios')->onDelete('cascade');
             $table->foreignId('cat_id')->references('id')->on('cats')->onDelete('cascade');
-            $table->decimal('precio', 25, 3)->nullable();
+            $table->decimal('precio', 25, 8)->nullable();
             $table->timestamps();
         });
     }

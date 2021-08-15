@@ -46,12 +46,12 @@ class CreateServiciosTable extends Migration
             $table->string('tipo_pago', 20)->nullable();
             $table->enum('is_cambio', ['Si', 'No'])->nullable();
             $table->enum('status', ['Pagado', 'Falta pagar', 'Exonerado']);
-            $table->decimal('precio_costo', 25, 2)->nullable();
+            $table->decimal('precio_costo', 25, 8)->nullable();
             $table->unsignedInteger('cantidad')->nullable();
-            $table->decimal('dinero_dejado', 25, 2)->nullable();
-            $table->decimal('excedente_nuevo', 25, 2)->nullable();
-            $table->decimal('pago_con_excedente', 25, 2)->nullable();
-            $table->decimal('total_venta', 25, 3)->nullable();
+            $table->decimal('dinero_dejado', 25, 8)->nullable();
+            $table->decimal('excedente_nuevo', 25, 8)->nullable();
+            $table->decimal('pago_con_excedente', 25, 8)->nullable();
+            $table->decimal('total_venta', 25, 8)->nullable();
             $table->enum('estado', ['Aceptada', 'Cancelada', 'Procesando']);
             $table->string('nombre_cliente', 100)->nullable();
             $table->string('cedula_cliente', 20)->nullable();

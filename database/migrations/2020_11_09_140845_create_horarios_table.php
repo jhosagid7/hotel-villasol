@@ -19,7 +19,8 @@ class CreateHorariosTable extends Migration
             $table->string('nombre', 100);
             $table->time('desde')->nullable();
             $table->time('hasta')->nullable();
-            $table->time('restringir')->nullable();
+            $table->time('restringir_desde')->nullable();
+            $table->time('restringir_hasta')->nullable();
             $table->unsignedInteger('is24Horas')->nullable();
             $table->timestamps();
         });

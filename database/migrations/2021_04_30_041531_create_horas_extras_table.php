@@ -24,13 +24,13 @@ class CreateHorasExtrasTable extends Migration
             $table->string('fecha_hora_salida_real', 20)->nullable();
             $table->decimal('precio_hora_extra', 25, 2)->nullable();
             $table->integer('cantidad_hora_extra')->nullable();
-            $table->decimal('monto_total_hora_extra', 25, 2)->nullable();
-            $table->decimal('otros_montos', 25, 2)->nullable();
+            $table->decimal('monto_total_hora_extra', 25, 8)->nullable();
+            $table->decimal('otros_montos', 25, 8)->nullable();
             $table->string('detalle_otros_montos', 256)->nullable();
             $table->decimal('total_horas_extras_otros_montos', 25, 2)->nullable();
-            $table->decimal('dinero_dejado', 25, 2)->nullable();
-            $table->decimal('excedente_nuevo', 25, 2)->nullable();
-            $table->decimal('pago_con_excedente', 25, 2)->nullable();
+            $table->decimal('dinero_dejado', 25, 8)->nullable();
+            $table->decimal('excedente_nuevo', 25, 8)->nullable();
+            $table->decimal('pago_con_excedente', 25, 8)->nullable();
             $table->enum('modo_pago', ['Contado', 'Credito', 'Cortesia', 'Excedente', 'Contado-Excedente']);
             $table->string('tipo_pago', 20)->nullable();
             $table->enum('status', ['Pagado', 'Falta pagar', 'Exonerado']);

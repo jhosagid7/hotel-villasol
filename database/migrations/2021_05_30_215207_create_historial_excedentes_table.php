@@ -18,6 +18,7 @@ class CreateHistorialExcedentesTable extends Migration
             $table->enum('tipo_registro', ['Pago_por_oficina', 'Excedente']);
             $table->enum('status', ['Pendiente', 'Pagado']);
             $table->enum('tipo_operacion', ['Ingreso', 'Egreso']);
+            $table->string('modo_pago', 100);
             $table->string('num_servicio', 30);
             $table->enum('motivo', ['Pagos_extras', 'Consumo', 'Servicio']);
             $table->decimal('saldo_anterior', 25, 2);

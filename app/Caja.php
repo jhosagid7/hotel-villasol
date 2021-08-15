@@ -55,6 +55,10 @@ class Caja extends Model
         return $this->hasMany(Venta::class);
     }
 
+    public function detalle_creditos_pagados(){
+        return $this->hasMany(Detalle_Creditos_Pagado::class);
+    }
+
     public function pagos_servicios(){
         return $this->hasMany(Pago_Servicio::class);
     }
@@ -64,6 +68,11 @@ class Caja extends Model
     }
 
     public function pago_vueltos_credito()
+    {
+        return $this->hasMany(Pago_Vuelto::class);
+    }
+
+    public function pago_vueltos()
     {
         return $this->hasMany(Pago_Vuelto::class);
     }
@@ -135,14 +144,14 @@ class Caja extends Model
         return $this->hasManyThrough(Pago_Servicio::class, Servicio::class);
     }
 
-    public function pago_vueltos()
-    {
-        return $this->hasManyThrough(Pago_Vuelto::class, Servicio::class);
-    }
+    // public function pago_vueltos()
+    // {
+    //     return $this->hasManyThrough(Pago_Vuelto::class, Servicio::class);
+    // }
 
     public function pago_creditos()
     {
-        return $this->hasManyThrough(Pago_Credito::class, Detalle_credito::class);
+        return $this->hasMany(Pago_Credito::class);
     }
 
     public function pago_credito()

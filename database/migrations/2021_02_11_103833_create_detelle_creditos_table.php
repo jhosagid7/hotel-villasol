@@ -18,7 +18,7 @@ class CreateDetelleCreditosTable extends Migration
             $table->string('numero_factura', 20);
             $table->string('tipo_operacion', 20);
             $table->integer('operacion_id');
-            $table->decimal('monto', 25, 2)->nullable();
+            $table->decimal('monto', 25, 8)->nullable();
             $table->enum('estado_pago', ['Pendiente', 'Pagado']);
             $table->enum('estado_credito', ['Vigente', 'Vencido','Pagado']);
             $table->string('tipo_pago', 20);

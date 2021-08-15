@@ -483,6 +483,7 @@
                 @can('haveaccess', 'reporte.index')
                 <li><a href="{{asset('reporte-general')}}"><i class="fa fa-desktop"></i> Reporte General</a></li>
                 <li><a href="{{asset('reporte-ingreso')}}"><i class="fa fa-desktop"></i> Reporte General Compras</a></li>
+                <li><a href="{{asset('reporte-creditos')}}"><i class="fa fa-desktop"></i> Reporte Creditos Pagados</a></li>
                 @endcan
             </ul>
         </li>

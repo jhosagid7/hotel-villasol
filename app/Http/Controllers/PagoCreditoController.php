@@ -13,6 +13,7 @@ use App\Sessioncaja;
 use App\Pago_Credito;
 use App\Credito_Pagado;
 use App\Detalle_credito;
+use App\Detalle_Creditos_Pagado;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -282,77 +283,128 @@ class PagoCreditoController extends Controller
             $date   = Carbon::now('America/Caracas');
             $fecha  = $date->format('y-m-d');
 
-        if($facturas_pagadas == 'una'){
+        if($facturas_pagadas == 'una' || $facturas_pagadas == 'todas'){
 
 
-            // Llenamos la tabla Creditos_pagados
-            $detalle_credito_datos = Detalle_credito::findOrFail($facturas_pagadas_id);
+            //Buscamos todos los ides de la tabla detalle_credito que pertenecen al la tabla credito por medio del id
 
+            if($facturas_pagadas == 'una'){
+                $creditos_ids = Detalle_credito::where('id',$facturas_pagadas_id)->where('estado_pago', 'pendiente')->get();
+            }else{
+                $creditos_ids = Detalle_credito::where('credito_id',$facturas_pagadas_id)->where('estado_pago', 'pendiente')->get();
+            }
+
+            // return $creditos_ids;
+
+
+
+            // return $facturas_pagadas_id;
+            $id_cliente = $creditos_ids[0]->credito_id;
+            $total_factura = count($creditos_ids);
             $monto_consumo = 0;
             $monto_servicio = 0;
 
-            if($detalle_credito_datos->tipo_operacion == 'Consumo'){
-                $monto_consumo = $monto_consumo + $detalle_credito_datos->monto;
+
+            foreach ($creditos_ids as $monto) {
+                if ($monto->estado_pago == 'Pendiente') {
+                    $credito_datos = Detalle_credito::findOrFail($monto->id);
+
+                    if($credito_datos->tipo_operacion == 'Consumo'){
+                        $monto_consumo = $monto_consumo + $credito_datos->monto;
+                    }
+
+                    if($credito_datos->tipo_operacion == 'Servicio'){
+                        $monto_servicio = $monto_servicio + $credito_datos->monto;
+                    }
+                }
             }
 
-            if($detalle_credito_datos->tipo_operacion == 'Servicio'){
-                $monto_servicio = $monto_servicio + $detalle_credito_datos->monto;
+            //consultamos la tabla creditos para traer los datos de nombrem,cedula entre otros.
+
+            $cliente =  Credito::findOrFail($id_cliente);
+            // return $cliente;
+
+
+            $detalle_creditos_pagados = new Detalle_Creditos_Pagado();
+            $detalle_creditos_pagados->nombre_cliente = $cliente->nombre_cliente;
+            $detalle_creditos_pagados->cedula_cliente = $cliente->cedula_cliente;
+            $detalle_creditos_pagados->direccion_cliente = $cliente->direccion_cliente;
+            $detalle_creditos_pagados->telefono_cliente = $cliente->telefono_cliente;
+            $detalle_creditos_pagados->tipo_pago = $tipo_pago;
+            $detalle_creditos_pagados->total_factura = $total_factura;
+            $detalle_creditos_pagados->total_Consumo = $monto_consumo;
+            $detalle_creditos_pagados->total_Servicio = $monto_servicio;
+            $detalle_creditos_pagados->total_deuda = $total_costo;
+            $detalle_creditos_pagados->fecha_pago = $fecha;
+            $detalle_creditos_pagados->estado_credito = $cliente->estado_credito;;
+            $detalle_creditos_pagados->persona_id = $cliente->persona_id;
+            $detalle_creditos_pagados->user_id = $operador_id;
+            $detalle_creditos_pagados->caja_id = $caja_id;
+            $detalle_creditos_pagados->save();
+
+            foreach($creditos_ids as $ids) {
+
+                // return $ids;
+                if ($ids->estado_pago == 'Pendiente') {
+                    $idFacturasPagadas[] = $ids->id;
+
+                    // Llenamos la tabla Creditos_pagados
+                    $detalle_credito_datos = Detalle_credito::findOrFail($ids->id);
+
+                    $credito_pagado = new Credito_Pagado();
+                    $credito_pagado->numero_factura = $detalle_credito_datos->numero_factura;
+                    $credito_pagado->tipo_operacion = $detalle_credito_datos->tipo_operacion;
+                    $credito_pagado->operacion_id = $detalle_credito_datos->operacion_id;
+                    $credito_pagado->monto = $detalle_credito_datos->monto;
+                    $credito_pagado->fecha_emision = $detalle_credito_datos->fecha_emision;
+                    $credito_pagado->fecha_vencimiento = $detalle_credito_datos->fecha_vencimiento;
+                    $credito_pagado->fecha_pago = $fecha;
+                    $credito_pagado->estado_credito_al_pagar = $detalle_credito_datos->estado_credito;
+                    $credito_pagado->persona_id = $detalle_credito_datos->persona_id;
+                    $credito_pagado->user_id = $operador_id;
+                    $credito_pagado->detalle__creditos__pagado_id = $detalle_creditos_pagados->id;
+                    $credito_pagado->caja_id = $caja_id;
+                    $credito_pagado->save();
+
+
+
+
+                    // Actualizamos la tabla Detalle_credito
+
+                    $detalle_credito = Detalle_credito::findOrFail($ids->id);
+                    $detalle_credito->estado_pago = 'Pagado';
+                    $detalle_credito->estado_credito = 'Pagado';
+                    $detalle_credito->fecha_pago = $fecha;
+                    $detalle_credito->update();
+
+                    // Capturamos la nueva fecha de vencimiento
+                    $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
+
+                    if(!$fecha_limite_pago){
+                        $date   = Carbon::now('America/Caracas');
+                        $fecha  = $date->format('y-m-d');
+
+                    }else{
+                        $fecha = $fecha_limite_pago->fecha_vencimiento;
+                    }
+
+                    $credito = Credito::findOrFail($detalle_credito_datos->credito_id);
+                    $ultima_factura = $credito->total_factura - 1;
+
+                    if ($ultima_factura == 0) {
+                        $credito->total_factura = 0;
+                        $credito->total_deuda = 0;
+                        $credito->fecha_limite_pago = null;
+                        $credito->update();
+                    }else{
+                        $credito->total_factura = $credito->total_factura - 1;
+                        $credito->total_deuda = $credito->total_deuda - $detalle_credito_datos->monto;
+                        $credito->fecha_limite_pago = $fecha;
+                        $credito->update();
+                    }
+                }
             }
 
-            $credito_pagado = new Credito_Pagado();
-            $credito_pagado->numero_factura = $detalle_credito_datos->numero_factura;
-            $credito_pagado->tipo_operacion = $detalle_credito_datos->tipo_operacion;
-            $credito_pagado->operacion_id = $detalle_credito_datos->operacion_id;
-            $credito_pagado->monto = $detalle_credito_datos->monto;
-            $credito_pagado->tipo_pago = $tipo_pago;
-            $credito_pagado->fecha_emision = $detalle_credito_datos->fecha_emision;
-            $credito_pagado->fecha_vencimiento = $detalle_credito_datos->fecha_vencimiento;
-            $credito_pagado->fecha_pago = $fecha;
-            $credito_pagado->estado_credito_al_pagar = $detalle_credito_datos->estado_credito;
-            $credito_pagado->user_id = $operador_id;
-            $credito_pagado->persona_id = $detalle_credito_datos->persona_id;
-            $credito_pagado->detalle_credito_id = $detalle_credito_datos->id;
-            $credito_pagado->credito_id = $detalle_credito_datos->credito_id;
-            $credito_pagado->caja_id = $caja_id;
-            $credito_pagado->save();
-
-
-            // Actualizamos la tabla Detalle_credito
-
-            $detalle_credito = Detalle_credito::findOrFail($facturas_pagadas_id);
-            $detalle_credito->estado_pago = 'Pagado';
-            $detalle_credito->estado_credito = 'Pagado';
-            $detalle_credito->fecha_pago = $fecha;
-            $detalle_credito->update();
-
-            // Capturamos la nueva fecha de vencimiento
-            $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
-
-            // return $fecha_limite_pago;
-
-            if(!$fecha_limite_pago){
-                $date   = Carbon::now('America/Caracas');
-                $fecha  = $date->format('y-m-d');
-
-            }else{
-                $fecha = $fecha_limite_pago->fecha_vencimiento;
-            }
-
-            // Actualizamos la tabla creditos
-            $credito = Credito::findOrFail($detalle_credito_datos->credito_id);
-            $ultima_factura = $credito->total_factura - 1;
-
-            if ($ultima_factura == 0) {
-                $credito->total_factura = 0;
-                $credito->total_deuda = 0;
-                $credito->fecha_limite_pago = null;
-                $credito->update();
-            }else{
-                $credito->total_factura = $credito->total_factura - 1;
-                $credito->total_deuda = $credito->total_deuda - $detalle_credito_datos->monto;
-                $credito->fecha_limite_pago = $fecha;
-                $credito->update();
-            }
 
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -446,10 +498,9 @@ class PagoCreditoController extends Controller
                                             $Pago_Credito->MontoDivisa = $montoDiv[$p];
                                             $Pago_Credito->TasaTiket = $TasaT[$p];
                                             $Pago_Credito->MontoDolar = floatval($value);
-                                            $Pago_Credito->MontoConsumo = $monto_consumo > 0 ? floatval($value) : $monto_consumo;
-                                            $Pago_Credito->MontoServicio = $monto_servicio > 0 ? floatval($value) : $monto_servicio;
+                                            $Pago_Credito->MontoCredito = $monto_consumo > 0 || $monto_servicio > 0 ? floatval($value) : $monto_consumo + $monto_servicio;
                                             $Pago_Credito->Vueltos = 0;
-                                            $Pago_Credito->detalle_credito_id = $detalle_credito->id;
+                                            $Pago_Credito->detalle__creditos__pagado_id = $detalle_creditos_pagados->id;
                                             $Pago_Credito->caja_id = $caja_id;
                                             $Pago_Credito->save();
 
@@ -486,10 +537,9 @@ class PagoCreditoController extends Controller
                                             $Pago_Credito->MontoDivisa = $montoDiv[$p];
                                             $Pago_Credito->TasaTiket = $TasaT[$p];
                                             $Pago_Credito->MontoDolar = floatval($value);
-                                            $Pago_Credito->MontoConsumo = $monto_consumo > 0 ? floatval($value) : $monto_consumo;
-                                            $Pago_Credito->MontoServicio = $monto_servicio > 0 ? floatval($value) : $monto_servicio;
+                                            $Pago_Credito->MontoCredito = $monto_consumo > 0 || $monto_servicio > 0 ? floatval($value) : $monto_consumo + $monto_servicio;
                                             $Pago_Credito->Vueltos = 0;
-                                            $Pago_Credito->detalle_credito_id = $detalle_credito->id;
+                                            $Pago_Credito->detalle__creditos__pagado_id = $detalle_creditos_pagados->id;
                                             $Pago_Credito->caja_id = $caja_id;
                                             $Pago_Credito->save();
 
@@ -544,10 +594,9 @@ class PagoCreditoController extends Controller
                                             $Pago_Credito->MontoDivisa = $montoDiv[$p];
                                             $Pago_Credito->TasaTiket = $TasaT[$p];
                                             $Pago_Credito->MontoDolar = floatval($value);
-                                            $Pago_Credito->MontoConsumo = $monto_consumo > 0 ? floatval($value) : $monto_consumo;
-                                            $Pago_Credito->MontoServicio = $monto_servicio > 0 ? floatval($residuo) : $monto_servicio;
+                                            $Pago_Credito->MontoCredito = $monto_consumo > 0 || $monto_servicio > 0 ? floatval($residuo) : $monto_consumo + $monto_servicio;
                                             $Pago_Credito->Vueltos = $vuel;
-                                            $Pago_Credito->detalle_credito_id = $detalle_credito->id;
+                                            $Pago_Credito->detalle__creditos__pagado_id = $detalle_creditos_pagados->id;
                                             $Pago_Credito->caja_id = $caja_id;
                                             $Pago_Credito->save();
 
@@ -618,7 +667,7 @@ class PagoCreditoController extends Controller
                                                         $Pago_Extras_Vueltos->servicio_id = 1;
                                                         $Pago_Extras_Vueltos->venta_id = 0;
                                                         $Pago_Extras_Vueltos->horas_extra_id = 0;
-                                                        $Pago_Extras_Vueltos->detalle_credito_id = $detalle_credito->id;
+                                                        $Pago_Extras_Vueltos->detalle__creditos__pagado_id = $detalle_creditos_pagados->id;
                                                         $Pago_Extras_Vueltos->caja_id = $caja_id;
                                                         $Pago_Extras_Vueltos->save();
 
@@ -697,134 +746,19 @@ class PagoCreditoController extends Controller
         }
 
 
-        if($facturas_pagadas == 'todas'){
-
-            //Buscamos todos los ides de la tabla detalle_credito que pertenecen al la tabla credito por medio del id
-
-            $creditos_ids = Detalle_credito::where('credito_id',$facturas_pagadas_id)->get();
-
-            // return $creditos_ids;
-            $monto_consumo = 0;
-            $monto_servicio = 0;
-
-            foreach($creditos_ids as $ids) {
-
-                // return $ids;
-                if ($ids->estado_pago == 'Pendiente') {
-                    $idFacturasPagadas[] = $ids->id;
-
-                    // Llenamos la tabla Creditos_pagados
-                    $detalle_credito_datos = Detalle_credito::findOrFail($ids->id);
-
-                    if($detalle_credito_datos->tipo_operacion == 'Consumo'){
-                        $monto_consumo = $monto_consumo + $detalle_credito_datos->monto;
-                    }
-
-                    if($detalle_credito_datos->tipo_operacion == 'Servicio'){
-                        $monto_servicio = $monto_servicio + $detalle_credito_datos->monto;
-                    }
-
-                    $credito_pagado = new Credito_Pagado();
-                    $credito_pagado->numero_factura = $detalle_credito_datos->numero_factura;
-                    $credito_pagado->tipo_operacion = $detalle_credito_datos->tipo_operacion;
-                    $credito_pagado->operacion_id = $detalle_credito_datos->operacion_id;
-                    $credito_pagado->monto = $detalle_credito_datos->monto;
-                    $credito_pagado->tipo_pago = $tipo_pago;
-                    $credito_pagado->fecha_emision = $detalle_credito_datos->fecha_emision;
-                    $credito_pagado->fecha_vencimiento = $detalle_credito_datos->fecha_vencimiento;
-                    $credito_pagado->fecha_pago = $fecha;
-                    $credito_pagado->estado_credito_al_pagar = $detalle_credito_datos->estado_credito;
-                    $credito_pagado->user_id = $operador_id;
-                    $credito_pagado->persona_id = $detalle_credito_datos->persona_id;
-                    $credito_pagado->detalle_credito_id = $detalle_credito_datos->id;
-                    $credito_pagado->credito_id = $detalle_credito_datos->credito_id;
-                    $credito_pagado->caja_id = $caja_id;
-                    $credito_pagado->save();
 
 
-                    // Actualizamos la tabla Detalle_credito
-
-                    $detalle_credito = Detalle_credito::findOrFail($ids->id);
-                    $detalle_credito->estado_pago = 'Pagado';
-                    $detalle_credito->estado_credito = 'Pagado';
-                    $detalle_credito->fecha_pago = $fecha;
-                    $detalle_credito->update();
-
-                    // Capturamos la nueva fecha de vencimiento
-                    $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
-
-                    // Actualizamos la tabla creditos
-                    // $credito = Credito::findOrFail($detalle_credito_datos->credito_id);
-                    // $credito->total_factura = $credito->total_factura - 1;
-                    // $credito->total_deuda = $credito->total_deuda - $detalle_credito_datos->monto;
-                    // $credito->fecha_limite_pago = $fecha_limite_pago->fecha_vencimiento;
-                    // $credito->update();
-
-                    $credito = Credito::findOrFail($detalle_credito_datos->credito_id);
-                    $ultima_factura = $credito->total_factura - 1;
-
-                    if ($ultima_factura == 0) {
-                        $credito->total_factura = 0;
-                        $credito->total_deuda = 0;
-                        $credito->fecha_limite_pago = null;
-                        $credito->update();
-                    }else{
-                        $credito->total_factura = $credito->total_factura - 1;
-                        $credito->total_deuda = $credito->total_deuda - $detalle_credito_datos->monto;
-                        $credito->fecha_limite_pago = $fecha;
-                        $credito->update();
-                    }
-                }
-            }
-
-            // return $idFacturasPagadas;
-
-            // DB::rollback();
-            // Llenamos la tabla Pagos_Creditos
-
-            $MontoDivisaR = $request->get('MontoDivisa');
-            $divisaR = $request->get('divisa');
-            $TasaTikeR = $request->get('TasaTike');
-            $MontoDolarR = $request->get('MontoDolar');
-            $VeltosR = $request->get('Veltos');
-
-            $MontoDivisaR = array_filter($MontoDivisaR);
 
 
-            foreach($MontoDivisaR as $key => $val) {
 
 
-                $divisa[]=$divisaR[$key];
-                $MontoDivisa[]=$MontoDivisaR[$key];
-                $TasaTiket[]=$TasaTikeR[$key];
-                $MontoDolar[]=$MontoDolarR[$key];
-                $Vueltos[]=$VeltosR[$key];
 
-            }
+
+
+
 
             //Creamos un contador
-            $cont = 0;
 
-            //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            while ($cont < count($MontoDolar)) {
-
-
-                $Pago_Credito = new Pago_Credito();
-                $Pago_Credito->Divisa = $divisa[$cont];
-                $Pago_Credito->MontoDivisa = $MontoDivisa[$cont];
-                $Pago_Credito->TasaTiket = $TasaTiket[$cont];
-                $Pago_Credito->MontoDolar = $MontoDolar[$cont];
-                $Pago_Credito->MontoConsumo = $monto_consumo;
-                $Pago_Credito->MontoServicio = $monto_servicio;
-                $Pago_Credito->Vueltos = $Vueltos[$cont];
-                $Pago_Credito->detalle_credito_id = $detalle_credito->id;
-                $Pago_Credito->caja_id = $caja_id;
-                $Pago_Credito->save();
-
-                $cont = $cont+1;
-            }
-
-        }
 
         DB::commit();
 

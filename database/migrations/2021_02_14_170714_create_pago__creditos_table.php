@@ -16,11 +16,13 @@ class CreatePagoCreditosTable extends Migration
         Schema::create('pago__creditos', function (Blueprint $table) {
             $table->id();
             $table->string('Divisa', 20)->nullable();
-            $table->decimal('MontoDivisa', 25, 3)->nullable();
+            $table->decimal('MontoDivisa', 25, 8)->nullable();
             $table->decimal('TasaTiket', 25, 2)->nullable();
-            $table->decimal('MontoDolar', 25, 3)->nullable();
-            $table->decimal('Vueltos', 25, 3)->nullable();
-            $table->foreignId('detalle_credito_id')->references('id')->on('detalle_creditos');
+            $table->decimal('MontoDolar', 25, 8)->nullable();
+            $table->decimal('MontoCredito', 25, 8)->nullable();
+            $table->decimal('Vueltos', 25, 8)->nullable();
+            $table->foreignId('detalle__creditos__pagado_id')->references('id')->on('detalle__creditos__pagados');
+            $table->foreignId('caja_id')->references('id')->on('cajas');
             $table->timestamps();
         });
     }

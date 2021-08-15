@@ -16,10 +16,12 @@ class CreatePagoExtrasTable extends Migration
         Schema::create('pago__extras', function (Blueprint $table) {
             $table->id();
             $table->string('Divisa', 20)->nullable();
-            $table->decimal('MontoDivisa', 25, 3)->nullable();
+            $table->decimal('MontoDivisa', 25, 8)->nullable();
             $table->decimal('TasaTiket', 25, 2)->nullable();
-            $table->decimal('MontoDolar', 25, 3)->nullable();
-            $table->decimal('Vueltos', 25, 3)->nullable();
+            $table->decimal('MontoDolar', 25, 8)->nullable();
+            $table->decimal('MontoDolarHoraExctra', 25, 8)->default(0)->nullable();
+            $table->decimal('Excedente', 25, 8)->default(0)->nullable();
+            $table->decimal('Vueltos', 25, 8)->nullable();
             $table->foreignId('horas_extra_id')->references('id')->on('horas_extras');
             $table->foreignId('servicio_id')->references('id')->on('servicios');
             $table->foreignId('caja_id')->references('id')->on('cajas');

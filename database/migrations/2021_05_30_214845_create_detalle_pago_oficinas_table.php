@@ -24,8 +24,8 @@ class CreateDetallePagoOficinasTable extends Migration
             $table->string('nombre_banco_empresa', 100);
             $table->enum('tipo_cuenta_empresa', ['Corriente', 'Ahorro']);
             $table->string('num_transaccion', 100);
-            $table->decimal('deuda', 25, 2);
-            $table->decimal('saldo_pagado', 25, 2);
+            $table->decimal('deuda', 25, 8);
+            $table->decimal('saldo_pagado', 25, 8);
             $table->date('fecha_pago');
             $table->foreignId('persona_id')->references('id')->on('personas');
             $table->foreignId('caja_id')->references('id')->on('cajas');

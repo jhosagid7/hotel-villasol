@@ -15,7 +15,7 @@ class CreatePrexcedentesTable extends Migration
     {
         Schema::create('prexcedentes', function (Blueprint $table) {
             $table->id();
-            $table->decimal('excedente', 25, 2)->nullable();
+            $table->decimal('excedente', 25, 8)->nullable();
             $table->foreignId('servicio_id')->references('id')->on('servicios');
             $table->timestamps();
         });

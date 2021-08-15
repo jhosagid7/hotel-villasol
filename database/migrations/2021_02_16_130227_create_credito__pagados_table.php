@@ -15,19 +15,17 @@ class CreateCreditoPagadosTable extends Migration
     {
         Schema::create('credito__pagados', function (Blueprint $table) {
             $table->id();
-            $table->string('numero_factura', 20);
-            $table->string('tipo_operacion', 20);
+            $table->string('numero_factura', 50);
+            $table->string('tipo_operacion', 50);
             $table->integer('operacion_id');
             $table->decimal('monto', 25, 2)->nullable();
-            $table->string('tipo_pago', 20);
             $table->date('fecha_emision');
             $table->date('fecha_vencimiento');
             $table->date('fecha_pago')->nullable();
             $table->enum('estado_credito_al_pagar', ['Vigente', 'Vencido','Pagado']);
             $table->foreignId('persona_id')->references('id')->on('personas');
             $table->foreignId('user_id')->references('id')->on('users');
-            $table->foreignId('detalle_credito_id')->references('id')->on('detalle_creditos');
-            $table->foreignId('credito_id')->references('id')->on('creditos');
+            $table->foreignId('detalle__creditos__pagado_id')->references('id')->on('detalle__creditos__pagados');
             $table->foreignId('caja_id')->references('id')->on('cajas');
             $table->timestamps();
         });

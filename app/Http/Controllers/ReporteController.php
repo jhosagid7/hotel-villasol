@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Venta;
+use App\Credito;
 use App\Ingreso;
 use App\Persona;
 use App\Articulo;
 use Carbon\Carbon;
 use App\Articulo_venta;
 use Illuminate\Http\Request;
+use App\Detalle_Creditos_Pagado;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -174,6 +176,51 @@ class ReporteController extends Controller
         // }
 // return $ingresos;
         return view('reportes.ingresos.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','estado','proveedor','operador', 'title'));
+    }
+
+
+    public function reportCreditosIndex(){
+
+        $title = 'Reporte General de Creditos Pagados por Fechas';
+
+        $users = User::Where('id', '<>', '2')->get();
+        $clientes = Credito::get();
+
+// return $ingresos;
+        return view('reportes.creditos.pagados.index', compact('users','clientes', 'title'));
+    }
+
+    public function reportCreditosPagadosShow(Request $request){
+        // return $request;
+        $fecha = $request->get('fecha');
+        $tipo = $request->get('tipo');
+        $cliente = $request->get('cliente');
+        $operador = $request->get('operador');
+        $title = 'Reporte General de Creditos Pagados';
+        $creditos = Detalle_Creditos_Pagado::fecha($fecha)
+        // ->tipo($tipo)
+        ->cliente($cliente)
+        ->operador($operador)
+        ->get();
+
+        // return $creditos[0]->creditos_pagados;
+
+        if($fecha){
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+
+            }
+
+
+            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+        if(!$tipo == 0 || !$tipo == null){
+            $tipo = $tipo;
+        }else{
+            $tipo = null;
+        }
+// return $ingresos;
+        return view('reportes.creditos.pagados.show', compact('tipo','detallado','fecha_inicio','fecha_fin','creditos','fecha','estado','proveedor','operador', 'title'));
     }
 
     /**

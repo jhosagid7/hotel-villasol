@@ -18,9 +18,9 @@ class CreateHistorialVueltosPendientesTable extends Migration
             $table->enum('Tipo', ['Servicio', 'Consumo','Credito','Horas_Extras']);
             $table->enum('Estado', ['Pendiente', 'Devueltos','PagarOficina','ExcedenteNuevo']);
             $table->string('Divisa', 20)->nullable();
-            $table->decimal('MontoDivisa', 25, 3)->nullable();
+            $table->decimal('MontoDivisa', 25, 8)->nullable();
             $table->decimal('TasaTiket', 25, 2)->nullable();
-            $table->decimal('MontoDolar', 25, 3)->nullable();
+            $table->decimal('MontoDolar', 25, 8)->nullable();
             $table->foreignId('servicio_id')->references('id')->on('servicios');
             $table->foreignId('caja_id')->references('id')->on('cajas');
             $table->timestamps();

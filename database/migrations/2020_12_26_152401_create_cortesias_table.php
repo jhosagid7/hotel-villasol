@@ -19,7 +19,7 @@ class CreateCortesiasTable extends Migration
             $table->string('cedula_cliente', 20)->nullable();
             $table->string('direccion_cliente', 100)->nullable();
             $table->string('telefono_cliente', 20)->nullable();
-            $table->decimal('exonerado', 25, 2)->nullable();
+            $table->decimal('exonerado', 25, 8)->nullable();
             $table->foreignId('persona_id')->references('id')->on('personas');
             $table->foreignId('servicio_id')->references('id')->on('servicios');
             $table->timestamps();

@@ -152,7 +152,7 @@
                                     <th><br><h4><b>Total deuda: </b></h4></th>
 
                                 <th><br><h4 id="total"><b>$. {{$total_deuda}}</b></h4></th>
-                                {{-- <th><br><br><a id="modalPago" href="#" onClick="selFactura({{floatval($total_deuda) ?? ''}},{{ $credito->id ?? ''}},'todas');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Pagar Todo</a></th> --}}
+                                <th><br><br><a id="modalPago" href="#" onClick="selFactura({{floatval($total_deuda) ?? ''}},{{ $credito->id ?? ''}},'todas');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Pagar Todo</a></th>
                                 </tfoot>
                             </tbody>
                         </table>

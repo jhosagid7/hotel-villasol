@@ -392,7 +392,7 @@ class CheckoutController extends Controller
 
                             if ($credPagados->user_id == $cajas->user_id){
 
-                                $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                $validarPagosCreditos = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                 if (count($validarPagosCreditos)) {
                                     foreach ($validarPagosCreditos as $credPagadosCaja ) {
                                         if ($credPagadosCaja->Divisa == 'Dolar') {
@@ -411,7 +411,7 @@ class CheckoutController extends Controller
 
                                 if ($credPagados->tipo_operacion == 'Consumo'){
 
-                                    $validarPagosCreditosConsumo = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                    $validarPagosCreditosConsumo = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                     if (count($validarPagosCreditosConsumo)) {
                                         foreach ($validarPagosCreditosConsumo as $credPagadosCajaConsumo ) {
                                             if ($credPagadosCajaConsumo->Divisa == 'Dolar') {
@@ -434,7 +434,7 @@ class CheckoutController extends Controller
 
                                 if ($credPagados->tipo_operacion == 'Servicio'){
 
-                                    $validarPagosCreditosServicio = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                    $validarPagosCreditosServicio = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                     if (count($validarPagosCreditosServicio)) {
                                         foreach ($validarPagosCreditosServicio as $credPagadosCajaServicio ) {
                                             if ($credPagadosCajaServicio->Divisa == 'Dolar') {
@@ -458,7 +458,7 @@ class CheckoutController extends Controller
 
                             }else{
 
-                                $validarPagosCreditos = Pago_Credito::where('detalle_credito_id',$credPagados->detalle_credito_id)->get();
+                                $validarPagosCreditos = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
                                 if (count($validarPagosCreditos)) {
                                     foreach ($validarPagosCreditos as $credPagadosOficina ) {
                                         if ($credPagadosOficina->Divisa == 'Dolar') {
