@@ -20,7 +20,7 @@ class CreateBancosClientesTable extends Migration
             $table->string('codigo', 4);
             $table->string('num_cuenta', 30);
             $table->enum('tipo_cuenta', ['Corriente', 'Ahorro']);
-            $table->string('pago_mobil', 30)->nullable();
+            $table->string('pago_movil', 30)->nullable();
             $table->foreignId('persona_id')->references('id')->on('personas');
             $table->foreignId('banco_id')->references('id')->on('bancos');
             $table->timestamps();

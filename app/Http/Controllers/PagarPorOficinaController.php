@@ -152,7 +152,7 @@ class PagarPorOficinaController extends Controller
      */
     public function show($id)
     {
-        $title = 'Facturas por Pagar';
+        $title = 'Facturas Pagadas';
         // $BancosClientes = BancosCliente::where('persona_id',$id)->get();
         // return $cliente_id;
 
@@ -160,7 +160,7 @@ class PagarPorOficinaController extends Controller
         $historialExcedentes = HistorialExcedente::where('detalle_pago_oficina_id',$id)->where('tipo_registro','Pago_por_oficina')->where('status','Pagado')->get();
 
 
-
+// return $historialExcedentes;
         $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
         // return $tasaDolarHabitacion->tasa;
         $tasaPesoHabitacion = Tasa::where('nombre','=','PesoHabitacion')->first();
@@ -174,16 +174,19 @@ class PagarPorOficinaController extends Controller
         $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
         $Cajas = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
         $caja = Caja::find($Cajas->id);
-        // return $caja->sucursal->id;
+        // return $caja->sucursal->id;{{$pagarporoficina->nombre_banco_cliente ?? ''}}
 
         // $bancosCLientes = BancosCliente::where('pertenece','Cliente')->where('persona_id',$historialExcedentes->persona_id)->get();
         // $pagarporoficina = Excedente::where('persona_id',$historialExcedentes->persona_id)->where('tipo','Pagar_por_oficina')->first();
         $bancosEmpresas = BancosEmpresa::where('pertenece','Empresa')->where('sucursal_id',$caja->sucursal->id)->get();
-        $clientes = Persona::where('nombre', '<>','Proveedor Comun')->where('nombre', '<>','Cliente Comun')->get();
+        $detalle_pagado_oficina = DetallePagoOficina::findOrFail($id);
+        $cliente = Persona::findOrFail($detalle_pagado_oficina->id);
+        // $excedente = Excedente::
+        // return $cliente;
             $bancos = Banco::get();
 
         // return $detalle_creditos;
-        return view('pagos.pendientes.show', compact('bancosEmpresas','bancosCLientes','clientes','bancos','historialExcedentes','caja','title','pagarporoficina','BancosClientes','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','users','UserName'));
+        return view('pagos.pendientes.show', compact('bancosEmpresas','bancosCLientes','cliente','bancos','historialExcedentes','caja','title','detalle_pagado_oficina','BancosClientes','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','users','UserName'));
     }
 
     /**

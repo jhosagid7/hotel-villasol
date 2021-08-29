@@ -11,7 +11,7 @@ class Excedente extends Model
         'nombre_cliente',
         'cedula_cliente',
         'direccion_cliente',
-        'telefono_pago_mobil_cliente',
+        'telefono_pago_movil_cliente',
         'nombre_banco_cliente',
         'num_cuenta_cliente',
         'tipo_cuenta_cliente',

@@ -43,30 +43,29 @@ class DetallePagoOficinaController extends Controller
      */
     public function store(Request $request)
     {
-        return $request;
+        // return $request;
 
 
 
 
-        $telefono_pago_movil_cliente = $request->get('pago_mobil_banco_cliente');
-        $telefono_pago_movil_empresa = $request->get('pago_mobil_banco_empresa');
-        $banco_id_banco_empresa = $request->get('banco_id_banco_empresa');
-        $banco_id_banco_cliente = $request->get('banco_id_banco_cliente');
+        $telefono_pago_movil_cliente = $request->get('pago_movil_banco_cliente');
 
-        $banco_id_banco_cliente =
+
+
+
         $codigo_cliente = $request->get('codigo_banco_cliente');
         $num_cuenta_cliente = $request->get('num_cuenta_banco_cliente');
         $tipo_cuenta_cliente = $request->get('tipo_cuenta_banco_cliente');
         $nombre_banco_cliente = $request->get('nombre_banco_cliente');
-        $num_cuenta_empresa = $request->get('num_cuenta_banco_empresa');
-        $nombre_banco_empresa = $request->get('nombre_banco_empresa');
-        $codigo_banco_empresa = $request->get('codigo_banco_empresa');
-        $tipo_cuenta_empresa = $request->get('tipo_cuenta_banco_empresa');
+
+
+
         $num_transaccion = $request->get('num_operacion');
         $deuda = $request->get('deudaPendiente');
         $saldo_pagado = $request->get('deudaPendiente');
         $fecha_pago = Carbon::now();
         $persona_id = $request->get('dcliente_id');
+        $tipo_documento = $request->get('tipo_documento');
         $sucursal_id = $request->get('sucursal_id');
         // return $sucursal_id;
         $caja_id  = $request->get('caja_id');
@@ -78,46 +77,43 @@ class DetallePagoOficinaController extends Controller
 
             // TODO Guardamos los datos de la cuenta bancaria de la empresa pero revisamos si ya existe esa cuenta registrada
 
-            $ifBancoEmpresa = BancosEmpresa::where('pertenece','Empresa')->where('codigo',$codigo_banco_empresa)->where('num_cuenta',$num_cuenta_empresa)->first();
-            // return $ifCliente;
+            // $ifBancoEmpresa = BancosEmpresa::where('pertenece','Empresa')->where('codigo',$codigo_banco_empresa)->where('num_cuenta',$num_cuenta_empresa)->first();
+            // // return $ifCliente;
 
-            if(!$ifBancoEmpresa){
-                //buscamos el nombre y el ide del banco para guardarlos en la tabla banco empresa pra que siempre se guarde con el nombre que aparece enla tabla bancos
-                $CodigoBancoEmpresa = Banco::where('codigo',$codigo_banco_empresa)->first();
-                if($CodigoBancoEmpresa){
-                    $nombre_banco_empresa = $CodigoBancoEmpresa->nombre_banco;
-                    $codigo_banco_empresa = $CodigoBancoEmpresa->codigo;
-                    $banco_id_banco_empresa = $CodigoBancoEmpresa->id;
-                }
+            // if(!$ifBancoEmpresa){
+            //     //buscamos el nombre y el ide del banco para guardarlos en la tabla banco empresa pra que siempre se guarde con el nombre que aparece enla tabla bancos
+            //     $CodigoBancoEmpresa = Banco::where('codigo',$codigo_banco_empresa)->first();
+            //     if($CodigoBancoEmpresa){
+            //         $nombre_banco_empresa = $CodigoBancoEmpresa->nombre_banco;
+            //         $codigo_banco_empresa = $CodigoBancoEmpresa->codigo;
+            //         $banco_id_banco_empresa = $CodigoBancoEmpresa->id;
+            //     }
 
-                // return 'no';
-                $BancosCliente = new BancosEmpresa;
-                $BancosCliente->pertenece = 'Empresa';
-                $BancosCliente->nombre_banco = $nombre_banco_empresa;
-                $BancosCliente->codigo = $codigo_banco_empresa;
-                $BancosCliente->num_cuenta = $num_cuenta_empresa;
-                $BancosCliente->tipo_cuenta = $tipo_cuenta_empresa;
-                $BancosCliente->pago_mobil = $telefono_pago_movil_empresa;
-                $BancosCliente->sucursal_id = $sucursal_id;
-                $BancosCliente->banco_id = $banco_id_banco_empresa;
-                $BancosCliente->save();
+            //     // return 'no';
+            //     $BancosCliente = new BancosEmpresa;
+            //     $BancosCliente->pertenece = 'Empresa';
+            //     $BancosCliente->nombre_banco = $nombre_banco_empresa;
+            //     $BancosCliente->codigo = $codigo_banco_empresa;
+            //     $BancosCliente->num_cuenta = $num_cuenta_empresa;
+            //     $BancosCliente->tipo_cuenta = $tipo_cuenta_empresa;
+            //     $BancosCliente->pago_movil = $telefono_pago_movil_empresa;
+            //     $BancosCliente->sucursal_id = $sucursal_id;
+            //     $BancosCliente->banco_id = $banco_id_banco_empresa;
+            //     $BancosCliente->save();
 
 
-            }
+            // }
             //
 
 
             // TODO Guardamos los registros en la tabla Detalle pagos oficina
 
             $DetallePagoOficina = new  DetallePagoOficina();
-            $DetallePagoOficina->tipo_pago = 'Transferencia';
+            $DetallePagoOficina->tipo_pago = $tipo_documento;
             $DetallePagoOficina->telefono_pago_movil_cliente = $telefono_pago_movil_cliente;
             $DetallePagoOficina->num_cuenta_cliente = $codigo_cliente.'-'.$num_cuenta_cliente;
             $DetallePagoOficina->tipo_cuenta_cliente = $tipo_cuenta_cliente;
             $DetallePagoOficina->nombre_banco_cliente = $nombre_banco_cliente;
-            $DetallePagoOficina->num_cuenta_empresa = $codigo_banco_empresa.'-'.$num_cuenta_empresa;
-            $DetallePagoOficina->nombre_banco_empresa = $nombre_banco_empresa;
-            $DetallePagoOficina->tipo_cuenta_empresa = $tipo_cuenta_empresa;
             $DetallePagoOficina->num_transaccion = $num_transaccion;
             $DetallePagoOficina->deuda = $deuda;
             $DetallePagoOficina->saldo_pagado = $saldo_pagado;

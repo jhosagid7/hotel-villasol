@@ -110,7 +110,7 @@
     </div>
 
 
-    @if ($pagarporoficina->isTransferencia == 1 || $pagarporoficina->isPagoMobil == 1)
+    @if ($pagarporoficina->isTransferencia || $pagarporoficina->isPagoMobil)
         <div class="row">
         <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
             <div class="panel panel-default">
@@ -122,7 +122,7 @@
                                 <th>Banco</th>
                                 <th>Tipo Cuenta</th>
                                 <th>Numero de cuenta</th>
-                                <th>Pago mobil</th>
+                                <th>Pago movil</th>
 
 
                             </thead>
@@ -135,10 +135,10 @@
                                 @foreach ($BancosClientes as $BancosCliente)
                                     <tr>
                                     <td>{{$i ?? ''}}</td>
-                                    <td>{{$BancosCliente->nombre_banco ?? ''}}</td>
-                                    <td>{{$BancosCliente->tipo_cuenta ?? ''}}</td>
-                                    <td>{{$BancosCliente->codigo ?? ''}}-{{$BancosCliente->num_cuenta ?? ''}}</td>
-                                    <td>{{$BancosCliente->pago_mobil ?? ''}}</td>
+                                    <td>{{$BancosCliente->nombre_banco_cliente ?? 'S/N'}}</td>
+                                    <td>{{$BancosCliente->tipo_cuenta_cliente ?? 'S/N'}}</td>
+                                    <td>{{$BancosCliente->num_cuenta_cliente ?? 'S/N'}}</td>
+                                    <td>{{$BancosCliente->telefono_pago_movil_cliente ?? 'S/N'}}</td>
 
 
 
@@ -215,7 +215,8 @@
                                     <th><br><h4><b>Total deuda: </b></h4></th>
 
                                 <th><br><h4 id="total"><b>$. {{$total_deuda}}</b></h4></th>
-                                <th><br><a id="modalPagoPendienteOpcionesBtn" href="#" data-toggle="modal" data-target="#modalPagoPendienteOpciones"  class="btn btn-danger">Procesar pago pendiente</a><br><a id="modalPago" href="#" onClick="selFactura({{floatval($total_deuda) ?? ''}},{{ $pagarporoficina->id ?? ''}},'todas');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Registrar pago</a></th>
+                                <th><br><a id="modalPagoPendienteOpcionesBtn" href="#" data-toggle="modal" data-target="#modalPagoPendienteOpciones"  class="btn btn-sm btn-danger btn-block col-lg-pull-2 small no-print">Procesar pago pendiente</a><br>
+                                        {{-- <a id="modalPago" href="#" onClick="selFactura({{floatval($total_deuda) ?? ''}},{{ $pagarporoficina->id ?? ''}},'todas');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Registrar pago</a></th> --}}
                                 </tfoot>
                             </tbody>
                         </table>
@@ -631,261 +632,7 @@
 </div>
 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
                 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
-                <div class="modal fade bs-example-modal-xm refrescar" id="modalPagoPendienteOpciones4" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog modal-danger">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                {{-- <form id="form2" action="{{route('proceso')}}" method="post">
-                                    @csrf --}}
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title"><span class="fa fa-spinner"></span>Registrar pago al cliente {{ $pagarporoficina->nombre_cliente ?? ''}} </h4>
-                                </div>
-                                <div class="modal-body" style="background-color:#fff !important;">
 
-                                    <div class="row">
-                                        <div class="col-md-offset-1 col-md-10">
-
-
-
-                                            <div class="text-black detalle" id="detalle2">
-                                            </div>
-
-
-                                    </div>
-                                    <div id="infoPago2Opciones">
-                                        <div class="col-md-12">
-                                            <div class="box box-danger">
-                                            <div class="box-header with-border">
-                                                <h3 class="box-title">Deuda a pagar (<b class="text-danger" id="countVueltosPendientes4">$0.00</b>). (Pago programado para pagar por oficina)...!</h3>
-                                            </div><!-- /.box-header -->
-
-                                            </div><!-- /.box -->
-                                        </div>
-                                    </div>
-                                    <div id="contentPagarOficina">
-                                        <div class="col-md-12">
-                                            <div id="box_PagarCrear" class="box box-warning">
-                                            <div class="box-header with-border">
-                                                <h3 class="box-title"><b class="text-warning">Bancos Empresa</b></h3><br>
-                                                Número de operaicon
-                                                <form id="form44" action="{{ route('registro.store')}}" enctype="multipart/form-data" method="POST" autocomplete="off">
-                                                <input id="num_operacion4" name="num_operacion" type="text">
-                                                {{-- Datos bancarios del cliente: --}}
-                                            </div><!-- /.box-header -->
-                                            <div class="box-body">
-                                                <div id="formPagarOficina">
-
-
-
-                                                        @csrf
-                                                        <div class="row">
-
-                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                <div class="form-group">
-                                                                    <label class="text-black" for="selec_banco">Seleccione Banco Origen</label>
-                                                                    <select name="selec_banco_empresa" id="selec_banco_empresa" class="form-control selectpicker" data-live-search="true">
-                                                                        <option value="default" selected="selected">Seleccione Banco Origen</option>
-                                                                        @if (count($bancosEmpresas))
-                                                                        @php
-                                                                            $bancosEmpresas = $bancosEmpresas;
-                                                                        @endphp
-                                                                        @else
-                                                                        @php
-                                                                            $bancosEmpresas = $bancos;
-                                                                    @endphp
-                                                                        @endif
-                                                                        @foreach ($bancosEmpresas as $bancosEmpresa)
-                                                                    <option value="{{$bancosEmpresa->id}}_{{$bancosEmpresa->nombre_banco}}_{{$bancosEmpresa->codigo}}_{{$bancosEmpresa->num_cuenta}}_{{$bancosEmpresa->tipo_cuenta}}_{{$bancosEmpresa->pago_mobil}}">{{$bancosEmpresa->nombre_banco}}</option>
-                                                                        @endforeach
-
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                <div class="form-group">
-                                                                    <label class="text-black" for="nombre_banco_empresa">Nombre Banco</label>
-                                                                    <input required type="text" id="nombre_banco_empresa" name="nombre_banco_empresa" class="form-control titulo" value="{{old('nombre')}}" placeholder="Nombre Banco...">
-                                                                </div>
-                                                            </div>
-
-
-
-                                                            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                                                                <div class="form-group">
-                                                                    <label class="text-black" for="num_documento">Código</label>
-                                                                    <input required type="number" id="codigo_banco_empresa" name="codigo_banco_empresa" class="form-control enteros" value="{{old('codigo')}}" placeholder="Código...">
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
-                                                                <div class="form-group">
-                                                                    <label class="text-black" for="direccion">Número de cuenta</label>
-                                                                    <input required type="text" id="num_cuenta_banco_empresa" name="num_cuenta_banco_empresa" class="form-control mayuscula" value="{{old('num_cuenta')}}" placeholder="Número de cuenta...">
-                                                                </div>
-                                                            </div>
-
-
-                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                                <div class="form-group">
-                                                                    <label class="text-black" for="tipo_cuenta_banco_empresa">Tipo de cuenta</label>
-                                                                    <select required class="form-control" id="tipo_cuenta_banco_empresa" name="tipo_cuenta_banco_empresa">
-                                                                        <option value="0">Seleccione tipo de cuenta</option>
-                                                                        <option value="Corriente">Corriente</option>
-                                                                        <option value="Ahorro">Ahorro</option>
-                                                                    </select>
-
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                                <div class="form-group">
-                                                                    <label class="text-black" for="pago_mobil_banco_empresa">Teléfono pago Mobil</label>
-                                                                    <input  type="text" id="pago_mobil_banco_empresa" name="pago_mobil_banco_empresa" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('pago_mobil')}}" placeholder="Pago mobil...">
-                                                                </div>
-                                                            </div>
-                                                            {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                                <div class="form-group">
-                                                                    <label for="imagen">Imagen</label>
-                                                                    <input required type="file" name="imagen" class="form-control" accept="image/*">
-                                                                </div>
-                                                            </div> --}}
-
-                                                        </div>
-                                                        <div id="datosBanco" class="box box-default">
-                                                            <div class="box-header with-border">
-                                                                <h3 class="box-title"><b class="text-warning">Bancos Cliente</b></h3>
-
-                                                            </div>
-                                                            <!-- /.box-header -->
-                                                            <div class="box-body">
-                                                                <div class="row">
-
-                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="selec_banco">Seleccione Banco Destino</label>
-                                                                            <select name="selec_banco_cliente" id="selec_banco_cliente" class="form-control selectpicker" data-live-search="true">
-                                                                                <option value="default" selected="selected">Seleccione Banco Destino</option>
-                                                                                @if (count($bancosCLientes))
-                                                                        @php
-                                                                            $bancosCLientes = $bancosCLientes;
-                                                                        @endphp
-                                                                        @else
-                                                                        @php
-                                                                            $bancosCLientes = $bancos;
-                                                                    @endphp
-                                                                        @endif
-                                                                                @foreach ($bancosCLientes as $bancoCliente)
-                                                                            <option value="{{$bancoCliente->id}}_{{$bancoCliente->nombre_banco}}_{{$bancoCliente->codigo}}_{{$bancoCliente->num_cuenta}}_{{$bancoCliente->tipo_cuenta}}_{{$bancoCliente->pago_mobil}}">{{$bancoCliente->nombre_banco}}</option>
-                                                                                @endforeach
-
-                                                                            </select>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="nombre_banco_cliente">Nombre Banco</label>
-                                                                            <input required type="text" id="nombre_banco_cliente" name="nombre_banco_cliente" class="form-control titulo" value="{{old('nombre_banco_cliente')}}" placeholder="Nombre Banco cliente...">
-                                                                        </div>
-                                                                    </div>
-
-
-
-                                                                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="codigo_banco_cliente">Código</label>
-                                                                            <input required type="number" id="codigo_banco_cliente" name="codigo_banco_cliente" class="form-control enteros" value="{{old('codigo_banco_cliente')}}" placeholder="Código Banco cliente...">
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="num_cuenta_banco_cliente">Número de cuenta</label>
-                                                                            <input required type="text" id="num_cuenta_banco_cliente" name="num_cuenta_banco_cliente" class="form-control mayuscula" value="{{old('num_cuenta_banco_cliente')}}" placeholder="Número de cuenta banco cliente...">
-                                                                        </div>
-                                                                    </div>
-
-
-                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="tipo_cuenta_banco_cliente">Tipo de cuenta</label>
-                                                                            <select required class="form-control" id="tipo_cuenta_banco_cliente" name="tipo_cuenta_banco_cliente">
-                                                                                <option value="0">Seleccione tipo de cuenta</option>
-                                                                                <option value="Corriente">Corriente</option>
-                                                                                <option value="Ahorro">Ahorro</option>
-                                                                            </select>
-
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label class="text-black" for="pago_mobil_banco_cliente">Teléfono pago Mobil</label>
-                                                                            <input class="text-black" type="text" id="pago_mobil_banco_cliente" name="pago_mobil_banco_cliente" class="form-control_banco_cliente"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('pago_mobil_banco_cliente')}}" placeholder="Pago mobil banco cliente...">
-                                                                        </div>
-                                                                    </div>
-
-
-
-                                                                    {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                                        <div class="form-group">
-                                                                            <label for="imagen">Imagen</label>
-                                                                            <input required type="file" name="imagen" class="form-control" accept="image/*">
-                                                                        </div>
-                                                                    </div> --}}
-
-                                                                </div>
-                                                                <!-- /.table-responsive -->
-                                                            </div>
-
-
-                                                        </div>
-                                                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                            <div class="form-group">
-                                                                <input class="text-black hidden" type="text" id="dcliente_id" name="dcliente_id" value="{{ $pagarporoficina->persona_id ?? '' }}">
-                                                                <input class="text-black hidden" type="text" id="motivo" name="motivo" value="servicio">
-                                                                <input class="text-black hidden" type="text" id="caja_id" name="caja_id" value="{{$caja->id ?? ''}}">
-                                                                <input class="text-black" id="banco_id_banco_empresa" name="banco_id_banco_empresa" value="" type="text">
-                                                                <input class="text-black" id="banco_id_banco_cliente" name="banco_id_banco_cliente" value="" type="text">
-                                                                <input class="text-black" id="deudaPendiente" name="deudaPendiente" value="{{ $pagarporoficina->excedente ?? '' }}" type="text">
-                                                                <input class="text-black" id="sucursal_id" name="sucursal_id" value="{{$caja->sucursal_id ?? ''}}" type="text">
-
-                                                                <button class="btn btn-primary" id="guardarFormaPago4" type="button">Guardar</button>
-
-                                                                {{-- <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a> --}}
-                                                            </div>
-                                                        </div>
-                                                        <!-- /.box -->
-                                                        <!-- /.box-body -->
-                                                        <div class="box-footer">
-                                                            {{-- Footer --}}
-                                                        </div>
-                                                        <!-- /.box-footer-->
-                                                    </form>
-                                                </div>
-                                            </div><!-- /.box-body -->
-                                            </div><!-- /.box -->
-                                        </div>
-                                    </div>
-
-
-                                </div>
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-                            {{-- <button name="procesarServicioPendiente" id="procesarServiciopendiente" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio Pendientes</button> --}}
-                            {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
-                        </div>
-                        {{-- </form> --}}
-                        </div>
-                        <!-- /.modal-content -->
-                        </div>
-                    <!-- /.modal-dialog -->
-                    </div>
-                    <!-- /.modal -->
-                </div>
                 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
                 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
                 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
@@ -918,6 +665,7 @@
                                             <div class="box box-danger">
                                             <div class="box-header with-border">
                                                 <h3 class="box-title">Deuda a pagar (<b class="text-danger" id="countVueltosPendientes">$0.00</b>). (Pago programado para pagar por oficina)...!</h3>
+
                                             </div><!-- /.box-header -->
                                             <div class="box-body">
                                                 <div id="btnPago2Opciones">
@@ -939,9 +687,9 @@
                                                                     <label class="text-black" for="nombre">Tipo de pago</label>
                                                                     <select required class="form-control" id="tipo_documento" name="tipo_documento">
                                                                         <option value="0">Seleccione tipo de pago</option>
-                                                                        <option value="Transferencia">Transferencia</option>
-                                                                        <option value="Pago_mobil">Pago mobil</option>
-                                                                        <option value="Efectivo">Efectivo</option>
+                                                                        <option @if ($pagarporoficina->isTransferencia =="1") selected  @elseif (old('isTransferencia')=="1") selected @endif  value="Transferencia">Transferencia</option>
+                                                                        <option @if ($pagarporoficina->isPagoMobil =="1") selected  @elseif (old('isPagoMobil')=="1") selected @endif value="Pago_movil">Pago mobil</option>
+                                                                        <option @if ($pagarporoficina->isEfectivo =="1") selected  @elseif (old('isEfectivo')=="1") selected @endif value="Efectivo">Efectivo</option>
 
                                                                     </select>
                                                                 </div>
@@ -999,9 +747,11 @@
 
                                                             <tbody style="padding: 0px;">
                                                                 <tr style="padding: 0px;">
-                                                                    <td><h4 class="text-primary" style="margin-top: 0px !important;">Transferencia: &nbsp;&nbsp;&nbsp; <input class="transferencia" @if ($pagarporoficina->isTransferencia =="1") checked  @elseif (old('isTransferencia')=="1") checked @endif name="isTransferencia" type="checkbox"></h4></td>
+                                                                    <td><h4 id="trans_" class="text-primary" style="margin-top: 0px !important;">Transferencia: &nbsp;&nbsp;&nbsp; <input class="transferencia" @if ($pagarporoficina->isTransferencia =="1") checked  @elseif (old('isTransferencia')=="1") checked @endif name="isTransferencia" type="checkbox"></h4></td>
 
-                                                                    <td><h4 class="text-primary" style="margin-top: 0px !important;">Pago Mobil: &nbsp;&nbsp;&nbsp;<input class="pagomobil" @if ($pagarporoficina->isPagoMobil =="1") checked  @elseif (old('isPagoMobil')=="1") checked @endif name="isPagoMobil" type="checkbox"></h4></td>
+
+                                                                    <td><h4 id="mobil_" class="text-primary" style="margin-top: 0px !important;">Pago Mobil: &nbsp;&nbsp;&nbsp;<input class="pagomobil" @if ($pagarporoficina->isPagoMobil =="1") checked  @elseif (old('isPagoMobil')=="1") checked @endif name="isPagoMobil" type="checkbox"></h4></td>
+
 
                                                                     <td><h4 class="text-primary" style="margin-top: 0px !important;">Efectivo: &nbsp;&nbsp;&nbsp;<input class="efectivo" @if ($pagarporoficina->isEfectivo =="1") checked  @elseif (old('isEfectivo')=="1") checked @endif name="isEfectivo" type="checkbox"></h4></td>
 
@@ -1164,8 +914,8 @@
 
                                                                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 telefonoMobil"  style="display:none">
                                                                         <div class="form-group">
-                                                                            <label class="text-black" for="pago_mobil">Teléfono</label>
-                                                                            <input required type="text" name="pago_mobil" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{$pagarporoficina->telefono_pago_mobil_cliente ?? ''}}" placeholder="Pago mobil...">
+                                                                            <label class="text-black" for="pago_movil">Teléfono</label>
+                                                                            <input required type="text" name="pago_movil" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{$pagarporoficina->telefono_pago_movil_cliente ?? ''}}" placeholder="Pago mobil...">
                                                                         </div>
                                                                     </div>
 
@@ -1186,14 +936,20 @@
                                                         </div>
                                                         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                             <div class="form-group">
-                                                                <input class="text-black hidden" type="text" id="dcliente_id" name="dcliente_id">
-                                                                <input class="text-black hidden" type="text" id="banco_id" name="banco_id">
-                                                                <input class="text-black hidden" type="text" id="bandera" name="bandera">
-                                                                <input class="text-black hidden" type="text" id="excedente" name="excedente">
-                                                                <input class="text-black hidden" type="text" id="servicio_id" name="servicio_id" value="{{$servicio->id ?? ''}}">
-                                                                <input class="text-black hidden" type="text" id="num_servicio" name="num_servicio" value="{{$servicio->num_servicio ?? ''}}">
+                                                                <input class="text-black hidden" type="text" id="dcliente_id" name="dcliente_id" value="{{ $pagarporoficina->persona_id ?? '' }}">
                                                                 <input class="text-black hidden" type="text" id="motivo" name="motivo" value="servicio">
-                                                                <input class="text-black hidden" type="text" id="caja_id" name="caja_id" value="{{$servicio->caja_id ?? ''}}">
+                                                                <input class="text-black hidden" type="text" id="caja_id" name="caja_id" value="{{$caja->id ?? ''}}">
+                                                                <input class="text-black hidden" id="deudaPendiente" name="deudaPendiente" value="{{ $pagarporoficina->excedente ?? '' }}">
+                                                                <input class="text-black hidden" id="sucursal_id" name="sucursal_id" value="{{$caja->sucursal_id ?? ''}}">
+
+                                                                {{-- <input class="text-black hidden" type="text" id="dcliente_id" name="dcliente_id"> --}}
+                                                                {{-- <input class="text-black hidden" type="text" id="banco_id" name="banco_id"> --}}
+                                                                {{-- <input class="text-black hidden" type="text" id="bandera" name="bandera"> --}}
+                                                                {{-- <input class="text-black hidden" type="text" id="excedente" name="excedente"> --}}
+                                                                {{-- <input class="text-black hidden" type="text" id="servicio_id" name="servicio_id" value="{{$servicio->id ?? ''}}"> --}}
+                                                                {{-- <input class="text-black hidden" type="text" id="num_servicio" name="num_servicio" value="{{$servicio->num_servicio ?? ''}}"> --}}
+                                                                {{-- <input class="text-black hidden" type="text" id="motivo" name="motivo" value="servicio"> --}}
+                                                                {{-- <input class="text-black hidden" type="text" id="caja_id" name="caja_id" value="{{$servicio->caja_id ?? ''}}"> --}}
                                                                 <button class="btn btn-primary" id="guardarFormaPago" type="button">Guardar</button>
                                                                 {{-- <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a> --}}
                                                             </div>
@@ -1216,7 +972,7 @@
 
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelara</button>
                             {{-- <button name="procesarServicioPendiente" id="procesarServiciopendiente" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio Pendientes</button> --}}
                             {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
                         </div>
@@ -1372,19 +1128,19 @@
                 $('.seleccioneCliente').css('display', 'block');
                 $('.nombre').css('display', 'block');
                 $('.cedula').css('display', 'block');
-                $('.datosBanco').css('display', 'block');
-                $('.selecctBanco').css('display', 'block');
-                $('.nombreBanco').css('display', 'block');
-                $('.telefonoMobil').css('display', 'block');
+                // $('.datosBanco').css('display', 'block');
+                // $('.selecctBanco').css('display', 'block');
+                // $('.nombreBanco').css('display', 'block');
+                // $('.telefonoMobil').css('display', 'block');
             }else{
                 $('.pagarPorOficina').css('display', 'none');
                 $('.seleccioneCliente').css('display', 'none');
                 $('.nombre').css('display', 'none');
                 $('.cedula').css('display', 'none');
-                $('.datosBanco').css('display', 'none');
-                $('.selecctBanco').css('display', 'none');
-                $('.nombreBanco').css('display', 'none');
-                $('.telefonoMobil').css('display', 'none');
+                // $('.datosBanco').css('display', 'none');
+                // $('.selecctBanco').css('display', 'none');
+                // $('.nombreBanco').css('display', 'none');
+                // $('.telefonoMobil').css('display', 'none');
 
                 if($('.transferencia').is(':checked')){
                     $('.pagarPorOficina').css('display', 'block');
@@ -1411,16 +1167,24 @@
                     $('.numCuenta').css('display', 'none');
                     $('.tipoCuenta').css('display', 'none');
 
-                    if($('.efectivo').is(':checked')){
-                        $('.pagarPorOficina').css('display', 'block');
-                        $('.seleccioneCliente').css('display', 'block');
-                        $('.nombre').css('display', 'block');
-                        $('.cedula').css('display', 'block');
-                    }else{
-                        $('.pagarPorOficina').css('display', 'none');
-                        $('.seleccioneCliente').css('display', 'none');
-                        $('.nombre').css('display', 'none');
-                        $('.cedula').css('display', 'none');
+                    if($('.pagomobil').is(':checked')){
+                    $('.pagarPorOficina').css('display', 'block');
+                    $('.seleccioneCliente').css('display', 'block');
+                    $('.nombre').css('display', 'block');
+                    $('.cedula').css('display', 'block');
+                    $('.datosBanco').css('display', 'block');
+                    $('.selecctBanco').css('display', 'block');
+                    $('.nombreBanco').css('display', 'block');
+                    $('.telefonoMobil').css('display', 'block');
+                }else{
+                    $('.pagarPorOficina').css('display', 'none');
+                    $('.seleccioneCliente').css('display', 'none');
+                    $('.nombre').css('display', 'none');
+                    $('.cedula').css('display', 'none');
+                    $('.datosBanco').css('display', 'none');
+                    $('.selecctBanco').css('display', 'none');
+                    $('.nombreBanco').css('display', 'none');
+                    $('.telefonoMobil').css('display', 'none');
                     }
                 }
 
@@ -1891,7 +1655,7 @@ $("#nombre_banco_empresa").val(datosArticulo[1]);
 $("#codigo_banco_empresa").val(datosArticulo[2]);
 $("#num_cuenta_banco_empresa").val(datosArticulo[3]);
 $("#tipo_cuenta_banco_empresa").val(datosArticulo[4]);
-$("#pago_mobil_banco_empresa").val(datosArticulo[5]);
+$("#pago_movil_banco_empresa").val(datosArticulo[5]);
 // $("#jstock").val(datosArticulo[2]);
 
 
@@ -1933,7 +1697,7 @@ $("#nombre_banco_cliente").val(datosArticulo[1]);
 $("#codigo_banco_cliente").val(datosArticulo[2]);
 $("#num_cuenta_banco_cliente").val(datosArticulo[3]);
 $("#tipo_cuenta_banco_cliente").val(datosArticulo[4]);
-$("#pago_mobil_banco_cliente").val(datosArticulo[5]);
+$("#pago_movil_banco_cliente").val(datosArticulo[5]);
 // $("#jstock").val(datosArticulo[2]);
 
 

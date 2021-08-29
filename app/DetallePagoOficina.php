@@ -12,9 +12,6 @@ class DetallePagoOficina extends Model
         'num_cuenta_cliente',
         'tipo_cuenta_cliente',
         'nombre_banco_cliente',
-        'num_cuenta_empresa',
-        'nombre_banco_empresa',
-        'tipo_cuenta_empresa',
         'num_transaccion',
         'deuda',
         'saldo_pagado',
@@ -42,5 +39,9 @@ class DetallePagoOficina extends Model
 
     public function operador(){
         return $this->belongsTo(User::class);
+    }
+
+    public function historiaExcedentes(){
+        return $this->hasMany(HistorialExcedente::class);
     }
 }

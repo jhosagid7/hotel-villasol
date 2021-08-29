@@ -66,11 +66,11 @@ class ReporteController extends Controller
 
     public function listadoInventario(){
         $title = 'Planilla de Inventario';
-        $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
-            $tasaPeso = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
-            $tasaTransferenciaPunto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
-            $tasaMixto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
-            $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
+        $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
+            $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
+            $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
+            $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
+            $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
             $articulos = DB::table('articulos as a')
             ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
 
@@ -83,11 +83,11 @@ class ReporteController extends Controller
 
     public function listadoPrecio(){
         $title = 'Listado General de Precios';
-        $tasaDolar = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Dolar')->first();
-            $tasaPeso = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Peso')->first();
-            $tasaTransferenciaPunto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Transferencia_Punto')->first();
-            $tasaMixto = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Mixto')->first();
-            $tasaEfectivo = DB::table('tasas')->where('estado', '=', 'Activo')->where('nombre', '=', 'Efectivo')->first();
+        $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
+            $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
+            $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
+            $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
+            $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
             $articulos = DB::table('articulos as a')
             ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
 

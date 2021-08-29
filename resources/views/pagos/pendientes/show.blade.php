@@ -57,19 +57,19 @@
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
                     <label class="text-blue text-bold" for="operador">Nombre:</label>
-                    <p>{{ $pagarporoficina->nombre_cliente ?? ''}}</p>
+                    <p>{{ $cliente->nombre ?? ''}}</p>
                 </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
                     <label class="text-blue text-bold" for="proveedor">Cédula:</label>
-                    <p>{{ $pagarporoficina->cedula_cliente ?? ''}}</p>
+                    <p>{{ $cliente->num_documento ?? ''}}</p>
                 </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
-                    <label class="text-blue text-bold" for="proveedor">Fecha:</label>
-                    <p>{{date('d-m-y')}}</p>
+                    <label class="text-blue text-bold" for="proveedor">Fecha pago:</label>
+                    <p>{{ $detalle_pagado_oficina->fecha_pago}}</p>
                 </div>
             </div>
         </div>
@@ -77,14 +77,14 @@
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
                     <label class="text-blue text-bold" for="tipo_comprobante">Teléfono:</label>
-                    <p>{{ $pagarporoficina->telefono_cliente ?? ''}}</p>
+                    <p>{{ $cliente->telefono ?? ''}}</p>
                 </div>
             </div>
 
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
                     <label class="text-blue text-bold" for="serie_comprobante">Dirección:</label>
-                    <p>{{ $pagarporoficina->direccion_cliente ?? ''}}</p>
+                    <p>{{ $cliente->direccion ?? ''}}</p>
                 </div>
             </div>
 
@@ -127,7 +127,7 @@
                                     <td>{{$BancosCliente->nombre_banco ?? ''}}</td>
                                     <td>{{$BancosCliente->tipo_cuenta ?? ''}}</td>
                                     <td>{{$BancosCliente->codigo ?? ''}}-{{$BancosCliente->num_cuenta ?? ''}}</td>
-                                    <td>{{$BancosCliente->pago_mobil ?? ''}}</td>
+                                    <td>{{$BancosCliente->pago_movil ?? ''}}</td>
 
 
 
@@ -199,7 +199,7 @@
                                 <tfoot>
                                     <th></th>
                                     <th></th>
-                                    <th><br><h4><b>Total deuda: </b></h4></th>
+                                    <th><br><h4><b>Total Pagado: </b></h4></th>
 
                                 <th><br><h4 id="total"><b>$. {{$total_deuda}}</b></h4></th>
                                 {{-- <th><br><a id="modalPagoPendienteOpcionesBtn" href="#" data-toggle="modal" data-target="#modalPagoPendienteOpciones"  class="btn btn-danger">Procesar pago pendiente</a><br><a id="modalPago" href="#" onClick="selFactura({{floatval($total_deuda) ?? ''}},{{ $pagarporoficina->id ?? ''}},'todas');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Registrar pago</a></th> --}}
@@ -684,7 +684,7 @@
                                                                     @endphp
                                                                         @endif
                                                                         @foreach ($bancosEmpresas as $bancosEmpresa)
-                                                                    <option value="{{$bancosEmpresa->id}}_{{$bancosEmpresa->nombre_banco}}_{{$bancosEmpresa->codigo}}_{{$bancosEmpresa->num_cuenta}}_{{$bancosEmpresa->tipo_cuenta}}_{{$bancosEmpresa->pago_mobil}}">{{$bancosEmpresa->nombre_banco}}</option>
+                                                                    <option value="{{$bancosEmpresa->id}}_{{$bancosEmpresa->nombre_banco}}_{{$bancosEmpresa->codigo}}_{{$bancosEmpresa->num_cuenta}}_{{$bancosEmpresa->tipo_cuenta}}_{{$bancosEmpresa->pago_movil}}">{{$bancosEmpresa->nombre_banco}}</option>
                                                                         @endforeach
 
                                                                     </select>
@@ -728,8 +728,8 @@
 
                                                             <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                                 <div class="form-group">
-                                                                    <label class="text-black" for="pago_mobil_banco_empresa">Teléfono pago Mobil</label>
-                                                                    <input  type="text" id="pago_mobil_banco_empresa" name="pago_mobil_banco_empresa" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('pago_mobil')}}" placeholder="Pago mobil...">
+                                                                    <label class="text-black" for="pago_movil_banco_empresa">Teléfono pago Mobil</label>
+                                                                    <input  type="text" id="pago_movil_banco_empresa" name="pago_movil_banco_empresa" class="form-control"  data-inputmask='"mask": "(9999) 999-9999"' data-mask value="{{old('pago_movil')}}" placeholder="Pago mobil...">
                                                                 </div>
                                                             </div>
                                                             {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -1067,7 +1067,7 @@ $("#nombre_banco_empresa").val(datosArticulo[1]);
 $("#codigo_banco_empresa").val(datosArticulo[2]);
 $("#num_cuenta_banco_empresa").val(datosArticulo[3]);
 $("#tipo_cuenta_banco_empresa").val(datosArticulo[4]);
-$("#pago_mobil_banco_empresa").val(datosArticulo[5]);
+$("#pago_movil_banco_empresa").val(datosArticulo[5]);
 // $("#jstock").val(datosArticulo[2]);
 
 
@@ -1109,7 +1109,7 @@ $("#nombre_banco_cliente").val(datosArticulo[1]);
 $("#codigo_banco_cliente").val(datosArticulo[2]);
 $("#num_cuenta_banco_cliente").val(datosArticulo[3]);
 $("#tipo_cuenta_banco_cliente").val(datosArticulo[4]);
-$("#pago_mobil_banco_cliente").val(datosArticulo[5]);
+$("#pago_movil_banco_cliente").val(datosArticulo[5]);
 // $("#jstock").val(datosArticulo[2]);
 
 

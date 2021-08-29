@@ -46,4 +46,8 @@ class HistorialExcedente extends Model
     public function operador(){
         return $this->belongsTo(User::class);
     }
+
+    public function detallePago(){
+        return $this->belongsTo(DetallePagoOficina::class);
+    }
 }

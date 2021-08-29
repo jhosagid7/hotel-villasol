@@ -2,11 +2,16 @@
 @section('contenido')
 
 
-
+{{-- <script>
+    table {
+        border-spacing: 0;
+        border-collapse: collapse;
+    }
+</script> --}}
 
 
     <!-- Main content -->
-    <section class="content">
+    <section class="content text-sm">
 
         <!-- Default box -->
         <div class="box">
@@ -44,6 +49,12 @@
                 <i class="fa fa-print"></i>
                 Imprimir
             </a>
+            <a onclick="printDiv('areaImprimir')" target="_blank" class="btn btn-primary  hidden-print">
+                <i class="fa fa-print"></i>
+                imprimir Resumen
+            </a>
+            {{-- <input class="btn btn-primary  hidden-print" type="button" onclick="printDiv('areaImprimir')" value="imprimir Resumen" /> --}}
+
             {{-- <button onclick="imprimir()">Imprimir pantalla</button> --}}
 
         </div>
@@ -51,12 +62,13 @@
     </div>
     <!-- /.box -->
     <!-- Main content -->
+    <div id="areaImprimir" class="invoice">
 <section id="imprimir" class="invoice">
     <!-- title row -->
     <div class="row">
       <div class="col-xs-12">
         <h2 class="page-header">
-          <i class="fa fa-globe"></i> VillaSoft Punto
+          <i class="fa fa-globe"></i> {{ $appDate[0]->nombre }}
         <small class="pull-right">Fecha: {{date('d-m-y')}}</small>
         </h2>
       </div>
@@ -808,13 +820,17 @@
                 <!-- /.description-block -->
             </div>
         </div>
+        </div>
+</div> {{-- imprimir --}}
+    </div></div>
+    </div></div>
 
-    </div></div>
-    </div></div>
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
     {{-- Montos de apertura de caja --}}
-
+    <div class="col-12">
+    <div >
+<div class="content">
     <div class="box-header with-border">
         <h3 class="box-title text-bold text-blue">Montos de Apertura </h3>
 
@@ -907,7 +923,7 @@
                 <!-- /.description-block -->
             </div>
         </div>
-        <div class="row">
+        {{-- <div class="row">
             <div class="col-sm-6 col-xs-12">
                 <span class="description-text">OBSERVACIONES:</span>
                 <div>
@@ -915,7 +931,7 @@
                 </div>
 
             </div>
-        </div>
+        </div> --}}
     </div>
 
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
@@ -1068,7 +1084,9 @@
 
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
-
+<div class="col-12">
+    <div >
+<div class="content">
     @can('haveaccess', 'cajadatosventas.show')
     @if (count($cajas->servicios) > 0)
     <!-- Table row -->
@@ -2459,8 +2477,8 @@
                         @endif --}}
                         @if ($horasEx->modo_pago)
                             @foreach ($horasEx->pagos_extras as $pagoExtr)
-                            @if ($pagoExtr->MontoDivisa - $horasEx->dinero_dejado > 0)
-                            {{ ' '.$pagoExtr->Divisa.': '.floatval($pagoExtr->MontoDivisa - $horasEx->dinero_dejado ) ?? '' }}
+                            @if ($pagoExtr->Vueltos > 0)
+                            {{ ' '.$pagoExtr->Divisa.': '.floatval($pagoExtr->Vueltos) ?? '' }}
                             @endif
 
                             @endforeach
@@ -2691,6 +2709,17 @@
 </script>
 
 <script language="javascript">
+
+    function printDiv(nombreDiv) {
+     var contenido= document.getElementById(nombreDiv).innerHTML;
+     var contenidoOriginal= document.body.innerHTML;
+
+     document.body.innerHTML = contenido;
+
+     window.print();
+
+     document.body.innerHTML = contenidoOriginal;
+}
 
     function imprimirContenido(el){
         // $('#guion').show();

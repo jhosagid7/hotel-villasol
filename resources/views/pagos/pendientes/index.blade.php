@@ -48,15 +48,12 @@
                 <thead>
                     <th>ID</th>
                     <th>Cliente</th>
-                    <th>Banco</th>
-                    <th>Direccion</th>
-                    <th>Num Cuenta</th>
-                    <th>Total Pagado</th>
-                    <th>Banco Empresa</th>
-                    <th>Cuenta Banco Empresa</th>
                     <th>Num Transaccion</th>
+                    <th>Tipo pago</th>
+                    <th>Total Pagado</th>
                     <th>Fecha de Pago</th>
                     <th>Operador</th>
+                    <th>Ver</th>
 
                     {{-- <th>Opciones</th> --}}
                 </thead>
@@ -68,12 +65,9 @@
                      <tr>
                          <td>{{ $pagosOfic->id }}</td>
                          <td><?php $nombre_cliente = "App\Persona"::where('id',$pagosOfic->persona_id)->select('nombre')->first();?> {{$nombre_cliente['nombre']}}</td>
-                         <td>{{ $pagosOfic->nombre_banco_cliente }}</td>
-                         <td>{{ $pagosOfic->num_cuenta_empresa }}</td>
-                         <td>{{ $pagosOfic->deuda }}</td>
-                         <td>{{ $pagosOfic->nombre_banco_empresa}}</td>
-                         <td>{{ $pagosOfic->num_cuenta_empresa}}</td>
                          <td>{{ $pagosOfic->num_transaccion}}</td>
+                         <td>{{ $pagosOfic->tipo_pago}}</td>
+                         <td>{{ $pagosOfic->deuda }}</td>
                          <td>{{ $pagosOfic->fecha_pago}}</td>
                          <td><?php $nombre_operador = "App\User"::where('id',$pagosOfic->user_id)->select('name')->first();?> {{$nombre_operador['name']}}</td>
 

@@ -19,7 +19,7 @@ class CreateExcedentesTable extends Migration
             $table->string('nombre_cliente', 100)->nullable();
             $table->string('cedula_cliente', 20)->nullable();
             $table->string('direccion_cliente', 100)->nullable();
-            $table->string('telefono_pago_mobil_cliente', 20)->nullable();
+            $table->string('telefono_pago_movil_cliente', 20)->nullable();
             $table->string('nombre_banco_cliente', 20)->nullable();
             $table->string('num_cuenta_cliente', 20)->nullable();
             $table->string('tipo_cuenta_cliente', 20)->nullable();

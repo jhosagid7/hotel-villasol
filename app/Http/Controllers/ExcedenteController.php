@@ -158,7 +158,7 @@ class ExcedenteController extends Controller
             $nombre_banco = $request->get('nombre_banco');
             $codigo = $request->get('codigo');
             $num_cuenta = $request->get('num_cuenta');
-            $pago_mobil = $request->get('pago_mobil');
+            $pago_movil = $request->get('pago_mobil');
             $tipo_cuenta = $request->get('tipo_cuenta');
             $dcliente_id = $request->get('dcliente_id');
             $banco_id = $request->get('banco_id');
@@ -226,27 +226,36 @@ class ExcedenteController extends Controller
 
                             $ifCliente = Excedente::where('persona_id',$dcliente_id)->where('tipo','Pagar_por_oficina')->first();
                             // return $ifCliente;
+                            if ($num_cuenta == null) {
+                                    $num_cuenta = '0';
+                                } else {
+                                    $num_cuenta = $num_cuenta;
+                                }
 
                             if($ifCliente){
                                 // return 'si';
 
                                 $upExcedente = Excedente::findOrFail($ifCliente->id);
+                                $upExcedente->direccion_cliente = $direccion;
+                                $upExcedente->telefono_pago_movil_cliente = $pago_movil;
+                                $upExcedente->nombre_banco_cliente = $nombre_banco;
+                                $upExcedente->num_cuenta_cliente = $codigo .' - '.$num_cuenta;
+                                $upExcedente->tipo_cuenta_cliente = $tipo_cuenta;
                                 $upExcedente->excedente = $upExcedente->excedente + $exced;
+                                $upExcedente->isTransferencia = $request->isTransferencia;
+                                $upExcedente->isPagoMobil = $request->isPagoMobil;
+                                $upExcedente->isEfectivo = $request->isEfectivo;
                                 $upExcedente->update();
                             }else{
                                 // return 'no';
-                                if ($num_cuenta == null) {
-                                    $num_cuenta = '0';
-                                } else {
-                                    $num_cuenta = $num_cuenta;
-                                }
+
 
                                 $dexcedente = new Excedente;
                                 $dexcedente->tipo = 'Pagar_por_oficina';
                                 $dexcedente->nombre_cliente = $nombre_cliente;
                                 $dexcedente->cedula_cliente = $num_documento;
                                 $dexcedente->direccion_cliente = $direccion;
-                                $dexcedente->telefono_pago_mobil_cliente = $pago_mobil;
+                                $dexcedente->telefono_pago_movil_cliente = $pago_movil;
                                 $dexcedente->nombre_banco_cliente = $nombre_banco;
                                 $dexcedente->num_cuenta_cliente = $codigo .' - '.$num_cuenta;
                                 $dexcedente->tipo_cuenta_cliente = $tipo_cuenta;
@@ -421,7 +430,7 @@ class ExcedenteController extends Controller
                                     $dexcedente->nombre_cliente = $nombre_cliente;
                                     $dexcedente->cedula_cliente = $num_documento;
                                     $dexcedente->direccion_cliente = $direccion;
-                                    $dexcedente->telefono_pago_mobil_cliente = $telefono;
+                                    $dexcedente->telefono_pago_movil_cliente = $telefono;
                                     $dexcedente->nombre_banco_cliente = $telefono;
                                     $dexcedente->num_cuenta_cliente = $telefono;
                                     $dexcedente->tipo_cuenta_cliente = $telefono;
@@ -512,7 +521,7 @@ class ExcedenteController extends Controller
     public function show($id)
     {
         $title = 'Facturas por Pagar';
-        $BancosClientes = BancosCliente::where('persona_id',$id)->get();
+        $BancosClientes = Excedente::where('persona_id',$id)->where('tipo','Pagar_por_oficina')->get();
         // return $cliente_id;
         $pagarporoficina = Excedente::where('persona_id',$id)->where('tipo','Pagar_por_oficina')->first();
 

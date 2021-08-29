@@ -1211,6 +1211,7 @@ class ServicioController extends Controller
                     $servicio_idData = $request->get('');
                     $caja_idData = $request->get('');
                     $servicio_id = $id;
+                    // return $servicio_id;
 
                     $total_costo = $request->get('total_costo');
                     $status = '';
@@ -2621,7 +2622,7 @@ class ServicioController extends Controller
                                                         $Pago_Extras_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Extras_Vueltos->venta_id = 0;
                                                         $Pago_Extras_Vueltos->horas_extra_id = $horasExtras->id;
-                                                        $Pago_Extras_Vueltos->detalle__creditos__pagado_id_id = 0;
+                                                        $Pago_Extras_Vueltos->detalle__creditos__pagado_id = 0;
                                                         $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Extras_Vueltos->save();
 
@@ -2810,7 +2811,7 @@ class ServicioController extends Controller
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = 0;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = $horasExtras->id;
-                                                        $Pago_Consumo_Vueltos->detalle__creditos__pagado_id_id = 0;
+                                                        $Pago_Consumo_Vueltos->detalle__creditos__pagado_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 
@@ -2972,7 +2973,7 @@ class ServicioController extends Controller
                                                         $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
                                                         $Pago_Consumo_Vueltos->venta_id = 0;
                                                         $Pago_Consumo_Vueltos->horas_extra_id = $horasExtras->id;
-                                                        $Pago_Consumo_Vueltos->detalle__creditos__pagado_id_id = 0;
+                                                        $Pago_Consumo_Vueltos->detalle__creditos__pagado_id = 0;
                                                         $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
                                                         $Pago_Consumo_Vueltos->save();
 

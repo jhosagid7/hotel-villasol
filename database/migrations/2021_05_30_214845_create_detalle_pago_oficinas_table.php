@@ -15,14 +15,11 @@ class CreateDetallePagoOficinasTable extends Migration
     {
         Schema::create('detalle_pago_oficinas', function (Blueprint $table) {
             $table->id();
-            $table->enum('tipo_pago', ['Pago_movil','Transferencia','Dolar','Peso','Bolivar']);
-            $table->string('telefono_pago_movil_cliente', 20);
-            $table->string('num_cuenta_cliente', 100);
-            $table->enum('tipo_cuenta_cliente', ['Corriente', 'Ahorro']);
-            $table->string('nombre_banco_cliente', 256);
-            $table->string('num_cuenta_empresa', 100);
-            $table->string('nombre_banco_empresa', 100);
-            $table->enum('tipo_cuenta_empresa', ['Corriente', 'Ahorro']);
+            $table->enum('tipo_pago', ['Pago_movil','Transferencia','Dolar','Peso','Bolivar','Efectivo']);
+            $table->string('telefono_pago_movil_cliente', 20)->nullable();
+            $table->string('num_cuenta_cliente', 100)->nullable();
+            $table->enum('tipo_cuenta_cliente', ['Corriente', 'Ahorro'])->nullable();
+            $table->string('nombre_banco_cliente', 256)->nullable();
             $table->string('num_transaccion', 100);
             $table->decimal('deuda', 25, 8);
             $table->decimal('saldo_pagado', 25, 8);
