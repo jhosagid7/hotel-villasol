@@ -188,3 +188,6 @@ Route::resource('/pagos/pendientes', 'PagarPorOficinaController');
 Route::get('/reporte-creditos', 'ReporteController@reportCreditosIndex')->name('reporte-creditos');
 Route::get('/reporte-creditos-pagados', 'ReporteController@reportCreditosPagadosShow')->name('reporte-creditos-pagados');
 
+Route::get('/reporte-general-creditos-buscar', 'ReporteController@reportGeneralCreditosBucarIndex')->name('reporte-general-creditos-buscar');
+Route::get('/reporte-general-creditos', 'ReporteController@reportGeneralCreditosShow')->name('reporte-general-creditos');
+

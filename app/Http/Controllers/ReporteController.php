@@ -10,6 +10,8 @@ use App\Persona;
 use App\Articulo;
 use Carbon\Carbon;
 use App\Articulo_venta;
+use App\Caja;
+use App\Detalle_credito;
 use Illuminate\Http\Request;
 use App\Detalle_Creditos_Pagado;
 use Illuminate\Support\Facades\DB;
@@ -221,6 +223,61 @@ class ReporteController extends Controller
         }
 // return $ingresos;
         return view('reportes.creditos.pagados.show', compact('tipo','detallado','fecha_inicio','fecha_fin','creditos','fecha','estado','proveedor','operador', 'title'));
+    }
+
+
+
+    public function reportGeneralCreditosBucarIndex(){
+
+        $title = 'Generador de Reportes por filtros de busqueda';
+
+        $users = User::Where('id', '<>', '2')->get();
+        $clientes = Credito::get();
+        $cajas = Caja::all();
+
+// return $ingresos;
+        return view('reportes.creditos.general.index', compact('cajas','users','clientes', 'title'));
+    }
+
+    public function reportGeneralCreditosShow(Request $request){
+        // return $request;
+        $fecha = $request->get('fecha');
+        $tipo = $request->get('tipo');
+        $cliente = $request->get('cliente');
+        $operador = $request->get('operador');
+        $estadoPago = $request->get('estadoPago');
+        $estadoCredito = $request->get('estadoCredito');
+        $caja_id = $request->get('caja_id');
+        $title = 'Reporte General de Creditos';
+
+
+        $creditos = Detalle_credito::fecha($fecha)
+        // ->tipo($tipo)
+        ->cliente($cliente)
+        ->operador($operador)
+        ->EstadoPago($estadoPago)
+        ->EstadoCredito($estadoCredito)
+        ->Caja($caja_id)
+        ->get();
+
+        // return $creditos[0]->creditos_pagados;
+
+        if($fecha){
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+
+            }
+
+
+            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+        if(!$tipo == 0 || !$tipo == null){
+            $tipo = $tipo;
+        }else{
+            $tipo = null;
+        }
+// return $creditos;
+        return view('reportes.creditos.general.show', compact('tipo','detallado','fecha_inicio','fecha_fin','creditos','fecha','estado','proveedor','operador', 'title'));
     }
 
     /**
