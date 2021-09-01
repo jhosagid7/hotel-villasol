@@ -25,10 +25,11 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('backup:clean')->everyMinute();
+        $schedule->command('backup:run')->everyMinute();
 
-        $schedule->command('backup:run')->hourly()
-        ->timezone('America/Caracas')
-        ->between('7:00', '22:00');
+        // $schedule->command('backup:c')->hourly()
+        // ->timezone('America/Caracas')
+        // ->between('7:00', '22:00');
 
         // $schedule->call(function () {
         //     DB::table('recent_users')->delete();
