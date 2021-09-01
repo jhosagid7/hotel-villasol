@@ -17,7 +17,9 @@ return [
 
     'default' => env('DB_CONNECTION', 'mysql'),
 
+
     /*
+
     |--------------------------------------------------------------------------
     | Database Connections
     |--------------------------------------------------------------------------
@@ -63,7 +65,8 @@ return [
             ]) : [],
 
             'dump' => [
-                'dump_binary_path' => 'C:\Users\jhosagid\Dropbox\laragon\bin\mysql\mysql-5.7.24-winx64\bin', // only the path, so without `mysqldump` or `pg_dump`
+
+                'dump_binary_path' => 'C:/laragon/bin/mysql/mysql-5.7.24-winx64/bin/',//env('DB_MYSQLDUMP_PATH'),//'C:\laragon\bin\mysql\mysql-5.7.24-winx64\bin', //env('DB_MYSQLDUMP_PATH') only the path, so without `mysqldump` or `pg_dump` 'C:\Users\jhosagid\Dropbox\laragon\bin\mysql\mysql-5.7.24-winx64\bin'
                 'use_single_transaction',
                 'timeout' => 60 * 5, // 5 minute timeout
                 // 'exclude_tables' => ['table1', 'table2'],
