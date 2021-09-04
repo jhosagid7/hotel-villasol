@@ -70,6 +70,8 @@
 
                             $totalServicio = 0;
                             $totalConsumo = 0;
+                            $totalHorasExtras = 0;
+
                             $totalDeuda = 0;
 
                             $credPagadoCant = 0;
@@ -80,8 +82,12 @@
 
                             $totalServicioPendiente = 0;
                             $totalConsumoPendiente = 0;
+                            $totalHorasExtrasPendiente = 0;
+
                             $totalServicioPagado = 0;
                             $totalConsumoPagado = 0;
+                            $totalHorasExtrasPagado = 0;
+
                             $totalCantPendiente = 0;
 
                             $totalDeudaPendiente = 0;
@@ -89,11 +95,16 @@
 
                             $cantConsumoPendiente = 0;
                             $cantServicioPendiente = 0;
+                            $cantServicioPendiente = 0;
+                            $cantHorasExtrasPendiente = 0;
 
 
                             $totalCantPagado = 0;
                             $cantServicioPagado = 0;
                             $cantConsumoPagado = 0;
+                            $cantHorasExtrasPagado = 0;
+                            
+                            
 
                             $totalD = 0;
                             $totalC = 0;
@@ -104,6 +115,10 @@
                             $operacones = 0;
                             $operaconesS = 0;
                             $operaconesC = 0;
+                            $operaconesH = 0;
+
+                            $totalVigente = 0;
+                            $totalVencido = 0;
                         @endphp
                         @foreach ($creditos as $cred)
                         @php
@@ -116,6 +131,14 @@
                                     $totalDeudaPendiente += $cred->monto;
                                     $cantServicioPendiente++;
                                     $totalCantPendiente++;
+
+                                    if($cred->estado_credito == 'Vigente'){
+                                    $totalVigente ++;   
+                                    }
+
+                                    if($cred->estado_credito == 'Vencido'){
+                                        $totalVencido ++;                                  
+                                    }
                                 }
 
                                 if($cred->estado_pago == 'Pagado'){
@@ -124,7 +147,10 @@
                                     $cantServicioPagado++;
                                     $totalCantPagado++;
                                 }
-                                    $totalConsumo += $cred->monto;
+
+                                
+
+                                    $totalServicio += $cred->monto;
                                     $totalDeuda += $cred->monto;
                                     $operaconesS++;
 
@@ -136,6 +162,14 @@
                                     $totalDeudaPendiente += $cred->monto;
                                     $cantConsumoPendiente++;
                                     $totalCantPendiente++;
+
+                                    if($cred->estado_credito == 'Vigente'){
+                                    $totalVigente ++;   
+                                    }
+
+                                    if($cred->estado_credito == 'Vencido'){
+                                        $totalVencido ++;                                  
+                                    }
                                 }
 
                                 if($cred->estado_pago == 'Pagado'){
@@ -147,6 +181,34 @@
                                     $totalConsumo += $cred->monto;
                                     $totalDeuda += $cred->monto;
                                     $operaconesC++;
+
+                            }
+
+                            if($cred->tipo_operacion == 'Horas_Extras'){
+                                if($cred->estado_pago == 'Pendiente'){
+                                    $totalHorasExtrasPendiente += $cred->monto;
+                                    $totalDeudaPendiente += $cred->monto;
+                                    $cantHorasExtrasPendiente++;
+                                    $totalCantPendiente++;
+
+                                    if($cred->estado_credito == 'Vigente'){
+                                    $totalVigente ++;   
+                                    }
+
+                                    if($cred->estado_credito == 'Vencido'){
+                                        $totalVencido ++;                                  
+                                    }
+                                }
+
+                                if($cred->estado_pago == 'Pagado'){
+                                    $totalHorasExtrasPagado += $cred->monto;
+                                    $totalDeudaPagado += $cred->monto;
+                                    $cantHorasExtrasPagado++;
+                                    $totalCantPagado++;
+                                }
+                                    $totalHorasExtras += $cred->monto;
+                                    $totalDeuda += $cred->monto;
+                                    $operaconesH++;
 
                             }
 
@@ -182,13 +244,18 @@
         <h4><strong>Datos de Busqueda:</strong></h4>
 
         <address>
-        <strong>Desde: </strong> {{$fecha_inicio}}<br>
-        <strong>Hasta: </strong> {{$fecha_fin}}<br>
-        <strong>Operador: </strong>{{ Auth::user()->name ?? ''}} <br>
-        <strong>Total Operaciones: </strong>{{$operacones ?? ''}} <br>
-        <strong>Total Servicio: </strong>{{$operaconesS ?? ''}} <br>
-        <strong>Total Consumo: </strong>{{$operaconesC ?? ''}} <br>
-
+        <strong>Desde: </strong> {{$fecha_inicio ?? ''}}<br>
+        <strong>Hasta: </strong> {{$fecha_fin ?? ''}}<br>
+        <strong>Operador: </strong>{{ Auth::user()->name ?? '0'}} <br>
+        <strong>Total Operaciones: </strong>{{$operacones ?? '0'}} <br>
+        <strong>Total Servicio: </strong>{{$operaconesS ?? '0'}} <br>
+        <strong>Total Consumo: </strong>{{$operaconesC ?? '0'}} <br>
+        <strong>Total Extras: </strong>{{$operaconesH ?? '0'}} <br>
+        <hr>
+        <h4><strong>Estado de Facturas Pendientes:</strong></h4>
+        <strong>Total Vigente: </strong>{{$totalVigente ?? '0'}} <br>
+        <strong>Total Vencida: </strong>{{$totalVencido ?? '0'}} <br>
+        <hr>
 
         </address>
       </div>
@@ -199,10 +266,12 @@
             <strong>Facturas Pendientes: </strong> {{$totalCantPendiente ?? ''}}<br>
             <strong>Cant/Servicio: </strong> {{number_format($cantServicioPendiente,0,',','.') ?? '0'}} <br>
             <strong>Cant/Consumo: </strong> {{number_format($cantConsumoPendiente,0,',','.') ?? '0'}}<br>
+            <strong>Cant/Hextras: </strong> {{number_format($cantHorasExtrasPendiente,0,',','.') ?? '0'}}<br>
             <br>
             <strong>Facturas Pagadas: </strong> {{$totalCantPagado ?? ''}}<br>
             <strong>Cant/Servicio: </strong> {{number_format($cantServicioPagado,0,',','.') ?? '0'}} <br>
-            <strong>Cant/Consumo: </strong> {{number_format($cantConsumoPagado,0,',','.') ?? '0'}}
+            <strong>Cant/Consumo: </strong> {{number_format($cantConsumoPagado,0,',','.') ?? '0'}}<br>
+            <strong>Cant/Extras: </strong> {{number_format($cantHorasExtrasPagado,0,',','.') ?? '0'}}
 
 
 
@@ -233,9 +302,14 @@
                     <td>$ {{number_format(floatval($totalConsumoPagado),2,',','.') ?? '0'}}</td>
                   </tr>
                   <tr>
+                    <th>Total Extras:</th>
+                    <td>$ {{number_format(floatval($totalHorasExtrasPendiente),2,',','.') ?? '0'}}</td>
+                    <td>$ {{number_format(floatval($totalHorasExtrasPagado),2,',','.') ?? '0'}}</td>
+                  </tr>
+                  <tr>
                     <th style="font-size: 20px">Total:</th>
-                    <td style="font-size: 20px" class="text-bold">$ {{number_format($totalServicioPendiente + $totalConsumoPendiente,2,',','.') ?? '0'}}</td>
-                    <td style="font-size: 20px" class="text-bold">$ {{number_format($totalServicioPagado + $totalConsumoPagado,2,',','.') ?? '0'}}</td>
+                    <td style="font-size: 20px" class="text-bold">$ {{number_format($totalServicioPendiente + $totalConsumoPendiente + $totalHorasExtrasPendiente,2,',','.') ?? '0'}}</td>
+                    <td style="font-size: 20px" class="text-bold">$ {{number_format($totalServicioPagado + $totalConsumoPagado + $totalHorasExtrasPagado,2,',','.') ?? '0'}}</td>
                   </tr>
                   <tr>
                     <th>
@@ -250,8 +324,10 @@
               </div>
 
         </address>
+        
       </div>
       <!-- /.col -->
+      
     </div>
     <!-- /.row -->
     <div class="row">
@@ -350,7 +426,7 @@
         </div>
       <!-- /.col -->
     </div> --}}
-
+<hr>
 
 </section></section>
   <!-- /.content -->

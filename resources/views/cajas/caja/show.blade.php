@@ -311,7 +311,7 @@
                     <td><strong></strong></td>
                     <td><strong></strong></td>
                     <th>Creditos/vigentes:</th>
-                    <td><strong>{{ $cajas->SumaTotalCantidadCreditosVigentes ?? '0' }}</strong></td>
+                    <td><strong>{{ $cajas->SumaTotalCantidadCreditosVigentes - ($cajas->SumaTotalCantidadServiciosPorPagar + $cajas->SumaTotalCantidadVentasCredito) ?? '0' }}</strong></td>
                   </tr>
                   @endcan
                   @can('haveaccess', 'cajautilidad.show')
@@ -340,7 +340,7 @@
                     <th></th>
                     <td><b></b></td>
                     <th>Creditos/pagados:</th>
-                    <td>{{$cajas->SumaTotalCantidadCreditosPagadosTotales ?? ''}}</td>
+                    <td>{{$cajas->SumaTotalCantidadCreditosPagadosTotales ?? '0'}}</td>
                   </tr>
                   @endcan
                   @can('haveaccess', 'cajatotalventa.show')
@@ -354,21 +354,39 @@
                     <th></th>
                     <td><b></b></td>
                     <th>Creditos nuevos:</th>
-                    <td><b>{{ $cajas->SumaTotalCantidadServiciosPorPagar + $cajas->SumaTotalCantidadVentasCredito ?? '0' }}</b></td>
+                    <td>
+                        <b>
+                            @if ($cajas->estado == 'Abierta')
+                                {{ $cajas->SumaTotalCantidadServiciosPorPagar + $cajas->SumaTotalCantidadVentasCredito ?? '0' }}
+                            @else
+                                {{ $cajas->hist_creditos_nuevos ?? '0' }}
+                            @endif
+                            
+                        </b>
+                    </td>
                   </tr>
                   @endcan
                   @can('haveaccess', 'cajatotalventa.show')
                   <tr>
                     <th>Cons/Créd/Pag:</th>
-                    <td>{{$cajas->SumaTotalCantidadCreditosPagadosConsumo ?? ''}}</td>
+                    <td>{{$cajas->SumaTotalCantidadCreditosPagadosConsumo ?? '0'}}</td>
                     <th></th>
                     <th>Serv/Créd/Pag:</th>
-                    <td>{{$cajas->SumaTotalCantidadCreditosPagadosServicio ?? ''}}</td>
+                    <td>{{$cajas->SumaTotalCantidadCreditosPagadosServicio ?? '0'}}</td>
                     <td><b></b></td>
                     <th></th>
                     <td><b></b></td>
                     <th>Total/Creditos:</th>
-                    <td><b>{{$cajas->SumaTotalCantidadCreditosVigentes + $cajas->SumaTotalCantidadCreditosVencidos + $cajas->SumaTotalCantidadCreditosPagadosTotales ?? ''}}</b></td>
+                    <td>
+                        <b>
+                            @if ($cajas->estado == 'Abierta')
+                                {{$cajas->SumaTotalCantidadCreditosVigentes + $cajas->SumaTotalCantidadCreditosVencidos + $cajas->SumaTotalCantidadCreditosPagadosTotales ?? '0'}}
+                            @else
+                                {{ $cajas->hist_total_creditos ?? '0'}}
+                            @endif
+                            
+                        </b>
+                    </td>
                   </tr>
                   @endcan
                   @can('haveaccess', 'cajatotalventa.show')
@@ -562,7 +580,7 @@
                     <td></td>
                     <td></td>
                     <th><h4><strong class="text-blue">Total/Contable:</h4></strong></th>
-                    <td><h4><strong>${{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios  + $cajas->SumaTotalExtra),2,',','.') ?? '0.000' }}</h4></strong></td>
+                    <td><h4><strong>${{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalCreditosPagadosHorasExtrasPorCaja + $cajas->SumaTotalServicios  + $cajas->SumaTotalExtra),2,',','.') ?? '0.000' }}</h4></strong></td>
                     <td></td>
                     <td></td>
                   </tr>
@@ -651,11 +669,11 @@
                             class="fa fa-caret-up"></i>
                         Dolar $</span>
                         <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold text-blue">$. {{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios  + $cajas->SumaTotalExtra),2,',','.') ?? '0.000' }}</h5>
+                    <h5 class="box-title text-bold text-blue">$. {{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios  + $cajas->SumaTotalExtra + $cajas->SumaTotalCreditosPagadosHorasExtrasPorCaja),2,',','.') ?? '0.000' }}</h5>
                     <br>
                     <h5 class="box-title text-bold">$. {{ number_format(($cajas->TotalSumaVueltosPagarOficinaDolarToDolar),2,',','.') ?? '0.000' }}</h5>
                     <h5 class="description-header">______________</h5>
-                    <h5 class="box-title text-bold">$. {{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra),2,',','.') ?? '0.000' }}</h5>
+                    <h5 class="box-title text-bold">$. {{ number_format(($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas) + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios + $cajas->TotalSumaVueltosPagarOficinaDolarToDolar  + $cajas->SumaTotalExtra + $cajas->SumaTotalCreditosPagadosHorasExtrasPorCaja),2,',','.') ?? '0.000' }}</h5>
                     <br>
                     <h5 class="box-title text-bold text-red">$. {{ number_format(floatval($cajas->total_operador_reg),2,',','.') ?? ' 0,00' }}</h5>
                     <h5 class="description-header">______________</h5>

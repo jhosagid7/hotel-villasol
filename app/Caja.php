@@ -163,6 +163,10 @@ class Caja extends Model
         return $this->hasMany(DetallePagoOficina::class);
     }
 
+    public function historial_creditos(){
+        return $this->hasMany(HistorialCreditoCaja::class);
+    }
+
 
 
 

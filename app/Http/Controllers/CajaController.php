@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Excedentes_Recibidos_Caja_Actual;
 use App\Excedentes_Pendientes_Caja_Anterior;
+use App\HistorialCreditoCaja;
 
 class CajaController extends Controller
 {
@@ -417,7 +418,7 @@ class CajaController extends Controller
             if($stock){
                 return $stock;
             }else{
-                return 'no hay datos';
+                return false;
             }
         }
     }
@@ -834,6 +835,30 @@ foreach ($cajas->creditos_pagados as $credPagados ) {
             $cajas->SumaTotalCreditosPagadosServicioPorCaja = $cajas->SumaTotalCreditosPagadosServicioPorCaja + $credPagados->monto;
 
         }
+
+        if ($credPagados->tipo_operacion == 'Horas_Extras'){
+
+            $validarPagosCreditosHorasExtras = Pago_Credito::where('detalle__creditos__pagado_id',$credPagados->detalle__creditos__pagado_id)->get();
+            // return $validarPagosCreditosHorasExtras;
+            if (count($validarPagosCreditosHorasExtras)) {
+                foreach ($validarPagosCreditosHorasExtras as $credPagadosCajaHorasExtra ) {
+                    if ($credPagadosCajaHorasExtra->Divisa == 'Dolar') {
+                        $cajas->SumaTotalDolarCredHorasExtra = $cajas->SumaTotalDolarCredHorasExtra + ($credPagadosCajaHorasExtra->MontoDivisa - $credPagadosCajaHorasExtra->Vueltos * -1);
+                    }elseif ($credPagadosCajaHorasExtra->Divisa == 'Peso') {
+                        $cajas->SumaTotalPesoCredHorasExtra = $cajas->SumaTotalPesoCredHorasExtra + ($credPagadosCajaHorasExtra->MontoDivisa - $credPagadosCajaHorasExtra->Vueltos * -1);
+                    }elseif ($credPagadosCajaHorasExtra->Divisa == 'Bolivar') {
+                        $cajas->SumaTotalBolivarCredHorasExtra = $cajas->SumaTotalBolivarCredHorasExtra + ($credPagadosCajaHorasExtra->MontoDivisa - $credPagadosCajaHorasExtra->Vueltos * -1);
+                    }elseif ($credPagadosCajaHorasExtra->Divisa == 'Punto') {
+                        $cajas->SumaTotalPuntoCredHorasExtra = $cajas->SumaTotalPuntoCredHorasExtra + ($credPagadosCajaHorasExtra->MontoDivisa - $credPagadosCajaHorasExtra->Vueltos * -1);
+                    }elseif ($credPagadosCajaHorasExtra->Divisa == 'Transferencia') {
+                        $cajas->SumaTotalTransferenciaCredHorasExtra = $cajas->SumaTotalTransferenciaCredHorasExtra + ($credPagadosCajaHorasExtra->MontoDivisa - $credPagadosCajaHorasExtra->Vueltos * -1);
+                    }
+                }
+            }
+
+            $cajas->SumaTotalCreditosPagadosHorasExtrasPorCaja = $cajas->SumaTotalCreditosPagadosHorasExtrasPorCaja + $credPagados->monto;
+
+        }
             $cajas->SumaTotalCreditosPagadosTotalesPorCaja = $cajas->SumaTotalCreditosPagadosTotalesPorCaja + $credPagados->monto;
 
     }else{
@@ -887,49 +912,86 @@ foreach ($cajas->creditos_pagados as $credPagados ) {
         $cajas->SumaTotalCantidadCreditosPagadosConsumo =  $cajas->SumaTotalCantidadCreditosPagadosConsumo + 1;
 
     }
+
+    if ($credPagados->tipo_operacion == 'Horas_Extras') {
+
+        // $cajas->SumaTotalCreditosPagadosConsumo = $cajas->SumaTotalCreditosPagadosConsumo + $credPagados->monto;
+        $cajas->SumaTotalCantidadCreditosPagadosHorasExtras =  $cajas->SumaTotalCantidadCreditosPagadosHorasExtras + 1;
+
+    }
     // $cajas->SumaTotalCreditosPagadosTotales = $cajas->SumaTotalCreditosPagadosTotales + $credPagados->monto;
-    $cajas->SumaTotalCantidadCreditosPagadosTotales = $cajas->SumaTotalCantidadCreditosPagadosTotales + 1;
+
+    if ($cajas->estado == 'Abierta') {
+
+        $cajas->SumaTotalCantidadCreditosPagadosTotales = $cajas->SumaTotalCantidadCreditosPagadosTotales + 1;
+    }
+    
 
 }
-// return $cajas->SumaTotalCreditosPagados;
+// return $cajas->SumaTotalCreditosPagadosHorasExtrasPorCaja;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //                    GESTIONAR DETALLE CREDITOS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-$detalle_creditos = Detalle_credito::get();
 
-// return $detalle_creditos;
+            if ($cajas->estado == 'Cerrada') {
 
-foreach ($detalle_creditos as $detalleCredito ) {
+                $historialCreditosCaja = HistorialCreditoCaja::where('caja_id', $id)->first();
+                if($historialCreditosCaja){
+                    // return $historialCreditosCaja;
+                    $cajas->SumaTotalCantidadCreditosVigentes = $historialCreditosCaja->hist_creditos_vigentes;
+                    $cajas->SumaTotalCantidadCreditosVencidos = $historialCreditosCaja->hist_creditos_vencidos;
+                    $cajas->SumaTotalCantidadCreditosPagadosTotales = $historialCreditosCaja->hist_creditos_pagados;
+                    $cajas->hist_creditos_nuevos = $historialCreditosCaja->hist_creditos_nuevos;
+                    $cajas->hist_total_creditos = $historialCreditosCaja->hist_total_creditos;
+                }else{
+                    $cajas->SumaTotalCantidadCreditosVigentes = 0;
+                    $cajas->SumaTotalCantidadCreditosVencidos = 0;
+                    $cajas->SumaTotalCantidadCreditosPagadosTotales = 0;
+                    $cajas->hist_creditos_nuevos = 0;
+                    $cajas->hist_total_creditos = 0;
+                }
+                
+            }
 
-    if ($detalleCredito->estado_credito == 'Vigente') {
+            
+                $detalle_creditos = Detalle_credito::get();
 
-        $cajas->SumaTotalCantidadCreditosVigentes = $cajas->SumaTotalCantidadCreditosVigentes + 1;
-        $cajas->SumaTotalMontoCreditosVigentes = $cajas->SumaTotalMontoCreditosVigentes + $detalleCredito->monto;
+                // return $detalle_creditos;
 
+                foreach ($detalle_creditos as $detalleCredito ) {
 
-    }
-
-    if ($detalleCredito->estado_credito == 'Vencido') {
-
-        $cajas->SumaTotalCantidadCreditosVencidos = $cajas->SumaTotalCantidadCreditosVencidos + 1;
-        $cajas->SumaTotalMontoCreditosVencidos = $cajas->SumaTotalMontoCreditosVencidos + $detalleCredito->monto;
-
-
-    }
-
-    // if ($detalleCredito->estado_credito == 'Pagado') {
-
-    //     $cajas->SumaTotalCantidadCreditosPagado = $cajas->SumaTotalCantidadCreditosPagado + 1;
-    //     $cajas->SumaTotalMontoCreditosPagado = $cajas->SumaTotalMontoCreditosPagado + $detalleCredito->monto;
+                    if ($detalleCredito->estado_credito == 'Vigente') {
+                        if ($cajas->estado == 'Abierta') {
+                            $cajas->SumaTotalCantidadCreditosVigentes = $cajas->SumaTotalCantidadCreditosVigentes + 1;
+                        }
+                        $cajas->SumaTotalMontoCreditosVigentes = $cajas->SumaTotalMontoCreditosVigentes + $detalleCredito->monto;
 
 
-    // }
+                    }
 
-}
+                    if ($detalleCredito->estado_credito == 'Vencido') {
 
+                        if ($cajas->estado == 'Abierta') {
+                            $cajas->SumaTotalCantidadCreditosVencidos = $cajas->SumaTotalCantidadCreditosVencidos + 1;
+                        }
+                        $cajas->SumaTotalMontoCreditosVencidos = $cajas->SumaTotalMontoCreditosVencidos + $detalleCredito->monto;
+
+
+                    }
+
+                    // if ($detalleCredito->estado_credito == 'Pagado') {
+
+                    //     $cajas->SumaTotalCantidadCreditosPagado = $cajas->SumaTotalCantidadCreditosPagado + 1;
+                    //     $cajas->SumaTotalMontoCreditosPagado = $cajas->SumaTotalMontoCreditosPagado + $detalleCredito->monto;
+
+
+                    // }
+
+                }
+            
 
 // return $cajas->SumaTotalCantidadCreditosVigentes;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2023,14 +2085,17 @@ $ojot = [];
 
 
                 }
-
+                
                 if($serv->status == 'Falta pagar'){
                     $cajas->SumaTotalServiciosPorPagar = $cajas->SumaTotalServiciosPorPagar + $serv->total_venta;
-                    $cajas->SumaTotalCantidadServiciosPorPagar = $cajas->SumaTotalCantidadServiciosPorPagar + 1;
+                    
+                        $cajas->SumaTotalCantidadServiciosPorPagar = $cajas->SumaTotalCantidadServiciosPorPagar + 1;
+                   
                 }
 
                 if($serv->modo_pago == 'Cortesía' && $serv->status == 'Exonerado'){
                     $cajas->SumaTotalServiciosCortesia = $cajas->SumaTotalServiciosCortesia + $serv->total_venta;
+                    
                     $cajas->SumaTotalCantidadServiciosCortesia = $cajas->SumaTotalCantidadServiciosCortesia + 1;
                 }
 
@@ -2178,6 +2243,57 @@ $ojot = [];
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //Guardamos registros en la tabla historialcreditoscaja
+
+                $historialCreditosCaja = new HistorialCreditoCaja();
+                $historialCreditosCaja->hist_creditos_vigentes = $request->get('hist_creditos_vigentes');
+                $historialCreditosCaja->hist_creditos_vencidos = $request->get('hist_creditos_vencidos');
+                $historialCreditosCaja->hist_creditos_pagados = $request->get('hist_creditos_pagados');
+                $historialCreditosCaja->hist_creditos_nuevos = $request->get('hist_creditos_nuevos');
+                $historialCreditosCaja->hist_total_creditos = $request->get('hist_total_creditos');
+                $historialCreditosCaja->user_id = $request->get('idusuario');
+                $historialCreditosCaja->caja_id = $caja_id;
+                $historialCreditosCaja->save();
+
+                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                //when we open the box we inital the stock
+
+                
+
+                $controlStock = ControlStock::where('caja_id', $caja_id)->get();
+
+                if($controlStock){
+                    $stocks = self::get_product_stock(['id','stock','nombre']);
+                    if($stocks){
+                    foreach ($stocks as $value) {
+                        $control_stock = ControlStock::where('articulo_id',$value->id)->where('caja_id',$caja_id)->first();
+                        if($control_stock){
+                            $control_stock->stock_cierre = $value->stock;
+                            $control_stock->stock_dif  = $control_stock->stock_cierre - $value->stock;
+                            $control_stock->stock_cierre_operador  = $request->get('stock_cierre_operador');
+                            $control_stock->observaciones  = $request->get('observacionesStock');
+                            $control_stock->update();
+                        }else{
+                            $control_stock = new ControlStock();
+                            $control_stock->stock_inicio = 0;
+                            $control_stock->stock_cierre = $value->stock;
+                            $control_stock->user_id  = $idUsuario;
+                            $control_stock->articulo_id  = $value->id;
+                            $control_stock->caja_id  = $Caja->id;
+                            $control_stock->save();
+                        }
+                        
+                    }
+
+                }
+                }
+
+                
+
+
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 // TODO Guardamos en la tabla historial vueltos pendientes para que luego pueda ser consultada si alteracion en el registro
 
                 $vueltos_pendientes_Actuales = Excedentes_Recibidos_Caja_Actual::where('caja_id', $caja_id)->get();
@@ -2197,6 +2313,7 @@ $ojot = [];
                         $historialVueltosPendientes->save();
                     }
                 }
+                
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

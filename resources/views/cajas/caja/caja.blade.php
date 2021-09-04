@@ -20,6 +20,16 @@
                 <input id="total_punto_dif" name="total_punto_dif" type="hidden" value="0">
                 <input id="total_trans_dif" name="total_trans_dif" type="hidden" value="0">
                 <input name="idusuario" type="hidden" value="{{Auth::user()->id}}">
+                {{-- cargadmos el historial de los creditos para que no se modifiquen cuando hagan un pago despues de cerrar la caja --}}
+                <input name="hist_creditos_vigentes" type="hidden" value="{{ $cajas->SumaTotalCantidadCreditosVigentes ?? '0' }}">
+                <input name="hist_creditos_vencidos" type="hidden" value="{{ $cajas->SumaTotalCantidadCreditosVencidos ?? '0' }}">
+                <input name="hist_creditos_pagados" type="hidden" value="{{$cajas->SumaTotalCantidadCreditosPagadosTotales ?? '0'}}">
+                <input name="hist_creditos_nuevos" type="hidden" value="{{ $cajas->SumaTotalCantidadServiciosPorPagar + $cajas->SumaTotalCantidadVentasCredito ?? '0' }}">
+                <input name="hist_total_creditos" type="hidden" value="{{$cajas->SumaTotalCantidadCreditosVigentes + $cajas->SumaTotalCantidadCreditosVencidos + $cajas->SumaTotalCantidadCreditosPagadosTotales ?? '0'}}">
+                <input name="stock_cierre_operador" type="hidden" value="">
+                <input name="observacionesStock" type="hidden" value="">
+
+
                 <input name="url" type="hidden" value="{{URL::previous()}}">
                 {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                     <div class="form-group col-md-3">

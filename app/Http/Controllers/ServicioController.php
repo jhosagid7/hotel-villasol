@@ -4931,26 +4931,45 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                     //     $modo_pago = $request->get('modo_pago');
                     // }
 
-                    $horarios = Horario::findOrFail($request->get('horario_id'));
-                    // return $horarios;
-                    if($horarios){
-                        $tipo =  $horarios->tipo;
-                        $horario = $horarios->nombre;
-                        // return $tipo;
-                        if($tipo == '24 HORAS'){
+                    
 
-                            $fechaS = $request->get('fecha_salida');
-                            $fecha_salida = Carbon::createFromFormat('Y-m-d', $fechaS);
-                            $fecha_salida->addDays(1);
-                            $fecha_salida = $fecha_salida->toDateString();
-                            $hora_salida = $request->get('hora_entrada');
+                    $comprobarHoraServicio_id = Servicio::where('habitacion_id',$habitacion_id_vieja)->where('status_servicio', 'Iniciado')->where('id', $id)->first();
+                    // return $comprobarHoraServicio_id;
 
-                        }else{
+                    if($comprobarHoraServicio_id){
+                        
+                        $horarios = Horario::findOrFail($request->get('horario_id'));
 
+                        if($comprobarHoraServicio_id->tipo_habitacion == $horarios->tipo){
+                            $tipo =  $comprobarHoraServicio_id->tipo_habitacion;
+                            $horario = $comprobarHoraServicio_id->horario;
+                            // return 'es igual';
                             $fecha_salida = $request->get('fecha_salida');
                             $hora_salida = $request->get('hora_salida');
+                        }else{
+                            // return 'no es igual';
+                            if($horarios){
+                                $tipo =  $horarios->tipo;
+                                $horario = $horarios->nombre;
+                                // return $tipo;
+                                if($tipo == '24 HORAS'){
+
+                                    $fechaS = $request->get('fecha_salida');
+                                    $fecha_salida = Carbon::createFromFormat('Y-m-d', $fechaS);
+                                    $fecha_salida->addDays(1);
+                                    $fecha_salida = $fecha_salida->toDateString();
+                                    $hora_salida = $request->get('hora_entrada');
+
+                                }else{
+
+                                    $fecha_salida = $request->get('fecha_salida');
+                                    $hora_salida = $request->get('hora_salida');
+                                }
+                            }
                         }
+
                     }
+                    
 
 
 

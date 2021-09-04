@@ -3142,7 +3142,7 @@
 
                 VueltosExcdt.innerHTML = numDecimal(VueltosExc);
                 // Excdt.innerHTML = numDecimal(Exc);
-                RestaTotal.innerHTML = resta; //se llena el campo resta
+                RestaTotal.innerHTML = numDecimal(resta); //se llena el campo resta
 
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3157,8 +3157,8 @@
                let tasaDolarHabitacion = $('#tasaDolarHabitacion').val();
                let tasaPesoHabitacion = $('#tasaPesoHabitacion').val();
 
-                RestaTotalV.innerHTML = resta; //se llena el campo resta
-                PagoTtotalV.innerHTML = resta; //se llena el campo resta
+                RestaTotalV.innerHTML = numDecimal(resta); //se llena el campo resta
+                PagoTtotalV.innerHTML = numDecimal(resta); //se llena el campo resta
                 DMontoDolarV();
 
                     } else {
