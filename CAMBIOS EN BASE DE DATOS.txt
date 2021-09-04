@@ -1,4 +1,0 @@
-CAMBIOS EN BASE DE DATOS
-
-credito_pagados
-	campo user_id => tipo de dato decimal a biging.
