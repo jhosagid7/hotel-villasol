@@ -1061,7 +1061,7 @@ text-overflow: ellipsis;
 
           <div class="modal-footer">
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cerrar</button>
-            <a id="procesarpago" href="#" class="btn btn-outline">Procesar pago</a>
+            <a id="procesarpago" href="#" class="btn btn-outline submit-prevent-button">Procesar pago</a>
 
           </div>
 

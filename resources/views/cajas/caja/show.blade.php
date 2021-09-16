@@ -361,7 +361,7 @@
                             @else
                                 {{ $cajas->hist_creditos_nuevos ?? '0' }}
                             @endif
-                            
+
                         </b>
                     </td>
                   </tr>
@@ -384,7 +384,7 @@
                             @else
                                 {{ $cajas->hist_total_creditos ?? '0'}}
                             @endif
-                            
+
                         </b>
                     </td>
                   </tr>
@@ -2224,7 +2224,7 @@
     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 <br>
     @can('haveaccess', 'cajadatosventas.show')
-    @if (count($cajas->pago_extras) > 0)
+    @if (count($cajas->horas_extras) > 0)
     <!-- Table row -->
     <div class="row">
         <div class="panel panel-primary">

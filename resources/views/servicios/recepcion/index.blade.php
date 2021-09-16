@@ -295,7 +295,7 @@
                                 <div class="modal-dialog modal-success">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <form id="form2" action="{{route('proceso')}}" method="post">
+                                            <form id="form2" action="{{route('proceso')}}" method="post" class="submit-prevent-form">
                                                 @csrf
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -396,7 +396,7 @@
                                     </div>
                                       <div class="modal-footer">
                                         <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
-                                        <button name="procesarServicio" id="procesarServicio" class="btn btn-outline ocular" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+                                        <button name="procesarServicio" id="procesarServicio" class="btn btn-outline ocular submit-prevent-button" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
                                         {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
                                       </div>
                                     </form>

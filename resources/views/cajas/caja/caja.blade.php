@@ -1,6 +1,6 @@
 <div class="modal fade bd-example-modal-lg" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{$caja->id}}">
 
-    <form action="{{ route('caja.update', $caja->id)}}" method="POST">
+    <form action="{{ route('caja.update', $caja->id)}}" method="POST" class="submit-prevent-form">
         @csrf
         @method('PUT')
         <div class="row">
@@ -285,7 +285,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn default" data-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Confirmar</button>
+                    <button type="submit" class="btn btn-primary submit-prevent-button">Confirmar</button>
                 </div>
             </div>
         </div>
