@@ -77,7 +77,7 @@
             <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                 <div class="form-group">
                     <label class="text-blue text-bold" for="tipo_comprobante">Teléfono:</label>
-                    <p>{{ $cliente->telefono ?? ''}}</p>
+                    <p>{{ $detalle_pagado_oficina->telefono_pago_movil_cliente ?? ''}}</p>
                 </div>
             </div>
 

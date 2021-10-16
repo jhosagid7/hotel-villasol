@@ -1022,7 +1022,7 @@ if(isset($servicio->id)){
     <div class="modal-dialog modal-lg modal-primary">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <form id="form3" action="{{route('servicio.update', $servicio->id)}}" method="post">
+                <form class="submit-prevent-form" id="form3" action="{{route('servicio.update', $servicio->id)}}" method="post">
                     @csrf
                     @method('PUT')
                 <div class="modal-header">
@@ -1447,7 +1447,7 @@ if(isset($servicio->id)){
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
             <div class=""
             id="">
-            <button id="enviar" class="btn btn-outline" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
+            <button id="enviar" class="btn btn-outline submit-prevent-button" type="submit"><i class='glyphicon glyphicon-search'></i> Procesar Servicio</button>
         </div>
             {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
           </div>

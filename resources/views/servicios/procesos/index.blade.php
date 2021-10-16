@@ -139,7 +139,7 @@ text-overflow: ellipsis;
 
                                     @if ($habitacion)
                                         {{-- si hay habitacion --}}
-                                        <form class="form-horizontal" id="form1" role="form" action="{{ route('servicio.store')}}" method="POST" autocomplete="off">
+                                        <form class="form-horizontal submit-prevent-form" id="form1" role="form" action="{{ route('servicio.store')}}" method="POST" autocomplete="off">
                                         @csrf
                                         {{-- <form class="form-horizontal" method="post" id="form1" action="index.php?view=addproceso" role="form"> --}}
                                     <div class="box box-default">
@@ -1061,7 +1061,7 @@ text-overflow: ellipsis;
 
           <div class="modal-footer">
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cerrar</button>
-            <a id="procesarpago" href="#" class="btn btn-outline submit-prevent-button">Procesar pago</a>
+            <button id="procesarpago" class="btn btn-outline submit-prevent-button">Procesar pago</button>
 
           </div>
 

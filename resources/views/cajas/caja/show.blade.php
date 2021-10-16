@@ -2,12 +2,12 @@
 @section('contenido')
 
 
-{{-- <script>
+<!-- <script>
     table {
         border-spacing: 0;
         border-collapse: collapse;
     }
-</script> --}}
+</script> -->
 
 
     <!-- Main content -->
@@ -68,7 +68,7 @@
     <div class="row">
       <div class="col-xs-12">
         <h2 class="page-header">
-          <i class="fa fa-globe"></i> {{ $appDate[0]->nombre }}
+          <i class="fa fa-globe"></i> {{ config('app.name', 'VillaSoft Hotel') }}
         <small class="pull-right">Fecha: {{date('d-m-y')}}</small>
         </h2>
       </div>

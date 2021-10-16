@@ -525,7 +525,7 @@ class ExcedenteController extends Controller
         // return $cliente_id;
         $pagarporoficina = Excedente::where('persona_id',$id)->where('tipo','Pagar_por_oficina')->first();
 
-        $historialExcedentes = HistorialExcedente::where('persona_id',$id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
+        $historialExcedentes = HistorialExcedente::where('persona_id',$id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->orderBy('caja_id', 'ASC')->get();
 
         // return $pagarporoficina;
 

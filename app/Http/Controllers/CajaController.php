@@ -925,7 +925,7 @@ foreach ($cajas->creditos_pagados as $credPagados ) {
 
         $cajas->SumaTotalCantidadCreditosPagadosTotales = $cajas->SumaTotalCantidadCreditosPagadosTotales + 1;
     }
-    
+
 
 }
 // return $cajas->SumaTotalCreditosPagadosHorasExtrasPorCaja;
@@ -953,10 +953,10 @@ foreach ($cajas->creditos_pagados as $credPagados ) {
                     $cajas->hist_creditos_nuevos = 0;
                     $cajas->hist_total_creditos = 0;
                 }
-                
+
             }
 
-            
+
                 $detalle_creditos = Detalle_credito::get();
 
                 // return $detalle_creditos;
@@ -991,7 +991,7 @@ foreach ($cajas->creditos_pagados as $credPagados ) {
                     // }
 
                 }
-            
+
 
 // return $cajas->SumaTotalCantidadCreditosVigentes;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2085,17 +2085,17 @@ $ojot = [];
 
 
                 }
-                
+
                 if($serv->status == 'Falta pagar'){
                     $cajas->SumaTotalServiciosPorPagar = $cajas->SumaTotalServiciosPorPagar + $serv->total_venta;
-                    
+
                         $cajas->SumaTotalCantidadServiciosPorPagar = $cajas->SumaTotalCantidadServiciosPorPagar + 1;
-                   
+
                 }
 
                 if($serv->modo_pago == 'Cortesía' && $serv->status == 'Exonerado'){
                     $cajas->SumaTotalServiciosCortesia = $cajas->SumaTotalServiciosCortesia + $serv->total_venta;
-                    
+
                     $cajas->SumaTotalCantidadServiciosCortesia = $cajas->SumaTotalCantidadServiciosCortesia + 1;
                 }
 
@@ -2259,7 +2259,7 @@ $ojot = [];
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 //when we open the box we inital the stock
 
-                
+
 
                 $controlStock = ControlStock::where('caja_id', $caja_id)->get();
 
@@ -2283,13 +2283,13 @@ $ojot = [];
                             $control_stock->caja_id  = $Caja->id;
                             $control_stock->save();
                         }
-                        
+
                     }
 
                 }
                 }
 
-                
+
 
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2313,7 +2313,7 @@ $ojot = [];
                         $historialVueltosPendientes->save();
                     }
                 }
-                
+
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

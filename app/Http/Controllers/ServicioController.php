@@ -1101,6 +1101,13 @@ class ServicioController extends Controller
             $habitacion->status = 'Ocupada';
             $habitacion->update();
 
+            $printer = new PrinterController;
+            if($printer){
+                $printer->ticketServicio('Servicio', $numeroServisio, $nombreHabitacion, $detalleHabitacion, $modo_pago, $tipo_pago, $total_costo, $operador,$tipo);
+            }
+
+
+
             DB::commit();
 
         }catch(\Exception $e)
@@ -1116,9 +1123,7 @@ class ServicioController extends Controller
             }
         }
 
-        $printer = new PrinterController;
 
-        $printer->ticketServicio('Servicio', $numeroServisio, $nombreHabitacion, $detalleHabitacion, $modo_pago, $tipo_pago, $total_costo, $operador,$tipo);
         // return view('checkin.checkin.index', compact('title','tasas'));
         return Redirect::to('checkout')->with('success', 'El servicio fué registrado exitosamente');
     }
@@ -4931,13 +4936,13 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                     //     $modo_pago = $request->get('modo_pago');
                     // }
 
-                    
+
 
                     $comprobarHoraServicio_id = Servicio::where('habitacion_id',$habitacion_id_vieja)->where('status_servicio', 'Iniciado')->where('id', $id)->first();
                     // return $comprobarHoraServicio_id;
 
                     if($comprobarHoraServicio_id){
-                        
+
                         $horarios = Horario::findOrFail($request->get('horario_id'));
 
                         if($comprobarHoraServicio_id->tipo_habitacion == $horarios->tipo){
@@ -4969,7 +4974,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                         }
 
                     }
-                    
+
 
 
 

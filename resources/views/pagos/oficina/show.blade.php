@@ -184,6 +184,7 @@
                                 <th>Monto Operacion</th>
                                 <th>Deuda Actual</th>
                                 <th>Fecha Emision</th>
+                                <th>Caja ID N°</th>
 
                             </thead>
 
@@ -201,6 +202,7 @@
                                     <td>{{$historialExcedente->saldo_operacion ?? ''}}</td>
                                     <td>{{$historialExcedente->saldo_disponible ?? ''}}</td>
                                     <td>{{$historialExcedente->created_at ?? ''}}</td>
+                                    <td>{{$historialExcedente->caja_id ?? ''}}</td>
 
 
                                     </tr>

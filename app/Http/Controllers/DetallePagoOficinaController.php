@@ -48,15 +48,15 @@ class DetallePagoOficinaController extends Controller
 
 
 
-        $telefono_pago_movil_cliente = $request->get('pago_movil_banco_cliente');
+        $telefono_pago_movil_cliente = $request->get('pago_movil');
 
 
-
+        // return $telefono_pago_movil_cliente;
 
         $codigo_cliente = $request->get('codigo_banco_cliente');
-        $num_cuenta_cliente = $request->get('num_cuenta_banco_cliente');
-        $tipo_cuenta_cliente = $request->get('tipo_cuenta_banco_cliente');
-        $nombre_banco_cliente = $request->get('nombre_banco_cliente');
+        $num_cuenta_cliente = $request->get('num_cuenta');
+        $tipo_cuenta_cliente = $request->get('tipo_cuenta');
+        $nombre_banco_cliente = $request->get('nombre_banco');
 
 
 
@@ -111,7 +111,7 @@ class DetallePagoOficinaController extends Controller
             $DetallePagoOficina = new  DetallePagoOficina();
             $DetallePagoOficina->tipo_pago = $tipo_documento;
             $DetallePagoOficina->telefono_pago_movil_cliente = $telefono_pago_movil_cliente;
-            $DetallePagoOficina->num_cuenta_cliente = $codigo_cliente.'-'.$num_cuenta_cliente;
+            $DetallePagoOficina->num_cuenta_cliente = $num_cuenta_cliente;
             $DetallePagoOficina->tipo_cuenta_cliente = $tipo_cuenta_cliente;
             $DetallePagoOficina->nombre_banco_cliente = $nombre_banco_cliente;
             $DetallePagoOficina->num_transaccion = $num_transaccion;

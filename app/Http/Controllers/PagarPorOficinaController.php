@@ -159,6 +159,8 @@ class PagarPorOficinaController extends Controller
 
         $historialExcedentes = HistorialExcedente::where('detalle_pago_oficina_id',$id)->where('tipo_registro','Pago_por_oficina')->where('status','Pagado')->get();
 
+        // return $historialExcedentes;
+
 
 // return $historialExcedentes;
         $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
@@ -180,7 +182,8 @@ class PagarPorOficinaController extends Controller
         // $pagarporoficina = Excedente::where('persona_id',$historialExcedentes->persona_id)->where('tipo','Pagar_por_oficina')->first();
         $bancosEmpresas = BancosEmpresa::where('pertenece','Empresa')->where('sucursal_id',$caja->sucursal->id)->get();
         $detalle_pagado_oficina = DetallePagoOficina::findOrFail($id);
-        $cliente = Persona::findOrFail($detalle_pagado_oficina->id);
+        $cliente = Persona::findOrFail($detalle_pagado_oficina->persona_id);
+        // return $detalle_pagado_oficina->telefono_pago_movil_cliente;
         // $excedente = Excedente::
         // return $cliente;
             $bancos = Banco::get();

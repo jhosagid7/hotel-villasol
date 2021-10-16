@@ -51,6 +51,7 @@
                     <th>Cedula</th>
                     <th>Modo pago</th>
                     <th>Telefono</th>
+                    <th>Fecha</th>
                     <th>Total Factura</th>
 
                     <th>Opciones</th>
@@ -77,6 +78,7 @@
                              {{-- {{ $pagosOfic->isEfectivo }} --}}
                         </td>
                          <td>{{ $pagosOfic->telefono_cliente }}</td>
+                         <td>{{ $pagosOfic->updated_at }}</td>
                          <td>{{ $pagosOfic->excedente}}</td>
 
                          <td>
