@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Articulo extends Model
 {
+    //hola esto es un conmentario
    //Hacemos referencia a que talla se refiere este modelo
     // protected $table = 'articulo';
 
