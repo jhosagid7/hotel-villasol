@@ -485,6 +485,8 @@
                 <li><a href="{{asset('reporte-ingreso')}}"><i class="fa fa-desktop"></i> Reporte General Compras</a></li>
                 <li><a href="{{asset('reporte-general-creditos-buscar')}}"><i class="fa fa-desktop"></i> Reporte General Creditos</a></li>
                 <li><a href="{{asset('reporte-creditos')}}"><i class="fa fa-desktop"></i> Reporte Creditos Pagados</a></li>
+                <li><a href="{{asset('reporte-cargos')}}"><i class="fa fa-desktop"></i> Reporte Cargos</a></li>
+                <li><a href="{{asset('reporte-descargos')}}"><i class="fa fa-desktop"></i> Reporte Descargos</a></li>
                 @endcan
             </ul>
         </li>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Caja;
 use App\User;
 use App\Venta;
 use App\Credito;
@@ -9,8 +10,8 @@ use App\Ingreso;
 use App\Persona;
 use App\Articulo;
 use Carbon\Carbon;
+use App\Transaction;
 use App\Articulo_venta;
-use App\Caja;
 use App\Detalle_credito;
 use Illuminate\Http\Request;
 use App\Detalle_Creditos_Pagado;
@@ -178,6 +179,76 @@ class ReporteController extends Controller
         // }
 // return $ingresos;
         return view('reportes.ingresos.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','estado','proveedor','operador', 'title'));
+    }
+
+    public function reportCargosIndex(){
+        // returna la vista primcipal de reportTransactionsIndex
+        $title = 'Reporte General de Cargos por Fechas';
+
+        $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();
+
+
+        return view('reportes.cargos.index', compact('users', 'title'));
+    }
+
+    public function reportCargosShow(Request $request){
+        /* Este metodo no filitra los campos de busqueda y nos envia el resultado a la vista show */
+        $fecha = $request->get('fecha');
+        $autorizado_por = $request->get('autorizado_por');
+        $operador = $request->get('operador');
+        $title = 'Reporte General de Cargos';
+        $ingresos = Transaction::where('tipo_operacion', '=', 'Cargo')
+        ->fecha($fecha)
+        ->autorizadoPor($autorizado_por)
+        ->operador($operador)
+        ->get();
+
+        if($fecha){
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+
+            }
+
+
+            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+
+            return view('reportes.cargos.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','autorizado_por','operador', 'title'));
+    }
+
+    public function reportDescargosIndex(){
+        // returna la vista primcipal de reportTransactionsIndex
+        $title = 'Reporte General de Descargo por Fechas';
+
+        $users = User::where('id', '<>', '1')->Where('id', '<>', '2')->get();
+
+
+        return view('reportes.descargos.index', compact('users', 'title'));
+    }
+
+    public function reportdescargosShow(Request $request){
+        /* Este metodo no filitra los campos de busqueda y nos envia el resultado a la vista show */
+        $fecha = $request->get('fecha');
+        $autorizado_por = $request->get('autorizado_por');
+        $operador = $request->get('operador');
+        $title = 'Reporte General de Descargo';
+        $ingresos = Transaction::where('tipo_operacion', '=', 'Descargo')
+        ->fecha($fecha)
+        ->autorizadoPor($autorizado_por)
+        ->operador($operador)
+        ->get();
+
+        if($fecha){
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+
+            }
+
+
+            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+
+            return view('reportes.descargos.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','autorizado_por','operador', 'title'));
     }
 
 

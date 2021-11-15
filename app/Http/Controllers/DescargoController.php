@@ -27,14 +27,13 @@ class DescargoController extends Controller
     {
         $fecha = $request->get('fecha');
         $operador = $request->get('operador');
-        $estado = $request->get('estado');
+
 
         $users = User::where('id','<>', '1')->where('id','<>', '2')->get();
 
         $cargos = Transaction::where('tipo_operacion', '=', 'Descargo')
         ->fecha($fecha)
         ->operador($operador)
-        ->estado($estado)
         ->get();
         return view('transactions.descargos.index', compact('cargos','users'));
     }

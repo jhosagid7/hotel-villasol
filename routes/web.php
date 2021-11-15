@@ -146,6 +146,10 @@ Route::get('/precios', 'ReporteController@listadoPrecio')->name('precios');
 Route::get('/reporte-general', 'ReporteController@reporteGeneral')->name('reporte-general');
 Route::get('/reporte-ingreso', 'ReporteController@reportIngresosIndex')->name('reporte-ingreso');
 Route::get('/reporte-compras', 'ReporteController@reportIngresosShow')->name('reporte-compras');
+Route::get('/reporte-cargos', 'ReporteController@reportCargosIndex')->name('reporte-cargos');
+Route::get('/reporte-cargos-detalle', 'ReporteController@reportCargosShow')->name('reporte-cargos-detalle');
+Route::get('/reporte-descargos', 'ReporteController@reportDescargosIndex')->name('reporte-descargos');
+Route::get('/reporte-descargos-detalle', 'ReporteController@reportDescargosShow')->name('reporte-descargos-detalle');
 
 
 Route::resource('/cargos', 'CargoController', ['except'=>[

@@ -27,14 +27,13 @@ class CargoController extends Controller
     {
         $fecha = $request->get('fecha');
         $operador = $request->get('operador');
-        $estado = $request->get('estado');
+
 
         $users = User::where('id','<>', '1')->where('id','<>', '2')->get();
 
         $cargos = Transaction::where('tipo_operacion', '=', 'Cargo')
         ->fecha($fecha)
         ->operador($operador)
-        ->estado($estado)
         ->get();
         return view('transactions.cargos.index', compact('cargos','users'));
     }
@@ -139,7 +138,7 @@ class CargoController extends Controller
      */
     public function show($id)
     {
-        $title = 'Recivo de Cargo';
+        $title = 'Recivo de Cargos';
         $cargos = Transaction::findOrfail($id);
 
         return view("transactions.cargos.show", compact('title', 'cargos'));

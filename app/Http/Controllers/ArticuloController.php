@@ -66,21 +66,21 @@ class ArticuloController extends Controller
         // return $request->all();
         //creamos un objeto del modelo categoria
         $articulo = new Articulo;
-        $articulo->categoria_id  = $request->get('categoria_id');
-        $articulo->codigo       = $request->get('codigo');
-        $articulo->nombre       = $request->get('nombre');
-        $articulo->stock         = 0;
+        $articulo->categoria_id     = $request->get('categoria_id');
+        $articulo->codigo           = $request->get('codigo');
+        $articulo->nombre           = $request->get('nombre');
+        $articulo->stock            = 0;
         $articulo->unidades         = $request->get('unidades');
-        $articulo->vender_al         = $request->get('vender_al');
-        $articulo->precio_costo         = 0;
-        $articulo->porEspecial         = $request->porEspecial;
-        $articulo->isDolar         = $request->isDolar;
-        $articulo->isPeso         = $request->isPeso;
-        $articulo->isTransPunto         = $request->isTransPunto;
-        $articulo->isMixto         = $request->isMixto;
-        $articulo->isEfectivo         = $request->isEfectivo;
-        $articulo->isKilo         = $request->isKilo;
-        $articulo->descripcion  = $request->get('descripcion');
+        $articulo->vender_al        = $request->get('vender_al');
+        $articulo->precio_costo     = 0;
+        $articulo->porEspecial      = $request->porEspecial;
+        $articulo->isDolar          = $request->isDolar;
+        $articulo->isPeso           = $request->isPeso;
+        $articulo->isTransPunto     = $request->isTransPunto;
+        $articulo->isMixto          = $request->isMixto;
+        $articulo->isEfectivo       = $request->isEfectivo;
+        $articulo->isKilo           = $request->isKilo;
+        $articulo->descripcion      = $request->get('descripcion');
 
         if ($request->hasFile('imagen')) {
             $file = $request->file('imagen');
@@ -113,20 +113,20 @@ class ArticuloController extends Controller
     public function update(Request $request, $id)
     {
         $articulo = Articulo::findOrFail($id);
-        $articulo->categoria_id  = $request->get('categoria_id');
-        $articulo->codigo       = $request->get('codigo');
-        $articulo->nombre       = $request->get('nombre');
-        $articulo->precio_costo         = $request->get('precio_costo');
-        $articulo->porEspecial         = $request->porEspecial;
-        $articulo->isDolar         = $request->isDolar;
-        $articulo->isPeso         = $request->isPeso;
-        $articulo->isTransPunto         = $request->isTransPunto;
-        $articulo->isMixto         = $request->isMixto;
-        $articulo->isEfectivo         = $request->isEfectivo;
-        $articulo->isKilo         = $request->isKilo;
-        $articulo->descripcion  = $request->get('descripcion');
+        $articulo->categoria_id     = $request->get('categoria_id');
+        $articulo->codigo           = $request->get('codigo');
+        $articulo->nombre           = $request->get('nombre');
+        $articulo->precio_costo     = $request->get('precio_costo');
+        $articulo->porEspecial      = $request->porEspecial;
+        $articulo->isDolar          = $request->isDolar;
+        $articulo->isPeso           = $request->isPeso;
+        $articulo->isTransPunto     = $request->isTransPunto;
+        $articulo->isMixto          = $request->isMixto;
+        $articulo->isEfectivo       = $request->isEfectivo;
+        $articulo->isKilo           = $request->isKilo;
+        $articulo->descripcion      = $request->get('descripcion');
         $articulo->unidades         = $request->get('unidades');
-        $articulo->vender_al         = $request->get('vender_al');
+        $articulo->vender_al        = $request->get('vender_al');
 
         if ($request->hasFile('imagen')) {
             $file = $request->file('imagen');

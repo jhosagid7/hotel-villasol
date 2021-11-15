@@ -41,22 +41,42 @@ class Transaction extends Model
     public function scopeFecha($query, $fecha){
 
         if($fecha){
-            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-                $fecha_inicio = Carbon::parse($fecha_inicio. '00:00:00')->format('Y-m-d H:i:s');
-                $fecha_fin = Carbon::parse($fecha_fin. '23:59:59')->format('Y-m-d H:i:s');
-            return $query->whereBetween('created_at', [$fecha_inicio, $fecha_fin]);
+        list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+            $fecha_inicio = Carbon::parse($fecha_inicio. '00:00:00')->format('Y-m-d H:i:s');
+            $fecha_fin = Carbon::parse($fecha_fin. '23:59:59')->format('Y-m-d H:i:s');
+        return $query->whereBetween('transactions.created_at', [$fecha_inicio, $fecha_fin]);
         }
     }
 
     public function scopeOperador($query, $operador){
         if($operador)
-        return $query->where('user_id', 'LIKE', "%$operador%");
+        return $query->where('transactions.user_id', '=', "$operador");
     }
 
-    public function scopeEstado($query, $estado){
-        if($estado)
-        return $query->where('estado', 'LIKE', "$estado");
+    public function scopeAutorizadoPor($query, $proveedor){
+        if($proveedor)
+        return $query->where('transactions.autorizado_por', '=', "$autorizado_por");
     }
+
+    // public function scopeFecha($query, $fecha){
+
+    //     if($fecha){
+    //         list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+    //             $fecha_inicio = Carbon::parse($fecha_inicio. '00:00:00')->format('Y-m-d H:i:s');
+    //             $fecha_fin = Carbon::parse($fecha_fin. '23:59:59')->format('Y-m-d H:i:s');
+    //         return $query->whereBetween('created_at', [$fecha_inicio, $fecha_fin]);
+    //     }
+    // }
+
+    // public function scopeOperador($query, $operador){
+    //     if($operador)
+    //     return $query->where('user_id', 'LIKE', "%$operador%");
+    // }
+
+    // public function scopeEstado($query, $estado){
+    //     if($estado)
+    //     return $query->where('estado', 'LIKE', "$estado");
+    // }
 
     //este metodo nos permite dar formato al numero de la factura
     public static function numCodigo($proseso, $op, $id_cod) {
