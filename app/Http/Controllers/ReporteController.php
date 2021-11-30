@@ -70,16 +70,15 @@ class ReporteController extends Controller
     public function listadoInventario(){
         $title = 'Planilla de Inventario';
         $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
-            $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
-            $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
-            $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
-            $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
-            $articulos = DB::table('articulos as a')
-            ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
-
-            ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
-            ->orderBy('id', 'desc')
-            ->get();
+        $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
+        $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
+        $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
+        $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
+        $articulos = DB::table('articulos as a')
+        ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
+        ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
+        ->orderBy('id', 'desc')
+        ->get();
         // return $articulos;
         return view('reportes.inventario.listaInventario', compact('articulos','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo'));
     }
