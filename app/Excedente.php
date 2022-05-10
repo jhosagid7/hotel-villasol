@@ -75,7 +75,18 @@ class Excedente extends Model
         list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
             $fecha_inicio = Carbon::parse($fecha_inicio. '00:00:00')->format('Y-m-d H:i:s');
             $fecha_fin = Carbon::parse($fecha_fin. '23:59:59')->format('Y-m-d H:i:s');
-        return $query->whereBetween('articulos.created_at', [$fecha_inicio, $fecha_fin]);
+        return $query->whereBetween('created_at', [$fecha_inicio, $fecha_fin]);
         }
     }
+
+    public function scopeCliente($query, $name){
+        if($name)
+        return $query->where('nombre_cliente', 'LIKE', "%$name%");
+    }
+
+    public function scopeOperador($query, $codigo){
+        if($codigo)
+        return $query->where('user_id', 'LIKE', "$codigo");
+    }
+
 }

@@ -188,6 +188,10 @@ class Caja extends Model
         return $this->hasMany(HistorialCreditoCaja::class);
     }
 
+    public function Cambios(){
+        return $this->hasMany(Cambio::class);
+    }
+
 
 
 

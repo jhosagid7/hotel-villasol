@@ -35,10 +35,24 @@ class ExcedenteController extends Controller
             $mesActual = Carbon::now()->format('Y-m-d');
             $restaMes = Carbon::now()->subWeek(1);
             $restaMes = $restaMes->format('Y-m-d');
+
+            $fecha = $request->get('fecha');
+            $tipo = $request->get('tipo');
+            $cliente = $request->get('cliente');
+            $operador = $request->get('operador');
+
+            $users = User::Where('id', '<>', '2')->get();
+            $clientes = Persona::get();
+
+
             $title='Pagar por oficina';
             $pagarporoficinas = Excedente::where('tipo','Pagar_por_oficina')->get();
 
-
+            $pagarporoficinas = Excedente::where('tipo','Pagar_por_oficina')->fecha($fecha)
+            // ->tipo($tipo)
+            ->cliente($cliente)
+            ->operador($operador)
+            ->get();
 
 
 
@@ -119,7 +133,7 @@ class ExcedenteController extends Controller
 
 
 
-            return view('pagos.oficina.index', compact('title','pagarporoficinas'));
+            return view('pagos.oficina.index', compact('clientes','users','title','pagarporoficinas'));
         }
     }
 
@@ -529,7 +543,8 @@ class ExcedenteController extends Controller
 
         // return $pagarporoficina;
 
-
+        $pagarporoficina->caja_id = $historialExcedentes;
+        return $pagarporoficina;
 
         $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
         // return $tasaDolarHabitacion->tasa;

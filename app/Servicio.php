@@ -71,6 +71,14 @@ class Servicio extends Model
         return $this->hasMany(DetallePagoOficina::class);
     }
 
+    public function Cambios(){
+        return $this->hasMany(Cambio::class);
+    }
+
+    public function servicio_id_cambios(){
+        return $this->hasMany(Cambio::class);
+    }
+
 
 
     // public function habitacion()

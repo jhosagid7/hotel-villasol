@@ -929,7 +929,7 @@ if(isset($servicio->id)){
                                     <span class="input-group-addon">SERVICIOS</span>
                                     {{-- <select id="segr_name" name="segr_name" data-size="2" data-width="100%" class="selectpicker" multiple data-value="{{segr_name}}" title="Seleccione Grupo de Servicio"> --}}
                                     {{-- <option id="0" value="0">0</option> --}}
-                                    <select   data-size="2" data-width="100%" palceholder="hola" data-id="{{$habitacion->cat->id}}" title="Seleccione Servicio" name="horario" id="horario" class="precio form-control select2">
+                                    <select   data-size="2" data-width="100%" palceholder="hola" data-id="{{$habitacion->cat->id ?? ''}}" title="Seleccione Servicio" name="horario" id="horario" class="precio form-control select2">
                                         <option value="0"></option>
                                         @foreach($horarios as $horario)
                                                 <option value="{{$horario->id}}">{{$horario->nombre}}</option>

@@ -33,7 +33,7 @@
         {{-- @include('compras.proveedor.buscar') --}}
     </div>
 </div>
-
+@include('pagos.oficina.buscar')
 <div class="row">
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
         {{-- <canvas id="myChart" width="400" height="400"></canvas> --}}
@@ -53,6 +53,7 @@
                     <th>Telefono</th>
                     <th>Fecha</th>
                     <th>Total Factura</th>
+                    <th>Caja</th>
 
                     <th>Opciones</th>
                 </thead>
@@ -77,9 +78,13 @@
                              @endif
                              {{-- {{ $pagosOfic->isEfectivo }} --}}
                         </td>
+                        @php
+                            $pago_creditos_Consumo = "App\HistorialExcedente"::where('persona_id',$pagosOfic->persona_id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->orderBy('caja_id', 'ASC')->get();
+                        @endphp
                          <td>{{ $pagosOfic->telefono_cliente }}</td>
                          <td>{{ $pagosOfic->updated_at }}</td>
                          <td>{{ $pagosOfic->excedente}}</td>
+                         <td>{{ $pago_creditos_Consumo[0]->caja_id }}</td>
 
                          <td>
                          <a href="{{URL::action('ExcedenteController@show', $pagosOfic->persona_id)}}"><button class='btn btn-primary btn-sm'><span class='glyphicon glyphicon-edit'></span></button></a>
@@ -100,6 +105,7 @@
                         <td></td>
                         <td></td>
 
+                        <td></td>
                         <td class="text-bold"><h3>Total:</h3> </td>
                         <td class="text-bold"><h3>{{$total ?? ''}}</h3></td>
 
@@ -204,7 +210,7 @@
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5,6,7] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6,7,8] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',
@@ -221,10 +227,10 @@
                     alignment: "center",
                     customize : function(doc){
                     doc.styles.tableHeader.alignment = 'left'; //giustifica a sinistra titoli colonne
-                    doc.content[1].table.widths = [20,100,100,100,100,60,60,60]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                    doc.content[1].table.widths = [20,100,100,100,100,60,60,60,10]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                     },
                     exportOptions: {
-                        columns: [0,1,2,3,4,5,6,7],
+                        columns: [0,1,2,3,4,5,6,7,8],
                         stripHtml: true,
 
                     } ,
@@ -243,7 +249,7 @@
                     },
                     alignment: "center",
 
-                    exportOptions: { columns: [0,1,2,3,4,5,6,7] } ,
+                    exportOptions: { columns: [0,1,2,3,4,5,6,7,8] } ,
                     // pageSize : 'A0',
                     orientation : 'portrait',
                     pageSize : 'LEGAL',

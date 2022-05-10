@@ -44,10 +44,11 @@ class CajaController extends Controller
 
         Sessioncaja::crearsession();
         $mesActual = Carbon::now();
-        $restaMes = Carbon::now()->subWeek(3);
+        $restaMes = Carbon::now()->subWeek(10);
         $restaMes = $restaMes->format('Y-m-d');
-        $cajas = Caja::where("created_at",">=",$restaMes)
-        ->where("fecha","<=",$mesActual)->orderBy('id', 'asc')->get();
+        // $cajas = Caja::where("created_at",">=",$restaMes)
+        // ->where("fecha","<=",$mesActual)->orderBy('id', 'asc')->get();
+        $cajas = Caja::all();
         // return $cajas;
         $denominacion_dolar = Denominacion::where('moneda', 'Dolar')->orderBy('id', 'desc')->get();
         $denominacion_peso = Denominacion::where('moneda', 'Pesos')->orderBy('id', 'desc')->get();
@@ -779,47 +780,47 @@ foreach ($cajas->creditos_pagados as $credPagados ) {
                 if ($credPagadosCaja->Divisa == 'Dolar') {
                     $cajas->SumaTotalDolarCred = $cajas->SumaTotalDolarCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
 
-                    $cajas->SumaTotalDolarCreditoDflotante = $cajas->SumaTotalDolarCreditoDflotante + ($credPagadosCaja->Vueltos);
-                    $cajas->SumaTotalDolarCredito = $cajas->SumaTotalDolarCredito + ($credPagadosCaja->MontoConsumo * $tasaDolar->tasa) + ($credPagadosCaja->MontoServeicio * $tasaDolar->tasa);
-                    $cajas->SumaTotalDolarCreditoFinal = $cajas->SumaTotalDolarCreditoFinal + ($credPagadosCaja->MontoDivisa);
-                    $cajas->SumaTotalDolarCreditoFinalDolar = $cajas->SumaTotalDolarCreditoFinalDolar + ($credPagadosCaja->MontoDolar);
+                    // $cajas->SumaTotalDolarCreditoDflotante = $cajas->SumaTotalDolarCreditoDflotante + ($credPagadosCaja->Vueltos);
+                    // $cajas->SumaTotalDolarCredito = $cajas->SumaTotalDolarCredito + ($credPagadosCaja->MontoConsumo * $tasaDolar->tasa) + ($credPagadosCaja->MontoServeicio * $tasaDolar->tasa);
+                    // $cajas->SumaTotalDolarCreditoFinal = $cajas->SumaTotalDolarCreditoFinal + ($credPagadosCaja->MontoDivisa);
+                    // $cajas->SumaTotalDolarCreditoFinalDolar = $cajas->SumaTotalDolarCreditoFinalDolar + ($credPagadosCaja->MontoDolar);
 
                 }elseif ($credPagadosCaja->Divisa == 'Peso') {
                     $cajas->SumaTotalPesoCred = $cajas->SumaTotalPesoCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
 
-                    $cajas->SumaTotalPesoCreditoDflotante = $cajas->SumaTotalPesoCreditoDflotante + ( $credPagadosCaja->Vueltos * $tasaPeso->tasa);
-                    $cajas->SumaTotalPesoCredito = $cajas->SumaTotalPesoCredito + ($credPagadosCaja->MontoConsumo * $tasaPeso->tasa) + ($credPagadosCaja->MontoServeicio * $tasaPeso->tasa);
-                    $cajas->SumaTotalPesoCreditoFinal = $cajas->SumaTotalPesoCreditoFinal + ($credPagadosCaja->MontoDivisa);
-                    $cajas->SumaTotalPesoCreditoFinalDolar = $cajas->SumaTotalPesoCreditoFinalDolar + ($credPagadosCaja->MontoDolar);
+                    // $cajas->SumaTotalPesoCreditoDflotante = $cajas->SumaTotalPesoCreditoDflotante + ( $credPagadosCaja->Vueltos * $tasaPeso->tasa);
+                    // $cajas->SumaTotalPesoCredito = $cajas->SumaTotalPesoCredito + ($credPagadosCaja->MontoConsumo * $tasaPeso->tasa) + ($credPagadosCaja->MontoServeicio * $tasaPeso->tasa);
+                    // $cajas->SumaTotalPesoCreditoFinal = $cajas->SumaTotalPesoCreditoFinal + ($credPagadosCaja->MontoDivisa);
+                    // $cajas->SumaTotalPesoCreditoFinalDolar = $cajas->SumaTotalPesoCreditoFinalDolar + ($credPagadosCaja->MontoDolar);
 
                 }elseif ($credPagadosCaja->Divisa == 'Bolivar') {
                     $cajas->SumaTotalBolivarCred = $cajas->SumaTotalBolivarCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
 
-                    $cajas->SumaTotalBolivarCreditoDflotante = $cajas->SumaTotalBolivarCreditoDflotante + ($credPagadosCaja->Vueltos * $tasaEfectivo->tasa);
-                    $cajas->SumaTotalBolivarCredito = $cajas->SumaTotalBolivarCredito + ($credPagadosCaja->MontoConsumo * $tasaEfectivo->tasa) + ($credPagadosCaja->MontoServeicio * $tasaEfectivo->tasa);
-                    $cajas->SumaTotalBolivarCreditoFinal = $cajas->SumaTotalBolivarCreditoFinal + ($credPagadosCaja->MontoDivisa);
-                    $cajas->SumaTotalBolivarCreditoFinalDolar = $cajas->SumaTotalBolivarCreditoFinalDolar + ($credPagadosCaja->MontoDolar);
+                    // $cajas->SumaTotalBolivarCreditoDflotante = $cajas->SumaTotalBolivarCreditoDflotante + ($credPagadosCaja->Vueltos * $tasaEfectivo->tasa);
+                    // $cajas->SumaTotalBolivarCredito = $cajas->SumaTotalBolivarCredito + ($credPagadosCaja->MontoConsumo * $tasaEfectivo->tasa) + ($credPagadosCaja->MontoServeicio * $tasaEfectivo->tasa);
+                    // $cajas->SumaTotalBolivarCreditoFinal = $cajas->SumaTotalBolivarCreditoFinal + ($credPagadosCaja->MontoDivisa);
+                    // $cajas->SumaTotalBolivarCreditoFinalDolar = $cajas->SumaTotalBolivarCreditoFinalDolar + ($credPagadosCaja->MontoDolar);
 
                 }elseif ($credPagadosCaja->Divisa == 'Punto') {
                     $cajas->SumaTotalPuntoCred = $cajas->SumaTotalPuntoCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
 
-                    $cajas->SumaTotalPuntoCreditoDflotante = $cajas->SumaTotalPuntoCreditoDflotante + ($credPagadosCaja->Vueltos * $tasaTransferenciaPunto->tasa);
-                    $cajas->SumaTotalPuntoCredito = $cajas->SumaTotalPuntoCredito + ($credPagadosCaja->MontoConsumo * $tasaTransferenciaPunto->tasa) + ($credPagadosCaja->MontoServeicio * $tasaTransferenciaPunto->tasa);
-                    $cajas->SumaTotalPuntoCreditoFinal = $cajas->SumaTotalPuntoCreditoFinal + ($credPagadosCaja->MontoDivisa);
-                    $cajas->SumaTotalPuntoCreditoFinalDolar = $cajas->SumaTotalPuntoCreditoFinalDolar + ($credPagadosCaja->MontoDolar);
+                    // $cajas->SumaTotalPuntoCreditoDflotante = $cajas->SumaTotalPuntoCreditoDflotante + ($credPagadosCaja->Vueltos * $tasaTransferenciaPunto->tasa);
+                    // $cajas->SumaTotalPuntoCredito = $cajas->SumaTotalPuntoCredito + ($credPagadosCaja->MontoConsumo * $tasaTransferenciaPunto->tasa) + ($credPagadosCaja->MontoServeicio * $tasaTransferenciaPunto->tasa);
+                    // $cajas->SumaTotalPuntoCreditoFinal = $cajas->SumaTotalPuntoCreditoFinal + ($credPagadosCaja->MontoDivisa);
+                    // $cajas->SumaTotalPuntoCreditoFinalDolar = $cajas->SumaTotalPuntoCreditoFinalDolar + ($credPagadosCaja->MontoDolar);
 
                 }elseif ($credPagadosCaja->Divisa == 'Transferencia') {
                     $cajas->SumaTotalTransferenciaCred = $cajas->SumaTotalTransferenciaCred + ($credPagadosCaja->MontoDivisa - $credPagadosCaja->Vueltos * -1);
 
-                    $cajas->SumaTotalTransferenciaCreditoDflotante = $cajas->SumaTotalTransferenciaCreditoDflotante + ($credPagadosCaja->Vueltos * $tasaTransferenciaPunto->tasa);
-                    $cajas->SumaTotalTransferenciaCredito = $cajas->SumaTotalTransferenciaCredito + ($credPagadosCaja->MontoConsumo * $tasaTransferenciaPunto->tasa) + ($credPagadosCaja->MontoServeicio * $tasaTransferenciaPunto->tasa);
-                    $cajas->SumaTotalTransferenciaCreditoFinal = $cajas->SumaTotalTransferenciaCreditoFinal + ($credPagadosCaja->MontoDivisa);
-                    $cajas->SumaTotalTransferenciaCreditoFinalDolar = $cajas->SumaTotalTransferenciaCreditoFinalDolar + ($credPagadosCaja->MontoDolar);
+                    // $cajas->SumaTotalTransferenciaCreditoDflotante = $cajas->SumaTotalTransferenciaCreditoDflotante + ($credPagadosCaja->Vueltos * $tasaTransferenciaPunto->tasa);
+                    // $cajas->SumaTotalTransferenciaCredito = $cajas->SumaTotalTransferenciaCredito + ($credPagadosCaja->MontoConsumo * $tasaTransferenciaPunto->tasa) + ($credPagadosCaja->MontoServeicio * $tasaTransferenciaPunto->tasa);
+                    // $cajas->SumaTotalTransferenciaCreditoFinal = $cajas->SumaTotalTransferenciaCreditoFinal + ($credPagadosCaja->MontoDivisa);
+                    // $cajas->SumaTotalTransferenciaCreditoFinalDolar = $cajas->SumaTotalTransferenciaCreditoFinalDolar + ($credPagadosCaja->MontoDolar);
 
                 }
 
-                $cajas->TotalSumaTotalCreditoDflotante = $cajas->TotalSumaTotalCreditoDflotante + ($credPagadosCaja->Vueltos);
-                $cajas->TotalSumaTotalCreditoFinal = $cajas->TotalSumaTotalCreditoFinal + ($credPagadosCaja->MontoDolar);
+                // $cajas->TotalSumaTotalCreditoDflotante = $cajas->TotalSumaTotalCreditoDflotante + ($credPagadosCaja->Vueltos);
+                // $cajas->TotalSumaTotalCreditoFinal = $cajas->TotalSumaTotalCreditoFinal + ($credPagadosCaja->MontoDolar);
             }
         }
 
@@ -1705,7 +1706,7 @@ $ojot = [];
 
         $sumaPagoServicios = Pago_Servicio::where('caja_id', $id)->get();
         // return $sumaPagoServicios;
-
+//foreach ($cajas->pago_servicios as $pagoS ) {
         foreach ($sumaPagoServicios as $pagoS ) {
 
 
@@ -1816,47 +1817,47 @@ $ojot = [];
                 if ($pagoCreditos->Divisa == 'Dolar') {
 
                         // $ojo[] = ($pagoCreditos->MontoDivisa - $pagoCreditos->Vueltos * -1) - $validarpagoCreditosServicios->excedente_nuevo;
-                        // $cajas->SumaTotalDolarCreditoDflotante = $cajas->SumaTotalDolarCreditoDflotante + ($pagoCreditos->Vueltos);
-                        // $cajas->SumaTotalDolarCredito = $cajas->SumaTotalDolarCredito + ($pagoCreditos->MontoConsumo * $tasaDolar->tasa) + ($pagoCreditos->MontoServeicio * $tasaDolar->tasa);
-                        // $cajas->SumaTotalDolarCreditoFinal = $cajas->SumaTotalDolarCreditoFinal + ($pagoCreditos->MontoDivisa);
-                        // $cajas->SumaTotalDolarCreditoFinalDolar = $cajas->SumaTotalDolarCreditoFinalDolar + ($pagoCreditos->MontoDolar);
+                        $cajas->SumaTotalDolarCreditoDflotante = $cajas->SumaTotalDolarCreditoDflotante + ($pagoCreditos->Vueltos);
+                        $cajas->SumaTotalDolarCredito = $cajas->SumaTotalDolarCredito + ($pagoCreditos->MontoConsumo * $tasaDolar->tasa) + ($pagoCreditos->MontoServeicio * $tasaDolar->tasa);
+                        $cajas->SumaTotalDolarCreditoFinal = $cajas->SumaTotalDolarCreditoFinal + ($pagoCreditos->MontoDivisa);
+                        $cajas->SumaTotalDolarCreditoFinalDolar = $cajas->SumaTotalDolarCreditoFinalDolar + ($pagoCreditos->MontoDolar);
 
                 }elseif ($pagoCreditos->Divisa == 'Peso') {
 
 
 
                         // $ojop[] = ($pagoCreditos->MontoDivisa - $pagoCreditos->Vueltos * -1) - ($validarpagoCreditosCreditouicios->excedente_nuevo * $tasaPeso->tasa);
-                        // $cajas->SumaTotalPesoCreditoDflotante = $cajas->SumaTotalPesoCreditoDflotante + ( $pagoCreditos->Vueltos * $tasaPeso->tasa);
-                        // $cajas->SumaTotalPesoCredito = $cajas->SumaTotalPesoCredito + ($pagoCreditos->MontoConsumo * $tasaPeso->tasa) + ($pagoCreditos->MontoServeicio * $tasaPeso->tasa);
-                        // $cajas->SumaTotalPesoCreditoFinal = $cajas->SumaTotalPesoCreditoFinal + ($pagoCreditos->MontoDivisa);
-                        // $cajas->SumaTotalPesoCreditoFinalDolar = $cajas->SumaTotalPesoCreditoFinalDolar + ($pagoCreditos->MontoDolar);
+                        $cajas->SumaTotalPesoCreditoDflotante = $cajas->SumaTotalPesoCreditoDflotante + ( $pagoCreditos->Vueltos * $tasaPeso->tasa);
+                        $cajas->SumaTotalPesoCredito = $cajas->SumaTotalPesoCredito + ($pagoCreditos->MontoConsumo * $tasaPeso->tasa) + ($pagoCreditos->MontoServeicio * $tasaPeso->tasa);
+                        $cajas->SumaTotalPesoCreditoFinal = $cajas->SumaTotalPesoCreditoFinal + ($pagoCreditos->MontoDivisa);
+                        $cajas->SumaTotalPesoCreditoFinalDolar = $cajas->SumaTotalPesoCreditoFinalDolar + ($pagoCreditos->MontoDolar);
 
                 }elseif ($pagoCreditos->Divisa == 'Bolivar') {
 
-                        // $cajas->SumaTotalBolivarCreditoDflotante = $cajas->SumaTotalBolivarCreditoDflotante + ($pagoCreditos->Vueltos * $tasaEfectivo->tasa);
-                        // $cajas->SumaTotalBolivarCredito = $cajas->SumaTotalBolivarCredito + ($pagoCreditos->MontoConsumo * $tasaEfectivo->tasa) + ($pagoCreditos->MontoServeicio * $tasaEfectivo->tasa);
-                        // $cajas->SumaTotalBolivarCreditoFinal = $cajas->SumaTotalBolivarCreditoFinal + ($pagoCreditos->MontoDivisa);
-                        // $cajas->SumaTotalBolivarCreditoFinalDolar = $cajas->SumaTotalBolivarCreditoFinalDolar + ($pagoCreditos->MontoDolar);
+                        $cajas->SumaTotalBolivarCreditoDflotante = $cajas->SumaTotalBolivarCreditoDflotante + ($pagoCreditos->Vueltos * $tasaEfectivo->tasa);
+                        $cajas->SumaTotalBolivarCredito = $cajas->SumaTotalBolivarCredito + ($pagoCreditos->MontoConsumo * $tasaEfectivo->tasa) + ($pagoCreditos->MontoServeicio * $tasaEfectivo->tasa);
+                        $cajas->SumaTotalBolivarCreditoFinal = $cajas->SumaTotalBolivarCreditoFinal + ($pagoCreditos->MontoDivisa);
+                        $cajas->SumaTotalBolivarCreditoFinalDolar = $cajas->SumaTotalBolivarCreditoFinalDolar + ($pagoCreditos->MontoDolar);
 
                 }elseif ($pagoCreditos->Divisa == 'Punto') {
 
-                        // $cajas->SumaTotalPuntoCreditoDflotante = $cajas->SumaTotalPuntoCreditoDflotante + ($pagoCreditos->Vueltos * $tasaTransferenciaPunto->tasa);
-                        // $cajas->SumaTotalPuntoCredito = $cajas->SumaTotalPuntoCredito + ($pagoCreditos->MontoConsumo * $tasaTransferenciaPunto->tasa) + ($pagoCreditos->MontoServeicio * $tasaTransferenciaPunto->tasa);
-                        // $cajas->SumaTotalPuntoCreditoFinal = $cajas->SumaTotalPuntoCreditoFinal + ($pagoCreditos->MontoDivisa);
-                        // $cajas->SumaTotalPuntoCreditoFinalDolar = $cajas->SumaTotalPuntoCreditoFinalDolar + ($pagoCreditos->MontoDolar);
+                        $cajas->SumaTotalPuntoCreditoDflotante = $cajas->SumaTotalPuntoCreditoDflotante + ($pagoCreditos->Vueltos * $tasaTransferenciaPunto->tasa);
+                        $cajas->SumaTotalPuntoCredito = $cajas->SumaTotalPuntoCredito + ($pagoCreditos->MontoConsumo * $tasaTransferenciaPunto->tasa) + ($pagoCreditos->MontoServeicio * $tasaTransferenciaPunto->tasa);
+                        $cajas->SumaTotalPuntoCreditoFinal = $cajas->SumaTotalPuntoCreditoFinal + ($pagoCreditos->MontoDivisa);
+                        $cajas->SumaTotalPuntoCreditoFinalDolar = $cajas->SumaTotalPuntoCreditoFinalDolar + ($pagoCreditos->MontoDolar);
 
                 }elseif ($pagoCreditos->Divisa == 'Transferencia') {
 
                         // $ojot[] = ($pagoCreditos->MontoDivisa - $pagoCreditos->Vueltos * -1) - ($validarpagoCreditosCreditouicios->excedente_nuevo * $tasaTransferenciaPunto->tasa);
-                        // $cajas->SumaTotalTransferenciaCreditoDflotante = $cajas->SumaTotalTransferenciaCreditoDflotante + ($pagoCreditos->Vueltos * $tasaTransferenciaPunto->tasa);
-                        // $cajas->SumaTotalTransferenciaCredito = $cajas->SumaTotalTransferenciaCredito + ($pagoCreditos->MontoConsumo * $tasaTransferenciaPunto->tasa) + ($pagoCreditos->MontoServeicio * $tasaTransferenciaPunto->tasa);
-                        // $cajas->SumaTotalTransferenciaCreditoFinal = $cajas->SumaTotalTransferenciaCreditoFinal + ($pagoCreditos->MontoDivisa);
-                        // $cajas->SumaTotalTransferenciaCreditoFinalDolar = $cajas->SumaTotalTransferenciaCreditoFinalDolar + ($pagoCreditos->MontoDolar);
+                        $cajas->SumaTotalTransferenciaCreditoDflotante = $cajas->SumaTotalTransferenciaCreditoDflotante + ($pagoCreditos->Vueltos * $tasaTransferenciaPunto->tasa);
+                        $cajas->SumaTotalTransferenciaCredito = $cajas->SumaTotalTransferenciaCredito + ($pagoCreditos->MontoConsumo * $tasaTransferenciaPunto->tasa) + ($pagoCreditos->MontoServeicio * $tasaTransferenciaPunto->tasa);
+                        $cajas->SumaTotalTransferenciaCreditoFinal = $cajas->SumaTotalTransferenciaCreditoFinal + ($pagoCreditos->MontoDivisa);
+                        $cajas->SumaTotalTransferenciaCreditoFinalDolar = $cajas->SumaTotalTransferenciaCreditoFinalDolar + ($pagoCreditos->MontoDolar);
 
                 }
 
-                // $cajas->TotalSumaTotalCreditoDflotante = $cajas->TotalSumaTotalCreditoDflotante + ($pagoCreditos->Vueltos);
-                // $cajas->TotalSumaTotalCreditoFinal = $cajas->TotalSumaTotalCreditoFinal + ($pagoCreditos->MontoDolar);
+                $cajas->TotalSumaTotalCreditoDflotante = $cajas->TotalSumaTotalCreditoDflotante + ($pagoCreditos->Vueltos);
+                $cajas->TotalSumaTotalCreditoFinal = $cajas->TotalSumaTotalCreditoFinal + ($pagoCreditos->MontoDolar);
 
             }
 

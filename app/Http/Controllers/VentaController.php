@@ -46,7 +46,7 @@ class VentaController extends Controller
             $restaMes = $restaMes->format('Y-m-d');
             $title='Ventas';
             $query = trim($request->get('buscarTexto'));
-            $ventas = DB::table('ventas as v')
+            $ventass = DB::table('ventas as v')
                 ->join('personas as p', 'v.persona_id', '=', 'p.id')
                 ->join('articulo_ventas as av', 'v.id', '=', 'av.venta_id')
                 ->join('cajas as c', 'c.sessioncaja_id', '=', 'v.caja_id')
@@ -60,6 +60,8 @@ class VentaController extends Controller
                 ->get();
              //dd($ventas);
             // return $ventas;
+
+            // $ventas = Venta::take(4)->orderBy('created_at', 'desc')->get();
             return view('ventas.venta.index', ["title" => $title,"ventas" => $ventas, "buscarTexto" => $query]);
         }
     }

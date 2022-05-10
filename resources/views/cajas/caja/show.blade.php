@@ -1302,7 +1302,8 @@
                     <td>Precio</td>
                     <td>M/Dejado</td>
                     <td>D/Pago</td>
-                    <td>D/Vueltos - <b class="text-red">Vtos/Devueltos</b></td>
+                    <td>D/Vueltos</td>
+                    <td>ID Ventas</td>
                     @endcan
 
 
@@ -1335,11 +1336,12 @@
                             {{ ' '.$pagoSrv->Divisa.': '.floatval($pagoSrv->MontoDivisa) ?? '' }}
                             @endforeach
                         @endif
-                        @if ($serv->pago_con_excedente)
+                        {{-- @if ($serv->pago_con_excedente)
                             <b class="text-red">{{' Excedente: '. floatval($serv->pago_con_excedente) ?? '' }}</b>
-                        @endif
+                        @endif --}}
                         {{-- {{ $serv->pago_servicios ?? '' }} --}}
                     </td>
+
                     <td>
                         {{-- @if ($serv->modo_pago)
                             @php
@@ -1363,11 +1365,11 @@
                         @if ($cajas->excedente_actual_valor)
                             @foreach ($cajas->excedente_actual_valor as $vtosDevueltos)
                             @if ($vtosDevueltos->servicio_id == $serv->id && $vtosDevueltos->Estado == 'Devueltos' && $vtosDevueltos->Tipo == 'Servicio')
-                                @if ($vtosDevueltos->Divisa <> 'Dolar')
+                                {{-- @if ($vtosDevueltos->Divisa <> 'Dolar')
                                     <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.number_format($vtosDevueltos->MontoDivisa,2) ?? '' }}</b>
                                 @else
                                     <b class="text-red">{{ ' '.$vtosDevueltos->Divisa.': '.floatval($vtosDevueltos->MontoDivisa) ?? '' }}</b>
-                                @endif
+                                @endif --}}
 
                             @endif
 
@@ -1378,7 +1380,13 @@
                     </td>
                     @endcan
 
+                    <td>
+                        <?php $VentasIds = "App\Venta"::where('servicio_id', $serv->id)->get(); ?>
+                        @foreach ( $VentasIds as $idVentas )
+                        {{ $idVentas->id }}
+                        @endforeach
 
+                    </td>
 
                 </tr>
 
@@ -1397,7 +1405,8 @@
                     <td>Cédula</td>
                     <td colspan="3">Dirección</td>
                     <td>Nvo/Excedete</td>
-                    <td>D/Vtos/Pendtes - <b class="text-red">Pagar/Oficina</b></td>
+                    <td>D/Vtos/Pendtes</td>
+                    <td>Pagar/Oficina</td>
                 </tr>
                 @if ($serv->modo_pago == 'Cortesía')
                         <tr style="background-color: rgb(247, 191, 191);" class="text-black detalleRojo">
@@ -1406,7 +1415,13 @@
                     @else
                         <tr style="background-color: rgba(174, 221, 236, 0.555);" class="text-black detalleAzul">
                     @endif
-                    <td>{{ $serv->nombre_habitacion ?? '' }}</td>
+                    @php
+                        $dd = "App\Cambio"::where('servicio_id_cambio', $serv->id)->first();
+                        if($dd['habitacion']){
+                            $cambio = '/' . $dd['habitacion'];
+                        }
+                    @endphp
+                    <td>{{ $serv->nombre_habitacion ?? '' }} {{ $cambio ?? '' }}</td>
                     <td>{{ $serv->detalle_habitacion ?? '' }}</td>
                     <td>{{ $serv->tipo_habitacion ?? '' }}
                         @php
@@ -1445,11 +1460,12 @@
 
                             @endforeach
                         @endif
-
+                    </td>
+                <td>
                         @if ($cajas->excedente_actual_valor)
                             @foreach ($cajas->excedente_actual_valor as $vtosPagarOfic)
                             @if ($vtosPagarOfic->servicio_id == $serv->id && $vtosPagarOfic->Estado == 'PagarOficina')
-                            <b class="text-red">{{ ' '.$vtosPagarOfic->Divisa.': '.floatval($vtosPagarOfic->MontoDivisa) ?? '' }}</b>
+                            <b class="text-bold">{{ ' '.$vtosPagarOfic->Divisa.': '.floatval($vtosPagarOfic->MontoDivisa) ?? '' }}</b>
                             @endif
 
                             @endforeach
@@ -2435,7 +2451,8 @@
                     <td>Precio</td>
                     <td>M/Dejado</td>
                     <td>D/Pago</td>
-                    <td>D/Vueltos - <b class="text-red">Vtos/Devueltos</b></td>
+                    <td>D/Vueltos</td>
+                    <td></td>
                     @endcan
 
 
@@ -2468,11 +2485,14 @@
                             {{ ' '.$pagoExtr->Divisa.': '.floatval($pagoExtr->MontoDivisa) ?? '' }}
                             @endforeach
                         @endif
-                        @if ($horasEx->pago_con_excedente)
+                        {{-- @if ($horasEx->pago_con_excedente)
                             <b class="text-red">{{' Excedente: '. floatval($horasEx->pago_con_excedente) ?? '' }}</b>
-                        @endif
+                        @endif --}}
                         {{-- {{ $serv->pago_servicios ?? '' }} --}}
                     </td>
+                    <td>
+                    </td>
+
                     <td>
                         {{-- @if ($serv->modo_pago)
                             @php
@@ -2553,6 +2573,7 @@
                     @else
                         <tr style="background-color: rgba(174, 221, 236, 0.555);" class="text-black detalleAzul">
                     @endif
+
                     <td>{{ $horasEx->nombre_habitacion ?? '' }}</td>
 
                     <td>Horas Extras</td>

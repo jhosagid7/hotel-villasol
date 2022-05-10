@@ -1447,7 +1447,7 @@ console.log('Falta '+minutes);
 
 
 
-    $("#procesarpago").show();//Boton procesar pago servicios
+    $("#procesarpago").show();//Boton procesar pago servicios sin lector qr para ocultar
     $("#guardar").show();
     $("#gestionpago").hide();
     $("#gestionpago_boton").show();
