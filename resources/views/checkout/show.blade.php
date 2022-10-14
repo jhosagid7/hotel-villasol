@@ -870,8 +870,7 @@ if(isset($servicio->id)){
     <div class="modal-dialog modal-danger">
         <div class="modal-dialog">
             <div class="modal-content">
-                {{-- <form id="form2" action="{{route('proceso')}}" method="post">
-                    @csrf --}}
+                
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
