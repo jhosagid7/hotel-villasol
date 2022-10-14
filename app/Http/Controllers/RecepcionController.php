@@ -336,7 +336,7 @@ return response()->json($clientes);
 
         // return redirect()->route('proceso', array('title' => $title,'levels' => $levels,'habitacion' => $habitacion,'horarios' => $horarios, 'tasaDolarHabitacion' => $tasaDolarHabitacion, 'tasaPesoHabitacion' => $tasaPesoHabitacion, 'users' => $users));
 
-             return view('servicios.procesos.index', compact('cajas','articulos','num_servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacion','horario', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'clientes','precio'));
+             return view('servicios.procesos.index', compact('cajas','articulos','num_servicio','UserId','UserName','caja','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacion','horario', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'clientes','precio'));
             }else{
                 return redirect()
                 ->route('caja.index')

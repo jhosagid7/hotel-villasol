@@ -655,7 +655,7 @@
                                         <div class="col-md-12">
                                             <div id="box_PagarCrear" class="box box-warning">
                                             <div class="box-header with-border">
-                                                <h3 class="box-title"><b class="text-warning">Bancos Empresa</b></h3><br>
+                                                <h3 class="box-title"><b class="text-warning">Bancos Empresaa</b></h3><br>
                                                 Número de operaicon
                                                 <form id="form4" action="{{ route('registro.store')}}" enctype="multipart/form-data" method="POST" autocomplete="off">
                                                 <input id="num_operacion" name="num_operacion" type="text">

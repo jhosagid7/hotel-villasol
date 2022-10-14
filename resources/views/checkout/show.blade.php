@@ -888,7 +888,7 @@ if(isset($servicio->id)){
                                       {{-- <option id="0" value="0">0</option> --}}
                                     <select   data-size="2" data-width="100%" palceholder="hola" data-id="" title="Seleccione Servicio" name="buscarHabitacion" id="buscarHabitacion" class="selval form-control select2">
                                         <option value="0"></option>
-                                        <option value="{{$mismaHabitacion->id}}_{{$mismaHabitacion->nombre}}_{{$mismaHabitacion->cat_id}}_{{$mismaHabitacion->cat->nombre}}_{{$mismaHabitacion->cat->descripcion}}_{{str_pad($mismaHabitacion->nombre,7,'0',STR_PAD_LEFT) ?? ''}}">{{$mismaHabitacion->nombre}} - {{$mismaHabitacion->cat->nombre}} - {{$mismaHabitacion->cat->descripcion}}</option>
+                                        {{-- <option value="{{$mismaHabitacion->id}}_{{$mismaHabitacion->nombre}}_{{$mismaHabitacion->cat_id}}_{{$mismaHabitacion->cat->nombre}}_{{$mismaHabitacion->cat->descripcion}}_{{str_pad($mismaHabitacion->nombre,7,'0',STR_PAD_LEFT) ?? ''}}">{{$mismaHabitacion->nombre}} - {{$mismaHabitacion->cat->nombre}} - {{$mismaHabitacion->cat->descripcion}}</option> --}}
                                         @foreach($habitacionese as $habitacion)
                                                 <option value="{{$habitacion->id}}_{{$habitacion->nombre}}_{{$habitacion->cat_id}}_{{$habitacion->cat->nombre}}_{{$habitacion->cat->descripcion}}_{{str_pad($habitacion->nombre,7,'0',STR_PAD_LEFT) ?? ''}}">{{$habitacion->nombre}} - {{$habitacion->cat->nombre}} - {{$habitacion->cat->descripcion}}</option>
                                             @endforeach
@@ -898,6 +898,14 @@ if(isset($servicio->id)){
                                 </div>
                             </div>
 
+                            <div class="form-group">
+                                <div class="input-group">
+                                <span class="input-group-addon"> OBSERVACIÓN </span>
+                                <textarea name="observacion" id="observacion" cols="30" class="form-control col-md-8 rows="10" placeholder="Obligarorio"></textarea>
+                                {{-- <input type="textarea" class="form-control col-md-8" name="observacion" id="observacion" readonly value=""  placeholder="Obligarorio"> --}}
+                                {{-- <input type="hidden" class="form-control col-md-8" name="habitacion_id_nueva"  value=""  placeholder="Ingrese nombre"> --}}
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <div class="input-group">
                                 <span class="input-group-addon"> HABITACIÓN </span>
@@ -1025,6 +1033,7 @@ if(isset($servicio->id)){
                 <form class="submit-prevent-form" id="form3" action="{{route('servicio.update', $servicio->id)}}" method="post">
                     @csrf
                     @method('PUT')
+                    <textarea  name="observacion_text" id="observacion_text" cols="30" class="hidden form-control col-md-8 rows="10"></textarea>
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
@@ -2534,6 +2543,16 @@ if (btnCambio == 1) {
                 // let cantVueltos = $('VueltosdispExcedenteShow').text();
                 let RestaTtotal = document.getElementById('RestaTtotal');
                 restaTotal = new Decimal(RestaTtotal.innerHTML);
+                let observacion    = $("#observacion").val();
+
+                if(observacion == ''){
+                    $("#observacion_text").val('');
+                    alert('(OBLIGATORIO) Debes llenar el campo Observacion...!');
+                    document.getElementById("observacion").focus();
+                    return false;
+                }else{
+                    $("#observacion_text").val(observacion);
+                }
                 // alert(restaTotal.toFixed());
 
                 // alert(restaTotalV.toFixed());
@@ -2562,6 +2581,16 @@ if (btnCambio == 1) {
 
 
 
+            let observacion    = $("#observacion").val();
+
+            if(observacion == ''){
+                $("#observacion_text").val('');
+                alert('(OBLIGATORIO) Debes llenar el campo Observacion...!');
+                document.getElementById("observacion").focus();
+                return false;
+            }else{
+                $("#observacion_text").val(observacion);
+            }
             let diferenciaPrecio    = $("#precioDolarHabitacio").val();
 
             if (diferenciaPrecio <= 0) {

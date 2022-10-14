@@ -23,9 +23,12 @@ use App\Pago_Servicio;
 use App\Detalle_credito;
 use App\Servicios_Ventas;
 use App\Temp_Pago_Vuelto;
+use App\DetallePagoOficina;
+use App\HistorialExcedente;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Redirect;
 use App\Excedentes_Recibidos_Caja_Actual;
 use App\Http\Controllers\PrinterController;
@@ -90,7 +93,7 @@ class ServicioController extends Controller
             // return $tipo_pago;
 
             $monto_dejado = $request->get('monto_dejado');
-            // $pagoConExcedente = $request->get('pagoConExcedente');
+            $pagoConExcedente = $request->get('pagoConExcedente');
 
             $total_costo = $request->get('total_costo');
             $status = '';
@@ -103,47 +106,23 @@ class ServicioController extends Controller
             $modo_pago = $request->get('modo_pago');
             $nuevo_excedente = 0;
 
-            // if($pagoConExcedente > 0){
+            if($pagoConExcedente > 0){
+                $modo_pago = 'Contado-Excedente';
 
-            //     if($monto_dejado == 0){
-            //         $modo_pago = 'Excedente';
-            //     }
+                // if($monto_dejado == 0){
+                //     $modo_pago = 'Contado-Excedente';
+                // }
 
-            //     if($monto_dejado > 0){
-            //         $modo_pago = 'Contado-Excedente';
-            //     }
+                // if($monto_dejado > 0){
+                //     $modo_pago = 'Contado-Excedente';
+                // }
 
-            // }else{
-            //     $modo_pago = $request->get('modo_pago');
-            // }
-
-
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // TODO metodo para pagar con vueltos pendientes
-            // $VueltospagoConExcedente = $request->get('VueltospagoConExcedente');
-
-            // if($VueltospagoConExcedente > 0){
-
-            //     if($monto_dejado > 0){
-            //         $modo_pago = 'contado';
-            //         $status = 'Pagado';
-            //         $monto_dejado = $VueltospagoConExcedente + $monto_dejado;
-            //     }
-
-            //     if($monto_dejado == 0){
-            //         $modo_pago = 'contado';
-            //         $status = 'Pagado';
-            //         $monto_dejado = $VueltospagoConExcedente;
-            //     }
+            }else{
+                $modo_pago = $request->get('modo_pago');
+            }
 
 
-            // }else{
-            //     $status = 'Pagado';
-            //     $modo_pago = $request->get('modo_pago');
-            // }
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
 
 // return $modo_pago;
 
@@ -178,41 +157,7 @@ class ServicioController extends Controller
 
                 }
 
-                // if($monto_dejado > $total_costo){
-
-
-                //     // dd($status);
-
-                //     $exced = $monto_dejado - $total_costo;
-
-                //     $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-                //     // return $ifCliente;
-
-                //     if($ifCliente){
-                //         // return 'si';
-
-                //         $upExcedente = Excedente::findOrFail($ifCliente->id);
-                //         $upExcedente->excedente = $upExcedente->excedente + $exced;
-                //         $upExcedente->update();
-                //     }else{
-                //         // return 'no';
-                //         // $excedente = new Excedente;
-                //         // $excedente->nombre_cliente = $request->get('nombre');
-                //         // $excedente->cedula_cliente = $request->get('num_documento');
-                //         // $excedente->direccion_cliente = $request->get('direccion');
-                //         // $excedente->telefono_cliente = $request->get('telefono');
-                //         // $excedente->excedente = $exced;
-                //         // $excedente->persona_id = $request->get('cliente_id');
-                //         // $excedente->save();
-
-
-                //         $prexcedente = new Prexcedente;
-                //         $prexcedente->excedente = $exced;
-                //         $prexcedente->persona_id = $request->get('cliente_id');
-                //         $prexcedente->save();
-                //     }
-
-                // }
+                
 
                 if($monto_dejado < $total_costo){
                     $status = 'Falta pagar';
@@ -284,249 +229,7 @@ class ServicioController extends Controller
 
 
 
-            // if($modo_pago == 'contado'){
-
-            //     if($monto_dejado > $total_costo){
-            //         // return 'aquí dentro '. $tipo_pago;
-
-            //         // dd($status);
-
-            //         $exced = $monto_dejado - $total_costo;
-            //         $excedMontoDolar = $monto_dejado - $total_costo;
-
-            //         if ($tipo_pago == 'Dolar') {
-            //             $tasaTiket = $request->get('tasaDolar');
-            //             $exced = $exced * $tasaTiket;
-            //             $divisaExced = 'Dolar';
-            //         }
-
-            //         if ($tipo_pago == 'Peso') {
-            //             $tasaTiket = $request->get('tasaPeso');
-            //             $exced = $exced * $tasaTiket;
-            //             $divisaExced = 'Peso';
-            //         }
-
-            //         if ($tipo_pago == 'Trans/Punto') {
-            //             // return 'Trans/Punto';
-            //             $numPunto = $request->get('num_Punto');
-            //             // return empty($numPunto);
-            //             $numTrans = $request->get('num_Trans');
-            //             // return $numTrans;
-            //             $numPuntoTrans = '';
-            //             if (empty($numPunto) && !empty($numTrans)) {
-            //                 // return 'p=null y t=si';
-            //                 $numPuntoTrans = $numTrans;
-            //             }
-
-            //             if (!empty($numPunto) && empty($numTrans)) {
-            //                 // return 'p=si y t=null';
-            //                 $numPuntoTrans = $numPunto;
-            //             }
-
-            //             if (!empty($numPunto) && !empty($numTrans)) {
-            //                 // return 'p=si y t=si';
-            //                 $numPuntoTrans = $numPunto. ' - ' .$numTrans;
-            //             }
-
-            //             if (empty($numPunto) && empty($numTrans)) {
-            //                 // return 'p=null y t=null';
-            //                 $numPuntoTrans = 'S/N - S/N';
-            //             }
-            //             // return $numPuntoTrans;
-
-            //             $tasaTiket = $numPuntoTrans;
-            //             $exced = $exced * $request->get('tasaTransPunto');
-            //             $divisaExced = 'Trans/Punto';
-            //         }
-            //         // BUG   revisar el metodo mixto
-
-            //         // if ($tipo_pago == 'Mixto') {
-
-            //         //     // return 'MIxto';
-            //         //     // $exced = $exced * $request->get('tasaMixto');
-            //         //     // $divisaExced = 'Dolar';
-
-            //         //     $MontoDivisaM = $request->get('MontoDivisa');
-            //         //     $divisaM = $request->get('divisa');
-            //         //     $TasaTikeM = $request->get('TasaTike');
-            //         //     $MontoDolarM = $request->get('MontoDolar');
-            //         //     $MontoDivisaM = array_filter($MontoDivisaM);
-
-            //         //     // TODO Comvertimos la variable $MontoDolarM en un array y buscamos el valor mas alto
-
-            //         //     $MontoDolarMax = array_filter($MontoDolarM);
-
-            //         //     // return $MontoDolarM;
-            //         //     $valorMax = max($MontoDolarMax);
-            //         //     // return $valorMax . ' excedente es '. $exced;
-
-            //         //     foreach($MontoDivisaM as $key => $val) {
-            //         //         // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
-            //         //         if($MontoDolarM[$key] == $valorMax){
-            //         //             // return 'MIxto';
-            //         //             // return $valorMax . ' excedente es '. $exced . ' la divisa es ' .$divisaM[$key];
-
-            //         //             $resta = $MontoDolarM[$key] - $exced;
-
-            //         //             if ($resta >= 0) {
-            //         //                 return $resta;
-            //         //             }else{
-
-            //         //                 $textos = $MontoDolarMax;
-            //         //                 // return $textos;
-
-            //         //                 if (($clave = array_search($valorMax, $textos)) !== false) {
-            //         //                     unset($textos[$clave]);
-            //         //                     return $textos;
-            //         //                 }
-            //         //             }
-
-            //         //             $divisaExced=$divisaM[$key];
-            //         //             $MontoDolar = $MontoDolarM[$key];
-            //         //             $exced = $exced * $TasaTikeM;
-
-
-            //         //         }
-            //         //         $ValorMaximo = $MontoDolarM[$key];
-            //         //     $divisa[]=$divisaM[$key];
-            //         //     $MontoDolar[]=$MontoDolarM[$key];
-            //         //     }
-            //         // }
-
-            //         if ($tipo_pago == 'Efectivo') {
-            //             $tasaTiket = $request->get('tasaEfectivo');
-            //             $exced = $exced * $tasaTiket;
-            //             $divisaExced = 'Bolivar';
-            //         }
-
-
-            //         $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
-            //         $excdtsRecibidosCaja->Tipo = 'Servicio';
-            //         $excdtsRecibidosCaja->Estado = 'Pendiente';
-            //         $excdtsRecibidosCaja->Divisa = $divisaExced;
-            //         $excdtsRecibidosCaja->TasaTiket = $tasaTiket;
-            //         $excdtsRecibidosCaja->MontoDivisa = $exced;
-            //         $excdtsRecibidosCaja->MontoDolar = $excedMontoDolar;
-            //         $excdtsRecibidosCaja->servicio_id = $servicio->id;
-            //         $excdtsRecibidosCaja->venta_id = 0;
-            //         $excdtsRecibidosCaja->caja_id = $request->get('caja_id');;
-            //         $excdtsRecibidosCaja->save();
-
-            //         $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-            //         // return $ifCliente;
-
-            //         // TODO definir que hacer con los excedentes si pasan a nuevo
-
-
-            //         // if($ifCliente){
-            //         //     // return 'si';
-
-            //         //     $upExcedente = Excedente::findOrFail($ifCliente->id);
-            //         //     $upExcedente->excedente = $upExcedente->excedente + $exced;
-            //         //     $upExcedente->update();
-            //         // }else{
-            //         //     // return 'no';
-            //         //     // $excedente = new Excedente;
-            //         //     // $excedente->nombre_cliente = $request->get('nombre');
-            //         //     // $excedente->cedula_cliente = $request->get('num_documento');
-            //         //     // $excedente->direccion_cliente = $request->get('direccion');
-            //         //     // $excedente->telefono_cliente = $request->get('telefono');
-            //         //     // $excedente->excedente = $exced;
-            //         //     // $excedente->persona_id = $request->get('cliente_id');
-            //         //     // $excedente->save();
-
-
-            //         //     $prexcedente = new Prexcedente;
-            //         //     $prexcedente->excedente = $exced;
-            //         //     $prexcedente->servicio_id = $servicio->id;
-            //         //     $prexcedente->save();
-            //         // }
-
-
-
-            //     }
-
-            // }
-
-            // if($modo_pago == 'Contado-Excedente'){
-
-
-
-
-            //         // dd($status);
-
-            //         $restarExced = $request->get('pagoConExcedente');
-
-            //         $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-            //         // return $ifCliente;
-
-            //         if($ifCliente){
-            //             // return 'si';
-
-            //             $upExcedente = Excedente::findOrFail($ifCliente->id);
-            //             $upExcedente->excedente = $upExcedente->excedente - $restarExced;
-            //             $upExcedente->update();
-            //         }
-            //         // else{
-            //             // return 'no';
-            //             // $excedente = new Excedente;
-            //             // $excedente->nombre_cliente = $request->get('nombre');
-            //             // $excedente->cedula_cliente = $request->get('num_documento');
-            //             // $excedente->direccion_cliente = $request->get('direccion');
-            //             // $excedente->telefono_cliente = $request->get('telefono');
-            //             // $excedente->excedente = $exced;
-            //             // $excedente->persona_id = $request->get('cliente_id');
-            //             // $excedente->save();
-
-
-            //         //     $prexcedente = new Prexcedente;
-            //         //     $prexcedente->excedente = $exced;
-            //         //     $prexcedente->servicio_id = $servicio->id;
-            //         //     $prexcedente->save();
-            //         // }
-
-
-            // }
-
-        //     if($modo_pago == 'Excedente'){
-
-
-
-
-        //         // dd($status);
-
-        //         $restarExced = $request->get('pagoConExcedente');
-
-        //         $ifCliente = Excedente::where('persona_id',$request->get('cliente_id'))->first();
-        //         // return $ifCliente;
-
-        //         if($ifCliente){
-        //             // return 'si';
-
-        //             $upExcedente = Excedente::findOrFail($ifCliente->id);
-        //             $upExcedente->excedente = $upExcedente->excedente - $restarExced;
-        //             $upExcedente->update();
-        //         }
-        //         // else{
-        //             // return 'no';
-        //             // $excedente = new Excedente;
-        //             // $excedente->nombre_cliente = $request->get('nombre');
-        //             // $excedente->cedula_cliente = $request->get('num_documento');
-        //             // $excedente->direccion_cliente = $request->get('direccion');
-        //             // $excedente->telefono_cliente = $request->get('telefono');
-        //             // $excedente->excedente = $exced;
-        //             // $excedente->persona_id = $request->get('cliente_id');
-        //             // $excedente->save();
-
-
-        //         //     $prexcedente = new Prexcedente;
-        //         //     $prexcedente->excedente = $exced;
-        //         //     $prexcedente->servicio_id = $servicio->id;
-        //         //     $prexcedente->save();
-        //         // }
-
-
-        // }
+           
 
             if($modo_pago == 'credito'){
 
@@ -670,25 +373,154 @@ class ServicioController extends Controller
                         // TODO creamos metodo para realizar el pago cuando se paga con dinero contable viene en la variable base_vuelto_monto_dejado
                         // primero validamos si exciste un pago hecho.
 
+                        $dispExcedente = $request->get('dispExcedente');
                         $montoBase = $request->get('base_vuelto_monto_dejado');
                         $montoResta = $request->get('monto_dejadoResta');
                         $total_venta = $request->get('total_costo');
+                        $pcliente_id = $request->get('cliente_id');
+                        $user_id = Auth::user()->id;
 
 
                         $montoBase = floatval($montoBase);
                         $montoResta = floatval($montoResta);
                         $total_venta = floatval($total_venta);
+                        $monto_deuda = floatval($dispExcedente);
+                        $monto_pagado = floatval($pagoConExcedente);
 
                         $servicio_id = $servicio->id;
                         $caja_id = $request->get('caja_id');
 
                         $opS = $montoBase;
+                        $fecha_pago = Carbon::now();
+
+                        if($pagoConExcedente > 0){
+                            $opS += $monto_pagado;
+                        }
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             //validamos si el monto pagado es mayor a 0 sea que lo paguen con montoBase o con montoPendiente y que el tipo de pago sea contado
-                        if($opS > 0 && $modo_pago == 'contado'){
+                        if($opS > 0 && $modo_pago == 'contado'  || $modo_pago == 'Contado-Excedente'){
+                            if($monto_pagado > 0){
+                                $modo_pago = 'Contado-Excedente';
+
+                                // TODO Guardamos los registros en la tabla Detalle pagos oficina
+
+                            if($monto_pagado == $monto_deuda){
+                                $DetallePagoOficina = new  DetallePagoOficina();
+                                $DetallePagoOficina->tipo_pago = 'Efectivo';
+                                $DetallePagoOficina->num_transaccion = '0002';
+                                $DetallePagoOficina->deuda = $monto_deuda;
+                                $DetallePagoOficina->saldo_pagado = $monto_pagado;
+                                $DetallePagoOficina->fecha_pago = $fecha_pago;
+                                $DetallePagoOficina->persona_id = $pcliente_id;
+                                $DetallePagoOficina->caja_id = $caja_id;
+                                $DetallePagoOficina->user_id = $user_id;
+                                $DetallePagoOficina->save();
+
+                                // TODO Ahora actualizamos la tabla historial_excedentes colocando el id del detalle pago oficina para poder agrupar los por ide de pago
+                                // y asi poder consultarlos luego y cambiando el estatus a pagado
+
+
+                                $historialExcedentes = HistorialExcedente::where('persona_id',$pcliente_id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
+
+                                if($historialExcedentes){
+
+                                    foreach ($historialExcedentes as $historialExcedente) {
+
+                                        $HistorialExcedente = HistorialExcedente::findOrFail($historialExcedente->id);
+                                        $HistorialExcedente->status = 'Pagado';
+                                        $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
+                                        $HistorialExcedente->update();
+                                    }
+
+                                    // TODO Ahora eliminamos de la tabla excedente el registro del usuario
+
+                                    $eliminarRegistroExcedente = Excedente::where('persona_id',$pcliente_id)->where('tipo','Pagar_por_oficina')->first();
+
+                                    if ($eliminarRegistroExcedente) {
+                                        Excedente::destroy($eliminarRegistroExcedente->id);
+                                    }
+                                }
+
+
+
+
+
+
+
+                            }else{
+                                $DetallePagoOficina = new  DetallePagoOficina();
+                                $DetallePagoOficina->tipo_pago = 'Efectivo';
+                                $DetallePagoOficina->num_transaccion = '0003';
+                                $DetallePagoOficina->deuda = $monto_deuda;
+                                $DetallePagoOficina->saldo_pagado = $monto_pagado;
+                                $DetallePagoOficina->fecha_pago = $fecha_pago;
+                                $DetallePagoOficina->persona_id = $pcliente_id;
+                                $DetallePagoOficina->caja_id = $caja_id;
+                                $DetallePagoOficina->user_id = $user_id;
+                                $DetallePagoOficina->save();
+
+
+                                // TODO Guardamos en la tabla historial excedente
+
+                                $historialExcedentes = HistorialExcedente::where('persona_id',$pcliente_id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
+
+                                if($historialExcedentes){
+                                    $saldo_disponible = 0;
+                                    $motivo = '';
+                                    $banco_id = '';
+                                    $servicio_id = '';
+
+                                    foreach ($historialExcedentes as $historialExcedente) {
+                                        $saldo_disponible = $historialExcedente->saldo_disponible;
+                                        $motivo = $historialExcedente->motivo;
+                                        $banco_id = $historialExcedente->banco_id;
+                                        $servicio_id = $historialExcedente->servicio_id;
+
+                                        $HistorialExcedente = HistorialExcedente::findOrFail($historialExcedente->id);
+                                        $HistorialExcedente->status = 'Pagado';
+                                        $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
+                                        $HistorialExcedente->update();
+
+                                    }
+                                }
+
+                                if($saldo_disponible > 0){
+                                    $saldo_anterior = $saldo_disponible;
+                                    $saldo_disponible = $saldo_disponible - $monto_pagado;
+
+                                }
+
+                                $HistorialExcedente = new  HistorialExcedente;
+                                $HistorialExcedente->tipo_registro = 'Pago_por_oficina';
+                                $HistorialExcedente->status = 'Pendiente';
+                                $HistorialExcedente->tipo_operacion = 'Egreso';
+                                $HistorialExcedente->num_servicio = $DetallePagoOficina->id;
+                                $HistorialExcedente->motivo = $motivo;
+                                $HistorialExcedente->saldo_anterior = $saldo_anterior;
+                                $HistorialExcedente->saldo_operacion = $monto_pagado;
+                                $HistorialExcedente->saldo_disponible = $saldo_disponible;
+                                $HistorialExcedente->operador = $operador;
+                                $HistorialExcedente->banco_id = $banco_id;
+                                $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
+                                $HistorialExcedente->persona_id = $pcliente_id;
+                                $HistorialExcedente->servicio_id = $servicio->id;
+                                $HistorialExcedente->caja_id = $caja_id;
+                                $HistorialExcedente->user_id  = $user_id;
+                                $HistorialExcedente->save();
+
+
+                                $UpdateExcedente = Excedente::where('persona_id', $pcliente_id)->first();
+                                $UpdateExcedente->excedente -= $monto_pagado;
+                                $UpdateExcedente->update();
+
+
+                            }
+
+
+                            }
                             // return $opS;
                             //validamos que el monto pagado sea mayor o igual al total de la venta
                             if($opS >= $total_venta){
@@ -920,22 +752,7 @@ class ServicioController extends Controller
 
                             // return 'no';
                         }
-                        // else{
-
-
-                        //     return Redirect::back()
-                        //         ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
-                        // }
-
-
-                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// return 'Finalizo...';
-
-
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                        
 
 
 
@@ -943,178 +760,29 @@ class ServicioController extends Controller
 
             if($modo_pago == 'contado' || $modo_pago == 'Contado-Excedente'){
 
-                // /////////////////////////////////////////////////////////////////////////////////////////////////
-                // // TODO ingresamos los datos en la tabla Pago_Servicio////////////////////////////////////////////
-                // $MontoDivisaR = $request->get('MontoDivisa');
-                // $divisaR = $request->get('divisa');
-                // $TasaTikeR = $request->get('TasaTike');
-                // $MontoDolarR = $request->get('MontoDolar');
-                // $VeltosR = $request->get('Veltos');
-
-                // $MontoDivisaR = array_filter($MontoDivisaR);
-
-
-                // foreach($MontoDivisaR as $key => $val) {
-
-
-                //     $divisa[]=$divisaR[$key];
-                //     $MontoDivisa[]=$MontoDivisaR[$key];
-                //     $TasaTiket[]=$TasaTikeR[$key];
-                //     $MontoDolar[]=$MontoDolarR[$key];
-                //     if($monto_dejado == $total_costo){
-                //         $Vueltos[]=$VeltosR[$key];
-
-                //     }else{
-                //         $Vueltos[]=$VeltosR[$key] - $VeltosR[$key];
-
-                //     }
-
-
-                // }
-
-
-
-
-                // // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                // //creamos un contador
-                // $cont = 0;
-
-
-                // //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                // while ($cont < count($MontoDolar)) {
-
-
-                //     $Pago_Servicio = new Pago_Servicio();
-                //     $Pago_Servicio->Divisa = $divisa[$cont];
-                //     $Pago_Servicio->MontoDivisa = $MontoDivisa[$cont];
-                //     $Pago_Servicio->TasaTiket = $TasaTiket[$cont];
-                //     $Pago_Servicio->MontoDolar = $MontoDolar[$cont];
-                //     $Pago_Servicio->MontoDolarServicio = $request->get('total_costo');
-                //     $Pago_Servicio->Excedente = $request->get('restaVueltos');
-                //     $Pago_Servicio->Vueltos = $request->get('monto_dejadoResta');
-                //     $Pago_Servicio->servicio_id = $servicio->id;
-                //     $Pago_Servicio->caja_id = $request->get('caja_id');;
-                //     $Pago_Servicio->save();
-
-                //     $cont = $cont+1;
-                // }
-
-                // // TODO Fin de ingreso en la tabla Pago_Servicio //////////////////////////////////////////////////
-                // //////////////////////////////////////////////////////////////////////////////////////////////////
-
-                // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
-
-                // $isVuelos = $request->get('isVueltos');
-
-                // if($isVuelos > 0 || $isVuelos != null){
-
-
-
-
-                //     $MontoDivisaVueltos = $request->get('MontoDivisaV');
-                //     $divisaVueltos = $request->get('divisaV');
-                //     $TasaTikeVueltos = $request->get('TasaTikeV');
-                //     $MontoDolarVueltos = $request->get('MontoDolarV');
-
-
-                //     $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
-
-
-                //     foreach($MontoDivisaVueltos as $key => $val) {
-
-
-                //         $Vdivisa[]=$divisaVueltos[$key];
-                //         $VMontoDivisa[]=$MontoDivisaVueltos[$key];
-                //         $VTasaTiket[]=$TasaTikeVueltos[$key];
-                //         $VMontoDolar[]=$MontoDolarVueltos[$key];
-
-
-
-
-
-                //     }
-
-
-
-
-                //     // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                //     //creamos un contador
-                //     $cont = 0;
-
-
-                //     //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                //     while ($cont < count($VMontoDolar)) {
-
-
-                //         $Pago_Servicio = new Pago_Vuelto();
-                //         $Pago_Servicio->Tipo = 'Servicio';
-                //         $Pago_Servicio->Divisa = $Vdivisa[$cont];
-                //         $Pago_Servicio->MontoDivisa = $VMontoDivisa[$cont];
-                //         $Pago_Servicio->TasaTiket = $VTasaTiket[$cont];
-                //         $Pago_Servicio->MontoDolar = $VMontoDolar[$cont];
-                //         $Pago_Servicio->servicio_id = $servicio->id;
-                //         $Pago_Servicio->caja_id = $request->get('caja_id');
-                //         $Pago_Servicio->save();
-
-                //         $cont = $cont+1;
-                //     }
-
-
-
-                //     // // TODO Ahora vamos a actualizar la tabla Pago_Servicios en su campo vueltos para evitar el problema de registrar
-                //     // //vueltos incorrectamente cuando se pagaba por medio del modo mixto
-
-                //     // //consultamos la tabla pago_servicios donde el id se el mismo del servicio que registramos para actualizar el campo
-                //     // //vueltos ejeplo: si pagan 10 en dolares la tabla servicio solo registra los 10 dolares pero el campo vueltos
-                //     // // queda en 0 luego se consulta la tabla vueltos y si dieron vueltos en dolares actualiza el campo vueltos donde
-                //     // //divisa sea igual a dolar esto se hace para corregir el error que presentava cuando se pagaba en modo mixto con
-                //     // // varias modedas.
-
-                //     // $revisarServicios = Pago_Servicio::where('servicio_id', $servicio->id)->get();
-                //     // // return $revisarServicios;
-                //     // if(count($revisarServicios)){
-                //     //     // return $revisarServicios;
-
-                //     //     foreach ($revisarServicios as $servicioReg) {
-                //     //         // return $servicioReg;
-                //     //         //Actializamos la tabla Pago_Servicios donde el id servicio sea igual al id recibido y el campo divisa
-                //     //         //sea igual alcampo divisa de la tabla pagos vuelos para ello consultamos la tabla vueltos
-
-                //     //         $vueltoReg = Pago_Vuelto::where('servicio_id', $servicio->id)->where('Divisa', $servicioReg->Divisa)->get();
-                //     //         if(count($vueltoReg)){
-                //     //             // return $vueltoReg[0]->MontoDivisa;
-                //     //             $upDateVueltos = Pago_Servicio::findOrFail($servicioReg->id);
-                //     //             $upDateVueltos->Vueltos = -$vueltoReg[0]->MontoDivisa;;
-                //     //             $upDateVueltos->update();
-                //     //         }
-
-                //     //     }
-                //     // }
-                // }
-
-                // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                
             }
             //ahora actualizamos la tabla Habitaico con un estatus de ocupada
             $habitacion = Habitacione::findOrFail($id_habitaicon);
             $habitacion->status = 'Ocupada';
             $habitacion->update();
 
-            $printer = new PrinterController;
-            if($printer){
-                $printer->ticketServicio('Servicio', $numeroServisio, $nombreHabitacion, $detalleHabitacion, $modo_pago, $tipo_pago, $total_costo, $operador,$tipo);
-            }
-
-
-
             DB::commit();
+
+            $printer = new PrinterController;
+            
+            $printer->ticketServicio('Servicio', $numeroServisio, $nombreHabitacion, $detalleHabitacion, $modo_pago, $tipo_pago, $total_costo, $operador,$tipo);
+
+            if( $printer->print_error === 1 ) {
+                return Redirect::to('checkout')->with('status_success', 'El servicio fué registrado exitosamente');
+            }else{
+                return Redirect::to('checkout')->with('status_warning', 'El servicio fué registrado exitosamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name );
+            }
 
         }catch(\Exception $e)
         {
 
-            dd($e);
+            // dd($e);
             DB::rollback();
             if (isset($MontoDolarR)) {
 
@@ -1125,8 +793,8 @@ class ServicioController extends Controller
         }
 
 
-        // return view('checkin.checkin.index', compact('title','tasas'));
-        return Redirect::to('checkout')->with('success', 'El servicio fué registrado exitosamente');
+        
+        // return Redirect::to('checkout')->with('success', 'El servicio fué registrado exitosamente');
     }
     }
 
@@ -1174,6 +842,9 @@ class ServicioController extends Controller
         if ($validarServicio) {
 
             $bandera = $request->get('banderaHorasExtras');
+
+
+            $observacion_text = $request->get('observacion_text');
             if ($bandera == 'PagoHorasExtras') {
                 // return 'si PagoHorasExtras';
                 try{
@@ -4010,8 +3681,13 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                 // $total_horas_extras_otros_montos = ;
                 // return $verificarHorasExtras->monto_total_hora_extra;
                 $printer->ticketPagoExtra('Pagos Extras','Servicio', $verificarHorasExtras);
+                if( $printer->print_error === 1 ) {
+                    return Redirect::to('checkout/'.$id)->with('status_success', 'El servicio fué registrado exitosamente');
+                }else{
+                    return Redirect::to('checkout/'.$id)->with('status_warning', 'El servicio fué registrado exitosamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name );
+                }
                 // return view('checkin.checkin.index', compact('title','tasas'));
-                return Redirect::to('checkout/'.$id)->with('success', 'El servicio fué registrado exitosamente');
+                // return Redirect::to('checkout/'.$id)->with('success', 'El servicio fué registrado exitosamente');
 
 
 
@@ -4920,6 +4596,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                     $operador = $request->get('operador');
                     $detalleHabitacion = $request->get('categoria_dest_nueva2');
 
+
                     $pagoConExcedente = $request->get('pagoConExcedente');
                     $nuevo_excedente = 0;
 
@@ -5572,7 +5249,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
             $saveCambio->servicio_id_cambio = $servicio->id;
             $saveCambio->habitacion_cambio = $request->get('nombre_nueva2');
             $saveCambio->caja_id = $request->get('caja_id');
-            $saveCambio->observacion = $request->get('observacion');
+            $saveCambio->observacion = $request->get('observacion_text');
             $saveCambio->save();
 
 
@@ -7022,6 +6699,12 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                 $printer = new PrinterController;
 
                 $printer->ticketServicioCambio('Cambio de Habitación','Servicio', $numeroServisio,$nombreHabitacionCambio, $nombreHabitacion, $detalleHabitacion, $modo_pago, $tipo_pago, $total_costo, $operador,$tipo);
+
+                if( $printer->print_error === 1 ) {
+                    return Redirect::to('checkout')->with('status_success', 'El servicio fué registrado exitosamente');
+                }else{
+                    return Redirect::to('checkout')->with('status_warning', 'El servicio fué registrado exitosamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name );
+                }
                 // return view('checkin.checkin.index', compact('title','tasas'));
                 return Redirect::to('checkout')->with('success', 'El servicio fué registrado exitosamente');
             }

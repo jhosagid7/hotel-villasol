@@ -77,33 +77,7 @@ class DetallePagoOficinaController extends Controller
 
             // TODO Guardamos los datos de la cuenta bancaria de la empresa pero revisamos si ya existe esa cuenta registrada
 
-            // $ifBancoEmpresa = BancosEmpresa::where('pertenece','Empresa')->where('codigo',$codigo_banco_empresa)->where('num_cuenta',$num_cuenta_empresa)->first();
-            // // return $ifCliente;
 
-            // if(!$ifBancoEmpresa){
-            //     //buscamos el nombre y el ide del banco para guardarlos en la tabla banco empresa pra que siempre se guarde con el nombre que aparece enla tabla bancos
-            //     $CodigoBancoEmpresa = Banco::where('codigo',$codigo_banco_empresa)->first();
-            //     if($CodigoBancoEmpresa){
-            //         $nombre_banco_empresa = $CodigoBancoEmpresa->nombre_banco;
-            //         $codigo_banco_empresa = $CodigoBancoEmpresa->codigo;
-            //         $banco_id_banco_empresa = $CodigoBancoEmpresa->id;
-            //     }
-
-            //     // return 'no';
-            //     $BancosCliente = new BancosEmpresa;
-            //     $BancosCliente->pertenece = 'Empresa';
-            //     $BancosCliente->nombre_banco = $nombre_banco_empresa;
-            //     $BancosCliente->codigo = $codigo_banco_empresa;
-            //     $BancosCliente->num_cuenta = $num_cuenta_empresa;
-            //     $BancosCliente->tipo_cuenta = $tipo_cuenta_empresa;
-            //     $BancosCliente->pago_movil = $telefono_pago_movil_empresa;
-            //     $BancosCliente->sucursal_id = $sucursal_id;
-            //     $BancosCliente->banco_id = $banco_id_banco_empresa;
-            //     $BancosCliente->save();
-
-
-            // }
-            //
 
 
             // TODO Guardamos los registros en la tabla Detalle pagos oficina

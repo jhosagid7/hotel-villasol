@@ -45,6 +45,7 @@ class Persona extends Model
         return $this->hasMany(DetallePagoOficina::class);
     }
 
+
     // protected $table = 'persona';
 
     // protected $primaryKey = 'idpersona';

@@ -46,6 +46,7 @@
   <!-- jvectormap -->
   <link rel="stylesheet" href="{{asset('bower_components/jvectormap/jquery-jvectormap.css')}}">
   <link rel="stylesheet" href="{{asset('css/submit.css')}}">
+  {{-- <link rel="stylesheet" href="{{asset('bower_components/jquery-ui/jquery-ui.min.css')}}"> --}}
   @yield('styles')
 
 
@@ -824,6 +825,7 @@
 
 <!-- Bootstrap 3.3.7 -->
 <script src="{{asset('Datatables/datatables.min.js')}}"></script>
+{{-- <script src="{{asset('bower_components/jquery-ui/jquery-ui.min.js')}}"></script> --}}
 {{-- <!-- Bootstrap 3.3.7 -->
 <script src="{{asset('Datatables/Buttons-1.6.2/js/buttons.bootstrap.min.js')}}"></script>
 <!-- Bootstrap 3.3.7 -->

@@ -109,11 +109,14 @@
                                 <th>Num Factura</th>
                                 <th>Tipo Operacion</th>
                                 <th>Monto</th>
+                                <th>Abonó</th>
+                                <th>Resta</th>
                                 <th>Estado Pago</th>
                                 <th>Estado Credito</th>
                                 <th>Fecha Emision</th>
                                 <th>Fecha Vencimiento</th>
-                                <th class="no-print">Operacion</th>
+                                <th class="no-print">Abonar</th>
+                                <th class="no-print">Pagar</th>
                             </thead>
 
                             <tbody>
@@ -127,6 +130,8 @@
                                     <td>{{$detalle_credito->numero_factura ?? ''}}</td>
                                     <td>{{$detalle_credito->tipo_operacion ?? ''}}</td>
                                     <td>{{floatval($detalle_credito->monto) ?? ''}}</td>
+                                    <td>{{floatval($detalle_credito->abono) ?? ''}}</td>
+                                    <td>{{floatval($detalle_credito->monto - $detalle_credito->abono) ?? ''}}</td>
                                     <td>{{$detalle_credito->estado_pago ?? ''}}</td>
                                     <td>{{$detalle_credito->estado_credito ?? ''}}</td>
                                     <td>{{$detalle_credito->fecha_emision ?? ''}}</td>
@@ -135,14 +140,22 @@
 
 
 
-                                                <a id="modalPago" href="#" onClick="selFactura({{floatval($detalle_credito->monto) ?? ''}},{{$detalle_credito->id ?? ''}},'una');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Pagar</a>
+                                                <a id="modalPago" href="#" onClick="selFactura({{floatval($detalle_credito->monto - $detalle_credito->abono) ?? ''}},{{$detalle_credito->id ?? ''}},'abonar');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-warning btn-block col-lg-pull-2 small no-print">Abonar</a>
+
+
+                                    </td>
+                                    <td class="no-print">
+
+
+
+                                                <a id="modalPago" href="#" onClick="selFactura({{floatval($detalle_credito->monto - $detalle_credito->abono) ?? ''}},{{$detalle_credito->id ?? ''}},'una');"  data-toggle="modal" data-target="#limpieza" class="btn btn-sm btn-success btn-block col-lg-pull-2 small no-print">Pagar</a>
 
 
                                     </td>
 
                                     </tr>
                                     @php
-                                        $total_deuda += floatval($detalle_credito->monto);
+                                        $total_deuda += floatval($detalle_credito->monto - $detalle_credito->abono);
                                         $i++
                                     @endphp
                                 @endforeach
@@ -190,7 +203,7 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><span class="fa fa-spinner"></span> GESTIONAR PAGOS DE CREDITOS </h4>
+                    <h4 class="modal-title"><span class="fa fa-spinner"></span> GESTIONAR PAGOS DE CREDITOS s </h4>
                 </div>
                 <div class="modal-body" style="background-color:#fff !important;">
 
@@ -570,8 +583,9 @@
 @push('sciptsMain')
 
 <script language="javascript">
-
-selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
+    var abonarFacturas = '';
+    selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
+    abonarFacturas = facturas_pagadas;
     // alert(PreCosto+'  '+PreVenta+'  '+Ids);
 
     $("#total_costo").val(total_costo_selec);
@@ -704,9 +718,14 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
             }
 
+    if(abonarFacturas == 'abonar'){
+        $("#guardar").show();
+        alert('abonar a factura')
+    }else{
+        $("#guardar").hide();
+    }
 
 
-    $("#guardar").hide();
     $("#gestionpago").hide();
     $("#gestionpago_boton").show();
     $("#jidarticulo").change(showValues);
@@ -732,32 +751,54 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
     }
 
 
+
+
+
+
     $(document).ready(function() {
         $("#enviar").on('click', function() {
             event.preventDefault();
 
             let restaTotalV = document.getElementById('RestaTtotalV');
             let spTotalV = document.getElementById('spTotalV');
+            let spTotal = $('#spTotal').html();
+            let PagoTtotal = $('#PagoTtotal').html();
             let RestaTtotal = document.getElementById('RestaTtotal');
             RestaTtotalCuenta = new Decimal(RestaTtotal.innerHTML);
             restaTotalV = new Decimal(restaTotalV.innerHTML);
-            spTotalV = new Decimal(spTotalV.innerHTML);
+            // spTotal = new Decimal(spTotal.innerHTML);
+            // PagoTtotal = new Decimal(PagoTtotal.innerHTML);
 
-            if (RestaTtotalCuenta > 0) {
-                alert('Debe ingresar monto para pagar la deuda...');
-                if (VueltosvtosPendientes > 0) {
-                    document.getElementById("VueltospagoConExcedente").focus();
-                }else{
-                    document.getElementById("DMontoDolar").focus();
+            alert(abonarFacturas)
+            if(abonarFacturas == 'abonar'){
+                $("#guardar").show();
+                alert('abonar a factura '+ spTotal +' '+ PagoTtotal)
+
+                // if(spTotal == PagoTtotal){
+                //     alert('El monto no puede ser igual a la deuda (Solo puede abonar a la factura)...');
+                //     return false;
+                // }
+            }else{
+                if (RestaTtotalCuenta > 0) {
+                    alert('Debe ingresar monto para pagar la deuda...');
+                    if (VueltosvtosPendientes > 0) {
+                        document.getElementById("VueltospagoConExcedente").focus();
+                    }else{
+                        document.getElementById("DMontoDolar").focus();
+                    }
+                    return false;
                 }
-                return false;
+
+                if(RestaTtotalCuenta > 0 && spTotalV == 0){
+                    alert('Debe especificar un monto para regresar los vueltos restante...');
+                    document.getElementById("DMontoDolarV").focus();
+                    return false;
+                }
             }
 
-            if(RestaTtotalCuenta > 0 && spTotalV == 0){
-                alert('Debe especificar un monto para regresar los vueltos restante...');
-                document.getElementById("DMontoDolarV").focus();
-                return false;
-            }
+
+
+
             if (restaTotalV > 0) {
                 alert('Los vueltos deben ser igual a la cantidad total de la deuda...');
                 document.getElementById("DMontoDolarV").focus();
@@ -2512,7 +2553,11 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
             $("#DMontoPesoV").val('');
             $("#DMontoBolivarV").val('');
             $("#vueltos").show("linear");
-            $("#guardar").hide("linear");
+            if(abonarFacturas == 'abonar'){
+                $("#guardar").show();
+            }else{
+                $("#guardar").hide();
+            }
             }
 
 
@@ -2568,7 +2613,11 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
             $("#r").html("RESTA");
             $("#tap").html("TOTAL A PAGAR");
-            $("#guardar").hide("linear");
+            if(abonarFacturas == 'abonar'){
+                $("#guardar").show();
+            }else{
+                $("#guardar").hide();
+            }
 
         }
 
@@ -3071,7 +3120,11 @@ selFactura = function(total_costo_selec,Ids_selec,facturas_pagadas){
 
                     $("#rV").html("RESTA");
                     $("#tapV").html("TOTAL A PAGAR");
-                    $("#guardar").hide("linear");
+                    if(abonarFacturas == 'abonar'){
+                        $("#guardar").show();
+                    }else{
+                        $("#guardar").hide();
+                    }
                 }
 
 

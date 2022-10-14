@@ -635,8 +635,8 @@ text-overflow: ellipsis;
                                         </div>
                                         <div class="row">
                                             <div id="excedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
-                                                <label for="pagoConExcedente"><h2 class="text-blue">Exedente disponible: <b id="dispExcedenteShow">$.0.00</b></h2></label>
-                                                <input class="form-control" type="text" id="pagoConExcedente" name="pagoConExcedente" >
+                                                <label for="pagoConExcedente"><h2 class="text-blue">Dispo en oficina: <b id="dispExcedenteShow">$.0.00</b>.</h2></label>
+                                                <input class="form-control" type="text" id="pagoConExcedente" name="pagoConExcedente" placeholder="Usar dinero disponible...">
                                                 <input class="form-control" type="hidden" id="dispExcedente" name="dispExcedente" >
                                             </div>
                                             <div id="nocredito" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
@@ -1488,7 +1488,9 @@ console.log('Falta '+minutes);
             modoPagoOn = $('#modo_pago').val();
             tipoPago = $('#tipo_pago').val();
             monto_dejadoR = $('#monto_dejado').val();
-            // alert(monto_dejadoR);
+            let pagoConExcedente = $('#pagoConExcedente').val();
+
+
 
             if (modoPagoOn == 'contado') {
 
@@ -1502,12 +1504,14 @@ console.log('Falta '+minutes);
                     validarPagoServicio = 0;
                     return false;
                 }
-
-                if(monto_dejadoR == 0 || monto_dejadoR == null){
+                if(pagoConExcedente == 0 || pagoConExcedente == null){
+                    if(monto_dejadoR == 0 || monto_dejadoR == null){
                     alert('No has ingresado el monto a pagar...!');
                     validarPagoServicio = 0;
                     return false;
                 }
+                }
+
 
                 if(RestaTotal.innerHTML > 0){
                     alert('El monto ingresado no supera la deuda a pagar...!');
@@ -4364,6 +4368,7 @@ $("#guardar").show("linear"); //boton qr bueno
                             modoPagoOn = $('#modo_pago').val();
                             tipoPago = $('#tipo_pago').val();
                             monto_dejadoR = $('#monto_dejado').val();
+                            let pagoConExcedente = $('#pagoConExcedente').val();
                             // alert(monto_dejadoR);
 
                             if (modoPagoOn == 'contado') {
@@ -4375,11 +4380,13 @@ $("#guardar").show("linear"); //boton qr bueno
                                     alert('No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...)');
                                     return false;
                                 }
-
-                                if(monto_dejadoR == 0 || monto_dejadoR == null){
-                                    alert('No has ingresado el monto a pagar...!');
-                                    return false;
+                                if(pagoConExcedente == 0 || pagoConExcedente == null){
+                                    if(monto_dejadoR == 0 || monto_dejadoR == null){
+                                        alert('No has ingresado el monto a pagar...!');
+                                        return false;
+                                    }
                                 }
+
 
                                 if(RestaTotal.innerHTML > 0){
                                     alert('El monto ingresado no supera la deuda a pagar...!');

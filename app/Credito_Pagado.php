@@ -12,6 +12,7 @@ class Credito_Pagado extends Model
         'tipo_operacion',
         'operacion_id',
         'monto',
+        'abono',
         'fecha_emision',
         'fecha_vencimiento',
         'fecha_pago',

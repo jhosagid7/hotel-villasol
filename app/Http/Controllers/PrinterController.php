@@ -17,6 +17,14 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
 class PrinterController extends Controller
 {
+
+    public $print_error     = 0;
+    public $print_name      = '';
+    protected $machine_user = '';
+    protected $machine_pass = '';
+    protected $machine_name = '';
+    protected $network      = false;
+    protected $print_route  = '';
     // Metodo para imprimir Ticket de Servicios
 
     public function ticketServicio($tipoOperasion, $numeroServisio, $nombreHabitacion, $detalleHabitacion, $modo_pago, $tipo_pago, $total_costo, $operador,$tipo){
@@ -29,11 +37,24 @@ class PrinterController extends Controller
             escribe el nombre de la tuya. Recuerda que debes compartirla
             desde el panel de control
         */
+        // $this->print_name = "AnyDesk-Printer";
+        $this->print_name = "POS5890";
+        $this->machine_user = "Administrador";
+        $this->machine_pass = "pass";
+        $this->machine_name = "INTEL";
+        $this->network = false;
 
-        $nombre_impresora = "POS5890";
+        try {
+        if($this->network){
+            $this->print_route = "smb://$this->machine_user:$this->machine_pass@$this->machine_name/$this->print_name"; 
+        }else{
+            $this->print_route = $this->print_name;
+        }
+
+        // $nombre_impresora = "POS5890";
 
 
-        $connector = new WindowsPrintConnector($nombre_impresora);
+        $connector = new WindowsPrintConnector($this->print_route);
         $printer = new Printer($connector);
         #Mando un numero de respuesta para saber que se conecto correctamente.
         echo 1;
@@ -125,16 +146,33 @@ class PrinterController extends Controller
             la conexión con la impresora. Recuerda incluir esto al final de todos los archivos
         */
         $printer->close();
+        $this->print_error = 1;
+    } catch (\Exception $e) {
+        $this->print_error = 0;
+    }
 
     }
 
     public function ticketConsumo($tipoOperasion, $articulo_id, $serie_comprobante, $precio_venta_unidad, $cantidad, $modo_pago, $tipo_pago, $total_venta, $operador){
 
-        // return $requestPrint;
-        $nombre_impresora = "POS5890";
+        // $this->print_name = "AnyDesk-Printer";
+        $this->print_name = "POS5890";
+        $this->machine_user = "Administrador";
+        $this->machine_pass = "pass";
+        $this->machine_name = "INTEL";
+        $this->network = false;
+
+        try {
+        if($this->network){
+            $this->print_route = "smb://$this->machine_user:$this->machine_pass@$this->machine_name/$this->print_name"; 
+        }else{
+            $this->print_route = $this->print_name;
+        }
+
+        // $nombre_impresora = "POS5890";
 
 
-        $connector = new WindowsPrintConnector($nombre_impresora);
+        $connector = new WindowsPrintConnector($this->print_route);
         $printer = new Printer($connector);
 
         echo 1;
@@ -199,17 +237,34 @@ class PrinterController extends Controller
 
 
         $printer->close();
+        $this->print_error = 1;
+    } catch (\Exception $e) {
+        $this->print_error = 0;
+    }
 
     }
 
 
     public function ticketCreditos($tipoOperasion, $facturas_pagadas_id, $nombreCliente, $modo_pago, $tipo_pago, $monto_dejado, $operador ,$facturas_pagadas, $idFacturasPagadas){
 
-        // return $requestPrint;
-        $nombre_impresora = "POS5890";
+        // $this->print_name = "AnyDesk-Printer";
+        $this->print_name = "POS5890";
+        $this->machine_user = "Administrador";
+        $this->machine_pass = "pass";
+        $this->machine_name = "INTEL";
+        $this->network = false;
+
+        try {
+        if($this->network){
+            $this->print_route = "smb://$this->machine_user:$this->machine_pass@$this->machine_name/$this->print_name"; 
+        }else{
+            $this->print_route = $this->print_name;
+        }
+
+        // $nombre_impresora = "POS5890";
 
 
-        $connector = new WindowsPrintConnector($nombre_impresora);
+        $connector = new WindowsPrintConnector($this->print_route);
         $printer = new Printer($connector);
 
         echo 1;
@@ -292,6 +347,10 @@ class PrinterController extends Controller
 
 
         $printer->close();
+        $this->print_error = 1;
+    } catch (\Exception $e) {
+        $this->print_error = 0;
+    }
 
     }
 
@@ -306,10 +365,24 @@ class PrinterController extends Controller
             desde el panel de control
         */
 
-        $nombre_impresora = "POS5890";
+        // $this->print_name = "AnyDesk-Printer";
+        $this->print_name = "POS5890";
+        $this->machine_user = "Administrador";
+        $this->machine_pass = "pass";
+        $this->machine_name = "INTEL";
+        $this->network = false;
+
+        try {
+        if($this->network){
+            $this->print_route = "smb://$this->machine_user:$this->machine_pass@$this->machine_name/$this->print_name"; 
+        }else{
+            $this->print_route = $this->print_name;
+        }
+
+        // $nombre_impresora = "POS5890";
 
 
-        $connector = new WindowsPrintConnector($nombre_impresora);
+        $connector = new WindowsPrintConnector($this->print_route);
         $printer = new Printer($connector);
         #Mando un numero de respuesta para saber que se conecto correctamente.
         echo 1;
@@ -402,6 +475,10 @@ class PrinterController extends Controller
             la conexión con la impresora. Recuerda incluir esto al final de todos los archivos
         */
         $printer->close();
+        $this->print_error = 1;
+    } catch (\Exception $e) {
+        $this->print_error = 0;
+    }
 
     }
 
@@ -417,11 +494,24 @@ class PrinterController extends Controller
             desde el panel de control
         */
         $operador = Auth::user()->name;
+        // $this->print_name = "AnyDesk-Printer";
+        $this->print_name = "POS5890";
+        $this->machine_user = "Administrador";
+        $this->machine_pass = "pass";
+        $this->machine_name = "INTEL";
+        $this->network = false;
 
-        $nombre_impresora = "POS5890";
+        try {
+        if($this->network){
+            $this->print_route = "smb://$this->machine_user:$this->machine_pass@$this->machine_name/$this->print_name"; 
+        }else{
+            $this->print_route = $this->print_name;
+        }
+
+        // $nombre_impresora = "POS5890";
 
 
-        $connector = new WindowsPrintConnector($nombre_impresora);
+        $connector = new WindowsPrintConnector($this->print_route);
         $printer = new Printer($connector);
         #Mando un numero de respuesta para saber que se conecto correctamente.
         echo 1;
@@ -521,6 +611,10 @@ class PrinterController extends Controller
             la conexión con la impresora. Recuerda incluir esto al final de todos los archivos
         */
         $printer->close();
+        $this->print_error = 1;
+    } catch (\Exception $e) {
+        $this->print_error = 0;
+    }
 
     }
 }

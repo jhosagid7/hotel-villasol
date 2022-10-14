@@ -9,6 +9,7 @@ use App\Credito;
 use App\Empresa;
 use App\Articulo;
 use App\Servicio;
+use App\Excedente;
 use Carbon\Carbon;
 use App\Horas_extra;
 use App\Sessioncaja;
@@ -16,16 +17,18 @@ use App\Contabilidad;
 use App\ControlStock;
 use App\Denominacion;
 use App\Pago_Credito;
+use App\PreExcedente;
 use App\Pago_Servicio;
 use App\Detalle_credito;
+use App\HistorialExcedente;
 use Illuminate\Http\Request;
+use App\HistorialCreditoCaja;
 use Illuminate\Support\Facades\DB;
 use App\Historial_Vueltos_Pendiente;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Excedentes_Recibidos_Caja_Actual;
 use App\Excedentes_Pendientes_Caja_Anterior;
-use App\HistorialCreditoCaja;
 
 class CajaController extends Controller
 {
@@ -446,6 +449,23 @@ class CajaController extends Controller
         $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
 
 
+        $clientes_vueltos_pendientes = HistorialExcedente::where('status', 'Pendiente')->where('caja_id', $id)->get();
+
+        $ids = [];
+
+        foreach ($clientes_vueltos_pendientes as $cvp) {
+            $ids[] = $cvp->persona_id;
+        }
+        $ids = array_unique($ids);
+
+        $clientes_vueltos = PreExcedente::whereIn('cliente_id', $ids)->get();
+        // $users=DB::table('users')
+        //             ->whereIn('id', [1, 2, 3])
+        //             ->get();
+        // return $clientes_vueltos_pendientes;
+
+        // return $clientes_vueltos_pendientes[0]->cliente->nombre;
+        //with('pago_extras','user','ventas','detalle_creditos_pagados','pagos_servicios','pagos_vueltos_extra','pago_vueltos_credito','pago_vueltos','horas_extras','excedente_anterior','excedente_actual','historial_vueltos_pendientes','pago_ventas','pagos_ventas','articulo_ventas','servicios','historialExcedentes','detalle_creditos','creditos_pagados','cortesias','pago_servicios','sucursal','pago_creditos', 'pago_credito','detalle_pago_oficina','historial_creditos','Cambios')->
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $cajas = Caja::find($caja->id);
         $cajas->user;
@@ -455,6 +475,7 @@ class CajaController extends Controller
         $cajas->articulo_ventas;
         $cajas->servicios;
         $cajas->detalle_creditos_pagados;
+        // return $cajas;
         // return $cajas;
         // $cajas->credito;
         $cajas->cortesias;
@@ -467,62 +488,36 @@ class CajaController extends Controller
         $cajas->pagos_vueltos_extra;
         $cajas->pago_vueltos_credito;
         $cajas->pago_extras;
+        $cajas->reintegros;
         // return $cajas;
 
 
 
+        if($cajas->reintegros){
+            foreach ($cajas->reintegros as $reintegro ) {
+                    if ($reintegro->monto_dolar) {
+                        $cajas->SumaTotalDolarReintegro += $reintegro->monto_dolar;
+                    }
+                    if ($reintegro->monto_peso) {
+                        $cajas->SumaTotalPesoReintegro += $reintegro->monto_peso;
+                    }
+                    if ($reintegro->monto_bolivar) {
+                        $cajas->SumaTotalBolivarReintegro += $reintegro->monto_bolivar;
+                    }
+                    if ($reintegro->monto_trans) {
+                        $cajas->SumaTotalTransReintegro = $reintegro->monto_trans;
+                    }
+                    $cajas->SumaTotalReintegrosPagadosoEnCaja += $reintegro->monto_pagado;
+                }
+        }
 
-
-//         // $creditos = Credito::where('caja_id',$caja->id)->get();
-
-//         $cajas->creditos = $creditos;
-
-
-// return $cajas->excedente_actual_valor;
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-//                    GESTIONAR PAGOS DE CREDITOS Y CREDITOS PAGADOS
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// foreach ($cajas->pago_creditos as $pagoC ) {
-
-//     if ($pagoC->Divisa == 'Dolar') {
-//         $cajas->SumaTotalDolarCred = $cajas->SumaTotalDolarCred + ($pagoC->MontoDivisa - $pagoC->Vueltos * -1);
-//     }elseif ($pagoC->Divisa == 'Peso') {
-//         $cajas->SumaTotalPesoCred = $cajas->SumaTotalPesoCred + ($pagoC->MontoDivisa - $pagoC->Vueltos * -1);
-//     }elseif ($pagoC->Divisa == 'Bolivar') {
-//         $cajas->SumaTotalBolivarCred = $cajas->SumaTotalBolivarCred + ($pagoC->MontoDivisa - $pagoC->Vueltos * -1);
-//     }elseif ($pagoC->Divisa == 'Punto') {
-//         $cajas->SumaTotalPuntoCred = $cajas->SumaTotalPuntoCred + ($pagoC->MontoDivisa - $pagoC->Vueltos * -1);
-//     }elseif ($pagoC->Divisa == 'Transferencia') {
-//         $cajas->SumaTotalTransferenciaCred = $cajas->SumaTotalTransferenciaCred + ($pagoC->MontoDivisa - $pagoC->Vueltos * -1);
-//     }
-
-// }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // TODO Traer los vueltos pendientes de las cajas ateriores
 
 
-    // $vueltosPendientesCajaAnterior = Excedentes_Pendientes_Caja_Anterior::where('Registrado_por','Sistema')->where('caja_id', '<>',$cajas->id)->latest('id')->first();
-    // // return $vueltosPendientesCajaAnterior;
 
-    //     if ($vueltosPendientesCajaAnterior) {
-    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDivisa = $vueltosPendientesCajaAnterior->Dolar;
-    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesDolarDolar = $vueltosPendientesCajaAnterior->Dolar_To_Dolar;
-    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDivisa = $vueltosPendientesCajaAnterior->Peso;
-    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesPesoDolar = $vueltosPendientesCajaAnterior->Peso_To_Dolar;
-    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDivisa = $vueltosPendientesCajaAnterior->Punto;
-    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesBolivarDolar = $vueltosPendientesCajaAnterior->Punto_To_Dolar;
-    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDivisa = $vueltosPendientesCajaAnterior->Transferencia;
-    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesPuntoDolar = $vueltosPendientesCajaAnterior->Trans_To_Dolar;
-    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDivisa = $vueltosPendientesCajaAnterior->Bolivar;
-    //         $cajas->TotalSumaVueltosCajaAnteriorPendientesTransferenciaDolar = $vueltosPendientesCajaAnterior->Bolivar_To_Dolar;
-    //         $cajas->VueltosCajaAnteriorPendientesOperador = $vueltosPendientesCajaAnterior->Operador;
-    //         $cajas->VueltosCajaAnteriorPendientesOperadorId = $vueltosPendientesCajaAnterior->Operador_id;
-    //     }
 
 
 
@@ -1030,21 +1025,6 @@ foreach ($cajas->creditos_pagados as $credPagados ) {
 // return $cajas->SumaTotalCantidadCreditosVigentes;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        // foreach ($cajas->pago_ventas as $pago ) {
-
-        //     if ($pago->Divisa == 'Dolar') {
-        //         $cajas->SumaTotalDolar = $cajas->SumaTotalDolar + ($pago->MontoDivisa - $pago->Vueltos * -1) ;
-        //     }elseif ($pago->Divisa == 'Peso') {
-        //         $cajas->SumaTotalPeso = $cajas->SumaTotalPeso + ($pago->MontoDivisa - $pago->Vueltos * -1);
-        //     }elseif ($pago->Divisa == 'Bolivar') {
-        //         $cajas->SumaTotalBolivar = $cajas->SumaTotalBolivar + ($pago->MontoDivisa - $pago->Vueltos * -1);
-        //     }elseif ($pago->Divisa == 'Punto') {
-        //         $cajas->SumaTotalPunto = $cajas->SumaTotalPunto + ($pago->MontoDivisa - $pago->Vueltos * -1);
-        //     }elseif ($pago->Divisa == 'Transferencia') {
-        //         $cajas->SumaTotalTransferencia = $cajas->SumaTotalTransferencia + ($pago->MontoDivisa - $pago->Vueltos * -1);
-        //     }
-
-        // }
 $ver = [];
         foreach ($cajas->ventas as $vent ) {
             // if ($vent->estado == 'Aceptada') {
@@ -2142,9 +2122,6 @@ $ojot = [];
 
 
         $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
-        $tasaDolarHabitacion = Tasa::where('nombre','=','PesoHabitacion')->first();
-        $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
-        $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
         $tasaPesoHabitacion = Tasa::where('nombre','=','PesoHabitacion')->first();
         $UserName = Auth::user()->name;
         $UserId = Auth::user()->id;
@@ -2201,7 +2178,7 @@ $ojot = [];
                 //  return $cajas;
                 $verificarHorasExtras = Horas_extra::where('caja_id',$cajas->id)->get();
                 // return $verificarHorasExtras;
-        return view('cajas.caja.show', compact('appDate','verificarHorasExtras','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar', 'tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar'))->with($mensaje);
+        return view('cajas.caja.show', compact('clientes_vueltos','clientes_vueltos_pendientes', 'appDate','verificarHorasExtras','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar', 'tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar'))->with($mensaje);
     }
 
     /**
@@ -2349,6 +2326,10 @@ $ojot = [];
                         $historialVueltosPendientes->save();
                     }
                 }
+
+                DB::statement("SET foreign_key_checks=0");
+                PreExcedente::truncate();
+                DB::statement("SET foreign_key_checks=1");
 
 
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

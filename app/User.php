@@ -89,4 +89,8 @@ class User extends Authenticatable
         return $this->hasMany(HistorialCreditoCaja::class);
     }
 
+    public function reintegros(){
+        return $this->hasMany(Reintegro::class);
+    }
+
 }

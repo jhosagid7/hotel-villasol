@@ -27,6 +27,7 @@
     <div class="col-lg-6">
         <h3>Nueva caja</h3>
         @include('custom.message')
+
     </div>
 </div>
 <form action="{{ route('caja.store')}}" method="POST" class="submit-prevent-form">

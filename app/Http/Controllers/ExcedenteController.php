@@ -12,6 +12,7 @@ use App\Articulo;
 use App\Excedente;
 use Carbon\Carbon;
 use App\Sessioncaja;
+use App\PreExcedente;
 use App\BancosCliente;
 use App\BancosEmpresa;
 use App\Detalle_credito;
@@ -354,6 +355,28 @@ class ExcedenteController extends Controller
                             $HistorialExcedente->user_id  = $user_id;
                             $HistorialExcedente->save();
 
+                            $is_cliente = PreExcedente::where('cliente_id', $dcliente_id)->first();
+
+                            if(!$is_cliente){
+                                $pre_excedente = new PreExcedente;
+                                $pre_excedente->nombre_cliente = $nombre_cliente;
+                                $pre_excedente->monto_excedente_actual = $saldo_disponible;
+                                $pre_excedente->deuda_total_acumulada = $excedente;
+                                $pre_excedente->user_id = $user_id;
+                                $pre_excedente->cliente_id = $dcliente_id;
+                                $pre_excedente->caja_id = $caja_id;
+                                $pre_excedente->save();
+                            }else{
+                                $updatePreExcedente = PreExcedente::findOrFail($is_cliente->id);
+                                $updatePreExcedente->monto_excedente_actual = $saldo_disponible;
+                                $updatePreExcedente->deuda_total_acumulada += $excedente;
+                                $updatePreExcedente->update();
+                            }
+
+
+
+
+
 // return 'llego... '.$servicio_id;
                 // TODO Actualizamos la tabla excedentes__recibidos__caja__actuals para poner el estatus en Pagar por oficina
 
@@ -544,7 +567,7 @@ class ExcedenteController extends Controller
         // return $pagarporoficina;
 
         $pagarporoficina->caja_id = $historialExcedentes;
-        return $pagarporoficina;
+        // return $pagarporoficina;
 
         $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
         // return $tasaDolarHabitacion->tasa;

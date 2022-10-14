@@ -136,6 +136,9 @@ class Caja extends Model
     public function servicios(){
         return $this->hasMany(Servicio::class);
     }
+    public function reintegros(){
+        return $this->hasMany(Reintegro::class);
+    }
 
     public function historialExcedentes(){
         return $this->hasMany(HistorialExcedente::class);

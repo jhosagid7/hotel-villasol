@@ -11,7 +11,7 @@
 
             <div style="background-color: #e7eaeb" class="box-body">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
+                    @include('custom.message')
                         <!-- Custom Tabs (Pulled to the right) -->
                         <div class="nav-tabs-custom">
                           <ul class="nav nav-tabs pull-right">
@@ -25,6 +25,7 @@
                                 {!!"Sistema"!!}
                             @endisset</li>
                           </ul>
+                          
                           <div style="background-color: #e7eaeb" class="tab-content">
 
 

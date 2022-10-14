@@ -199,6 +199,9 @@ class PagoCreditoController extends Controller
         $num_Punto = $request->get('num_Punto');
         $num_Trans = $request->get('num_Trans');
 
+        // $base_vuelto_monto_dejado_abono = $request->get('base_vuelto_monto_dejado');
+        $monto_dejado_abono = $request->get('monto_dejado');
+        $resta_costo_abono = 0;
 
 
 
@@ -283,12 +286,12 @@ class PagoCreditoController extends Controller
             $date   = Carbon::now('America/Caracas');
             $fecha  = $date->format('y-m-d');
 
-        if($facturas_pagadas == 'una' || $facturas_pagadas == 'todas'){
+        if($facturas_pagadas == 'una' || $facturas_pagadas == 'todas' || $facturas_pagadas == 'abonar'){
 
 
             //Buscamos todos los ides de la tabla detalle_credito que pertenecen al la tabla credito por medio del id
 
-            if($facturas_pagadas == 'una'){
+            if($facturas_pagadas == 'una' || $facturas_pagadas == 'abonar'){
                 $creditos_ids = Detalle_credito::where('id',$facturas_pagadas_id)->where('estado_pago', 'pendiente')->get();
             }else{
                 $creditos_ids = Detalle_credito::where('credito_id',$facturas_pagadas_id)->where('estado_pago', 'pendiente')->get();
@@ -319,12 +322,24 @@ class PagoCreditoController extends Controller
                 }
             }
 
-            //consultamos la tabla creditos para traer los datos de nombrem,cedula entre otros.
+            //consultamos la tabla creditos para traer los datos de nombre,cedula entre otros.
 
             $cliente =  Credito::findOrFail($id_cliente);
             // return $cliente;
 
+            if($facturas_pagadas == 'una' || $facturas_pagadas == 'todas' || $facturas_pagadas == 'abonar'){
+                // return 'abonar';
+                if($monto_dejado_abono >= $total_costo){
+                    // return $total_costo . ' - ' . $monto_dejado_abono;
+                    // return 'factura ==';
+                    $resta_costo_abono = 0;
+                }else{
+                    // return 'factura <';
+                    $resta_costo_abono = $monto_dejado_abono;
+                }
 
+            }
+            // return $total_costo . ' - ' . $monto_dejado_abono;
             $detalle_creditos_pagados = new Detalle_Creditos_Pagado();
             $detalle_creditos_pagados->nombre_cliente = $cliente->nombre_cliente;
             $detalle_creditos_pagados->cedula_cliente = $cliente->cedula_cliente;
@@ -334,13 +349,14 @@ class PagoCreditoController extends Controller
             $detalle_creditos_pagados->total_factura = $total_factura;
             $detalle_creditos_pagados->total_Consumo = $monto_consumo;
             $detalle_creditos_pagados->total_Servicio = $monto_servicio;
-            $detalle_creditos_pagados->total_deuda = $total_costo;
+            $detalle_creditos_pagados->total_deuda = $total_costo - $resta_costo_abono;
             $detalle_creditos_pagados->fecha_pago = $fecha;
             $detalle_creditos_pagados->estado_credito = $cliente->estado_credito;;
             $detalle_creditos_pagados->persona_id = $cliente->persona_id;
             $detalle_creditos_pagados->user_id = $operador_id;
             $detalle_creditos_pagados->caja_id = $caja_id;
             $detalle_creditos_pagados->save();
+            // return $detalle_creditos_pagados->id;
 
             foreach($creditos_ids as $ids) {
 
@@ -350,6 +366,18 @@ class PagoCreditoController extends Controller
 
                     // Llenamos la tabla Creditos_pagados
                     $detalle_credito_datos = Detalle_credito::findOrFail($ids->id);
+
+                    if($facturas_pagadas == 'una' || $facturas_pagadas == 'todas' || $facturas_pagadas == 'abonar'){
+
+                        if($monto_dejado_abono >= $total_costo){
+                            $detalle_credito = Detalle_credito::findOrFail($ids->id);
+                            $detalle_credito_datos->monto = $detalle_credito_datos->monto -  $detalle_credito->abono;
+                        }else{
+                            $detalle_credito_datos->monto = $resta_costo_abono;
+                        }
+
+                    }
+                    // $detalle_credito_datos->monto = $resta_costo_abono;
 
                     $credito_pagado = new Credito_Pagado();
                     $credito_pagado->numero_factura = $detalle_credito_datos->numero_factura;
@@ -371,13 +399,41 @@ class PagoCreditoController extends Controller
 
                     // Actualizamos la tabla Detalle_credito
 
+                if($facturas_pagadas == 'una' || $facturas_pagadas == 'todas' || $facturas_pagadas == 'abonar'){
+
+                    if($monto_dejado_abono >= $total_costo){
+                        $detalle_credito = Detalle_credito::findOrFail($ids->id);
+                        $detalle_credito->estado_pago = 'Pagado';
+                        $detalle_credito->estado_credito = 'Pagado';
+                        $detalle_credito->abono = $detalle_credito->monto;
+                        $detalle_credito->fecha_pago = $fecha;
+                        $detalle_credito->update();
+
+                        $restar_factura = 1;
+                    }else{
+                        $detalle_credito = Detalle_credito::findOrFail($ids->id);
+                        $detalle_credito->estado_pago = 'Pendiente';
+                        $detalle_credito->abono = $detalle_credito->abono + $resta_costo_abono;
+                        $detalle_credito->fecha_pago = $fecha;
+                        $detalle_credito->update();
+
+                        $restar_factura = 0;
+                    }
+
+                }else{
                     $detalle_credito = Detalle_credito::findOrFail($ids->id);
                     $detalle_credito->estado_pago = 'Pagado';
                     $detalle_credito->estado_credito = 'Pagado';
+                    $detalle_credito->abono = $detalle_credito->monto;
                     $detalle_credito->fecha_pago = $fecha;
                     $detalle_credito->update();
 
-                    // Capturamos la nueva fecha de vencimiento
+                    $restar_factura = 1;
+                }
+
+
+
+                    // * Capturamos la nueva fecha de vencimiento
                     $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
 
                     if(!$fecha_limite_pago){
@@ -389,7 +445,7 @@ class PagoCreditoController extends Controller
                     }
 
                     $credito = Credito::findOrFail($detalle_credito_datos->credito_id);
-                    $ultima_factura = $credito->total_factura - 1;
+                    $ultima_factura = $credito->total_factura - $restar_factura;
 
                     if ($ultima_factura == 0) {
                         $credito->total_factura = 0;
@@ -397,10 +453,31 @@ class PagoCreditoController extends Controller
                         $credito->fecha_limite_pago = null;
                         $credito->update();
                     }else{
-                        $credito->total_factura = $credito->total_factura - 1;
-                        $credito->total_deuda = $credito->total_deuda - $detalle_credito_datos->monto;
-                        $credito->fecha_limite_pago = $fecha;
-                        $credito->update();
+                        if($facturas_pagadas == 'una' || $facturas_pagadas == 'todas' || $facturas_pagadas == 'abonar'){
+
+
+
+                            if($monto_dejado_abono >= $total_costo){
+                                $credito->total_factura = $credito->total_factura - $restar_factura;
+                                $credito->total_deuda = $credito->total_deuda - $detalle_credito_datos->monto;
+                                $credito->fecha_limite_pago = $fecha;
+                                $credito->update();
+                            }else{
+                                $detalle_credito_datos->monto = $monto_dejado_abono;
+                                $credito->total_factura = $credito->total_factura - $restar_factura;
+                                $credito->total_deuda = $credito->total_deuda - $detalle_credito_datos->monto;
+                                $credito->fecha_limite_pago = $fecha;
+                                $credito->update();
+                            }
+
+                        }else{
+
+                            $credito->total_factura = $credito->total_factura - $restar_factura;
+                            $credito->total_deuda = $credito->total_deuda - $detalle_credito_datos->monto;
+                            $credito->fecha_limite_pago = $fecha;
+                            $credito->update();
+                        }
+
                     }
                 }
             }
@@ -434,7 +511,7 @@ class PagoCreditoController extends Controller
                         if($opS > 0 && $modo_pago == 'Contado'){
                             // return $opS;
                             //validamos que el monto pagado sea mayor o igual al total de la venta
-                            if($opS >= $total_venta){
+                            if($opS){
                                 // return 'si';
                                 // calculamos excedente si el valor pagado es mayor a la venta
                                 // $MontoDolarR = $request->get('MontoDolar');
@@ -504,20 +581,6 @@ class PagoCreditoController extends Controller
                                             $Pago_Credito->caja_id = $caja_id;
                                             $Pago_Credito->save();
 
-                                            // $Pago_Servicio = new Pago_Servicio();
-                                            // $Pago_Servicio->Divisa = $p;
-                                            // $Pago_Servicio->MontoDivisa = $montoDiv[$p];
-                                            // $Pago_Servicio->TasaTiket = $TasaT[$p];
-                                            // $Pago_Servicio->MontoDolar = floatval($value);
-                                            // $Pago_Servicio->MontoDolarServicio = floatval($value);
-                                            // $Pago_Servicio->Excedente = 0;
-                                            // $Pago_Servicio->Vueltos = 0;
-                                            // $Pago_Servicio->servicio_id = $servicio_id;
-                                            // $Pago_Servicio->caja_id = $caja_id;
-                                            // $Pago_Servicio->save();
-
-
-
                                             echo 'excd '. 0 .' <br> ';
                                             echo 'vueltos '. 0 .' <br> ';
                                             echo $restk.' <br> ';
@@ -542,18 +605,6 @@ class PagoCreditoController extends Controller
                                             $Pago_Credito->detalle__creditos__pagado_id = $detalle_creditos_pagados->id;
                                             $Pago_Credito->caja_id = $caja_id;
                                             $Pago_Credito->save();
-
-                                            // $Pago_Servicio = new Pago_Servicio();
-                                            // $Pago_Servicio->Divisa = $p;
-                                            // $Pago_Servicio->MontoDivisa = $montoDiv[$p];
-                                            // $Pago_Servicio->TasaTiket = $TasaT[$p];
-                                            // $Pago_Servicio->MontoDolar = floatval($value);
-                                            // $Pago_Servicio->MontoDolarServicio = floatval($value);
-                                            // $Pago_Servicio->Excedente = 0;
-                                            // $Pago_Servicio->Vueltos = 0;
-                                            // $Pago_Servicio->servicio_id = $servicio_id;
-                                            // $Pago_Servicio->caja_id = $caja_id;
-                                            // $Pago_Servicio->save();
 
                                             echo 'excd '. 0 .' <br> ';
                                             echo 'vueltos '. 0 .' <br> ';
@@ -600,34 +651,6 @@ class PagoCreditoController extends Controller
                                             $Pago_Credito->caja_id = $caja_id;
                                             $Pago_Credito->save();
 
-                                            // $Pago_Servicio = new Pago_Servicio();
-                                            // $Pago_Servicio->Divisa = $p;
-                                            // $Pago_Servicio->MontoDivisa = $montoDiv[$p];
-                                            // $Pago_Servicio->TasaTiket = $TasaT[$p];
-                                            // $Pago_Servicio->MontoDolar = floatval($value);
-                                            // $Pago_Servicio->MontoDolarServicio = floatval($residuo);
-                                            // $Pago_Servicio->Excedente = $exc;
-                                            // $Pago_Servicio->Vueltos = $vuel;
-                                            // $Pago_Servicio->servicio_id = $servicio_id;
-                                            // $Pago_Servicio->caja_id = $caja_id;
-                                            // $Pago_Servicio->save();
-
-
-                                            // if($exc > 0){
-                                            //     $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
-                                            //     $excdtsRecibidosCaja->Tipo = 'Servicio';
-                                            //     $excdtsRecibidosCaja->Estado = 'Pendiente';
-                                            //     $excdtsRecibidosCaja->Divisa = $p;
-                                            //     $excdtsRecibidosCaja->MontoDivisa = floatval($exc * $TasaT[$p]);
-                                            //     $excdtsRecibidosCaja->TasaTiket = $TasaT[$p];
-                                            //     $excdtsRecibidosCaja->MontoDolar = floatval($exc);
-                                            //     $excdtsRecibidosCaja->servicio_id = $servicio_id;
-                                            //     $excdtsRecibidosCaja->venta_id = 0;
-                                            //     $excdtsRecibidosCaja->horas_extra_id = 0;
-                                            //     $excdtsRecibidosCaja->caja_id = $caja_id;
-                                            //     $excdtsRecibidosCaja->save();
-                                            //     echo  'Excedentes_Recibidos_Caja_Actual Tipo: Servicio Estado: Pendiente Divisa: '.$p.' MontoDivisa: '.floatval($exc * $TasaT[$p]).' TasaTiket: '.$TasaT[$p].'  MontoDolar:  '.floatval($exc).'<br> ';
-                                            // }
 
                                             if($vuel > 0){
                                                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -696,68 +719,8 @@ class PagoCreditoController extends Controller
 
                             // return 'no';
                         }
-                        // return $modo_pago;
-            // Llenamos la tabla Pagos_Creditos
-
-            // $MontoDivisaR = $request->get('MontoDivisa');
-            // $divisaR = $request->get('divisa');
-            // $TasaTikeR = $request->get('TasaTike');
-            // $MontoDolarR = $request->get('MontoDolar');
-            // $VeltosR = $request->get('Veltos');
-
-            // $MontoDivisaR = array_filter($MontoDivisaR);
-
-
-            // foreach($MontoDivisaR as $key => $val) {
-
-
-            //     $divisa[]=$divisaR[$key];
-            //     $MontoDivisa[]=$MontoDivisaR[$key];
-            //     $TasaTiket[]=$TasaTikeR[$key];
-            //     $MontoDolar[]=$MontoDolarR[$key];
-            //     $Vueltos[]=$VeltosR[$key];
-
-            // }
-
-            // //Creamos un contador
-            // $cont = 0;
-
-            // //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            // while ($cont < count($MontoDolar)) {
-
-
-            //     $Pago_Venta = new Pago_Credito();
-            //     $Pago_Venta->Divisa = $divisa[$cont];
-            //     $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
-            //     $Pago_Venta->TasaTiket = $TasaTiket[$cont];
-            //     $Pago_Venta->MontoDolar = $MontoDolar[$cont];
-            //     $Pago_Venta->MontoConsumo = $monto_consumo;
-            //     $Pago_Venta->MontoServicio = $monto_servicio;
-            //     $Pago_Venta->Vueltos = $Vueltos[$cont];
-            //     $Pago_Venta->detalle_credito_id = $detalle_credito->id;
-            //     $Pago_Venta->caja_id = $caja_id;
-            //     $Pago_Venta->save();
-
-            //     $cont = $cont+1;
-            // }
-
-
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-            //Creamos un contador
 
 
         DB::commit();

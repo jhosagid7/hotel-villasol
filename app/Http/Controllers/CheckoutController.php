@@ -93,7 +93,7 @@ class CheckoutController extends Controller
         $servicio = Servicio::where('id', $id)->where('status_servicio', 'Iniciado')->first();
         // return $servicio;
 
-        $horarios = Horario::where('tipo',$servicio->tipo_habitacion)->orwhere('tipo','24 HORAS')->get();
+        $horarios = Horario::where('tipo',$servicio->tipo_habitacion)->get();
         $cliente = Persona::where('id',$servicio->persona_id)->first();
         $clientes = Persona::where('nombre', '<>','Proveedor Comun')->where('nombre', '<>','Cliente Comun')->get();
         $bancos = Banco::get();
