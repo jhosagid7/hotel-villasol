@@ -36,6 +36,10 @@ class Persona extends Model
     public function servicios(){
         return $this->hasMany(Servicio::class);
     }
+    
+    public function excedentes(){
+        return $this->hasMany(Excedente::class);
+    }
 
     public function historialExcedentes(){
         return $this->hasMany(HistorialExcedente::class);

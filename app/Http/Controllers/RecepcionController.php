@@ -156,6 +156,9 @@ return response()->json($clientes);
 
     public function proceso(Request $request)
     {
+    //    $clientes = Persona::with('excedentes')->where('tipo_persona', '<>', 'Inactivo')->get();
+
+    //    return $clientes[55]->excedentes[0]->excedente;
         // return $request;
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // este codigo maneja las fechas de los creditos vencidos

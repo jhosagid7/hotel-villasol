@@ -449,16 +449,17 @@ class CajaController extends Controller
         $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
 
 
-        $clientes_vueltos_pendientes = HistorialExcedente::where('status', 'Pendiente')->where('caja_id', $id)->get();
+        // $clientes_vueltos_pendientes = HistorialExcedente::where('status', 'Pendiente')->where('caja_id', $id)->get();
 
-        $ids = [];
+        // $ids = [];
 
-        foreach ($clientes_vueltos_pendientes as $cvp) {
-            $ids[] = $cvp->persona_id;
-        }
-        $ids = array_unique($ids);
+        // foreach ($clientes_vueltos_pendientes as $cvp) {
+        //     $ids[] = $cvp->persona_id;
+        // }
+        // $ids = array_unique($ids);
 
-        $clientes_vueltos = PreExcedente::whereIn('cliente_id', $ids)->get();
+        $clientes_vueltos = PreExcedente::get();
+        // return $clientes_vueltos;
         // $users=DB::table('users')
         //             ->whereIn('id', [1, 2, 3])
         //             ->get();
@@ -2178,7 +2179,7 @@ $ojot = [];
                 //  return $cajas;
                 $verificarHorasExtras = Horas_extra::where('caja_id',$cajas->id)->get();
                 // return $verificarHorasExtras;
-        return view('cajas.caja.show', compact('clientes_vueltos','clientes_vueltos_pendientes', 'appDate','verificarHorasExtras','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar', 'tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar'))->with($mensaje);
+        return view('cajas.caja.show', compact('clientes_vueltos', 'appDate','verificarHorasExtras','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar', 'tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','title','cajas', 'caja','denominacion_dolar', 'denominacion_peso' ,'denominacion_bolivar'))->with($mensaje);
     }
 
     /**

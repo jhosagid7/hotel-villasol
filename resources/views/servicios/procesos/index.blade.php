@@ -214,7 +214,7 @@ text-overflow: ellipsis;
                                                 $i = 0;
                                             @endphp
                                             @foreach ($clientes as $cliente)
-                                                <option value="{{ $cliente->id }}_{{ $cliente->nombre }}_{{ $cliente->num_documento }}_{{ $cliente->direccion }}_{{ $cliente->isCortesia }}_{{ $cliente->isCredito }}_{{ $cliente->telefono }}_{{ $cliente->limite_fecha }}_{{ $cliente->limite_monto }}_<?php $deuda_cliente = "App\Credito"::where('persona_id',$cliente->id)->select('total_deuda')->first(); ?>{{$deuda_cliente['total_deuda']}}_<?php $deuda_cliente = "App\Credito"::where('persona_id',$cliente->id)->select('estado_credito')->first(); ?>{{$deuda_cliente['estado_credito']}}_<?php $excedente_cliente = "App\Excedente"::where('persona_id',$cliente->id)->select('excedente')->first(); ?>{{$excedente_cliente['excedente']}}">{{ $cliente->nombre }}</option>
+                                                <option value="{{ $cliente->id }}_{{ $cliente->nombre }}_{{ $cliente->num_documento }}_{{ $cliente->direccion }}_{{ $cliente->isCortesia }}_{{ $cliente->isCredito }}_{{ $cliente->telefono }}_{{ $cliente->limite_fecha }}_{{ $cliente->limite_monto }}_<?php $deuda_cliente = "App\Credito"::where('persona_id',$cliente->id)->select('total_deuda')->first(); ?>{{$deuda_cliente['total_deuda']}}_<?php $deuda_cliente = "App\Credito"::where('persona_id',$cliente->id)->select('estado_credito')->first(); ?>{{$deuda_cliente['estado_credito']}}_<?php $excedente_cliente = "App\Excedente"::where('persona_id',$cliente->id)->select('excedente','persona_id', 'id')->first(); ?>{{$excedente_cliente['excedente']}}">{{ $cliente->nombre }} - {{$excedente_cliente['excedente']}} - {{$excedente_cliente['persona_id']}} - {{$excedente_cliente['id']}}</option>
                                                 @php
                                                 $i++;
                                             @endphp
@@ -1140,6 +1140,7 @@ function showValues() {
 
                 $("#dispExcedente").val(datosArticulo[11]);
                 var verCajaExcedente = datosArticulo[11];
+                console.log(verCajaExcedente)
                 if(verCajaExcedente > 0){
                 $("#excedente").show();
                 $("#ex").show();

@@ -1142,11 +1142,11 @@
                                                                     </h2>
                                                                 </div>
                                                                 <div class="row">
-                                                                    {{-- <div id="excedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
+                                                                    <div id="excedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
                                                                         <label for="pagoConExcedente"><h2 class="text-blue">Exedente disponible: <b id="dispExcedenteShow">$.0.00</b></h2></label>
                                                                         <input class="form-control" type="text" id="pagoConExcedente" name="pagoConExcedente" >
                                                                         <input class="form-control" type="hidden" id="dispExcedente" name="dispExcedente" >
-                                                                    </div> --}}
+                                                                    </div>
                                                                     <div id="Vueltosexcedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
                                                                         <label for="VueltospagoConExcedente"><h1 class="text-blue"><button type="button" id="cargarExcedente" class="btn btn-blue"> <i class="fa fa-money" aria-hidden="true"> <b>USAR VUELTOS PENDIENTES: </b> <b id="VueltosdispExcedenteShow">$.0.00</b></i></button><div class="col-xs-3">
                                                                             <input class="form-control" type="text" id="VueltospagoConExcedente" name="VueltospagoConExcedente" readonly>
