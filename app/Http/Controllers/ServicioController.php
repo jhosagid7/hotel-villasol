@@ -4571,7 +4571,7 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
             } else if ($bandera == 'cambiarHabitacion') {
                 // return 'no';
 
-                // return $request;
+                return $request;
 
                 try{
 
@@ -5124,15 +5124,10 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                             }
                         }
 
-                    }else{
+                    }else{//can be here! 
                         $status = 'Pagado';
                         $modo_pago = $request->get('modo_pago');
                     }
-
-
-
-
-
 
                     if($modo_pago == 'cambio'){
                         $status = 'Exonerado';
