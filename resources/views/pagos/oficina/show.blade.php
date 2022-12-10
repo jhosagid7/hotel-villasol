@@ -207,7 +207,7 @@
 
                                     </tr>
                                     @php
-                                        $total_deuda += floatval($historialExcedente->saldo_operacion);
+                                        $total_deuda += floatval($historialExcedente->saldo_disponible);
                                         $i++
                                     @endphp
                                 @endforeach

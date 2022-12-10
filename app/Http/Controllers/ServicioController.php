@@ -410,7 +410,7 @@ class ServicioController extends Controller
                             if($monto_pagado == $monto_deuda){
                                 $DetallePagoOficina = new  DetallePagoOficina();
                                 $DetallePagoOficina->tipo_pago = 'Efectivo';
-                                $DetallePagoOficina->num_transaccion = '0002';
+                                $DetallePagoOficina->num_transaccion = $servicio->num_servicio;
                                 $DetallePagoOficina->deuda = $monto_deuda;
                                 $DetallePagoOficina->saldo_pagado = $monto_pagado;
                                 $DetallePagoOficina->fecha_pago = $fecha_pago;
@@ -453,7 +453,7 @@ class ServicioController extends Controller
                             }else{
                                 $DetallePagoOficina = new  DetallePagoOficina();
                                 $DetallePagoOficina->tipo_pago = 'Efectivo';
-                                $DetallePagoOficina->num_transaccion = '0003';
+                                $DetallePagoOficina->num_transaccion = $servicio->num_servicio;
                                 $DetallePagoOficina->deuda = $monto_deuda;
                                 $DetallePagoOficina->saldo_pagado = $monto_pagado;
                                 $DetallePagoOficina->fecha_pago = $fecha_pago;
@@ -466,6 +466,7 @@ class ServicioController extends Controller
                                 // TODO Guardamos en la tabla historial excedente
 
                                 $historialExcedentes = HistorialExcedente::where('persona_id',$pcliente_id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
+
 
                                 if($historialExcedentes){
                                     $saldo_disponible = 0;
@@ -497,7 +498,8 @@ class ServicioController extends Controller
                                 $HistorialExcedente->tipo_registro = 'Pago_por_oficina';
                                 $HistorialExcedente->status = 'Pendiente';
                                 $HistorialExcedente->tipo_operacion = 'Egreso';
-                                $HistorialExcedente->num_servicio = $DetallePagoOficina->id;
+                                $HistorialExcedente->modo_pago = 'Por caja';
+                                $HistorialExcedente->num_servicio = $servicio->num_servicio;
                                 $HistorialExcedente->motivo = $motivo;
                                 $HistorialExcedente->saldo_anterior = $saldo_anterior;
                                 $HistorialExcedente->saldo_operacion = $monto_pagado;

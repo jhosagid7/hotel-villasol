@@ -88,6 +88,7 @@ class CheckoutController extends Controller
      */
     public function show($id)
     {
+        $userpermision = User::with('roles')->where('id', Auth::id())->first();
         // return $id;
         $title = 'Salida';
         $servicio = Servicio::where('id', $id)->where('status_servicio', 'Iniciado')->first();
@@ -119,7 +120,7 @@ class CheckoutController extends Controller
 
             if ($Caja) {
 
-                if($Caja->user_id == Auth::id()){
+                if($Caja->user_id == Auth::id() || $userpermision->roles[0]->name == 'Admin'){
         // return $request;
         $title = 'PROCESAR SALIDA HABITACIÓN';
 

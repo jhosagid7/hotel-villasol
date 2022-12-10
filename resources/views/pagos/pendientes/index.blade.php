@@ -67,7 +67,7 @@
                          <td><?php $nombre_cliente = "App\Persona"::where('id',$pagosOfic->persona_id)->select('nombre')->first();?> {{$nombre_cliente['nombre']}}</td>
                          <td>{{ $pagosOfic->num_transaccion}}</td>
                          <td>{{ $pagosOfic->tipo_pago}}</td>
-                         <td>{{ $pagosOfic->deuda }}</td>
+                         <td>{{ $pagosOfic->saldo_pagado }}</td>
                          <td>{{ $pagosOfic->fecha_pago}}</td>
                          <td><?php $nombre_operador = "App\User"::where('id',$pagosOfic->user_id)->select('name')->first();?> {{$nombre_operador['name']}}</td>
 
@@ -78,7 +78,7 @@
                      </tr>
                     {{-- @include('ventas.venta.modal') --}}
                     @php
-                    $total += $pagosOfic->deuda;
+                    $total += $pagosOfic->saldo_pagado;
                     @endphp
                     @endforeach
 

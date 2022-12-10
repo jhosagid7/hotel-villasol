@@ -165,12 +165,12 @@
                         <table id="detalles" class="table table-striped table-borderd table-condensed table-hover">
                             <thead style="background-color: #A9D0F5">
                                 <th>ID</th>
+                                <th>Fecha Emision</th>
                                 <th>Número de Servicio</th>
                                 <th>Estatus</th>
                                 <th>Deuda Anterior</th>
-                                <th>Monto Operacion</th>
+                                <th>Monto Abonado</th>
                                 <th>Deuda Actual</th>
-                                <th>Fecha Emision</th>
 
                             </thead>
 
@@ -182,17 +182,17 @@
                                 @foreach ($historialExcedentes as $historialExcedente)
                                     <tr>
                                     <td>{{$i ?? ''}}</td>
-                                    <td>{{$historialExcedente->num_servicio ?? ''}}</td>
-                                    <td>{{$historialExcedente->status ?? ''}}</td>
-                                    <td>{{floatval($historialExcedente->saldo_anterior) ?? ''}}</td>
-                                    <td>{{$historialExcedente->saldo_operacion ?? ''}}</td>
-                                    <td>{{$historialExcedente->saldo_disponible ?? ''}}</td>
                                     <td>{{$historialExcedente->created_at ?? ''}}</td>
+                                    <td>{{$historialExcedente->num_transaccion ?? ''}}</td>
+                                    <td>Pagodo</td>
+                                    <td>{{floatval($historialExcedente->deuda) ?? ''}}</td>
+                                    <td>{{$historialExcedente->saldo_pagado ?? ''}}</td>
+                                    <td>{{$historialExcedente->deuda - $historialExcedente->saldo_pagado ?? ''}}</td>
 
 
                                     </tr>
                                     @php
-                                        $total_deuda += floatval($historialExcedente->saldo_operacion);
+                                        $total_deuda += floatval($historialExcedente->saldo_pagado);
                                         $i++
                                     @endphp
                                 @endforeach

@@ -35,6 +35,7 @@ class PagarPorOficinaController extends Controller
             $restaMes = $restaMes->format('Y-m-d');
             $title='Historial Pagos por oficina';
             $pagarporoficinas = DetallePagoOficina::get();
+            // return $pagarporoficinas;
 
             // return $pagarporoficinas->cliente;
 
@@ -157,7 +158,9 @@ class PagarPorOficinaController extends Controller
         // return $cliente_id;
 
 
-        $historialExcedentes = HistorialExcedente::where('detalle_pago_oficina_id',$id)->where('tipo_registro','Pago_por_oficina')->where('status','Pagado')->get();
+        // $historialExcedentes = HistorialExcedente::where('detalle_pago_oficina_id',$id)->where('tipo_registro','Pago_por_oficina')->where('status','Pagado')->where('tipo_operacion','Egreso')->get();
+
+        $historialExcedentes = DetallePagoOficina::where('id', $id)->get();
 
         // return $historialExcedentes;
 

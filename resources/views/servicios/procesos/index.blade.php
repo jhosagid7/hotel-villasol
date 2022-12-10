@@ -3306,11 +3306,12 @@ console.log('Falta '+minutes);
                 $("#dispExcedenteShow").html('$'+dispExced.toFixed(2));
             }
             if (validarDispExced){
-                alert('El montoddd disponible no supera el monto a pagar... Credito disponible es de: $'+dispExcedente+ ' y el monto que decea pagar es de: $'+dispExced.toFixed(2));
+                alert('No puede pagar mas de su credito disponible: $'+dispExcedente);
                 pagoExc = 0;
                 excedenteDispSet = $("#dispExcedente").val();
                 $('#pagoConExcedente').val('');
                 $("#dispExcedenteShow").html('$'+excedenteDispSet);
+                Exc = numDecimal(pagoExc);
             }
 
         }else{
@@ -3318,6 +3319,7 @@ console.log('Falta '+minutes);
             excedenteDispSet = $("#dispExcedente").val();
             $('#pagoConExcedente').val('');
             $("#dispExcedenteShow").html('$'+excedenteDispSet);
+            Exc = numDecimal(pagoExc);
         }
 
 

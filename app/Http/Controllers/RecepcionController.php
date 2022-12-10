@@ -255,6 +255,7 @@ return response()->json($clientes);
         $horario = Horario::where('id',$request->get('horario_id'))->first();
         // return $horario;
         $clientes = Persona::where('tipo_persona', '<>', 'Inactivo')->get();
+        // return $clientes;
         // $clientes[3]->creditos;
         // return $clientes;
         $precio = Precio::where('id',$request->get('precio_id'))->first();

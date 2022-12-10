@@ -2120,7 +2120,7 @@ $ojot = [];
 
             }
         }
-
+        // return  $cajas->SumaTotalServiciosPagadosConExcedente;
 
         $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
         $tasaPesoHabitacion = Tasa::where('nombre','=','PesoHabitacion')->first();
