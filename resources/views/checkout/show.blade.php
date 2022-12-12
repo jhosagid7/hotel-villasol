@@ -4102,7 +4102,7 @@ if (btnCambio == 1) {
     $("#dispExcedente").val(vtosPendientes);
     // var verCajaExcedente = vtosPendientes;
     if(vtosPendientes > 0){
-        alert('vtosPendientes '+vtosPendientes);
+        // alert('vtosPendientes '+vtosPendientes);
     $("#excedente").show();
     $("#ex").show();
     $("#excdt").show();

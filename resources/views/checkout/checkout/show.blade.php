@@ -2650,11 +2650,11 @@ $("#excdt").hide();
 
 var vtosPendientes = $('#vtosPendientes').val();
 
-alert(vtosPendientes);
+// alert(vtosPendientes);
 $("#dispExcedente").val(vtosPendientes);
                 // var verCajaExcedente = vtosPendientes;
                 if(vtosPendientes > 0){
-                    alert(vtosPendientes);
+                    // alert(vtosPendientes);
                 $("#excedente").show();
                 $("#ex").show();
                 $("#excdt").show();
@@ -2672,11 +2672,11 @@ $("#Vueltosexcdt").hide();
 
 var VueltosvtosPendientes = $('#VueltosvtosPendientes').val();
 
-alert(VueltosvtosPendientes);
+// alert(VueltosvtosPendientes);
 $("#VueltosdispExcedente").val(VueltosvtosPendientes);
                 // var verCajaExcedente = vtosPendientes;
                 if(VueltosvtosPendientes > 0){
-                    alert(VueltosvtosPendientes);
+                    // alert(VueltosvtosPendientes);
                 $("#Vueltosexcedente").show();
                 $("#Vueltosex").show();
                 $("#Vueltosexcdt").show();
