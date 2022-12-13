@@ -206,11 +206,11 @@
               <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
-                    <a href="{{asset('cajas/caja')}}">Caja</a>
+                    <a href="{{asset('cajas/caja')}}">Cajas</a>
                   </div>
                   @can('haveaccess', 'ventas.create')
                   <div class="col-xs-4 text-center">
-                    <a href="{{asset('ventas/venta/create')}}">Ventas</a>
+                    <a href="{{asset('recepcion')}}">Recepcion</a>
                   </div>
                   @endcan
                   <div class="col-xs-4 text-center">
@@ -401,9 +401,9 @@
                 @can('haveaccess', 'cliente.index')
                 <li><a href="{{asset('ventas/cliente')}}"><i class="fa fa-user-plus"></i> Clientes</a></li>
                 @endcan
-                @can('haveaccess', 'venta.index')
+                {{-- @can('haveaccess', 'venta.index')
                 <li><a href="{{asset('ventas/venta')}}"><i class="fa fa-desktop"></i> Venta</a></li>
-                @endcan
+                @endcan --}}
                 @can('haveaccess', 'tasa.index')
                 <li><a href="{{asset('ventas/tasa')}}"><i class="fa fa-desktop"></i> Tasa</a></li>
                 @endcan
