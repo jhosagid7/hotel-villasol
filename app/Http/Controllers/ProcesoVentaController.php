@@ -57,7 +57,7 @@ class ProcesoVentaController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
+        return $request;
 
 
 
@@ -71,46 +71,46 @@ class ProcesoVentaController extends Controller
             if ($creditos_clientes) {
 
 
-            foreach ($creditos_clientes as $fecha_limite) {
+                foreach ($creditos_clientes as $fecha_limite) {
 
-                $now = Carbon::parse($date);
-                $second = Carbon::parse($fecha_limite->fecha_limite_pago);
+                    $now = Carbon::parse($date);
+                    $second = Carbon::parse($fecha_limite->fecha_limite_pago);
 
-                if ($second->gte($now)) {
-                    // return 'tiene credito vigente';
-                    $credito_id = $fecha_limite->id;
-                    $upCredito = Credito::findOrFail($credito_id);
-                    if ($upCredito->total_deuda > 0) {
+                    if ($second->gte($now)) {
+                        // return 'tiene credito vigente';
+                        $credito_id = $fecha_limite->id;
+                        $upCredito = Credito::findOrFail($credito_id);
+                        if ($upCredito->total_deuda > 0) {
+                            $upCredito->estado_credito = 'Moroso';
+                            $upCredito->update();
+                        }else{
+                            $upCredito->estado_credito = 'Activo';
+                            $upCredito->update();
+                        }
+
+                        $upCredito->estado_credito = 'Activo';
+                            $upCredito->update();
+
+                    }else{
+                        // return 'tiene credito vencido';
+                        $credito_id = $fecha_limite->id;
+                        $upCredito = Credito::findOrFail($credito_id);
+
                         $upCredito->estado_credito = 'Moroso';
                         $upCredito->update();
-                    }else{
-                        $upCredito->estado_credito = 'Activo';
-                        $upCredito->update();
+
+
+                        if ($upCredito->total_deuda > 0) {
+                            $upCredito->estado_credito = 'Moroso';
+                            $upCredito->update();
+                        }else{
+                            $upCredito->estado_credito = 'Activo';
+                            $upCredito->update();
+                        }
                     }
 
-                    $upCredito->estado_credito = 'Activo';
-                        $upCredito->update();
-
-                }else{
-                    // return 'tiene credito vencido';
-                    $credito_id = $fecha_limite->id;
-                    $upCredito = Credito::findOrFail($credito_id);
-
-                    $upCredito->estado_credito = 'Moroso';
-                    $upCredito->update();
-
-
-                    if ($upCredito->total_deuda > 0) {
-                        $upCredito->estado_credito = 'Moroso';
-                        $upCredito->update();
-                    }else{
-                        $upCredito->estado_credito = 'Activo';
-                        $upCredito->update();
-                    }
                 }
-
             }
-        }
             $detalle_creditos = Detalle_credito::get();
             // return $detalle_credito;
             foreach ($detalle_creditos as $detalle_credito) {
@@ -127,46 +127,43 @@ class ProcesoVentaController extends Controller
 
                 }
 
-        }
+            }
             // echo $difference = $date->diff($date2)->days;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             DB::beginTransaction();
+
             $myTime = Carbon::now('America/Caracas');
-            // number_format($número, 2, '.', '');
-
-
-
-
+            $tipo_pago = $request->get('tipo_pago');
+            $monto_dejado = $request->get('monto_dejado');
+            $VueltospagoConExcedente = $request->get('VueltospagoConExcedente');
             $total_venta = $request->get('total_venta');
+            $status = '';
             $serie_comprobante = $request->get('serie_comprobante');
             $operador = $request->get('operador');
+            $modo_pago = $request->get('modo_pago');
 
+            $nuevo_excedente = 0;
 
 
             $servicio_id = $request->get('servicio_id');
 
-            $tipo_pago = $request->get('tipo_pago');
 
             if($tipo_pago == null){
                 $tipo_pago = 'No pagado';
             }else{
                 $tipo_pago = $request->get('tipo_pago');
             }
-            $modo_pago = $request->get('modo_pago');
-            $monto_dejado = $request->get('monto_dejado');
             // $monto_dejado = $monto_dejado;
             // return $monto_dejado;
             $total_costo = $request->get('total_costo');
-            $status = '';
             $estado_pago = '';
 
             $base_vuelto_monto_dejado = $request->get('base_vuelto_monto_dejado');
             $monto_dejadoResta = $request->get('monto_dejadoResta');
             $isVueltos = $request->get('isVueltos');
 
-            $VueltospagoConExcedente = $request->get('VueltospagoConExcedente');
             $VueltosdispExcedente = $request->get('VueltosdispExcedente');
                 // return $request;
 
@@ -799,124 +796,124 @@ class ProcesoVentaController extends Controller
 
 
 
-if($modo_pago == 'credito'){
+            if($modo_pago == 'credito'){
 
 
 
-    $fecha_vencimiento = Carbon::now();
-    $fecha_vencimiento->addDays($request->get('limite_fecha'));
-    $fecha_vencimiento->toDateString();
+                $fecha_vencimiento = Carbon::now();
+                $fecha_vencimiento->addDays($request->get('limite_fecha'));
+                $fecha_vencimiento->toDateString();
 
 
-    $deuda_actual = Credito::where('persona_id',$request->get('cliente_id'))->first();
+                $deuda_actual = Credito::where('persona_id',$request->get('cliente_id'))->first();
 
-    if ($deuda_actual) {
-
-
+                if ($deuda_actual) {
 
 
-        if ($deuda_actual->total_deuda == 0) {
-            // return 'La deuda es menor a 0 '.$deuda_actual->total_deuda.'';
-
-            $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
-            // return $fecha_limite_pago;
-            $upCredito = Credito::findOrFail($deuda_actual->id);
-
-            $upCredito->total_factura = 1;
-            $upCredito->total_deuda = $total_costo;
-            $upCredito->fecha_limite_pago = $fecha_vencimiento;
-            $upCredito->update();
 
 
-            $detalleCredito = new Detalle_credito;
-            $detalleCredito->numero_factura = $request->get('num_comprobante');
-            $detalleCredito->tipo_operacion = 'Consumo';
-            $detalleCredito->operacion_id = $venta->id;
-            $detalleCredito->monto = $total_costo;
-            $detalleCredito->estado_pago = 'Pendiente';
-            $detalleCredito->estado_credito = 'Vigente';
-            $detalleCredito->tipo_pago = 'Crédito';
-            $detalleCredito->fecha_emision = $myTime->toDateString();
-            $detalleCredito->fecha_vencimiento = $fecha_vencimiento;
-            $detalleCredito->fecha_pago = null;
-            $detalleCredito->persona_id = $request->get('cliente_id');
-            $detalleCredito->credito_id = $upCredito->id ;
-            $detalleCredito->caja_id = $request->get('caja_id');
-            $detalleCredito->save();
+                    if ($deuda_actual->total_deuda == 0) {
+                        // return 'La deuda es menor a 0 '.$deuda_actual->total_deuda.'';
+
+                        $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
+                        // return $fecha_limite_pago;
+                        $upCredito = Credito::findOrFail($deuda_actual->id);
+
+                        $upCredito->total_factura = 1;
+                        $upCredito->total_deuda = $total_costo;
+                        $upCredito->fecha_limite_pago = $fecha_vencimiento;
+                        $upCredito->update();
 
 
-        } else {
-            // return 'La deuda es mayor a 0 '.$deuda_actual->total_deuda.'';
+                        $detalleCredito = new Detalle_credito;
+                        $detalleCredito->numero_factura = $request->get('num_comprobante');
+                        $detalleCredito->tipo_operacion = 'Consumo';
+                        $detalleCredito->operacion_id = $venta->id;
+                        $detalleCredito->monto = $total_costo;
+                        $detalleCredito->estado_pago = 'Pendiente';
+                        $detalleCredito->estado_credito = 'Vigente';
+                        $detalleCredito->tipo_pago = 'Crédito';
+                        $detalleCredito->fecha_emision = $myTime->toDateString();
+                        $detalleCredito->fecha_vencimiento = $fecha_vencimiento;
+                        $detalleCredito->fecha_pago = null;
+                        $detalleCredito->persona_id = $request->get('cliente_id');
+                        $detalleCredito->credito_id = $upCredito->id ;
+                        $detalleCredito->caja_id = $request->get('caja_id');
+                        $detalleCredito->save();
 
-            $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
-            // return $fecha_limite_pago;
-            $upCredito = Credito::findOrFail($deuda_actual->id);
 
-            $upCredito->total_factura = $upCredito->total_factura + 1;
-            $upCredito->total_deuda = $upCredito->total_deuda + $total_costo;
-            $upCredito->fecha_limite_pago = $fecha_limite_pago->fecha_vencimiento;
-            $upCredito->update();
+                    } else {
+                        // return 'La deuda es mayor a 0 '.$deuda_actual->total_deuda.'';
+
+                        $fecha_limite_pago = Detalle_credito::where('persona_id', $request->get('cliente_id'))->where('estado_pago','Pendiente')->first();
+                        // return $fecha_limite_pago;
+                        $upCredito = Credito::findOrFail($deuda_actual->id);
+
+                        $upCredito->total_factura = $upCredito->total_factura + 1;
+                        $upCredito->total_deuda = $upCredito->total_deuda + $total_costo;
+                        $upCredito->fecha_limite_pago = $fecha_limite_pago->fecha_vencimiento;
+                        $upCredito->update();
 
 
-            $detalleCredito = new Detalle_credito;
-            $detalleCredito->numero_factura = $request->get('num_comprobante');
-            $detalleCredito->tipo_operacion = 'Consumo';
-            $detalleCredito->operacion_id = $venta->id;
-            $detalleCredito->monto = $total_costo;
-            $detalleCredito->estado_pago = 'Pendiente';
-            $detalleCredito->estado_credito = 'Vigente';
-            $detalleCredito->tipo_pago = 'Crédito';
-            $detalleCredito->fecha_emision = $myTime->toDateString();
-            $detalleCredito->fecha_vencimiento = $fecha_vencimiento;
-            $detalleCredito->fecha_pago = null;
-            $detalleCredito->persona_id = $request->get('cliente_id');
-            $detalleCredito->credito_id = $upCredito->id ;
-            $detalleCredito->caja_id = $request->get('caja_id');
-            $detalleCredito->save();
+                        $detalleCredito = new Detalle_credito;
+                        $detalleCredito->numero_factura = $request->get('num_comprobante');
+                        $detalleCredito->tipo_operacion = 'Consumo';
+                        $detalleCredito->operacion_id = $venta->id;
+                        $detalleCredito->monto = $total_costo;
+                        $detalleCredito->estado_pago = 'Pendiente';
+                        $detalleCredito->estado_credito = 'Vigente';
+                        $detalleCredito->tipo_pago = 'Crédito';
+                        $detalleCredito->fecha_emision = $myTime->toDateString();
+                        $detalleCredito->fecha_vencimiento = $fecha_vencimiento;
+                        $detalleCredito->fecha_pago = null;
+                        $detalleCredito->persona_id = $request->get('cliente_id');
+                        $detalleCredito->credito_id = $upCredito->id ;
+                        $detalleCredito->caja_id = $request->get('caja_id');
+                        $detalleCredito->save();
+                        }
+
+
+
+                } else {
+                    $fecha_vencimiento_pago = Carbon::now();
+                    $fecha_vencimiento_pago->addDays($request->get('limite_fecha'));
+                    $fecha_vencimiento_pago->toDateString();
+
+                    $credito = new Credito;
+                    $credito->nombre_cliente = $request->get('nombre_cliente');
+                    $credito->cedula_cliente = $request->get('cedula_cliente');
+                    $credito->direccion_cliente = $request->get('direccion_cliente');
+                    $credito->telefono_cliente = $request->get('telefono_cliente');
+                    $credito->total_factura = 1;
+                    $credito->total_deuda = $total_costo;
+                    $credito->fecha_limite_pago = $fecha_vencimiento_pago;
+                    $credito->estado_credito = 'Activo';
+                    $credito->persona_id = $request->get('cliente_id');
+                    $credito->user_id = Auth::user()->id;
+                    $credito->save();
+
+
+                    $detalleCredito = new Detalle_credito;
+                    $detalleCredito->numero_factura = $request->get('num_comprobante');
+                    $detalleCredito->tipo_operacion = 'Consumo';
+                    $detalleCredito->operacion_id = $venta->id;
+                    $detalleCredito->monto = $total_costo;
+                    $detalleCredito->estado_pago = 'Pendiente';
+                    $detalleCredito->estado_credito = 'Vigente';
+                    $detalleCredito->tipo_pago = 'Credito';
+                    $detalleCredito->fecha_emision = $myTime->toDateTimeString();
+                    $detalleCredito->fecha_vencimiento = $fecha_vencimiento_pago;
+                    $detalleCredito->fecha_pago = null;
+                    $detalleCredito->persona_id = $request->get('cliente_id');
+                    $detalleCredito->credito_id = $credito->id ;
+                    $detalleCredito->caja_id = $request->get('caja_id');
+                    $detalleCredito->save();
+                }
+
+
+
+
             }
-
-
-
-    } else {
-        $fecha_vencimiento_pago = Carbon::now();
-        $fecha_vencimiento_pago->addDays($request->get('limite_fecha'));
-        $fecha_vencimiento_pago->toDateString();
-
-        $credito = new Credito;
-        $credito->nombre_cliente = $request->get('nombre_cliente');
-        $credito->cedula_cliente = $request->get('cedula_cliente');
-        $credito->direccion_cliente = $request->get('direccion_cliente');
-        $credito->telefono_cliente = $request->get('telefono_cliente');
-        $credito->total_factura = 1;
-        $credito->total_deuda = $total_costo;
-        $credito->fecha_limite_pago = $fecha_vencimiento_pago;
-        $credito->estado_credito = 'Activo';
-        $credito->persona_id = $request->get('cliente_id');
-        $credito->user_id = Auth::user()->id;
-        $credito->save();
-
-
-        $detalleCredito = new Detalle_credito;
-        $detalleCredito->numero_factura = $request->get('num_comprobante');
-        $detalleCredito->tipo_operacion = 'Consumo';
-        $detalleCredito->operacion_id = $venta->id;
-        $detalleCredito->monto = $total_costo;
-        $detalleCredito->estado_pago = 'Pendiente';
-        $detalleCredito->estado_credito = 'Vigente';
-        $detalleCredito->tipo_pago = 'Credito';
-        $detalleCredito->fecha_emision = $myTime->toDateTimeString();
-        $detalleCredito->fecha_vencimiento = $fecha_vencimiento_pago;
-        $detalleCredito->fecha_pago = null;
-        $detalleCredito->persona_id = $request->get('cliente_id');
-        $detalleCredito->credito_id = $credito->id ;
-        $detalleCredito->caja_id = $request->get('caja_id');
-        $detalleCredito->save();
-    }
-
-
-
-
-}
 
 
             if($modo_pago == 'cortesia'){
@@ -2204,13 +2201,11 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
                                                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                                 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                                             }
-                                            // echo 'excd '.$exc.' <br> ';
-                                            // echo 'vueltos '.$vuel.' <br> ';
-                                            // echo $restk.' <br> ';
+                                            
                                         }
 
                                     }
-                                // validamos  si montopendiente es mayor y montobase es menor... lo que significa esto es que estamos reciviendo una moneda pendiente
+                                
                                     }
 
 
@@ -2243,490 +2238,19 @@ echo 'value <'.$value.' - '.$restk.' <br> ';
 
                             // return 'no';
                         }
-                        // else{
-
-
-                        //     return Redirect::back()
-                        //         ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
-                        // }
-
+                        
 
                         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // return 'Finalizo...';
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            
 
             if($modo_pago == 'contado' || $modo_pago == 'Contado-Excedente'){
-                // $MontoDivisaR = $request->get('MontoDivisa');
-                // $divisaR = $request->get('divisa');
-                // $TasaTikeR = $request->get('TasaTike');
-                // $MontoDolarR = $request->get('MontoDolar');
-                // $VeltosR = $request->get('Veltos');
-                // // return 'estoy en contado';
-                // $MontoDivisaR = array_filter($MontoDivisaR);
-
-                // if(count($MontoDivisaR) > 0){
-                //     // return 'estoy en MontoDivisaR';
-
-                //     // return count($MontoDivisaR);
-
-                //     foreach($MontoDivisaR as $key => $val) {
-
-
-                //         $divisa[]=$divisaR[$key];
-                //         $MontoDivisa[]=$MontoDivisaR[$key];
-                //         $TasaTiket[]=$TasaTikeR[$key];
-                //         $MontoDolar[]=$MontoDolarR[$key];
-                //         $Vueltos[]=$VeltosR[$key];
-
-                //         if($monto_dejado == $total_costo){
-                //             $Vueltos[]=$VeltosR[$key];
-                //             // return 'igual';
-
-                //         }else{
-
-                //             $Vueltos[]=$VeltosR[$key] - $VeltosR[$key];
-                //             // return $Vueltos;
-                //             $isVuelos = $request->get('isVueltos');
-
-
-                //         if(!$isVuelos > 0 || !$isVuelos != null){
-                //             $Vueltos[$key] = 0;
-                //             // return $Vueltos;
-
-                //         }
-
-                //         }
-
-
-                //     }
-                //     // return $request;
-
-
-
-                //     // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                //     //creamos un contador
-                //     $cont = 0;
-
-
-                //     //realizamos el pago en la tabla Pagos Extras
-                //     while ($cont < count($MontoDolar)) {
-                //         // return 'estoy en MontoDolar '.$divisa[$cont];
-
-                //         $Pago_Venta = new Pago_Venta();
-                //         $Pago_Venta->Divisa = $divisa[$cont];
-                //         $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
-                //         $Pago_Venta->TasaTiket = $TasaTiket[$cont];
-                //         $Pago_Venta->MontoDolar = $MontoDolar[$cont];
-                //         $Pago_Venta->MontoDolarConsumo = $total_venta;
-                //         $Pago_Venta->Excedente = $MontoDolar[$cont];/////////////////////////////////////////ojo//////////////////////////////////////
-                //         $Pago_Venta->Vueltos = $Vueltos[$cont];///////////////////////////////////////////ojo/////////////////////////////////////////
-                //         $Pago_Venta->servicio_id = $request->get('servicio_id');
-                //         $Pago_Venta->caja_id = $request->get('caja_id');
-                //         $Pago_Venta->venta_id = $venta->id;
-                //         $Pago_Venta->save();
-
-                //         $cont = $cont+1;
-                //     }
-
-                //     // return 'estoy en contado';
-
-                //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //     // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos para eso usamos una bandera llamad isVuelto
-                //     //que debemos pasar por la vista
-
-                //     $isVuelos = $request->get('isVueltos');
-
-                //     if($isVuelos > 0 || $isVuelos != null){
-
-
-
-
-                //         $MontoDivisaVueltos = $request->get('MontoDivisaV');
-                //         $divisaVueltos = $request->get('divisaV');
-                //         $TasaTikeVueltos = $request->get('TasaTikeV');
-                //         $MontoDolarVueltos = $request->get('MontoDolarV');
-
-
-                //         $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
-
-
-                //         foreach($MontoDivisaVueltos as $key => $val) {
-
-
-                //             $Vdivisa[]=$divisaVueltos[$key];
-                //             $VMontoDivisa[]=$MontoDivisaVueltos[$key];
-                //             $VTasaTiket[]=$TasaTikeVueltos[$key];
-                //             $VMontoDolar[]=$MontoDolarVueltos[$key];
-
-
-
-
-
-                //         }
-
-
-
-
-                //         // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                //         //creamos un contador
-                //         $cont = 0;
-
-
-                //         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                //         while ($cont < count($VMontoDolar)) {
-
-
-                //             $Pago_Consumo_Vueltos = new Pago_Vuelto();
-                //             $Pago_Consumo_Vueltos->Tipo = 'Consumo';
-                //             $Pago_Consumo_Vueltos->Divisa = $Vdivisa[$cont];
-                //             $Pago_Consumo_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
-                //             $Pago_Consumo_Vueltos->TasaTiket = $VTasaTiket[$cont];
-                //             $Pago_Consumo_Vueltos->MontoDolar = $VMontoDolar[$cont];
-                //             $Pago_Consumo_Vueltos->servicio_id = $servicio_id;
-                //             $Pago_Consumo_Vueltos->caja_id = $request->get('caja_id');
-                //             $Pago_Consumo_Vueltos->save();
-
-                //             $cont = $cont+1;
-                //         }
-
-                //     }
-                //     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                //     // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
-                //     // de lo contrario solo registra el dinero dejado de contado.
-                //     // REVIEW  resuelto (revizar si esta resuelto)
-
-                //     if($VueltospagoConExcedente > 0){
-                //         // return 'estoy en '.$VueltospagoConExcedente;
-                //         // $Restardivisa = '';
-                //         // $RestarMontoDivisa = 0;
-                //         // $RestarTasaTiket = 0;
-                //         // $RestarMontoDolar = 0;
-
-                //         // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
-                //         //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
-                //         // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
-                //         //con dos divisas
-
-                //         $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Consumo_Vueltos->id);
-                //         // return $pagoVueltos;
-
-                //         if ($pagoVueltos) {
-
-                //             // return $Pago_Extra->id;
-                //             $UdatePagoConsumoConVtosPendientes = Pago_Venta::findOrFail($Pago_Venta->id);
-                //             // return $UdatePagoServiciosConVtosPendientes;
-                //             if ($UdatePagoConsumoConVtosPendientes->Divisa == $pagoVueltos->Divisa) {
-                //                 $UdatePagoConsumoConVtosPendientes->MontoDivisa = $UdatePagoConsumoConVtosPendientes->MontoDivisa + $pagoVueltos->MontoDivisa;
-                //                 $UdatePagoConsumoConVtosPendientes->MontoDolar = $UdatePagoConsumoConVtosPendientes->MontoDolar + $pagoVueltos->MontoDolar;
-                //                 // return $UdatePagoConsumoConVtosPendientes->MontoDivisa;
-                //                 $UdatePagoConsumoConVtosPendientes->update();
-                //             }else{
-
-                //                 $Pago_Venta = new Pago_Venta();
-                //                 $Pago_Venta->Divisa = $pagoVueltos->Divisa;
-                //                 $Pago_Venta->MontoDivisa = $pagoVueltos->MontoDivisa;
-                //                 $Pago_Venta->TasaTiket = $pagoVueltos->TasaTiket;
-                //                 $Pago_Venta->MontoDolar = $pagoVueltos->MontoDolar;
-                //                 $Pago_Venta->MontoDolarConsumo = $total_venta;
-                //                 $Pago_Venta->Excedente = $MontoDolar[$cont];/////////////////////////////////////////ojo//////////////////////////////////////
-                //                 $Pago_Venta->Vueltos = 0;
-                //                 $Pago_Venta->servicio_id = $request->get('servicio_id');
-                //                 $Pago_Venta->caja_id = $request->get('caja_id');
-                //                 $Pago_Venta->venta_id = $venta->id;
-                //                 $Pago_Venta->save();
-
-
-                //             }
-
-
-                //         }
-
-                //         // // TODO Ahora actualizamos la tabla Excedentes_Recibidos_Caja_Actual para pasar el dinero pendiente si lo hay al nuevo servicio
-                //         // //que se creo porque de lo contrario se perderia el vuelto pendiente
-
-                //         // // TODO verificamos si exciste un vuelto pendiente con el id del servicio que cerramos $id
-
-
-                //         //     $PasarVtossPtesToNextServ = Excedentes_Recibidos_Caja_Actual::where('servicio_id',$id)->where('Estado','Pendiente')->first();
-                //         //     if ($PasarVtossPtesToNextServ) {
-                //         //         $PasarVtossPtesToNextServ->servicio_id = $servicio->id;
-                //         //         $PasarVtossPtesToNextServ->update();
-                //         //     }
-
-
-
-
-                //     }
-
-
-                // }else{
-                //     // BUG actualizar la tabla pago servicios cuando se paga con vueltos pendientes
-                //     // de lo contrario solo registra el dinero dejado de contado.
-                //     // return 'estoy en else';
-                //     if($VueltospagoConExcedente > 0){
-
-
-                //         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //         // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
-
-                //         $isVuelos = $request->get('isVueltos');
-
-                //         if($isVuelos > 0 || $isVuelos != null){
-
-
-
-
-                //             $MontoDivisaVueltos = $request->get('MontoDivisaV');
-                //             $divisaVueltos = $request->get('divisaV');
-                //             $TasaTikeVueltos = $request->get('TasaTikeV');
-                //             $MontoDolarVueltos = $request->get('MontoDolarV');
-
-
-                //             $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
-
-
-                //             foreach($MontoDivisaVueltos as $key => $val) {
-
-
-                //                 $Vdivisa[]=$divisaVueltos[$key];
-                //                 $VMontoDivisa[]=$MontoDivisaVueltos[$key];
-                //                 $VTasaTiket[]=$TasaTikeVueltos[$key];
-                //                 $VMontoDolar[]=$MontoDolarVueltos[$key];
-
-
-
-
-
-                //             }
-
-
-
-
-                //             // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-                //             //creamos un contador
-                //             $cont = 0;
-
-
-                //             //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-                //             while ($cont < count($VMontoDolar)) {
-
-
-                //                 $Pago_Extras_Vueltos = new Pago_Vuelto();
-                //                 $Pago_Extras_Vueltos->Tipo = 'Consumo';
-                //                 $Pago_Extras_Vueltos->Divisa = $Vdivisa[$cont];
-                //                 $Pago_Extras_Vueltos->MontoDivisa = $VMontoDivisa[$cont];
-                //                 $Pago_Extras_Vueltos->TasaTiket = $VTasaTiket[$cont];
-                //                 $Pago_Extras_Vueltos->MontoDolar = $VMontoDolar[$cont];
-                //                 $Pago_Extras_Vueltos->servicio_id = $servicio_id;
-                //                 $Pago_Extras_Vueltos->caja_id = $request->get('caja_id');
-                //                 $Pago_Extras_Vueltos->save();
-
-                //                 $cont = $cont+1;
-                //             }
-
-                //         }
-                //         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                //          // $Restardivisa = '';
-                //         // $RestarMontoDivisa = 0;
-                //         // $RestarTasaTiket = 0;
-                //         // $RestarMontoDolar = 0;
-
-                //         // TODO consultamos la tabla Pagos vueltos para descubrir con que moneda se dieron los vueltos
-                //         //para sumarcelos a pago servicio si la divisa usada es igual a la de pagos servicios solo se
-                //         // suma y es distinta se hace un nuevo registro en la tabla y quedaría como si se hubiece pagado
-                //         //con dos divisas
-
-                //         $pagoVueltos = Pago_Vuelto::findOrFail($Pago_Extras_Vueltos->id);
-                //         // return $RestarVtossPtesToVtosPtesDevueltos;
-
-
-
-                //         if ($pagoVueltos) {
-                //             $isVuelos = $request->get('isVueltos');
-
-                //             $Pago_Venta = new Pago_Venta();
-                //             $Pago_Venta->Divisa = $pagoVueltos->Divisa;
-                //             $Pago_Venta->MontoDivisa = $pagoVueltos->MontoDivisa;
-                //             $Pago_Venta->TasaTiket = $pagoVueltos->TasaTiket;
-                //             $Pago_Venta->MontoDolar = $pagoVueltos->MontoDolar;
-                //             $Pago_Venta->MontoDolarConsumo = $total_venta;
-                //             $Pago_Venta->Excedente = 0;/////////////////////////////////////////ojo//////////////////////////////////////
-                //             $Pago_Venta->Vueltos = -$isVuelos;///////////////////////////////////////////ojo/////////////////////////////////////////
-                //             $Pago_Venta->servicio_id = $request->get('servicio_id');
-                //             $Pago_Venta->caja_id = $request->get('caja_id');
-                //             $Pago_Venta->venta_id = $venta->id;
-                //             $Pago_Venta->save();
-
-                //         }
-
-
-
-
-
-                //     }
-
-                //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                // }
-
-
+                //code here
             }
 
-            // if($modo_pago == 'contado'){
-
-            //    /////////////////////////////////////////////////////////////////////////////////////////////////
-            //     // TODO ingresamos los datos en la tabla Pago_Venta////////////////////////////////////////////
-
-            //     $MontoDivisaR = $request->get('MontoDivisa');
-            //     $divisaR = $request->get('divisa');
-            //     $TasaTikeR = $request->get('TasaTike');
-            //     $MontoDolarR = $request->get('MontoDolar');
-            //     $VeltosR = $request->get('Veltos');
-
-            //     $MontoDivisaR = array_filter($MontoDivisaR);
-
-
-            //     foreach($MontoDivisaR as $key => $val) {
-
-
-            //         $divisa[]=$divisaR[$key];
-            //         $MontoDivisa[]=$MontoDivisaR[$key];
-            //         $TasaTiket[]=$TasaTikeR[$key];
-            //         $MontoDolar[]=$MontoDolarR[$key];
-            //         $Vueltos[]=$VeltosR[$key];
-
-            //     }
-
-
-
-
-            //     // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-            //     //creamos un contador
-            //     $cont = 0;
-
-            //     //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            //     while ($cont < count($MontoDolar)) {
-
-
-            //         $Pago_Venta = new Pago_Venta();
-            //         $Pago_Venta->Divisa = $divisa[$cont];
-            //         $Pago_Venta->MontoDivisa = $MontoDivisa[$cont];
-            //         $Pago_Venta->TasaTiket = $TasaTiket[$cont];
-            //         $Pago_Venta->MontoDolar = $MontoDolar[$cont];
-            //         $Pago_Venta->Vueltos = $Vueltos[$cont];
-            //         $Pago_Venta->venta_id = $venta->id;
-            //         $Pago_Venta->save();
-
-            //         $cont = $cont+1;
-            //     }
-
-            //     // TODO Fin de ingreso en la tabla Pago_Venta //////////////////////////////////////////////////
-            //     //////////////////////////////////////////////////////////////////////////////////////////////////
-
-            //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //     // En esta seccion trabajaremos la parte de vueltos llenamos la tabla pagos_vueltos
-
-            //     $isVuelos = $request->get('isVueltos');
-
-            //     if($isVuelos > 0 || $isVuelos != null){
-
-
-
-
-            //         $MontoDivisaVueltos = $request->get('MontoDivisaV');
-            //         $divisaVueltos = $request->get('divisaV');
-            //         $TasaTikeVueltos = $request->get('TasaTikeV');
-            //         $MontoDolarVueltos = $request->get('MontoDolarV');
-
-
-            //         $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
-
-
-            //         foreach($MontoDivisaVueltos as $key => $val) {
-
-
-            //             $Vdivisa[]=$divisaVueltos[$key];
-            //             $VMontoDivisa[]=$MontoDivisaVueltos[$key];
-            //             $VTasaTiket[]=$TasaTikeVueltos[$key];
-            //             $VMontoDolar[]=$MontoDolarVueltos[$key];
-
-
-
-
-
-            //         }
-
-
-
-
-            //         // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-            //         //creamos un contador
-            //         $cont = 0;
-
-
-            //         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            //         while ($cont < count($VMontoDolar)) {
-
-
-            //             $Pago_Servicio = new Pago_Vuelto();
-            //             $Pago_Servicio->Tipo = 'Consumo';
-            //             $Pago_Servicio->Divisa = $Vdivisa[$cont];
-            //             $Pago_Servicio->MontoDivisa = $VMontoDivisa[$cont];
-            //             $Pago_Servicio->TasaTiket = $VTasaTiket[$cont];
-            //             $Pago_Servicio->MontoDolar = $VMontoDolar[$cont];
-            //             $Pago_Servicio->servicio_id = $servicio_id;
-            //             $Pago_Servicio->caja_id = $request->get('caja_id');
-            //             $Pago_Servicio->save();
-
-            //             $cont = $cont+1;
-            //         }
-
-
-
-            //         // // TODO Ahora vamos a actualizar la tabla Pago_Servicios en su campo vueltos para evitar el problema de registrar
-            //         // //vueltos incorrectamente cuando se pagaba por medio del modo mixto
-
-            //         // //consultamos la tabla pago_servicios donde el id se el mismo del servicio que registramos para actualizar el campo
-            //         // //vueltos ejeplo: si pagan 10 en dolares la tabla servicio solo registra los 10 dolares pero el campo vueltos
-            //         // // queda en 0 luego se consulta la tabla vueltos y si dieron vueltos en dolares actualiza el campo vueltos donde
-            //         // //divisa sea igual a dolar esto se hace para corregir el error que presentava cuando se pagaba en modo mixto con
-            //         // // varias modedas.
-
-            //         // $revisarServicios = Pago_Servicio::where('servicio_id', $servicio->id)->get();
-            //         // // return $revisarServicios;
-            //         // if(count($revisarServicios)){
-            //         //     // return $revisarServicios;
-
-            //         //     foreach ($revisarServicios as $servicioReg) {
-            //         //         // return $servicioReg;
-            //         //         //Actializamos la tabla Pago_Servicios donde el id servicio sea igual al id recibido y el campo divisa
-            //         //         //sea igual alcampo divisa de la tabla pagos vuelos para ello consultamos la tabla vueltos
-
-            //         //         $vueltoReg = Pago_Vuelto::where('servicio_id', $servicio->id)->where('Divisa', $servicioReg->Divisa)->get();
-            //         //         if(count($vueltoReg)){
-            //         //             // return $vueltoReg[0]->MontoDivisa;
-            //         //             $upDateVueltos = Pago_Servicio::findOrFail($servicioReg->id);
-            //         //             $upDateVueltos->Vueltos = -$vueltoReg[0]->MontoDivisa;;
-            //         //             $upDateVueltos->update();
-            //         //         }
-
-            //         //     }
-            //         // }
-            //     }
-
-            //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // }
+            
             DB::commit();
             // return count($requestPrint->idarticulo);
             $printer = new PrinterController;

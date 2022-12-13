@@ -10,19 +10,19 @@
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
         <div class="nav-tabs-custom margin">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#caja" data-toggle="tab">Caja</a></li>
-                <li><a href="#ventas" data-toggle="tab">Ventas</a></li>
-                <li><a href="#tasa" data-toggle="tab">Configurar tasa</a></li>
+                <li><a href="#caja" data-toggle="tab">Caja</a></li>
+                <li class="active"><a href="#ventas" data-toggle="tab">Ventas</a></li>
+                <li class="hidden"><a href="#tasa" data-toggle="tab">Configurar tasa</a></li>
             </ul>
             <div class="tab-content">
-                <a href="{{URL::action('CajaController@show', $caja->id)}}"><button class='btn btn-danger btn-sm'><span class='glyphicon glyphicon-edit'> Cerrar caja</span></button></a>
+                <a href="{{URL::action('CajaController@show', $caja->id)}}"><button class='btn btn-success btn-sm'><span class='glyphicon glyphicon-arrow-up'> VER CAJA</span></button></a>
 
-                <div class="active tab-pane" id="caja">
+                <div class="tab-pane" id="caja">
                     <!-- Main content -->
                     <section class="content">
                         <!-- Info boxes -->
                         <div class="row">
-                            <div class="col-md-4 col-sm-6 col-xs-12">
+                            {{-- <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box">
                                     <span class="info-box-icon bg-red"><i class="fa fa-calendar-check-o"></i></span>
 
@@ -35,10 +35,10 @@
                                     <!-- </.info-box-content -->
                                 </div>
                                 <!-- /.info-box -->
-                            </div>
+                            </div> --}}
                             <!-- /.col -->
 
-                            <div class="col-md-4 col-sm-6 col-xs-12">
+                            {{-- <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box">
                                     <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
 
@@ -50,14 +50,14 @@
                                     <!-- /.info-box-content -->
                                 </div>
                                 <!-- /.info-box -->
-                            </div>
+                            </div> --}}
                             <!-- /.col -->
 
 
                             <!-- fix for small devices only -->
                             {{-- <div class="clearfix visible-sm-block"></div> --}}
                             {{-- <div class="row"> --}}
-                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                {{-- <div class="col-md-4 col-sm-6 col-xs-12">
                                     <div class="info-box">
                                         <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
 
@@ -69,68 +69,12 @@
                                         <!-- /.info-box-content -->
                                     </div>
                                     <!-- /.info-box -->
-                                </div>
+                                </div> --}}
                                 <!-- /.col -->
 
+                            
+
                             {{-- <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="info-box">
-                                    <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
-                                    @php
-                                    $countMayor = 0;
-                                    $countDetal = 0;
-                                    $actual = 0;
-                                    $stockDetal = 0;
-
-
-                                @endphp
-                                    @foreach ($articulos as $art)
-                                        @if ($art->vender_al !== $actual)
-                                        @php
-                                        $actual = $art->vender_al;
-                                        @endphp
-
-                                        @endif
-                                        @if ($art->isKilo)
-                                            @php
-                                                $stock = $art->stock / 1000;
-
-                                            @endphp
-
-                                        @else
-                                            @php
-                                                $stock = $art->stock;
-                                            @endphp
-                                        @endif
-                                        @if ($art->vender_al == 'Mayor' && $stock <= 1)
-
-
-                                            @php
-                                            $countMayor += 1;
-                                            @endphp
-                                        @elseif($art->vender_al == 'Detal' && $stock <= 10)
-
-
-                                            @php
-                                            $countDetal += 1;
-                                            @endphp
-
-                                        @endif
-
-
-
-                                    @endforeach
-
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Poco stock</span>
-                                    <span class="info-box-number">Mayor <b class="text-primary">{{$countMayor}}</b></span>
-                                        <span class="info-box-number">Detal <b class="text-primary">{{$countDetal}}</b></span>
-                                    </div>
-                                    <!-- /.info-box-content -->
-                                </div>
-                                <!-- /.info-box -->
-                            </div> --}}
-
-                            <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box">
                                     <span class="info-box-icon bg-green"><i class="ion ion-ios-cart-outline"></i></span>
 
@@ -143,9 +87,9 @@
                                     <!-- /.info-box-content -->
                                 </div>
                                 <!-- /.info-box -->
-                            </div>
+                            </div> --}}
 
-                            <div class="col-md-4 col-sm-6 col-xs-12">
+                            {{-- <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box">
                                     <span class="info-box-icon bg-green"><i class="ion ion-ios-cart-outline"></i></span>
 
@@ -158,9 +102,9 @@
                                     <!-- /.info-box-content -->
                                 </div>
                                 <!-- /.info-box -->
-                            </div>
+                            </div> --}}
 
-                            <div class="col-md-4 col-sm-6 col-xs-12">
+                            {{-- <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box">
                                     <span class="info-box-icon bg-green"><i class="ion ion-ios-cart-outline"></i></span>
 
@@ -173,7 +117,7 @@
                                     <!-- /.info-box-content -->
                                 </div>
                                 <!-- /.info-box -->
-                            </div>
+                            </div> --}}
                             <!-- /.col -->
 
                             <!-- /.col -->
@@ -188,9 +132,9 @@
                             <div class="col-md-12">
                                 <div class="box box-info">
                                     <div class="box-header with-border">
-                                        <h3 class="box-title">Montos Recibidos en Caja </h3>
+                                        <h3 class="box-title">VENTAS RALIZADAS Y PRODUCTOS CON POCO STOCK </h3>
 
-                                        <div class="row">
+                                        {{-- <div class="row">
                                             <div class="col-sm-2 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-text">INICIO DE CAJA</span>
@@ -255,7 +199,7 @@
                                                 </div>
                                                 <!-- /.description-block -->
                                             </div>
-                                        </div>
+                                        </div> --}}
                                     </div>
                                     <!-- /.box-header -->
                                     <!-- Main row -->
@@ -468,7 +412,7 @@
                     <!-- /.content -->
                 </div>
                 <!-- /.tab-pane -->
-                <div class="tab-pane" id="ventas">
+                <div class="active tab-pane" id="ventas">
                     <!-- Ventas -->
                     <div class="container-small text-sm">
                         <form id="form1" action="{{ route('procesoventa.store') }}" method="POST" autocomplete="off" class="submit-prevent-form">
@@ -1536,7 +1480,7 @@
                 </div>
                 <!-- /.tab-pane -->
 
-                <div class="tab-pane" id="tasa">
+                <div class="hidden tab-pane" id="tasa">
 
 
 
