@@ -47,7 +47,8 @@
                                                 </div>
 
                                                 <div class="info-box-content">
-                                                    <span class="info-box-text ">Vender al Servicio {{$habitacion->tipo_habitacion}}</span>
+                                                    <span class="info-box-text text-center text-muted">Servicio {{$habitacion->tipo_habitacion}}</span>
+                                                    <span class="info-box-text text-center text-gray"> {{$habitacion->nombre_cliente}}</span>
 
 
 
