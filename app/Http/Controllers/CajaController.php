@@ -1023,18 +1023,19 @@ foreach ($cajas->creditos_pagados as $credPagados ) {
                 }
 
 
-// return $cajas->SumaTotalCantidadCreditosVigentes;
+// return $cajas;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 $ver = [];
+$ver2 = [];
         foreach ($cajas->ventas as $vent ) {
             // if ($vent->estado == 'Aceptada') {
             // $cajas->SumaTotalVentas = $cajas->SumaTotalVentas + $vent->total_venta;
             // $cajas->SumaTotalCantidadVentas = $cajas->SumaTotalCantidadVentas + 1;
             // }
-            if ($vent->estado == 'Aceptada'  && $vent->modo_pago == 'Contado') {
+            if ($vent->estado == 'Aceptada'  && $vent->modo_pago == 'Contado' || $vent->modo_pago == 'Contado-Excedente'  && $vent->status == 'Pagado' ) {
 
-                    $cajas->SumaTotalVentas = $cajas->SumaTotalVentas + $vent->total_venta;
+                    $cajas->SumaTotalVentas = $cajas->SumaTotalVentas + ($vent->total_venta - $vent->pago_con_excedente);
                     $ver[] = $vent->total_venta;
                     $cajas->SumaTotalCostoVentas = $cajas->SumaTotalCostoVentas + $vent->precio_costo;
                     $cajas->SumaTotalMargenVentas = $cajas->SumaTotalMargenVentas + $vent->margen_ganancia;
@@ -1047,10 +1048,18 @@ $ver = [];
 
                 $cajas->SumaTotalCantidadVentas = $cajas->SumaTotalCantidadVentas + 1;
 
-        }
+            }
 
             if ($vent->modo_pago == 'Contado') {
                 $cajas->SumaTotalCantidadVentasContado = $cajas->SumaTotalCantidadVentasContado + 1;
+            }
+
+            if ($vent->modo_pago == 'Contado-Excedente') {
+                //////////////////////////////////////////////////////////////////////////////////////////
+                //contavilizamos cuanto hay pagado con excedente
+                $cajas->SumaTotalConsumoPagadosConExcedente = $cajas->SumaTotalConsumoPagadosConExcedente + $vent->pago_con_excedente;
+                // $ver2[] = $vent->pago_con_excedente;
+                
             }
 
             if ($vent->modo_pago == 'Crédito') {
@@ -1063,7 +1072,9 @@ $ver = [];
                 $cajas->SumaTotalVentasCortesia = $cajas->SumaTotalVentasCortesia + $vent->total_venta;
             }
         }
-        // return $ver;
+
+        // $cajas->SumaTotalVentas += $cajas->SumaTotalReintegrosPagadosoEnCaja;
+        // return $ver2;
         $nombre = [];
         foreach ($cajas->articulo_ventas as $art_vent ) {
             $nombre[] = Articulo::find($art_vent->articulo_id);
