@@ -421,9 +421,9 @@
         </a>
           <ul class="treeview-menu">
 
-            @can('haveaccess', 'ingreso.index')
+            {{-- @can('haveaccess', 'ingreso.index')
                 <li><a href="{{asset('pagos/excedentes')}}"><i class="fa fa-sign-in"></i> Excedentes</a></li>
-            @endcan
+            @endcan --}}
             @can('haveaccess', 'menu.transactions')
                 <li class="treeview">
                     <a href="#"><i class="fa fa-exchange"></i> Pagar por oficina

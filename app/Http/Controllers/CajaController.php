@@ -1874,10 +1874,12 @@ $ojot = [];
 // return $cajas->SumaTotalPesoServDflotante;
         // TODO captuaramos en variables los montos pagados en el proseso de pagos extras de la tabla horas extras
 
-
+// return $cajas->pago_extras;
         foreach ($cajas->pago_extras as $pagoVeX ) {
+            
             // return $cajas->pago_extras;
             $validarPagosHorasExtras = Horas_extra::where('id',$pagoVeX->horas_extra_id)->first();
+            $cajas->SumaTotalHorasExtrasPagadosConExcedente = $cajas->SumaTotalHorasExtrasPagadosConExcedente + $validarPagosHorasExtras->pago_con_excedente;
             // return $validarPagosHorasExtras;
             // if ($validarPagosHorasExtras) {
 
@@ -1969,6 +1971,8 @@ $ojot = [];
                 $cajas->TotalSumaTotalHorasExtrasDflotante = $cajas->TotalSumaTotalHorasExtrasDflotante + ($pagoVeX->Vueltos);
                 $cajas->TotalSumaTotalHorasExtrasFinal = $cajas->TotalSumaTotalHorasExtrasFinal + ($pagoVeX->MontoDolar);
 
+                
+
             }
 
 
@@ -1976,8 +1980,8 @@ $ojot = [];
         }
 // return $cajas->pago_extras;
         foreach ($cajas->horas_extras as $creditosHorasExtras) {
-            if($creditosHorasExtras->modo_pago == 'Contado' && $creditosHorasExtras->status == 'Pagado'){
-                $cajas->SumaTotalExtra = $cajas->SumaTotalExtra + $creditosHorasExtras->total_horas_extras_otros_montos;
+            if($creditosHorasExtras->modo_pago == 'Contado' || $creditosHorasExtras->modo_pago == 'Contado-Excedente' && $creditosHorasExtras->status == 'Pagado'){
+                $cajas->SumaTotalExtra = $cajas->SumaTotalExtra + $creditosHorasExtras->total_horas_extras_otros_montos - $creditosHorasExtras->pago_con_excedente;
                 $cajas->SumaTotalCantidadHorasExtrasCortesia = $cajas->SumaTotalCantidadHorasExtrasContado + 1;
             }
 
