@@ -156,7 +156,7 @@ class ExcedenteController extends Controller
      */
     public function store(Request $request)
     {
-        // return $request;
+        return $request;
 
 
             $bandera = $request->get('bandera');
@@ -210,8 +210,18 @@ class ExcedenteController extends Controller
                 try{
 
                     // TODO verificamos que exista el cliente si no lo registramos
+                    if($dcliente_id){
+                        $existeCliente = Persona::where('id',$dcliente_id)->where('nombre', '<>', 'Proveedor Comun')->where('nombre', '<>', 'Cliente Comun')->first();
+                    }else{
+                        $is_exist_cliente = Persona::where('num_documento',$num_documento)->first();
+                        if($is_exist_cliente){
+                            $existeCliente = Persona::where('id',$is_exist_cliente->id)->where('nombre', '<>', 'Proveedor Comun')->where('nombre', '<>', 'Cliente Comun')->first();
+                        }else{
+                            $existeCliente = null;
+                        }
+                    }
 
-                    $existeCliente = Persona::where('id',$dcliente_id)->where('nombre', '<>', 'Proveedor Comun')->where('nombre', '<>', 'Cliente Comun')->first();
+                    return $existeCliente;
 
                     if($existeCliente){
                         $dcliente_id = $existeCliente->id;
@@ -422,7 +432,16 @@ class ExcedenteController extends Controller
 
                     // TODO verificamos que exista el cliente si no lo registramos
 
-                    $existeCliente = Persona::where('id',$dcliente_id)->where('nombre', '<>', 'Proveedor Comun')->where('nombre', '<>', 'Cliente Comun')->first();
+                    if($dcliente_id){
+                        $existeCliente = Persona::where('id',$dcliente_id)->where('nombre', '<>', 'Proveedor Comun')->where('nombre', '<>', 'Cliente Comun')->first();
+                    }else{
+                        $is_exist_cliente = Persona::where('num_documento',$num_documento)->first();
+                        if($is_exist_cliente){
+                            $existeCliente = Persona::where('id',$is_exist_cliente->id)->where('nombre', '<>', 'Proveedor Comun')->where('nombre', '<>', 'Cliente Comun')->first();
+                        }else{
+                            $existeCliente = null;
+                        }
+                    }
 
                     if($existeCliente){
                         $dcliente_id = $existeCliente->id;

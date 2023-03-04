@@ -77,7 +77,7 @@ class CheckoutController extends Controller
      */
     public function store(Request $request)
     {
-        return $request;
+        return 'Estoy en store de checout' .  $request;
     }
 
     /**
@@ -788,7 +788,7 @@ class CheckoutController extends Controller
                     // return $servicio;
                 // return redirect()->route('proceso', array('title' => $title,'levels' => $levels,'habitacion' => $habitacion,'horarios' => $horarios, 'tasaDolarHabitacion' => $tasaDolarHabitacion, 'tasaPesoHabitacion' => $tasaPesoHabitacion, 'users' => $users));
 
-             return view('checkout.show', compact('clientes','bancos','dolarDisponible','pesoDisponible','bolivarDisponible','verificarHorasExtras','mismaHabitacion','cajas','articulos','servicio','serie_comprobante','UserId','UserName','caja','ventaNum','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','denominacion_dolar','title','levels','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','precio','num_servicio'));
+             return view('checkout.show', compact('clientes','bancos','dolarDisponible','pesoDisponible','bolivarDisponible','verificarHorasExtras','mismaHabitacion','cajas','servicio','UserId','UserName','caja','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','title','habitacionese','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente','num_servicio'));
             }else{
                 return redirect()
                 ->route('caja.index')

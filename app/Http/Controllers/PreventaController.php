@@ -34,7 +34,7 @@ class PreventaController extends Controller
 
 
 
-        return view('preventa.index', compact('title','levels','habitaciones','horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users'));
+        return view('preventa.index', compact('title','habitaciones', 'users'));
     }
 
     /**

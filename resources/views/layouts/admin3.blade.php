@@ -6,6 +6,7 @@
   <title>Administracion | {{ config('app.name', 'VillaSoft') }}</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <!-- Bootstrap 3.3.7 -->
   <link rel="stylesheet" href="{{asset('bower_components/bootstrap/dist/css/bootstrap.min.css')}}">
   <link rel="stylesheet" type="text/css" media="print" href="{{asset('bower_components/bootstrap/dist/css/bootstrap_imprimir.css')}}">
@@ -46,7 +47,11 @@
   <!-- jvectormap -->
   <link rel="stylesheet" href="{{asset('bower_components/jvectormap/jquery-jvectormap.css')}}">
   <link rel="stylesheet" href="{{asset('css/submit.css')}}">
+
+  <link rel="stylesheet" href="{{asset('jquery-ui-1.12.1/jquery-ui.css')}}">
   {{-- <link rel="stylesheet" href="{{asset('bower_components/jquery-ui/jquery-ui.min.css')}}"> --}}
+
+
   @yield('styles')
 
 
@@ -537,7 +542,7 @@
             @can('haveaccess', 'precio.index')
             <li><a href="{{asset('config/precio')}}"><i class="fa fa-cubes"></i> Precio</a></li>
             @endcan
-            @can('haveaccess', 'menu.transactions')
+            <!-- @can('haveaccess', 'menu.transactions')
             <li class="treeview">
                 <a href="#"><i class="fa fa-exchange"></i> Transacciones
                 <span class="pull-right-container">
@@ -556,7 +561,7 @@
                     @endcan
                 </ul>
             </li>
-            @endcan
+            @endcan -->
         </ul>
       </li>
     </ul>
@@ -853,6 +858,9 @@
 <script src="{{asset('plugins/jvectormap/jquery-jvectormap-world-mill-en.js')}}"></script>
 <script src="{{asset('bower_components/chart.js/Chart.js')}}"></script>
 <script src="{{asset('dist/js/pages/dashboard2.js')}}"></script> --}}
+
+<script src="{{asset('jquery-ui-1.12.1/jquery-ui.js')}}"></script>
+
 
 {{-- Funtion Main --}}
 @stack('sciptsMain')

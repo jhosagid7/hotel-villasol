@@ -192,7 +192,7 @@ class PagarPorOficinaController extends Controller
             $bancos = Banco::get();
 
         // return $detalle_creditos;
-        return view('pagos.pendientes.show', compact('bancosEmpresas','bancosCLientes','cliente','bancos','historialExcedentes','caja','title','detalle_pagado_oficina','BancosClientes','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','users','UserName'));
+        return view('pagos.pendientes.show', compact('bancosEmpresas','cliente','bancos','historialExcedentes','caja','title','detalle_pagado_oficina','tasaDolarHabitacion','tasaPesoHabitacion','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','users','UserName'));
     }
 
     /**

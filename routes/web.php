@@ -196,3 +196,9 @@ Route::get('/reporte-general-creditos-buscar', 'ReporteController@reportGeneralC
 Route::get('/reporte-general-creditos', 'ReporteController@reportGeneralCreditosShow')->name('reporte-general-creditos');
 
 Route::resource('/reintegros', 'ReintegroController');
+
+Route::get('search/articulos', 'SearchController@articulos')->name('search.articulos');
+Route::get('search/articulos/ventas', 'SearchController@articulosVentas')->name('search.articulos.ventas');
+Route::get('search/articulos/cargos', 'SearchController@articulosCargos')->name('search.articulos.cargos');
+
+Route::get('search/personas', 'SearchController@personas')->name('search.personas');

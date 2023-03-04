@@ -49,6 +49,7 @@ class ReporteController extends Controller
         //     return view("almacen.categoria.index",["categorias"=>$categorias]);
         // }
 
+
         $title = 'Reporte de Productos Vendidos';
         $articulos = Articulo_venta::join('articulos', 'articulo_ventas.articulo_id', '=', 'articulos.id')
         ->join('ventas', 'articulo_ventas.venta_id', '=', 'ventas.id')
@@ -292,7 +293,7 @@ class ReporteController extends Controller
             $tipo = null;
         }
 // return $ingresos;
-        return view('reportes.creditos.pagados.show', compact('tipo','detallado','fecha_inicio','fecha_fin','creditos','fecha','estado','proveedor','operador', 'title'));
+        return view('reportes.creditos.pagados.show', compact('tipo','detallado','fecha_inicio','fecha_fin','creditos','fecha','operador', 'title'));
     }
 
 
@@ -347,7 +348,7 @@ class ReporteController extends Controller
             $tipo = null;
         }
 // return $creditos;
-        return view('reportes.creditos.general.show', compact('tipo','detallado','fecha_inicio','fecha_fin','creditos','fecha','estado','proveedor','operador', 'title'));
+        return view('reportes.creditos.general.show', compact('tipo','detallado','fecha_inicio','fecha_fin','creditos','fecha','operador', 'title'));
     }
 
     /**
