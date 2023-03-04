@@ -33,7 +33,7 @@ class SearchController extends Controller
     //     return json_encode( $users );
     // }
 
-
+    // coment...
     public function personas(Request $request){
         $term = $request->get('term');
 
