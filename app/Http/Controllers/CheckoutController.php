@@ -88,6 +88,7 @@ class CheckoutController extends Controller
      */
     public function show($id)
     {
+        // return 'jajaj' . $id;
         $userpermision = User::with('roles')->where('id', Auth::id())->first();
         // return $id;
         $title = 'Salida';

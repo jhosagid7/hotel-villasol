@@ -33,7 +33,7 @@ class SearchController extends Controller
     //     return json_encode( $users );
     // }
 
-
+    // coment...
     public function personas(Request $request){
         $term = $request->get('term');
 
@@ -44,8 +44,6 @@ class SearchController extends Controller
             $query
             ->whereFullText(['nombre'], $term )
             ->orWhereFullText(['num_documento'], $term)
-            // ->where('nombre', 'like', '%'.$term.'%')
-            // ->orWhere('num_documento', 'like', '%'.$term.'%')
             ->orderBy('nombre','Asc');
         })->get();
 

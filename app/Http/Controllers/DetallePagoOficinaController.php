@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Banco;
 use App\Excedente;
 use Carbon\Carbon;
+use App\PreExcedente;
 use App\BancosCliente;
 use App\BancosEmpresa;
 use App\DetallePagoOficina;
@@ -15,25 +16,6 @@ use Illuminate\Support\Facades\Auth;
 
 class DetallePagoOficinaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -45,13 +27,7 @@ class DetallePagoOficinaController extends Controller
     {
         // return $request;
 
-
-
-
         $telefono_pago_movil_cliente = $request->get('pago_movil');
-
-
-        // return $telefono_pago_movil_cliente;
 
         $codigo_cliente = $request->get('codigo_banco_cliente');
         $num_cuenta_cliente = $request->get('num_cuenta');
@@ -67,18 +43,11 @@ class DetallePagoOficinaController extends Controller
         $persona_id = $request->get('dcliente_id');
         $tipo_documento = $request->get('tipo_documento');
         $sucursal_id = $request->get('sucursal_id');
-        // return $sucursal_id;
         $caja_id  = $request->get('caja_id');
         $user_id = Auth::user()->id;
 
-
         try{
-
-
             // TODO Guardamos los datos de la cuenta bancaria de la empresa pero revisamos si ya existe esa cuenta registrada
-
-
-
 
             // TODO Guardamos los registros en la tabla Detalle pagos oficina
 
@@ -97,10 +66,8 @@ class DetallePagoOficinaController extends Controller
             $DetallePagoOficina->user_id = $user_id;
             $DetallePagoOficina->save();
 
-
             // TODO Ahora actualizamos la tabla historial_excedentes colocando el id del detalle pago oficina para poder agrupar los por ide de pago
             // y asi poder consultarlos luego y cambiando el estatus a pagado
-
 
             $historialExcedentes = HistorialExcedente::where('persona_id',$persona_id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
 
@@ -123,15 +90,18 @@ class DetallePagoOficinaController extends Controller
                     Excedente::destroy($eliminarRegistroExcedente->id);
                 }
 
+                // TODO Ahora eliminamos de la tabla preExcedente el registro del usuario ya que esta tabla maneja los mostos de pagar por
+                // oficina en el area de la caja
+
+                $eliminarRegistroPreExcedente = PreExcedente::where('cliente_id',$persona_id)->first();
+
+                if ($eliminarRegistroPreExcedente) {
+                    PreExcedente::destroy($eliminarRegistroPreExcedente->id);
+                }
+
 
 
             }
-
-
-
-
-
-
 
             DB::commit();
 
@@ -156,48 +126,4 @@ class DetallePagoOficinaController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\DetallePagoOficina  $detallePagoOficina
-     * @return \Illuminate\Http\Response
-     */
-    public function show(DetallePagoOficina $detallePagoOficina)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\DetallePagoOficina  $detallePagoOficina
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(DetallePagoOficina $detallePagoOficina)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\DetallePagoOficina  $detallePagoOficina
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, DetallePagoOficina $detallePagoOficina)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\DetallePagoOficina  $detallePagoOficina
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(DetallePagoOficina $detallePagoOficina)
-    {
-        //
-    }
 }
