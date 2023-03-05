@@ -26,36 +26,39 @@ class Categoria extends Model
     ];
 
     //Haora especificamos los campos guarded
-    protected $guarded=[
+    protected $guarded = [];
 
-    ];
-
-    public function articulos(){
+    public function articulos()
+    {
         return $this->hasMany(Articulo::class);
     }
 
-    public function scopeNombre($query, $nombre){
-        if($nombre)
-        return $query->where('nombre', 'LIKE', "%$nombre%");
+    public function scopeNombre($query, $nombre)
+    {
+        if ($nombre)
+            return $query->where('nombre', 'LIKE', "%$nombre%");
     }
 
-    public function scopeDescription($query, $description){
-        if($description)
-        return $query->where('descripcion', 'LIKE', "%$description%");
+    public function scopeDescription($query, $description)
+    {
+        if ($description)
+            return $query->where('descripcion', 'LIKE', "%$description%");
     }
 
-    public function scopeCondition($query, $condition){
-        if($condition)
-        return $query->where('condicion', 'LIKE', "$condition");
+    public function scopeCondition($query, $condition)
+    {
+        if ($condition)
+            return $query->where('condicion', 'LIKE', "$condition");
     }
 
-    public function scopeFecha($query, $fecha){
+    public function scopeFecha($query, $fecha)
+    {
 
-        if($fecha){
-        list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-            $fecha_inicio = Carbon::parse($fecha_inicio. '00:00:00')->format('Y-m-d H:i:s');
-            $fecha_fin = Carbon::parse($fecha_fin. '23:59:59')->format('Y-m-d H:i:s');
-        return $query->whereBetween('created_at', [$fecha_inicio, $fecha_fin]);
+        if ($fecha) {
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+            $fecha_inicio = Carbon::parse($fecha_inicio . '00:00:00')->format('Y-m-d H:i:s');
+            $fecha_fin = Carbon::parse($fecha_fin . '23:59:59')->format('Y-m-d H:i:s');
+            return $query->whereBetween('created_at', [$fecha_inicio, $fecha_fin]);
         }
     }
 }

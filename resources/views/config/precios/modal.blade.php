@@ -1,9 +1,10 @@
-<div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{$precio->id}}">
+<div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+    id="modal-delete-{{ $precio->id }}">
     {{-- {{ Form::open(array('action'=>array('CategoriaController@destroy',$cat->idcategoria),'method'=>'delete'))}} --}}
-    <form action="{{ route('precio.destroy', $precio->id)}}" method="POST">
-    @csrf
-    @method('DELETE')
-    <div class="modal-dialog">
+    <form action="{{ route('precio.destroy', $precio->id) }}" method="POST">
+        @csrf
+        @method('DELETE')
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -12,7 +13,7 @@
                     <h4 class="modal-title">Eliminar el Precio</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Confirme si decea eliminar Precio <b>{{$precio->precio}}</b></p>
+                    <p>Confirme si decea eliminar Precio <b>{{ $precio->precio }}</b></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn default btn-sm" data-dismiss="modal">Cerrar</button>

@@ -14,11 +14,13 @@ class Cat extends Model
 
     protected $guarded = [];
 
-    public function habitaciones(){
+    public function habitaciones()
+    {
         return $this->hasMany('App\Habitacione');
     }
 
-    public function precios(){
+    public function precios()
+    {
         return $this->hasMany('App\Precio');
     }
 }

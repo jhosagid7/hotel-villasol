@@ -52,23 +52,24 @@ class ReporteController extends Controller
 
         $title = 'Reporte de Productos Vendidos';
         $articulos = Articulo_venta::join('articulos', 'articulo_ventas.articulo_id', '=', 'articulos.id')
-        ->join('ventas', 'articulo_ventas.venta_id', '=', 'ventas.id')
-        ->where('ventas.estado', '=','Aceptada')
-        // ->name($name)
-        ->tipo($tipo)
-        // ->description($description)
-        ->select('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at',DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_costo_unidad) as precio_costo_total'),DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_venta_unidad) as precio_venta_total'))
-        ->fecha($fecha)
-        ->groupBy('articulo_ventas.id','articulos.codigo','articulos.vender_al','articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo','articulo_ventas.cantidad','articulo_ventas.precio_costo_unidad','articulo_ventas.precio_venta_unidad','articulo_ventas.descuento','articulo_ventas.created_at')
-        ->get();
+            ->join('ventas', 'articulo_ventas.venta_id', '=', 'ventas.id')
+            ->where('ventas.estado', '=', 'Aceptada')
+            // ->name($name)
+            ->tipo($tipo)
+            // ->description($description)
+            ->select('articulo_ventas.id', 'articulos.codigo', 'articulos.vender_al', 'articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo', 'articulo_ventas.cantidad', 'articulo_ventas.precio_costo_unidad', 'articulo_ventas.precio_venta_unidad', 'articulo_ventas.descuento', 'articulo_ventas.created_at', DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_costo_unidad) as precio_costo_total'), DB::raw('sum(articulo_ventas.cantidad*articulo_ventas.precio_venta_unidad) as precio_venta_total'))
+            ->fecha($fecha)
+            ->groupBy('articulo_ventas.id', 'articulos.codigo', 'articulos.vender_al', 'articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo', 'articulo_ventas.cantidad', 'articulo_ventas.precio_costo_unidad', 'articulo_ventas.precio_venta_unidad', 'articulo_ventas.descuento', 'articulo_ventas.created_at')
+            ->get();
 
 
         // return $articulos;
 
-        return view('reportes.ventas.index', ["title" => $title,"articulos" => $articulos]);
+        return view('reportes.ventas.index', ["title" => $title, "articulos" => $articulos]);
     }
 
-    public function listadoInventario(){
+    public function listadoInventario()
+    {
         $title = 'Planilla de Inventario';
         $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
         $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
@@ -76,52 +77,55 @@ class ReporteController extends Controller
         $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
         $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
         $articulos = DB::table('articulos as a')
-        ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
-        ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
-        ->orderBy('id', 'desc')
-        ->get();
+            ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
+            ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'c.nombre as categoria')
+            ->orderBy('id', 'desc')
+            ->get();
         // return $articulos;
-        return view('reportes.inventario.listaInventario', compact('articulos','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo'));
+        return view('reportes.inventario.listaInventario', compact('articulos', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo'));
     }
 
-    public function listadoPrecio(){
+    public function listadoPrecio()
+    {
         $title = 'Listado General de Precios';
         $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
-            $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
-            $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
-            $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
-            $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
-            $articulos = DB::table('articulos as a')
+        $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
+        $tasaTransferenciaPunto = DB::table('tasas')->where('nombre', '=', 'Transferencia_Punto')->first();
+        $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
+        $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
+        $articulos = DB::table('articulos as a')
             ->join('categorias as c', 'a.categoria_id', '=', 'c.id')
 
             ->select('a.id', 'a.codigo', 'a.nombre', 'a.stock', 'a.precio_costo', 'a.unidades', 'a.descripcion', 'a.imagen', 'a.estado', 'a.porEspecial', 'a.isDolar', 'a.isPeso', 'a.isTransPunto', 'a.isMixto', 'a.isEfectivo', 'c.nombre as categoria')
             ->orderBy('id', 'desc')
             ->get();
         // return $articulos;
-        return view('reportes.inventario.listaPrecio', compact('title','articulos','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo'));
+        return view('reportes.inventario.listaPrecio', compact('title', 'articulos', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo'));
     }
 
-    public function reporteGeneral(){
+    public function reporteGeneral()
+    {
         $title = 'Reporte General';
-        $totalInversion = Articulo::where("estado","=",'Activo')
-        ->select(DB::raw('sum(precio_costo*stock) as precio_costo_total'))
-        ->get();
+        $totalInversion = Articulo::where("estado", "=", 'Activo')
+            ->select(DB::raw('sum(precio_costo*stock) as precio_costo_total'))
+            ->get();
 
-        $mayor = Articulo::where("estado","=",'Activo')
-        ->where("vender_al","=",'Mayor')
-        ->select(DB::raw('sum(precio_costo*stock) as totalMayor'),DB::raw('sum(unidades*stock) as totalUnidadesMayor'),DB::raw('sum(stock) as totalStockMayor'))
-        ->get();
+        $mayor = Articulo::where("estado", "=", 'Activo')
+            ->where("vender_al", "=", 'Mayor')
+            ->select(DB::raw('sum(precio_costo*stock) as totalMayor'), DB::raw('sum(unidades*stock) as totalUnidadesMayor'), DB::raw('sum(stock) as totalStockMayor'))
+            ->get();
 
-        $detal = Articulo::where("estado","=",'Activo')
-        ->where("vender_al","=",'Detal')
-        ->select(DB::raw('sum(precio_costo*stock) as totalDetal'),DB::raw('sum(unidades*stock) as totalUnidadesDetal'),DB::raw('sum(stock) as totalStockDetal'))
-        ->get();
-            $user = Auth::user();
+        $detal = Articulo::where("estado", "=", 'Activo')
+            ->where("vender_al", "=", 'Detal')
+            ->select(DB::raw('sum(precio_costo*stock) as totalDetal'), DB::raw('sum(unidades*stock) as totalUnidadesDetal'), DB::raw('sum(stock) as totalStockDetal'))
+            ->get();
+        $user = Auth::user();
         // return $totalInversion.$mayor.$detal;
-        return view('reportes.inventario.general', compact('title', 'user','totalInversion','mayor','detal'));
+        return view('reportes.inventario.general', compact('title', 'user', 'totalInversion', 'mayor', 'detal'));
     }
 
-    public function reportIngresosIndex(){
+    public function reportIngresosIndex()
+    {
 
         $title = 'Reporte General de Compras por Fechas';
 
@@ -140,31 +144,31 @@ class ReporteController extends Controller
         //         $art->articulo;
         //     }
         // }
-// return $ingresos;
-        return view('reportes.ingresos.index', compact('users','proveedors', 'title'));
+        // return $ingresos;
+        return view('reportes.ingresos.index', compact('users', 'proveedors', 'title'));
     }
 
-    public function reportIngresosShow(Request $request){
+    public function reportIngresosShow(Request $request)
+    {
         $fecha = $request->get('fecha');
         $estado = $request->get('estado');
         $proveedor = $request->get('proveedor');
         $operador = $request->get('operador');
         $title = 'Reporte General de Compras';
         $ingresos = Ingreso::fecha($fecha)
-        ->estado($estado)
-        ->proveedor($proveedor)
-        ->operador($operador)
-        ->get();
+            ->estado($estado)
+            ->proveedor($proveedor)
+            ->operador($operador)
+            ->get();
 
-        if($fecha){
+        if ($fecha) {
             list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
-                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+            $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+            $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+        }
 
-            }
 
-
-            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+        $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
         // ->name($name)
         //     ->codigo($codigo)
         //     ->venderal($venderal)
@@ -177,11 +181,12 @@ class ReporteController extends Controller
         //         $art->articulo;
         //     }
         // }
-// return $ingresos;
-        return view('reportes.ingresos.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','estado','proveedor','operador', 'title'));
+        // return $ingresos;
+        return view('reportes.ingresos.show', compact('detallado', 'fecha_inicio', 'fecha_fin', 'ingresos', 'fecha', 'estado', 'proveedor', 'operador', 'title'));
     }
 
-    public function reportCargosIndex(){
+    public function reportCargosIndex()
+    {
         // returna la vista primcipal de reportTransactionsIndex
         $title = 'Reporte General de Cargos por Fechas';
 
@@ -191,32 +196,33 @@ class ReporteController extends Controller
         return view('reportes.cargos.index', compact('users', 'title'));
     }
 
-    public function reportCargosShow(Request $request){
+    public function reportCargosShow(Request $request)
+    {
         /* Este metodo no filitra los campos de busqueda y nos envia el resultado a la vista show */
         $fecha = $request->get('fecha');
         $autorizado_por = $request->get('autorizado_por');
         $operador = $request->get('operador');
         $title = 'Reporte General de Cargos';
         $ingresos = Transaction::where('tipo_operacion', '=', 'Cargo')
-        ->fecha($fecha)
-        ->autorizadoPor($autorizado_por)
-        ->operador($operador)
-        ->get();
+            ->fecha($fecha)
+            ->autorizadoPor($autorizado_por)
+            ->operador($operador)
+            ->get();
 
-        if($fecha){
+        if ($fecha) {
             list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
-                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+            $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+            $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+        }
 
-            }
 
+        $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
 
-            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
-
-            return view('reportes.cargos.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','autorizado_por','operador', 'title'));
+        return view('reportes.cargos.show', compact('detallado', 'fecha_inicio', 'fecha_fin', 'ingresos', 'fecha', 'autorizado_por', 'operador', 'title'));
     }
 
-    public function reportDescargosIndex(){
+    public function reportDescargosIndex()
+    {
         // returna la vista primcipal de reportTransactionsIndex
         $title = 'Reporte General de Descargo por Fechas';
 
@@ -226,44 +232,46 @@ class ReporteController extends Controller
         return view('reportes.descargos.index', compact('users', 'title'));
     }
 
-    public function reportdescargosShow(Request $request){
+    public function reportdescargosShow(Request $request)
+    {
         /* Este metodo no filitra los campos de busqueda y nos envia el resultado a la vista show */
         $fecha = $request->get('fecha');
         $autorizado_por = $request->get('autorizado_por');
         $operador = $request->get('operador');
         $title = 'Reporte General de Descargo';
         $ingresos = Transaction::where('tipo_operacion', '=', 'Descargo')
-        ->fecha($fecha)
-        ->autorizadoPor($autorizado_por)
-        ->operador($operador)
-        ->get();
+            ->fecha($fecha)
+            ->autorizadoPor($autorizado_por)
+            ->operador($operador)
+            ->get();
 
-        if($fecha){
+        if ($fecha) {
             list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
-                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+            $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+            $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+        }
 
-            }
 
+        $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
 
-            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
-
-            return view('reportes.descargos.show', compact('detallado','fecha_inicio','fecha_fin','ingresos','fecha','autorizado_por','operador', 'title'));
+        return view('reportes.descargos.show', compact('detallado', 'fecha_inicio', 'fecha_fin', 'ingresos', 'fecha', 'autorizado_por', 'operador', 'title'));
     }
 
 
-    public function reportCreditosIndex(){
+    public function reportCreditosIndex()
+    {
 
         $title = 'Reporte General de Creditos Pagados por Fechas';
 
         $users = User::Where('id', '<>', '2')->get();
         $clientes = Credito::get();
 
-// return $ingresos;
-        return view('reportes.creditos.pagados.index', compact('users','clientes', 'title'));
+        // return $ingresos;
+        return view('reportes.creditos.pagados.index', compact('users', 'clientes', 'title'));
     }
 
-    public function reportCreditosPagadosShow(Request $request){
+    public function reportCreditosPagadosShow(Request $request)
+    {
         // return $request;
         $fecha = $request->get('fecha');
         $tipo = $request->get('tipo');
@@ -271,34 +279,34 @@ class ReporteController extends Controller
         $operador = $request->get('operador');
         $title = 'Reporte General de Creditos Pagados';
         $creditos = Detalle_Creditos_Pagado::fecha($fecha)
-        // ->tipo($tipo)
-        ->cliente($cliente)
-        ->operador($operador)
-        ->get();
+            // ->tipo($tipo)
+            ->cliente($cliente)
+            ->operador($operador)
+            ->get();
 
         // return $creditos[0]->creditos_pagados;
 
-        if($fecha){
+        if ($fecha) {
             list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
-                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+            $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+            $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+        }
 
-            }
 
-
-            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
-        if(!$tipo == 0 || !$tipo == null){
+        $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+        if (!$tipo == 0 || !$tipo == null) {
             $tipo = $tipo;
-        }else{
+        } else {
             $tipo = null;
         }
-// return $ingresos;
-        return view('reportes.creditos.pagados.show', compact('tipo','detallado','fecha_inicio','fecha_fin','creditos','fecha','operador', 'title'));
+        // return $ingresos;
+        return view('reportes.creditos.pagados.show', compact('tipo', 'detallado', 'fecha_inicio', 'fecha_fin', 'creditos', 'fecha', 'operador', 'title'));
     }
 
 
 
-    public function reportGeneralCreditosBucarIndex(){
+    public function reportGeneralCreditosBucarIndex()
+    {
 
         $title = 'Generador de Reportes por filtros de busqueda';
 
@@ -306,11 +314,12 @@ class ReporteController extends Controller
         $clientes = Credito::get();
         $cajas = Caja::all();
 
-// return $ingresos;
-        return view('reportes.creditos.general.index', compact('cajas','users','clientes', 'title'));
+        // return $ingresos;
+        return view('reportes.creditos.general.index', compact('cajas', 'users', 'clientes', 'title'));
     }
 
-    public function reportGeneralCreditosShow(Request $request){
+    public function reportGeneralCreditosShow(Request $request)
+    {
         // return $request;
         $fecha = $request->get('fecha');
         $tipo = $request->get('tipo');
@@ -323,32 +332,31 @@ class ReporteController extends Controller
 
 
         $creditos = Detalle_credito::fecha($fecha)
-        // ->tipo($tipo)
-        ->cliente($cliente)
-        ->operador($operador)
-        ->EstadoPago($estadoPago)
-        ->EstadoCredito($estadoCredito)
-        ->Caja($caja_id)
-        ->get();
+            // ->tipo($tipo)
+            ->cliente($cliente)
+            ->operador($operador)
+            ->EstadoPago($estadoPago)
+            ->EstadoCredito($estadoCredito)
+            ->Caja($caja_id)
+            ->get();
 
         // return $creditos[0]->creditos_pagados;
 
-        if($fecha){
+        if ($fecha) {
             list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-                $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
-                $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+            $fecha_inicio = Carbon::parse($fecha_inicio)->format('d-m-Y');
+            $fecha_fin = Carbon::parse($fecha_fin)->format('d-m-Y');
+        }
 
-            }
 
-
-            $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
-        if(!$tipo == 0 || !$tipo == null){
+        $detallado = ($request->get('detallado') == 'on' ? '' : 'hidden');
+        if (!$tipo == 0 || !$tipo == null) {
             $tipo = $tipo;
-        }else{
+        } else {
             $tipo = null;
         }
-// return $creditos;
-        return view('reportes.creditos.general.show', compact('tipo','detallado','fecha_inicio','fecha_fin','creditos','fecha','operador', 'title'));
+        // return $creditos;
+        return view('reportes.creditos.general.show', compact('tipo', 'detallado', 'fecha_inicio', 'fecha_fin', 'creditos', 'fecha', 'operador', 'title'));
     }
 
     /**

@@ -15,24 +15,9 @@ use Illuminate\Support\Facades\Auth;
 
 class ReintegroController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function __construct()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        $this->middleware('auth');
     }
 
     /**
@@ -65,7 +50,7 @@ class ReintegroController extends Controller
         $observacion = $request->get('pObservaciones');
         $operador = Auth::user()->name;
         $user_id = Auth::user()->id;
-        $caja = Caja::where("estado","=",'Abierta')->first();
+        $caja = Caja::where("estado", "=", 'Abierta')->first();
         $caja_id = $caja->id;
         $fecha_pago = Carbon::now();
 
@@ -73,7 +58,7 @@ class ReintegroController extends Controller
 
 
 
-        try{
+        try {
 
             $reintegro = new  Reintegro();
             $reintegro->nombre_cliente = $pnombre_cliente;
@@ -102,7 +87,7 @@ class ReintegroController extends Controller
 
             // TODO Guardamos los registros en la tabla Detalle pagos oficina
 
-            if($monto_pagado == $monto_deuda){
+            if ($monto_pagado == $monto_deuda) {
                 $DetallePagoOficina = new  DetallePagoOficina();
                 $DetallePagoOficina->tipo_pago = 'Efectivo';
                 $DetallePagoOficina->num_transaccion = '0001';
@@ -118,16 +103,16 @@ class ReintegroController extends Controller
 
                 $is_cliente = PreExcedente::where('cliente_id', $pcliente_id)->first();
 
-                if($is_cliente){
-                    if($is_cliente->deuda_total_acumulada == $is_cliente->monto_excedente_actual){
+                if ($is_cliente) {
+                    if ($is_cliente->deuda_total_acumulada == $is_cliente->monto_excedente_actual) {
                         PreExcedente::destroy($is_cliente->id);
                         // TODO Ahora actualizamos la tabla historial_excedentes colocando el id del detalle pago oficina para poder agrupar los por ide de pago
                         // y asi poder consultarlos luego y cambiando el estatus a pagado
 
 
-                        $historialExcedentes = HistorialExcedente::where('persona_id',$pcliente_id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
+                        $historialExcedentes = HistorialExcedente::where('persona_id', $pcliente_id)->where('tipo_registro', 'Pago_por_oficina')->where('status', 'Pendiente')->get();
 
-                        if($historialExcedentes){
+                        if ($historialExcedentes) {
 
                             foreach ($historialExcedentes as $historialExcedente) {
 
@@ -139,78 +124,70 @@ class ReintegroController extends Controller
 
                             // TODO Ahora eliminamos de la tabla excedente el registro del usuario
 
-                            $eliminarRegistroExcedente = Excedente::where('persona_id',$pcliente_id)->where('tipo','Pagar_por_oficina')->first();
+                            $eliminarRegistroExcedente = Excedente::where('persona_id', $pcliente_id)->where('tipo', 'Pagar_por_oficina')->first();
 
                             if ($eliminarRegistroExcedente) {
                                 Excedente::destroy($eliminarRegistroExcedente->id);
                             }
+                        }
+                    } else {
+                        // TODO Guardamos en la tabla historial excedente
+
+                        $historialExcedentes = HistorialExcedente::where('persona_id', $pcliente_id)->where('tipo_registro', 'Pago_por_oficina')->where('status', 'Pendiente')->get();
+
+                        if ($historialExcedentes) {
+                            $saldo_disponible = 0;
+                            $motivo = '';
+                            $banco_id = '';
+                            $servicio_id = '';
+
+                            foreach ($historialExcedentes as $historialExcedente) {
+                                $saldo_disponible = $historialExcedente->saldo_disponible;
+                                $motivo = $historialExcedente->motivo;
+                                $banco_id = $historialExcedente->banco_id;
+                                $servicio_id = $historialExcedente->servicio_id;
+
+                                $HistorialExcedente = HistorialExcedente::findOrFail($historialExcedente->id);
+                                $HistorialExcedente->status = 'Pagado';
+                                $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
+                                $HistorialExcedente->update();
                             }
+                        }
 
-                }else{
-                    // TODO Guardamos en la tabla historial excedente
+                        if ($saldo_disponible > 0) {
+                            $saldo_anterior = $saldo_disponible;
+                            $saldo_disponible = $saldo_disponible - $monto_pagado;
+                        }
 
-                 $historialExcedentes = HistorialExcedente::where('persona_id',$pcliente_id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
-
-                 if($historialExcedentes){
-                     $saldo_disponible = 0;
-                     $motivo = '';
-                     $banco_id = '';
-                     $servicio_id = '';
-
-                     foreach ($historialExcedentes as $historialExcedente) {
-                         $saldo_disponible = $historialExcedente->saldo_disponible;
-                         $motivo = $historialExcedente->motivo;
-                         $banco_id = $historialExcedente->banco_id;
-                         $servicio_id = $historialExcedente->servicio_id;
-
-                         $HistorialExcedente = HistorialExcedente::findOrFail($historialExcedente->id);
-                         $HistorialExcedente->status = 'Pagado';
-                         $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
-                         $HistorialExcedente->update();
-
-                     }
-                 }
-
-                  if($saldo_disponible > 0){
-                      $saldo_anterior = $saldo_disponible;
-                      $saldo_disponible = $saldo_disponible - $monto_pagado;
-
-                  }
-
-                  $HistorialExcedente = new  HistorialExcedente;
-                  $HistorialExcedente->tipo_registro = 'Pago_por_oficina';
-                  $HistorialExcedente->status = 'Pendiente';
-                  $HistorialExcedente->tipo_operacion = 'Egreso';
-                  $HistorialExcedente->num_servicio = $DetallePagoOficina->id;
-                  $HistorialExcedente->motivo = $motivo;
-                  $HistorialExcedente->saldo_anterior = $saldo_anterior;
-                  $HistorialExcedente->saldo_operacion = $monto_pagado;
-                  $HistorialExcedente->saldo_disponible = $saldo_disponible;
-                  $HistorialExcedente->operador = $operador;
-                  $HistorialExcedente->banco_id = $banco_id;
-                  $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
-                  $HistorialExcedente->persona_id = $pcliente_id;
-                  $HistorialExcedente->servicio_id = $servicio_id;
-                  $HistorialExcedente->caja_id = $caja_id;
-                  $HistorialExcedente->user_id  = $user_id;
-                  $HistorialExcedente->save();
+                        $HistorialExcedente = new  HistorialExcedente;
+                        $HistorialExcedente->tipo_registro = 'Pago_por_oficina';
+                        $HistorialExcedente->status = 'Pendiente';
+                        $HistorialExcedente->tipo_operacion = 'Egreso';
+                        $HistorialExcedente->num_servicio = $DetallePagoOficina->id;
+                        $HistorialExcedente->motivo = $motivo;
+                        $HistorialExcedente->saldo_anterior = $saldo_anterior;
+                        $HistorialExcedente->saldo_operacion = $monto_pagado;
+                        $HistorialExcedente->saldo_disponible = $saldo_disponible;
+                        $HistorialExcedente->operador = $operador;
+                        $HistorialExcedente->banco_id = $banco_id;
+                        $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
+                        $HistorialExcedente->persona_id = $pcliente_id;
+                        $HistorialExcedente->servicio_id = $servicio_id;
+                        $HistorialExcedente->caja_id = $caja_id;
+                        $HistorialExcedente->user_id  = $user_id;
+                        $HistorialExcedente->save();
 
 
-                 $UpdateExcedente = Excedente::where('persona_id', $pcliente_id)->first();
-                 $UpdateExcedente->excedente -= $monto_pagado;
-                 $UpdateExcedente->update();
+                        $UpdateExcedente = Excedente::where('persona_id', $pcliente_id)->first();
+                        $UpdateExcedente->excedente -= $monto_pagado;
+                        $UpdateExcedente->update();
 
-                 if($is_cliente){
-                    PreExcedente::destroy($is_cliente->id);
+                        if ($is_cliente) {
+                            PreExcedente::destroy($is_cliente->id);
+                        }
+                    }
                 }
-                }
-
-
-
-
-
-            }
-            }else{
+            } else {
                 $DetallePagoOficina = new  DetallePagoOficina();
                 $DetallePagoOficina->tipo_pago = 'Efectivo';
                 $DetallePagoOficina->num_transaccion = '0001';
@@ -223,11 +200,11 @@ class ReintegroController extends Controller
                 $DetallePagoOficina->save();
 
 
-                 // TODO Guardamos en la tabla historial excedente
+                // TODO Guardamos en la tabla historial excedente
 
-                 $historialExcedentes = HistorialExcedente::where('persona_id',$pcliente_id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
+                $historialExcedentes = HistorialExcedente::where('persona_id', $pcliente_id)->where('tipo_registro', 'Pago_por_oficina')->where('status', 'Pendiente')->get();
 
-                if($historialExcedentes){
+                if ($historialExcedentes) {
                     $saldo_disponible = 0;
                     $motivo = '';
                     $banco_id = '';
@@ -243,33 +220,31 @@ class ReintegroController extends Controller
                         $HistorialExcedente->status = 'Pagado';
                         $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
                         $HistorialExcedente->update();
-
                     }
                 }
 
-                 if($saldo_disponible > 0){
-                     $saldo_anterior = $saldo_disponible;
-                     $saldo_disponible = $saldo_disponible - $monto_pagado;
+                if ($saldo_disponible > 0) {
+                    $saldo_anterior = $saldo_disponible;
+                    $saldo_disponible = $saldo_disponible - $monto_pagado;
+                }
 
-                 }
-
-                 $HistorialExcedente = new  HistorialExcedente;
-                 $HistorialExcedente->tipo_registro = 'Pago_por_oficina';
-                 $HistorialExcedente->status = 'Pendiente';
-                 $HistorialExcedente->tipo_operacion = 'Egreso';
-                 $HistorialExcedente->num_servicio = $DetallePagoOficina->id;
-                 $HistorialExcedente->motivo = $motivo;
-                 $HistorialExcedente->saldo_anterior = $saldo_anterior;
-                 $HistorialExcedente->saldo_operacion = $monto_pagado;
-                 $HistorialExcedente->saldo_disponible = $saldo_disponible;
-                 $HistorialExcedente->operador = $operador;
-                 $HistorialExcedente->banco_id = $banco_id;
-                 $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
-                 $HistorialExcedente->persona_id = $pcliente_id;
-                 $HistorialExcedente->servicio_id = $servicio_id;
-                 $HistorialExcedente->caja_id = $caja_id;
-                 $HistorialExcedente->user_id  = $user_id;
-                 $HistorialExcedente->save();
+                $HistorialExcedente = new  HistorialExcedente;
+                $HistorialExcedente->tipo_registro = 'Pago_por_oficina';
+                $HistorialExcedente->status = 'Pendiente';
+                $HistorialExcedente->tipo_operacion = 'Egreso';
+                $HistorialExcedente->num_servicio = $DetallePagoOficina->id;
+                $HistorialExcedente->motivo = $motivo;
+                $HistorialExcedente->saldo_anterior = $saldo_anterior;
+                $HistorialExcedente->saldo_operacion = $monto_pagado;
+                $HistorialExcedente->saldo_disponible = $saldo_disponible;
+                $HistorialExcedente->operador = $operador;
+                $HistorialExcedente->banco_id = $banco_id;
+                $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
+                $HistorialExcedente->persona_id = $pcliente_id;
+                $HistorialExcedente->servicio_id = $servicio_id;
+                $HistorialExcedente->caja_id = $caja_id;
+                $HistorialExcedente->user_id  = $user_id;
+                $HistorialExcedente->save();
 
 
                 $UpdateExcedente = Excedente::where('persona_id', $pcliente_id)->first();
@@ -278,7 +253,7 @@ class ReintegroController extends Controller
 
                 $is_cliente = PreExcedente::where('cliente_id', $pcliente_id)->first();
 
-                if($is_cliente){
+                if ($is_cliente) {
                     $updatePreExcedente = PreExcedente::findOrFail($is_cliente->id);
                     $updatePreExcedente->monto_excedente_actual -= $monto_pagado;
                     $updatePreExcedente->deuda_total_acumulada -= $monto_pagado;
@@ -287,72 +262,18 @@ class ReintegroController extends Controller
             }
 
 
-
-
-
-
-
             DB::commit();
+        } catch (\Exception $e) {
 
-        }catch(\Exception $e)
-        {
-
-            dd($e);
             DB::rollback();
             if (isset($MontoDolarR)) {
 
                 return redirect()
-                ->route('registro')
-                ->with('status_danger', '¡Error Pago incompleto! ... ');
+                    ->route('registro')
+                    ->with('status_danger', '¡Error Pago incompleto! ... ');
             }
-
         }
 
         return app(CheckoutController::class)->index();
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Reintegro  $reintegro
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Reintegro $reintegro)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Reintegro  $reintegro
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Reintegro $reintegro)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Reintegro  $reintegro
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Reintegro $reintegro)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Reintegro  $reintegro
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Reintegro $reintegro)
-    {
-        //
     }
 }

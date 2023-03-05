@@ -17,6 +17,11 @@ use Illuminate\Support\Facades\Auth;
 class DetallePagoOficinaController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -42,11 +47,10 @@ class DetallePagoOficinaController extends Controller
         $fecha_pago = Carbon::now();
         $persona_id = $request->get('dcliente_id');
         $tipo_documento = $request->get('tipo_documento');
-        $sucursal_id = $request->get('sucursal_id');
         $caja_id  = $request->get('caja_id');
         $user_id = Auth::user()->id;
 
-        try{
+        try {
             // TODO Guardamos los datos de la cuenta bancaria de la empresa pero revisamos si ya existe esa cuenta registrada
 
             // TODO Guardamos los registros en la tabla Detalle pagos oficina
@@ -69,9 +73,9 @@ class DetallePagoOficinaController extends Controller
             // TODO Ahora actualizamos la tabla historial_excedentes colocando el id del detalle pago oficina para poder agrupar los por ide de pago
             // y asi poder consultarlos luego y cambiando el estatus a pagado
 
-            $historialExcedentes = HistorialExcedente::where('persona_id',$persona_id)->where('tipo_registro','Pago_por_oficina')->where('status','Pendiente')->get();
+            $historialExcedentes = HistorialExcedente::where('persona_id', $persona_id)->where('tipo_registro', 'Pago_por_oficina')->where('status', 'Pendiente')->get();
 
-            if($historialExcedentes){
+            if ($historialExcedentes) {
 
                 foreach ($historialExcedentes as $historialExcedente) {
 
@@ -79,12 +83,11 @@ class DetallePagoOficinaController extends Controller
                     $HistorialExcedente->status = 'Pagado';
                     $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
                     $HistorialExcedente->update();
-
                 }
 
                 // TODO Ahora eliminamos de la tabla excedente el registro del usuario
 
-                $eliminarRegistroExcedente = Excedente::where('persona_id',$persona_id)->where('tipo','Pagar_por_oficina')->first();
+                $eliminarRegistroExcedente = Excedente::where('persona_id', $persona_id)->where('tipo', 'Pagar_por_oficina')->first();
 
                 if ($eliminarRegistroExcedente) {
                     Excedente::destroy($eliminarRegistroExcedente->id);
@@ -93,37 +96,26 @@ class DetallePagoOficinaController extends Controller
                 // TODO Ahora eliminamos de la tabla preExcedente el registro del usuario ya que esta tabla maneja los mostos de pagar por
                 // oficina en el area de la caja
 
-                $eliminarRegistroPreExcedente = PreExcedente::where('cliente_id',$persona_id)->first();
+                $eliminarRegistroPreExcedente = PreExcedente::where('cliente_id', $persona_id)->first();
 
                 if ($eliminarRegistroPreExcedente) {
                     PreExcedente::destroy($eliminarRegistroPreExcedente->id);
                 }
-
-
-
             }
 
             DB::commit();
-
-        }catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
 
             dd($e);
             DB::rollback();
             if (isset($MontoDolarR)) {
 
                 return redirect()
-                ->route('registro')
-                ->with('status_danger', '¡Error Pago incompleto! ... ');
+                    ->route('registro')
+                    ->with('status_danger', '¡Error Pago incompleto! ... ');
             }
-
         }
 
         return app(CheckoutController::class)->index();
-
-
-
-
     }
-
 }

@@ -25,23 +25,27 @@ class DetallePagoOficina extends Model
 
     protected $guarded = [];
 
-    public function caja(){
+    public function caja()
+    {
         return $this->belongsTo(Caja::class);
     }
 
 
 
-    public function cliente(){
+    public function cliente()
+    {
         return $this->belongsTo(Persona::class);
     }
 
 
 
-    public function operador(){
+    public function operador()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function historiaExcedentes(){
+    public function historiaExcedentes()
+    {
         return $this->hasMany(HistorialExcedente::class);
     }
 }

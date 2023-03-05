@@ -6,16 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class DetalleIngreso extends Model
 {
-    
+
     protected $table = 'detalle_ingreso';
 
-    
+
     protected $primaryKey = 'iddetalle_ingreso';
 
-    
+
     public $timestamps = false;
 
-    
+
     protected $fillabel = [
         'idingreso',
         'idarticulo',
@@ -24,6 +24,6 @@ class DetalleIngreso extends Model
         'precio_venta'
     ];
 
-    
+
     protected $guarded = [];
 }

@@ -149,8 +149,8 @@
                                                             <!-- <select name="selec_cliente" id="selec_cliente" class="form-control selectpicker" data-live-search="true">
                                                         <option value="default" selected="selected">Seleccione Cliente</option>
                                                         @foreach ($clientes as $dcliente)
-                                                            <option value="{{ $dcliente->id }}_{{ $dcliente->nombre }}_{{ $dcliente->num_documento }}_{{ $dcliente->direccion }}_{{ $dcliente->telefono }}_{{ $dcliente->email }}">{{ $dcliente->nombre }} - {{ $dcliente->num_documento }}</option>
-                                                        @endforeach
+<option value="{{ $dcliente->id }}_{{ $dcliente->nombre }}_{{ $dcliente->num_documento }}_{{ $dcliente->direccion }}_{{ $dcliente->telefono }}_{{ $dcliente->email }}">{{ $dcliente->nombre }} - {{ $dcliente->num_documento }}</option>
+@endforeach
                                                     </select> -->
                                                             <span id="nombreamesagge" class="text-red"></span>
                                                         </div>

@@ -18,6 +18,7 @@ class TransferenciaController extends Controller
     {
         $this->middleware('auth');
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -30,28 +31,30 @@ class TransferenciaController extends Controller
         $fecha = $request->get('fecha');
 
         $title = 'Transferencias Realizadas';
-        $transferencias = Transferencia::orderBy('id','DESC')
-        ->nombre($nombre)
-        ->accion($accion)
-        ->fecha($fecha)
-        ->get();
+        $transferencias = Transferencia::orderBy('id', 'DESC')
+            ->nombre($nombre)
+            ->accion($accion)
+            ->fecha($fecha)
+            ->get();
 
         return view('almacen.transferencia.index', compact('transferencias', 'title'));
     }
 
-    public function getProductoOrigenes(Request $request){
+    public function getProductoOrigenes(Request $request)
+    {
         // return $request;
         if ($request->ajax()) {
             $origenArticulos = Articulo::where('vender_al', $request->accion)
                 ->where('stock', '>', '0')
                 ->get();
 
-                // return $origenesArtArray;
-                return response()->json($origenArticulos);
+            // return $origenesArtArray;
+            return response()->json($origenArticulos);
         }
     }
 
-    public function getProductoDestinos(Request $request){
+    public function getProductoDestinos(Request $request)
+    {
         // return $request;
         // return $request->ajax();
         if ($request->ajax()) {
@@ -68,7 +71,7 @@ class TransferenciaController extends Controller
                 ->get();
 
 
-                return response()->json($origenDestinos);
+            return response()->json($origenDestinos);
         }
     }
     /**
@@ -83,7 +86,6 @@ class TransferenciaController extends Controller
         $User = Auth::user()->name;
         // return $articulos;
         return view('almacen.transferencia.create', compact('User'));
-
     }
 
     /**
@@ -95,7 +97,7 @@ class TransferenciaController extends Controller
     public function store(Request $request)
     {
         // return $request;
-        try{
+        try {
             DB::beginTransaction();
 
             $origenId = $request->get('origen_id');
@@ -135,19 +137,17 @@ class TransferenciaController extends Controller
 
 
             DB::commit();
-
-        }catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
 
             DB::rollback();
             return redirect()
-            ->route('transferencia.index')
-            ->with('status_danger', 'No se pueden cargar los datos en este momento, Por favor Intentalo más Tarde..!');
+                ->route('transferencia.index')
+                ->with('status_danger', 'No se pueden cargar los datos en este momento, Por favor Intentalo más Tarde..!');
         }
 
         return redirect()
-        ->route('transferencia.index')
-        ->with('status_success', 'La Transferencia se Ha Realizado Exitosamente...!');
+            ->route('transferencia.index')
+            ->with('status_success', 'La Transferencia se Ha Realizado Exitosamente...!');
     }
 
     /**
@@ -163,6 +163,4 @@ class TransferenciaController extends Controller
 
         return view('almacen.transferencia.show', compact('title', 'transferencia'));
     }
-
-
 }

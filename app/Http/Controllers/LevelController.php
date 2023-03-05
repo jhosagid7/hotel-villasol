@@ -23,7 +23,7 @@ class LevelController extends Controller
 
         $levels = Level::get();
 
-       return view('config.levels.index', compact('levels'));
+        return view('config.levels.index', compact('levels'));
     }
 
     /**
@@ -89,8 +89,8 @@ class LevelController extends Controller
         $level->update();
 
         return redirect()
-        ->route('level.index')
-        ->with('status_success', 'Nivel actualizado exitosamente...');
+            ->route('level.index')
+            ->with('status_success', 'Nivel actualizado exitosamente...');
     }
 
     /**
@@ -105,7 +105,7 @@ class LevelController extends Controller
         $level->update();
 
         return redirect()
-        ->route('level.index')
-        ->with('status_success', 'Nivel eliminado Exitosamente...!');
+            ->route('level.index')
+            ->with('status_success', 'Nivel eliminado Exitosamente...!');
     }
 }

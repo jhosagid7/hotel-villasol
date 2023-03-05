@@ -29,13 +29,13 @@ class DescargoController extends Controller
         $operador = $request->get('operador');
 
 
-        $users = User::where('id','<>', '1')->where('id','<>', '2')->get();
+        $users = User::where('id', '<>', '1')->where('id', '<>', '2')->get();
 
         $cargos = Transaction::where('tipo_operacion', '=', 'Descargo')
-        ->fecha($fecha)
-        ->operador($operador)
-        ->get();
-        return view('transactions.descargos.index', compact('cargos','users'));
+            ->fecha($fecha)
+            ->operador($operador)
+            ->get();
+        return view('transactions.descargos.index', compact('cargos', 'users'));
     }
 
     /**
@@ -46,21 +46,21 @@ class DescargoController extends Controller
     public function create()
     {
         $articulos = Articulo::where('estado', '=', 'Activo')
-        ->get();
+            ->get();
 
         $idSerie = Transaction::where('tipo_operacion', '=', 'Descargo')->count('id');
         $idUsuario = Auth::user()->id;
         // return $idUsuario;
-        if(!empty($idSerie)){
+        if (!empty($idSerie)) {
             $id_cod = $idSerie + 1;
             $num_documento = Transaction::numCodigo('DG', $idUsuario, $id_cod);
-        }else{
+        } else {
             $id_cod = 1;
             $num_documento = Transaction::numCodigo('DG', $idUsuario, $id_cod);
         }
         // return $num_documento;
 
-        return view('transactions.descargos.create', compact('articulos','num_documento'));
+        return view('transactions.descargos.create', compact('articulos', 'num_documento'));
     }
 
     /**
@@ -72,7 +72,7 @@ class DescargoController extends Controller
     public function store(Request $request)
     {
         // return $request;
-        try{
+        try {
             DB::beginTransaction();
 
             $transaction = new Transaction;
@@ -112,16 +112,14 @@ class DescargoController extends Controller
                 $Articulo_transaction->save();
 
                 $articulo = Articulo::findOrFail($articulo_id[$cont]);
-                $articulo->stock = $articulo->stock-$cantidad[$cont];
+                $articulo->stock = $articulo->stock - $cantidad[$cont];
                 $articulo->update();
 
-                $cont = $cont+1;
+                $cont = $cont + 1;
             }
 
             DB::commit();
-
-        }catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
 
             DB::rollback();
             // dd($e);
@@ -175,31 +173,28 @@ class DescargoController extends Controller
      */
     public function destroy($id)
     {
-        try{
+        try {
             DB::beginTransaction();
-        $transaction = Transaction::findOrFail($id);
-        $transaction->estado = 'Cancelado';
-        $transaction->update();
+            $transaction = Transaction::findOrFail($id);
+            $transaction->estado = 'Cancelado';
+            $transaction->update();
 
-        $detalleArticuloTransaction = Articulo_transactions::where('transaction_id','=',$id)->get();
+            $detalleArticuloTransaction = Articulo_transactions::where('transaction_id', '=', $id)->get();
 
-         //creamos un contador
-         $cont = 0;
+            //creamos un contador
+            $cont = 0;
 
-         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-         while ($cont < count($detalleArticuloTransaction)) {
-            $idarticulo = $detalleArticuloTransaction[$cont]->articulo_id;
-            $articulo = Articulo::findOrFail($idarticulo);
-            $articulo->stock = $articulo->stock+$detalleArticuloTransaction[$cont]->cantidad;
-            $articulo->update();
+            //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+            while ($cont < count($detalleArticuloTransaction)) {
+                $idarticulo = $detalleArticuloTransaction[$cont]->articulo_id;
+                $articulo = Articulo::findOrFail($idarticulo);
+                $articulo->stock = $articulo->stock + $detalleArticuloTransaction[$cont]->cantidad;
+                $articulo->update();
 
-            $cont = $cont+1;
-
-         };
-         DB::commit();
-
-        }catch(\Exception $e)
-        {
+                $cont = $cont + 1;
+            };
+            DB::commit();
+        } catch (\Exception $e) {
 
             DB::rollback();
             dd($e);

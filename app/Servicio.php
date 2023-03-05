@@ -27,22 +27,27 @@ class Servicio extends Model
         return $this->belongsTo(Habitacione::class);
     }
 
-    public function pago_servicios(){
+    public function pago_servicios()
+    {
         return $this->hasMany(Pago_Servicio::class);
     }
 
-    public function pago_ventas(){
+    public function pago_ventas()
+    {
         return $this->hasMany(Pago_Venta::class);
     }
-    public function ventas(){
+    public function ventas()
+    {
         return $this->hasMany(Venta::class);
     }
 
-    public function pago_vueltos(){
+    public function pago_vueltos()
+    {
         return $this->hasMany(Pago_Vuelto::class);
     }
 
-    public function servicios_ventas(){
+    public function servicios_ventas()
+    {
         return $this->hasMany(Servicios_Ventas::class);
     }
 
@@ -55,27 +60,33 @@ class Servicio extends Model
         return $this->hasManyThrough(Articulo::class, Servicios_Ventas::class);
     }
 
-    public function excedente_actual(){
+    public function excedente_actual()
+    {
         return $this->hasMany(Excedentes_Recibidos_Caja_Actual::class);
     }
 
-    public function historial_vueltos_pendientes(){
+    public function historial_vueltos_pendientes()
+    {
         return $this->hasMany(Historial_Vueltos_Pendiente::class);
     }
 
-    public function historialExcedentes(){
+    public function historialExcedentes()
+    {
         return $this->hasMany(HistorialExcedente::class);
     }
 
-    public function detalle_pago_oficina(){
+    public function detalle_pago_oficina()
+    {
         return $this->hasMany(DetallePagoOficina::class);
     }
 
-    public function Cambios(){
+    public function Cambios()
+    {
         return $this->hasMany(Cambio::class);
     }
 
-    public function servicio_id_cambios(){
+    public function servicio_id_cambios()
+    {
         return $this->hasMany(Cambio::class);
     }
 
@@ -147,6 +158,4 @@ class Servicio extends Model
 
 
     protected $guarded = [];
-
-
 }

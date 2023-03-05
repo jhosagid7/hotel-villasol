@@ -25,10 +25,10 @@ class PrecioController extends Controller
         $title = 'Lista de Precios';
 
         $precios = Precio::get();
-        $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
-        $tasaPesoHabitacion = Tasa::where('nombre','=','PesoHabitacion')->first();
+        $tasaDolarHabitacion = Tasa::where('nombre', '=', 'DolarHabitacion')->first();
+        $tasaPesoHabitacion = Tasa::where('nombre', '=', 'PesoHabitacion')->first();
 
-        return view('config.precios.index', compact('precios','tasaDolarHabitacion','tasaPesoHabitacion'));
+        return view('config.precios.index', compact('precios', 'tasaDolarHabitacion', 'tasaPesoHabitacion'));
     }
 
     /**
@@ -40,7 +40,7 @@ class PrecioController extends Controller
     {
         $title = 'Crear de Precios';
         $horarios = Horario::get();
-        $categorias = Cat::where('estado','<>','Eliminada')->get();
+        $categorias = Cat::where('estado', '<>', 'Eliminada')->get();
         return view('config.precios.create', compact('horarios', 'categorias'));
     }
 
@@ -59,9 +59,8 @@ class PrecioController extends Controller
         $precio->precio = $request->get('precio');
         $precio->save();
         return redirect()
-        ->route('precio.create')
-        ->with('status_success', 'El Precio fue creado Exitosamente...!');
-
+            ->route('precio.create')
+            ->with('status_success', 'El Precio fue creado Exitosamente...!');
     }
 
     /**
@@ -85,7 +84,7 @@ class PrecioController extends Controller
     {
         $title = 'Editar habitación';
         $horarios = Horario::get();
-        $categorias = Cat::where('estado','<>','Eliminada')->get();
+        $categorias = Cat::where('estado', '<>', 'Eliminada')->get();
 
         return view('config.precios.edit', compact('precio', 'categorias', 'horarios'));
     }
@@ -105,8 +104,8 @@ class PrecioController extends Controller
         $precio->update();
 
         return redirect()
-        ->route('precio.index')
-        ->with('status_success', 'Precio actualizado exitosamente...');
+            ->route('precio.index')
+            ->with('status_success', 'Precio actualizado exitosamente...');
     }
 
     /**
@@ -119,7 +118,7 @@ class PrecioController extends Controller
     {
         $precio->delete();
         return redirect()
-        ->route('precio.index')
-        ->with('status_success', 'Precio fue eliminado exitosamente...');
+            ->route('precio.index')
+            ->with('status_success', 'Precio fue eliminado exitosamente...');
     }
 }

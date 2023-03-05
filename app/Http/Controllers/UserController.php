@@ -21,10 +21,10 @@ class UserController extends Controller
     public function index()
     {
         $this->authorize('haveaccess', 'user.index');
-        $title='Usuarios';
-        $users = User::with('roles')->orderBy('id','Desc')->paginate(2);
+        $title = 'Usuarios';
+        $users = User::with('roles')->orderBy('id', 'Desc')->paginate(2);
         // return $users;
-        return view('user.index', compact('title','users'));
+        return view('user.index', compact('title', 'users'));
     }
 
     /**
@@ -58,7 +58,7 @@ class UserController extends Controller
     public function show(User $user)
     {
         $this->authorize('view', [$user, ['user.show', 'userown.show']]);
-        $title='Ver Usuarios';
+        $title = 'Ver Usuarios';
         $roles = Role::orderBy('name')->get();
         // return $roles;
         return view('user.view', compact('title', 'roles', 'user'));
@@ -73,7 +73,7 @@ class UserController extends Controller
     public function edit(User $user)
     {
         $this->authorize('update', [$user, ['user.edit', 'userown.edit']]);
-        $title='Editar Usuarios';
+        $title = 'Editar Usuarios';
         $roles = Role::orderBy('name')->get();
         // return $roles;
         return view('user.edit', compact('title', 'roles', 'user'));
@@ -89,17 +89,17 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         $request->validate([
-            'name'        => 'required|max:50|unique:users,name,'.$user->id,
-            'email'        => 'required|max:50|unique:users,email,'.$user->id
+            'name'        => 'required|max:50|unique:users,name,' . $user->id,
+            'email'        => 'required|max:50|unique:users,email,' . $user->id
         ]);
-            //dd($request->all());
+        //dd($request->all());
         $user->update($request->all());
 
         $user->roles()->sync($request->get('roles'));
         // }
         return redirect()
-        ->route('user.index')
-        ->with('status_success', 'User Update successfully');
+            ->route('user.index')
+            ->with('status_success', 'User Update successfully');
     }
 
     /**
@@ -114,7 +114,7 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()
-        ->route('user.index')
-        ->with('status_success', 'User successfully removed');
+            ->route('user.index')
+            ->with('status_success', 'User successfully removed');
     }
 }

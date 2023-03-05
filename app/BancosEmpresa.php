@@ -20,11 +20,13 @@ class BancosEmpresa extends Model
 
     protected $guarded = [];
 
-    public function sucursal(){
+    public function sucursal()
+    {
         return $this->belongsTo('App\Sucursal');
     }
 
-    public function banco(){
+    public function banco()
+    {
         return $this->belongsTo('App\Banco');
     }
 }

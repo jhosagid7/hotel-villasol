@@ -1,6 +1,5 @@
 @extends ('layouts.admin3')
 @section('contenido')
-
     <div class="row">
         <div class="col-lg-6">
 
@@ -15,7 +14,8 @@
                 <li><a href="#tasa" data-toggle="tab">Configurar tasa</a></li>
             </ul>
             <div class="tab-content">
-                <a href="{{URL::action('CajaController@show', $caja->id)}}"><button class='btn btn-danger btn-sm'><span class='glyphicon glyphicon-edit'> Cerrar caja</span></button></a>
+                <a href="{{ URL::action('CajaController@show', $caja->id) }}"><button class='btn btn-danger btn-sm'><span
+                            class='glyphicon glyphicon-edit'> Cerrar caja</span></button></a>
 
                 <div class="active tab-pane" id="caja">
                     <!-- Main content -->
@@ -41,7 +41,8 @@
 
                                     <div class="info-box-content">
                                         <span class="info-box-text">Ventas Realizadas</span>
-                                        <span class="info-box-number">{{ $cajas->SumaTotalCantidadVentas ?? ' 0,00' }}</span>
+                                        <span
+                                            class="info-box-number">{{ $cajas->SumaTotalCantidadVentas ?? ' 0,00' }}</span>
                                     </div>
                                     <!-- </.info-box-content -->
                                 </div>
@@ -69,54 +70,43 @@
                                 <div class="info-box">
                                     <span class="info-box-icon bg-yellow"><i class="ion ion-ios-people-outline"></i></span>
                                     @php
-                                    $countMayor = 0;
-                                    $countDetal = 0;
-                                    $actual = 0;
-                                    $stockDetal = 0;
+                                        $countMayor = 0;
+                                        $countDetal = 0;
+                                        $actual = 0;
+                                        $stockDetal = 0;
 
-
-                                @endphp
+                                    @endphp
                                     @foreach ($articulos as $art)
                                         @if ($art->vender_al !== $actual)
-                                        @php
-                                        $actual = $art->vender_al;
-                                        @endphp
-
+                                            @php
+                                                $actual = $art->vender_al;
+                                            @endphp
                                         @endif
                                         @if ($art->isKilo)
                                             @php
                                                 $stock = $art->stock / 1000;
 
                                             @endphp
-
                                         @else
                                             @php
                                                 $stock = $art->stock;
                                             @endphp
                                         @endif
                                         @if ($art->vender_al == 'Mayor' && $stock <= 1)
-
-
                                             @php
-                                            $countMayor += 1;
+                                                $countMayor += 1;
                                             @endphp
                                         @elseif($art->vender_al == 'Detal' && $stock <= 10)
-
-
                                             @php
-                                            $countDetal += 1;
+                                                $countDetal += 1;
                                             @endphp
-
                                         @endif
-
-
-
                                     @endforeach
 
                                     <div class="info-box-content">
                                         <span class="info-box-text">Poco stock</span>
-                                    <span class="info-box-number">Mayor {{$countMayor}}</span>
-                                        <span class="info-box-number">Detal {{$countDetal}}</span>
+                                        <span class="info-box-number">Mayor {{ $countMayor }}</span>
+                                        <span class="info-box-number">Detal {{ $countDetal }}</span>
                                     </div>
                                     <!-- /.info-box-content -->
                                 </div>
@@ -134,15 +124,18 @@
                             <div class="col-md-12">
                                 <div class="box box-info">
                                     <div class="box-header with-border">
-                                    <h3 class="box-title">Montos Recividos en Caja </h3>
+                                        <h3 class="box-title">Montos Recividos en Caja </h3>
 
                                         <div class="row">
                                             <div class="col-sm-2 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-text">INICIO DE CAJA</span>
-                                                    <h5 class="description-header">Dolar: {{ number_format($caja->monto_dolar,3,',','.') ?? '' }}</h5>
-                                                    <h5 class="description-header">Peso: {{ number_format($caja->monto_peso,2,',','.') ?? '' }}</h5>
-                                                    <h5 class="description-header">Bolivar: {{ number_format($caja->monto_bolivar,2,',','.') ?? '' }}</h5>
+                                                    <h5 class="description-header">Dolar:
+                                                        {{ number_format($caja->monto_dolar, 3, ',', '.') ?? '' }}</h5>
+                                                    <h5 class="description-header">Peso:
+                                                        {{ number_format($caja->monto_peso, 2, ',', '.') ?? '' }}</h5>
+                                                    <h5 class="description-header">Bolivar:
+                                                        {{ number_format($caja->monto_bolivar, 2, ',', '.') ?? '' }}</h5>
                                                 </div>
                                             </div>
                                             <div class="col-sm-2 col-xs-6">
@@ -150,7 +143,9 @@
                                                     <span class="description-percentage text-green"><i
                                                             class="fa fa-caret-up"></i>
                                                         {{ $tasaDolar->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">$. {{ number_format($cajas->SumaTotalDolar,3,',','.') ?? ' 0,00' }}</h5>
+                                                    <h5 class="description-header">$.
+                                                        {{ number_format($cajas->SumaTotalDolar, 3, ',', '.') ?? ' 0,00' }}
+                                                    </h5>
                                                     <span class="description-text">DOLAR</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -161,7 +156,9 @@
                                                     <span class="description-percentage text-yellow"><i
                                                             class="fa fa-caret-left"></i>
                                                         {{ $tasaPeso->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">$. {{ number_format($cajas->SumaTotalPeso,2,',','.') ?? ' 0,00' }}</h5>
+                                                    <h5 class="description-header">$.
+                                                        {{ number_format($cajas->SumaTotalPeso, 2, ',', '.') ?? ' 0,00' }}
+                                                    </h5>
                                                     <span class="description-text">PESO</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -172,7 +169,9 @@
                                                     <span class="description-percentage text-green"><i
                                                             class="fa fa-caret-up"></i>
                                                         {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalPunto,2,',','.') ?? ' 0,00' }}</h5>
+                                                    <h5 class="description-header">Bs.
+                                                        {{ number_format($cajas->SumaTotalPunto, 2, ',', '.') ?? ' 0,00' }}
+                                                    </h5>
                                                     <span class="description-text">PUNTO</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -184,7 +183,9 @@
                                                     <span class="description-percentage text-green"><i
                                                             class="fa fa-caret-up"></i>
                                                         {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalTransferencia,2,',','.') ?? ' 0,00' }}</h5>
+                                                    <h5 class="description-header">Bs.
+                                                        {{ number_format($cajas->SumaTotalTransferencia, 2, ',', '.') ?? ' 0,00' }}
+                                                    </h5>
                                                     <span class="description-text">TRANS</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -196,7 +197,9 @@
                                                     <span class="description-percentage text-red"><i
                                                             class="fa fa-caret-down"></i>
                                                         {{ $tasaEfectivo->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalBolivar,2,',','.') ?? ' 0,00' }}</h5>
+                                                    <h5 class="description-header">Bs.
+                                                        {{ number_format($cajas->SumaTotalBolivar, 2, ',', '.') ?? ' 0,00' }}
+                                                    </h5>
                                                     <span class="description-text">EFECTIVO</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -296,103 +299,102 @@
                                             <div class="box-body">
                                                 <div class="box box-info">
                                                     <div class="box-header with-border">
-                                                      <h3 class="box-title">Productos con poco stock</h3>
+                                                        <h3 class="box-title">Productos con poco stock</h3>
 
-                                                      <div class="box-tools pull-right">
-                                                        <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                                                        </button>
-                                                        <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                                                      </div>
+                                                        <div class="box-tools pull-right">
+                                                            <button type="button" class="btn btn-box-tool"
+                                                                data-widget="collapse"><i class="fa fa-minus"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-box-tool"
+                                                                data-widget="remove"><i class="fa fa-times"></i></button>
+                                                        </div>
                                                     </div>
                                                     <!-- /.box-header -->
                                                     <div class="box-body">
-                                                      <ul class="products-list product-list-in-box">
-                                                        @php
-                                                        $count = 0;
-                                                        $actual = 0;
-                                                        $nombre = '';
-                                                        $stock = 0;
+                                                        <ul class="products-list product-list-in-box">
+                                                            @php
+                                                                $count = 0;
+                                                                $actual = 0;
+                                                                $nombre = '';
+                                                                $stock = 0;
 
-                                                    @endphp
-                                                        @foreach ($articulos as $art)
+                                                            @endphp
+                                                            @foreach ($articulos as $art)
+                                                                @if ($art->vender_al !== $actual)
+                                                                    @php
+                                                                        $actual = $art->vender_al;
+                                                                    @endphp
 
-                                                        @if ($art->vender_al !== $actual)
-                                                        @php
-                                                        $actual = $art->vender_al;
-                                                        @endphp
+                                                                    Productos al {{ $actual }}
+                                                                @endif
+                                                                @if ($art->isKilo)
+                                                                    @php
+                                                                        $stock = $art->stock / 1000;
 
-                                                            Productos al {{$actual}}
-                                                        @endif
-                                                        @if ($art->isKilo)
-                                                        @php
-                                                            $stock = $art->stock / 1000;
-
-                                                        @endphp
-
-                                                    @else
-                                                        @php
-                                                            $stock = $art->stock;
-                                                        @endphp
-                                                    @endif
-                                                        @if ($art->vender_al == 'Mayor' && $stock <= 1)
-
-                                                            <li class="item">
-                                                                <div class="product-img">
-                                                                <img src="{{asset('imagenes/articulos/'.$art->imagen)}}" alt="{{ $art->nombre }}" alt="Product Image">
-                                                                </div>
-                                                                <div class="product-info">
-                                                                <a href="javascript:void(0)" class="product-title">{{$art->nombre}}
-                                                                    <span class="label label-danger pull-right">
-                                                                    @if ($art->isKilo)
-                                                                    {{$art->stock / 1000}} Kg.
-                                                                    @else
-                                                                    {{$art->stock}}
-                                                                    @endif
-
-
-                                                                    </span></a>
-                                                                <span class="product-description">
-                                                                    {{$art->vender_al}}
-                                                                    </span>
-                                                                </div>
-                                                            </li>
-
-                                                        @elseif($art->vender_al == 'Detal' && $stock <= 10)
-
-                                                            <li class="item">
-                                                                <div class="product-img">
-                                                                <img src="{{asset('imagenes/articulos/'.$art->imagen)}}" alt="Product Image">
-                                                                </div>
-                                                                <div class="product-info">
-                                                                <a href="javascript:void(0)" class="product-title">{{$art->nombre}}
-                                                                    <span class="label label-danger pull-right">
-                                                                    @if ($art->isKilo)
-                                                                    {{$art->stock / 1000}} Kg.
-                                                                    @else
-                                                                    {{$art->stock}}
-                                                                    @endif
+                                                                    @endphp
+                                                                @else
+                                                                    @php
+                                                                        $stock = $art->stock;
+                                                                    @endphp
+                                                                @endif
+                                                                @if ($art->vender_al == 'Mayor' && $stock <= 1)
+                                                                    <li class="item">
+                                                                        <div class="product-img">
+                                                                            <img src="{{ asset('imagenes/articulos/' . $art->imagen) }}"
+                                                                                alt="{{ $art->nombre }}"
+                                                                                alt="Product Image">
+                                                                        </div>
+                                                                        <div class="product-info">
+                                                                            <a href="javascript:void(0)"
+                                                                                class="product-title">{{ $art->nombre }}
+                                                                                <span
+                                                                                    class="label label-danger pull-right">
+                                                                                    @if ($art->isKilo)
+                                                                                        {{ $art->stock / 1000 }} Kg.
+                                                                                    @else
+                                                                                        {{ $art->stock }}
+                                                                                    @endif
 
 
-                                                                    </span></a>
-                                                                <span class="product-description">
-                                                                    {{$art->vender_al}}
-                                                                    </span>
-                                                                </div>
-                                                            </li>
+                                                                                </span></a>
+                                                                            <span class="product-description">
+                                                                                {{ $art->vender_al }}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                @elseif($art->vender_al == 'Detal' && $stock <= 10)
+                                                                    <li class="item">
+                                                                        <div class="product-img">
+                                                                            <img src="{{ asset('imagenes/articulos/' . $art->imagen) }}"
+                                                                                alt="Product Image">
+                                                                        </div>
+                                                                        <div class="product-info">
+                                                                            <a href="javascript:void(0)"
+                                                                                class="product-title">{{ $art->nombre }}
+                                                                                <span
+                                                                                    class="label label-danger pull-right">
+                                                                                    @if ($art->isKilo)
+                                                                                        {{ $art->stock / 1000 }} Kg.
+                                                                                    @else
+                                                                                        {{ $art->stock }}
+                                                                                    @endif
 
 
-                                                        @endif
+                                                                                </span></a>
+                                                                            <span class="product-description">
+                                                                                {{ $art->vender_al }}
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                @endif
+                                                            @endforeach
 
 
-
-                                                        @endforeach
-
-
-                                                      </ul>
+                                                        </ul>
                                                     </div>
                                                     <!-- /.box-body -->
 
-                                                  </div>
+                                                </div>
 
                                             </div>
                                             <!-- ./box-body -->
@@ -420,7 +422,7 @@
                             <input id="precio_costo_unidad" name="precio_costo_unidad" type="hidden" value="">
                             <input id="precio_costo" name="precio_costo" type="hidden" value="">
                             <input id="tipo_pago" name="tipo_pago" type="hidden" value="">
-                        <input id="caja_id" name="caja_id" type="hidden" value="{{$caja->id}}">
+                            <input id="caja_id" name="caja_id" type="hidden" value="{{ $caja->id }}">
                             <div class="row">
                                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <div class="form-group">
@@ -447,14 +449,17 @@
                                     <div class="form-group">
                                         <label for="serie_comprobante">Control Comprobante</label>
                                         <input readonly type="text" name="serie_comprobante" class="form-control"
-                                    value="{{ old('serie_comprobante') }} {{ $num_comprobante ?? '' }}" placeholder="Control Comprobante...">
+                                            value="{{ old('serie_comprobante') }} {{ $num_comprobante ?? '' }}"
+                                            placeholder="Control Comprobante...">
                                     </div>
                                 </div>
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="form-group">
                                         <label for="num_comprobante">Número Comprobante</label>
-                                        <input readonly type="text" name="num_comprobante" required class="form-control"
-                                            value="{{ old('num_comprobante') }} {{ $serie_comprobante ?? '' }}" placeholder="Número Comprobante...">
+                                        <input readonly type="text" name="num_comprobante" required
+                                            class="form-control"
+                                            value="{{ old('num_comprobante') }} {{ $serie_comprobante ?? '' }}"
+                                            placeholder="Número Comprobante...">
                                     </div>
                                 </div>
                             </div>
@@ -467,7 +472,8 @@
                                                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                                         <div class="form-group">
                                                             <label for="articulo">Artículo</label>
-                                                            <select autofocus name="jidarticulo" id="jidarticulo" class="form-control selectpicker" data-live-search="true">
+                                                            <select autofocus name="jidarticulo" id="jidarticulo"
+                                                                class="form-control selectpicker" data-live-search="true">
                                                                 <option value="0">Seleccione Articulo</option>
                                                                 @foreach ($articulos as $articulo)
                                                                     <option
@@ -482,7 +488,8 @@
                                                             <!-- Small modal -->
                                                             <!-- Button trigger modal -->
                                                             <label for="kilos">Cantidad de Kilos</label>
-                                                            <button type="button" class="btn btn-primary form-control" data-toggle="modal" data-target="#exampleModalCenter">
+                                                            <button type="button" class="btn btn-primary form-control"
+                                                                data-toggle="modal" data-target="#exampleModalCenter">
                                                                 Peso kilos
                                                             </button>
                                                         </div>
@@ -515,8 +522,9 @@
                                                             </h4>
                                                             <input type="hidden" name="jprecio_venta_d_dolar"
                                                                 id="jprecio_venta_d_dolar" class="form-control">
-                                                            <input type="hidden" name="jprecio_compra" id="jprecio_compra"
-                                                                class="form-control" placeholder="Precio venta dolar...">
+                                                            <input type="hidden" name="jprecio_compra"
+                                                                id="jprecio_compra" class="form-control"
+                                                                placeholder="Precio venta dolar...">
                                                             <input type="hidden" name="jprecio_venta" id="jprecio_venta"
                                                                 class="form-control" placeholder="Precio dolar...">
                                                             <input type="hidden" name="jprecio_venta_dolar"
@@ -525,7 +533,7 @@
                                                             <input type="hidden" name="jmarjen_ganancia_dolar"
                                                                 id="jmarjen_ganancia_dolar"
                                                                 value="{{ $tasaDolar->porcentaje_ganancia }}">
-                                                                <input type="hidden" name="tasaDolars" id="tasaDolars"
+                                                            <input type="hidden" name="tasaDolars" id="tasaDolars"
                                                                 value="{{ $tasaDolar->tasa }}">
                                                         </div>
                                                     </div>
@@ -542,7 +550,7 @@
                                                             <input type="hidden" name="jmarjen_ganancia_peso"
                                                                 id="jmarjen_ganancia_peso"
                                                                 value="{{ $tasaPeso->porcentaje_ganancia }}">
-                                                                <input type="hidden" name="tasaPesos" id="tasaPesos"
+                                                            <input type="hidden" name="tasaPesos" id="tasaPesos"
                                                                 value="{{ $tasaPeso->tasa }}">
                                                         </div>
                                                     </div>
@@ -550,7 +558,8 @@
                                                         <div class="form group">
                                                             <label for="jprecio_venta_trans_punto">Precio
                                                                 Trans/Punto</label>
-                                                            <h4 class="font-weight-bold" id="vprecio_venta_trans_punto">Bs.
+                                                            <h4 class="font-weight-bold" id="vprecio_venta_trans_punto">
+                                                                Bs.
                                                                 0.00
                                                             </h4>
                                                             <input type="hidden" name="jprecio_venta_tp_dolar"
@@ -561,7 +570,8 @@
                                                             <input type="hidden" name="jmarjen_ganancia_trans_punto"
                                                                 id="jmarjen_ganancia_trans_punto"
                                                                 value="{{ $tasaTransferenciaPunto->porcentaje_ganancia }}">
-                                                            <input type="hidden" name="tasaTransPunto" id="tasaTransPunto"
+                                                            <input type="hidden" name="tasaTransPunto"
+                                                                id="tasaTransPunto"
                                                                 value="{{ $tasaTransferenciaPunto->tasa }}">
                                                         </div>
                                                     </div>
@@ -639,25 +649,30 @@
                                                                     <tfoot>
                                                                         <th colspan="3">TOTAL</th>
                                                                         <th colspan="2">
-                                                                            <h4 class="font-weight-bold" id="totald">$. 0.00
-                                                                            </h4>
-                                                                        </th>
-                                                                        <th colspan="2">
-                                                                            <h4 class="font-weight-bold" id="totalp">$. 0.00
-                                                                            </h4>
-                                                                        </th>
-                                                                        <th colspan="2">
-                                                                            <h4 class="font-weight-bold" id="totaltp">Bs.
+                                                                            <h4 class="font-weight-bold" id="totald">$.
                                                                                 0.00
                                                                             </h4>
                                                                         </th>
                                                                         <th colspan="2">
-                                                                            <h4 class="font-weight-bold" id="totalm">Bs.
+                                                                            <h4 class="font-weight-bold" id="totalp">$.
                                                                                 0.00
                                                                             </h4>
                                                                         </th>
                                                                         <th colspan="2">
-                                                                            <h4 class="font-weight-bold" id="totale">Bs.
+                                                                            <h4 class="font-weight-bold" id="totaltp">
+                                                                                Bs.
+                                                                                0.00
+                                                                            </h4>
+                                                                        </th>
+                                                                        <th colspan="2">
+                                                                            <h4 class="font-weight-bold" id="totalm">
+                                                                                Bs.
+                                                                                0.00
+                                                                            </h4>
+                                                                        </th>
+                                                                        <th colspan="2">
+                                                                            <h4 class="font-weight-bold" id="totale">
+                                                                                Bs.
                                                                                 0.00
                                                                             </h4>
                                                                         </th><input type="hidden" name="total_venta"
@@ -735,15 +750,18 @@
                                                                             type="hidden">
                                                                         <td><input name="MontoDivisa[]" class="decimal"
                                                                                 type="texto" id="DMontoDolar">
-                                                                                <button type="button" id="cargarDolar" class="btn btn-primary btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                            <button type="button" id="cargarDolar"
+                                                                                class="btn btn-primary btn-sm"> <i
+                                                                                    class="fa fa-exchange"
+                                                                                    aria-hidden="true"> </i></button>
                                                                         </td>
 
-                                                                        <td><input name="TasaTike[]" type="texto" readonly
-                                                                                id="TasaDolar"
+                                                                        <td><input name="TasaTike[]" type="texto"
+                                                                                readonly id="TasaDolar"
                                                                                 value="{{ $tasaDolar->tasa }}">
                                                                         </td>
-                                                                        <td><input name="MontoDolar[]" type="text" readonly
-                                                                                id="DolarToDolar" class="monto"
+                                                                        <td><input name="MontoDolar[]" type="text"
+                                                                                readonly id="DolarToDolar" class="monto"
                                                                                 onchange="sumar();"></td>
                                                                         <td><input name="Veltos[]" type="text" readonly
                                                                                 id="RestaDolar"></td>
@@ -757,13 +775,17 @@
                                                                             type="hidden">
                                                                         <td><input name="MontoDivisa[]" class="decimal"
                                                                                 type="texto" id="DMontoPeso">
-                                                                                <button type="button" id="cargarPeso" class="btn btn-info btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                            <button type="button" id="cargarPeso"
+                                                                                class="btn btn-info btn-sm"> <i
+                                                                                    class="fa fa-exchange"
+                                                                                    aria-hidden="true"> </i></button>
                                                                         </td>
-                                                                        <td><input name="TasaTike[]" type="texto" readonly
-                                                                                id="TasaPeso" value="{{ $tasaPeso->tasa }}">
+                                                                        <td><input name="TasaTike[]" type="texto"
+                                                                                readonly id="TasaPeso"
+                                                                                value="{{ $tasaPeso->tasa }}">
                                                                         </td>
-                                                                        <td><input name="MontoDolar[]" type="text" readonly
-                                                                                id="PesoToDolar" class="monto"
+                                                                        <td><input name="MontoDolar[]" type="text"
+                                                                                readonly id="PesoToDolar" class="monto"
                                                                                 onchange="sumar();"></td>
                                                                         <td><input name="Veltos[]" type="text" readonly
                                                                                 id="RestaPeso"></td>
@@ -771,21 +793,25 @@
                                                                     </tr>
                                                                     <tr id="trE">
                                                                         <td>
-                                                                            <h4 class="text-bold text-primary">Efectivo</h4>
+                                                                            <h4 class="text-bold text-primary">Efectivo
+                                                                            </h4>
                                                                         </td>
                                                                         </th><input name="divisa[]" value="Bolivar"
                                                                             type="hidden">
                                                                         <td><input name="MontoDivisa[]" class="decimal"
                                                                                 type="texto" id="DMontoBolivar">
-                                                                                <button type="button" id="cargarBolivar" class="btn btn-warning btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
+                                                                            <button type="button" id="cargarBolivar"
+                                                                                class="btn btn-warning btn-sm"> <i
+                                                                                    class="fa fa-exchange"
+                                                                                    aria-hidden="true"> </i></button>
                                                                         </td>
-                                                                        <td><input name="TasaTike[]" type="texto" readonly
-                                                                                id="TasaBolivar"
+                                                                        <td><input name="TasaTike[]" type="texto"
+                                                                                readonly id="TasaBolivar"
                                                                                 value="{{ $tasaTransferenciaPunto->tasa }}">
                                                                         </td>
-                                                                        <td><input name="MontoDolar[]" type="texto" readonly
-                                                                                id="BolivarToDolar" class="monto"
-                                                                                onchange="sumar();"></td>
+                                                                        <td><input name="MontoDolar[]" type="texto"
+                                                                                readonly id="BolivarToDolar"
+                                                                                class="monto" onchange="sumar();"></td>
                                                                         <td><input name="Veltos[]" type="text" readonly
                                                                                 id="RestaBolivar"></td>
                                                                         <td id="BoSubTotal"></td>
@@ -798,18 +824,23 @@
                                                                             type="hidden">
                                                                         <td><input name="MontoDivisa[]" class="decimal"
                                                                                 type="texto" id="DMontoPunto">
-                                                                                <button type="button" id="cargarPunto" class="btn btn-danger btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
-                                                                            </td>
-                                                                        <td>
-                                                                            <input
-                                                                            type="text" name="num_Punto" id="num_Punto" placeholder="N° de Punto..."
-                                                                            value="">
-                                                                            <input name="TasaTike[]" type="texto"
-                                                                                class="enteros" id="TasaPunto" readonly value="{{ $tasaTransferenciaPunto->tasa }}">
+                                                                            <button type="button" id="cargarPunto"
+                                                                                class="btn btn-danger btn-sm"> <i
+                                                                                    class="fa fa-exchange"
+                                                                                    aria-hidden="true"> </i></button>
                                                                         </td>
-                                                                        <td><input name="MontoDolar[]" readonly type="texto"
-                                                                                id="PuntoToDolar" class="monto"
-                                                                                onchange="sumar();"></td>
+                                                                        <td>
+                                                                            <input type="text" name="num_Punto"
+                                                                                id="num_Punto"
+                                                                                placeholder="N° de Punto..."
+                                                                                value="">
+                                                                            <input name="TasaTike[]" type="texto"
+                                                                                class="enteros" id="TasaPunto" readonly
+                                                                                value="{{ $tasaTransferenciaPunto->tasa }}">
+                                                                        </td>
+                                                                        <td><input name="MontoDolar[]" readonly
+                                                                                type="texto" id="PuntoToDolar"
+                                                                                class="monto" onchange="sumar();"></td>
                                                                         <td><input name="Veltos[]" readonly type="text"
                                                                                 id="RestaPunto"></td>
                                                                         <td id="PuSubTotal"></td>
@@ -822,19 +853,25 @@
                                                                         </th><input name="divisa[]" value="Transferencia"
                                                                             type="hidden">
                                                                         <td><input name="MontoDivisa[]" class="decimal"
-                                                                                class="" type="texto" id="DMontoTrans">
-                                                                                <button type="button" id="cargarTrans" class="btn btn-success btn-sm"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
-                                                                            </td>
+                                                                                class="" type="texto"
+                                                                                id="DMontoTrans">
+                                                                            <button type="button" id="cargarTrans"
+                                                                                class="btn btn-success btn-sm"> <i
+                                                                                    class="fa fa-exchange"
+                                                                                    aria-hidden="true"> </i></button>
+                                                                        </td>
                                                                         <td>
-                                                                            <input
-                                                                            type="text" name="num_Trans" id="num_Trans" placeholder="N° de Transferencia..."
-                                                                            value="">
-                                                                            <input name="TasaTike[]" type="texto" readonly
-                                                                                class="enteros" id="TasaTrans" value="{{ $tasaTransferenciaPunto->tasa }}">
+                                                                            <input type="text" name="num_Trans"
+                                                                                id="num_Trans"
+                                                                                placeholder="N° de Transferencia..."
+                                                                                value="">
+                                                                            <input name="TasaTike[]" type="texto"
+                                                                                readonly class="enteros" id="TasaTrans"
+                                                                                value="{{ $tasaTransferenciaPunto->tasa }}">
 
                                                                         </td>
-                                                                        <td><input name="MontoDolar[]" type="texto" readonly
-                                                                                id="TransToDolar" class="monto"
+                                                                        <td><input name="MontoDolar[]" type="texto"
+                                                                                readonly id="TransToDolar" class="monto"
                                                                                 onchange="sumar();"></td>
                                                                         <td><input name="Veltos[]" type="text" readonly
                                                                                 id="RestaTrans"></td>
@@ -847,9 +884,11 @@
                                                                     <th></th>
                                                                     <th></th>
                                                                     <th>
-                                                                        <h4 id="tp" class="text-bold">TOTAL PAGADO</h4>
+                                                                        <h4 id="tp" class="text-bold">TOTAL PAGADO
+                                                                        </h4>
                                                                         <h4 id="r" class="text-bold">RESTA</h4>
-                                                                        <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
+                                                                        <h4 id="tap" class="text-bold">TOTAL A PAGAR
+                                                                        </h4>
                                                                     <th>
                                                                         <h4 class="text-bold" id="spTotal">0.00</h4>
                                                                         <h4 class="text-bold" id="RestaTtotal">0.00</h4>
@@ -862,7 +901,8 @@
                                                     <div class="panel-footer" id="guardar">
                                                         <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
                                                             id="guardar">
-                                                            <input name="_token" value="{{ csrf_token() }}" type="hidden">
+                                                            <input name="_token" value="{{ csrf_token() }}"
+                                                                type="hidden">
                                                             <button id="enviar" class="btn btn-primary btn-block"
                                                                 type="button">Guardar</button>
                                                         </div>
@@ -931,19 +971,18 @@
                     dataTable.fnFilter(this.value);
                 });
             });
-
         </script>
         <script>
-            var cont            = 0;
-            var total           = parseFloat(0.00);
-            var porEspecial     = null;
-            var isDolar         = null;
-            var isPeso          = null;
-            var isTransPunto    = null;
-            var isMixto         = null;
-            var isEfectivo      = null;
-            var isKilo          = null;
-            var stock            = 0;
+            var cont = 0;
+            var total = parseFloat(0.00);
+            var porEspecial = null;
+            var isDolar = null;
+            var isPeso = null;
+            var isTransPunto = null;
+            var isMixto = null;
+            var isEfectivo = null;
+            var isKilo = null;
+            var stock = 0;
 
 
             // var totalp=parseFloat(0.00);
@@ -951,33 +990,33 @@
             // var totalm=parseFloat(0.00);
             // var totale=parseFloat(0.00);
 
-            var total_d         = parseFloat(0.00);
-            var total_p         = parseFloat(0.00);
-            var total_tp        = parseFloat(0.00);
-            var total_m         = parseFloat(0.00);
-            var total_e         = parseFloat(0.00);
-            var total_costo     = parseFloat(0.00);
+            var total_d = parseFloat(0.00);
+            var total_p = parseFloat(0.00);
+            var total_tp = parseFloat(0.00);
+            var total_m = parseFloat(0.00);
+            var total_e = parseFloat(0.00);
+            var total_costo = parseFloat(0.00);
 
-            var precio_costo    = parseFloat(0.00);
-            var jporEspecial    = parseFloat(0.00);
-            var precio_venta    = parseFloat(0.00);
-            var precio_compra   = parseFloat(0.00);
+            var precio_costo = parseFloat(0.00);
+            var jporEspecial = parseFloat(0.00);
+            var precio_venta = parseFloat(0.00);
+            var precio_compra = parseFloat(0.00);
 
-            subtotal    = [];
+            subtotal = [];
 
-            subtotalPC  = [];
-            subtotald   = [];
-            subtotalp   = [];
-            subtotaltp  = [];
-            subtotalm   = [];
-            subtotale   = [];
-            subtotalc   = [];
+            subtotalPC = [];
+            subtotald = [];
+            subtotalp = [];
+            subtotaltp = [];
+            subtotalm = [];
+            subtotale = [];
+            subtotalc = [];
 
-            var tasaD   = parseFloat($("#TasaDolar").val());
-            var tasaP   = parseFloat($("#TasaPeso").val());
-            var tasaTP  = parseFloat($("#tasaTransPunto").val());
-            var tasaM   = parseFloat($("#tasaMixto").val());
-            var tasaE   = parseFloat($("#tasaEfectivo").val());
+            var tasaD = parseFloat($("#TasaDolar").val());
+            var tasaP = parseFloat($("#TasaPeso").val());
+            var tasaTP = parseFloat($("#tasaTransPunto").val());
+            var tasaM = parseFloat($("#tasaMixto").val());
+            var tasaE = parseFloat($("#tasaEfectivo").val());
 
             var vcargar = 0;
             var vcargarp = 0;
@@ -1014,7 +1053,7 @@
                 });
 
                 $("#cargarDolar").on('click', function() {
-                    if(vcargar == 0){
+                    if (vcargar == 0) {
                         vcargar = 1;
                         vcargarp = 0;
                         vcargarb = 0;
@@ -1028,10 +1067,10 @@
                         DMontoPunto();
                         $("#DMontoTrans").val('');
                         DMontoTrans();
-                        let Rd    = document.getElementById('RestaDolar').value;
+                        let Rd = document.getElementById('RestaDolar').value;
                         $("#DMontoDolar").val(Rd);
                         DMontoDolar();
-                    }else{
+                    } else {
                         vcargar = 0;
                         $("#DMontoDolar").val('');
                         DMontoDolar();
@@ -1039,7 +1078,7 @@
                 });
 
                 $("#cargarPeso").on('click', function() {
-                    if(vcargarp == 0){
+                    if (vcargarp == 0) {
                         vcargarp = 1;
                         vcargar = 0;
                         vcargarb = 0;
@@ -1053,10 +1092,10 @@
                         DMontoDolar();
                         $("#DMontoBolivar").val('');
                         DMontoBolivar();
-                        let Rp    = document.getElementById('RestaPeso').value;
+                        let Rp = document.getElementById('RestaPeso').value;
                         $("#DMontoPeso").val(Rp);
                         DMontoPeso();
-                    }else{
+                    } else {
                         vcargarp = 0;
                         $("#DMontoPeso").val('');
                         DMontoPeso();
@@ -1064,7 +1103,7 @@
                 });
 
                 $("#cargarBolivar").on('click', function() {
-                    if(vcargarb == 0){
+                    if (vcargarb == 0) {
                         vcargarb = 1;
                         vcargar = 0;
                         vcargarp = 0;
@@ -1078,10 +1117,10 @@
                         DMontoPeso();
                         $("#DMontoDolar").val('');
                         DMontoDolar();
-                        let Rb    = document.getElementById('RestaBolivar').value;
+                        let Rb = document.getElementById('RestaBolivar').value;
                         $("#DMontoBolivar").val(Rb);
                         DMontoBolivar();
-                    }else{
+                    } else {
                         vcargarb = 0;
                         $("#DMontoBolivar").val('');
                         DMontoBolivar();
@@ -1089,7 +1128,7 @@
                 });
 
                 $("#cargarPunto").on('click', function() {
-                    if(vcargarpto == 0){
+                    if (vcargarpto == 0) {
                         vcargarpto = 1;
                         vcargar = 0;
                         vcargarp = 0;
@@ -1103,10 +1142,10 @@
                         DMontoPeso();
                         $("#DMontoDolar").val('');
                         DMontoDolar();
-                        let Rpto    = document.getElementById('RestaPunto').value;
+                        let Rpto = document.getElementById('RestaPunto').value;
                         $("#DMontoPunto").val(Rpto);
                         DMontoPunto();
-                    }else{
+                    } else {
                         vcargarpto = 0;
                         $("#DMontoPunto").val('');
                         DMontoPunto();
@@ -1114,7 +1153,7 @@
                 });
 
                 $("#cargarTrans").on('click', function() {
-                    if(vcargart == 0){
+                    if (vcargart == 0) {
                         vcargart = 1;
                         vcargar = 0;
                         vcargarp = 0;
@@ -1128,10 +1167,10 @@
                         DMontoPeso();
                         $("#DMontoDolar").val('');
                         DMontoDolar();
-                        let Rt    = document.getElementById('RestaTrans').value;
+                        let Rt = document.getElementById('RestaTrans').value;
                         $("#DMontoTrans").val(Rt);
                         DMontoTrans();
-                    }else{
+                    } else {
                         vcargart = 0;
                         $("#DMontoTrans").val('');
                         DMontoTrans();
@@ -1142,7 +1181,7 @@
 
             });
 
-            function numDecimal(valor){
+            function numDecimal(valor) {
                 let result = Number(valor).toFixed(3);
 
                 return result;
@@ -1515,8 +1554,7 @@
                 // divisorEnteroDecimala('125995');
             });
 
-            function divisorEnteroDecimala(entero)
-            {
+            function divisorEnteroDecimala(entero) {
 
                 // alert("Numero: "+entero);
                 entero = entero / 1000;
@@ -1525,9 +1563,9 @@
                 arr = entero.split('.');
                 var resEntero = arr[0];
                 var resDecimal = arr[1];
-                if(resDecimal > 0 ){
+                if (resDecimal > 0) {
                     resDecimal = resDecimal;
-                }else{
+                } else {
                     resDecimal = 0;
                 }
 
@@ -1538,10 +1576,9 @@
 
             }
 
-            function unionEnteroDecimalaEnteros(entero = null,decimal = null){
+            function unionEnteroDecimalaEnteros(entero = null, decimal = null) {
                 var result = 0;
-                if ( entero.indexOf(".") > -1 )
-                {
+                if (entero.indexOf(".") > -1) {
                     // alert( "found it ." );
                     entero = parseFloat(entero).toFixed(3);
                     // alert(entero);
@@ -1562,10 +1599,9 @@
                         return result;
 
                     }
-                }else if ( entero.indexOf(",") > -1 )
-                {
+                } else if (entero.indexOf(",") > -1) {
                     // alert( "found it ," );
-                    entero = entero.replace(',','.');
+                    entero = entero.replace(',', '.');
                     entero = parseFloat(entero).toFixed(3);
                     // alert(entero);
                     arr = entero.split('.');
@@ -1585,8 +1621,7 @@
                         return result;
 
                     }
-                 }else
-                {
+                } else {
                     if (entero > 0 && decimal > 0) {
                         entero = entero * 1000;
                         decimal = fijaLargoDerecha(decimal);
@@ -1598,15 +1633,15 @@
                         result = entero + decimal;
                         // alert('resultado '+result);
                         return result;
-                    }else if (entero == '' || entero == null) {
+                    } else if (entero == '' || entero == null) {
                         decimal = fijaLargoDerecha(decimal);
                         // alert('decimal '+decimal+'sin enteros');
                         return decimal;
-                    }else if (decimal == '' || decimal == null) {
+                    } else if (decimal == '' || decimal == null) {
 
                         entero = entero * 1000;
                         // alert('entero '+entero+'sin decimal');
-                    return entero;
+                        return entero;
                     }
 
 
@@ -1620,8 +1655,8 @@
                 var caracteres = 3;
                 // T.setAttribute("maxlength", caracteres);
 
-                while(numero.length < caracteres){
-                    numero = "0"+numero;
+                while (numero.length < caracteres) {
+                    numero = "0" + numero;
                 }
                 return numero;
             }
@@ -1632,8 +1667,8 @@
                 var caracteres = 3;
                 // T.setAttribute("maxlength", caracteres);
 
-                while(numero.length < caracteres){
-                    numero = numero+"0";
+                while (numero.length < caracteres) {
+                    numero = numero + "0";
                 }
 
                 result = parseInt(numero);
@@ -1648,24 +1683,24 @@
                 $("#jstock").val(datosArticulo[1]);
 
 
-                stock           = datosArticulo[1]
-                porEspecial     = datosArticulo[4];
-                isDolar         = datosArticulo[5];
-                isPeso          = datosArticulo[6];
-                isTransPunto    = datosArticulo[7];
-                isMixto         = datosArticulo[8];
-                isEfectivo      = datosArticulo[9];
-                isKilo          = datosArticulo[10];
+                stock = datosArticulo[1]
+                porEspecial = datosArticulo[4];
+                isDolar = datosArticulo[5];
+                isPeso = datosArticulo[6];
+                isTransPunto = datosArticulo[7];
+                isMixto = datosArticulo[8];
+                isEfectivo = datosArticulo[9];
+                isKilo = datosArticulo[10];
                 // $("#jmarjen_venta_dolar").val(12);
                 // alert(isKilo);
 
-               var exkilo = 0;
-               var exgramos = 0;
+                var exkilo = 0;
+                var exgramos = 0;
 
-               var res = divisorEnteroDecimala(stock);
+                var res = divisorEnteroDecimala(stock);
 
-               exkilo = res[0];
-               exgramos = res[1];
+                exkilo = res[0];
+                exgramos = res[1];
 
                 $("#exkilo").html(exkilo);
                 $("#exgramos").html(fijaLargoDerecha(exgramos));
@@ -1688,7 +1723,7 @@
                     restarKilos();
                 });
 
-                $("#procesaKilo").on('click',function() {
+                $("#procesaKilo").on('click', function() {
                     // alert('listo');
                     $("#kilo").val('');
                     $("#gramos").val('');
@@ -1698,40 +1733,41 @@
                     add_article();
                 });
 
-                function restarKilos(){
+                function restarKilos() {
                     $("#restaKilos").val('');
 
                     $("#cantidadKilos").val('');
-                    kilo =   $("#kilo").val();
-                    gramos =   $("#gramos").val();
-                    resultado = unionEnteroDecimalaEnteros(kilo,gramos);
+                    kilo = $("#kilo").val();
+                    gramos = $("#gramos").val();
+                    resultado = unionEnteroDecimalaEnteros(kilo, gramos);
                     // alert('gramos '+resultado);
 
-                   $("#cantidadKilos").val(resultado);
-                   cantidadKilos =  $("#cantidadKilos").val();
-                   cantidad        = $("#jcantidad").val(cantidadKilos);
+                    $("#cantidadKilos").val(resultado);
+                    cantidadKilos = $("#cantidadKilos").val();
+                    cantidad = $("#jcantidad").val(cantidadKilos);
 
-                    showCantidad=divisorEnteroDecimala(cantidadKilos);
+                    showCantidad = divisorEnteroDecimala(cantidadKilos);
                     showEntero = showCantidad[0];
-                    showDecimal = showCantidad[1];kilosCompletos
+                    showDecimal = showCantidad[1];
+                    kilosCompletos
 
-                    cantidadMostrar = showEntero +"."+fijaLargoDerecha(showDecimal)+".Kg";
+                    cantidadMostrar = showEntero + "." + fijaLargoDerecha(showDecimal) + ".Kg";
 
                     $("#ckilo").html(showEntero);
                     $("#cgramos").html(fijaLargoDerecha(showDecimal));
 
-                   resta1 = stock - cantidadKilos;
+                    resta1 = stock - cantidadKilos;
 
-                   $("#restaKilos").val(resta1);
+                    $("#restaKilos").val(resta1);
                     // alert(cantidadKilos);
 
                     var res = divisorEnteroDecimala(resta1);
 
-               exkilo = res[0];
-               exgramos = res[1];
+                    exkilo = res[0];
+                    exgramos = res[1];
 
-                $("#exkilo").html(exkilo);
-                $("#exgramos").html(fijaLargoDerecha(exgramos));
+                    $("#exkilo").html(exkilo);
+                    $("#exgramos").html(fijaLargoDerecha(exgramos));
 
                     cantidad = $("#jcantidad").val();
                     precio = $("#precio").val();
@@ -1765,25 +1801,25 @@
                 }
             };
 
-            function numDecimalExp(valor){
+            function numDecimalExp(valor) {
                 let result = Number((valor)).toFixed(3);
                 return result;
             }
 
             function por() {
-                var precio_compra   = parseFloat($("#jprecio_compra").val());
-                var porDolar        = parseFloat($("#jmarjen_ganancia_dolar").val());
-                var porPeso         = parseFloat($("#jmarjen_ganancia_peso").val());
-                var porTP           = parseFloat($("#jmarjen_ganancia_trans_punto").val());
-                var porM            = parseFloat($("#jmarjen_ganancia_mixto").val());
-                var porE            = parseFloat($("#jmarjen_ganancia_Efectivo").val());
+                var precio_compra = parseFloat($("#jprecio_compra").val());
+                var porDolar = parseFloat($("#jmarjen_ganancia_dolar").val());
+                var porPeso = parseFloat($("#jmarjen_ganancia_peso").val());
+                var porTP = parseFloat($("#jmarjen_ganancia_trans_punto").val());
+                var porM = parseFloat($("#jmarjen_ganancia_mixto").val());
+                var porE = parseFloat($("#jmarjen_ganancia_Efectivo").val());
 
 
-                var tasaD           = parseFloat($("#TasaDolar").val());
-                var tasaP           = parseFloat($("#TasaPeso").val());
-                var tasaTP          = parseFloat($("#tasaTransPunto").val());
-                var tasaM           = parseFloat($("#tasaMixto").val());
-                var tasaE           = parseFloat($("#tasaEfectivo").val());
+                var tasaD = parseFloat($("#TasaDolar").val());
+                var tasaP = parseFloat($("#TasaPeso").val());
+                var tasaTP = parseFloat($("#tasaTransPunto").val());
+                var tasaM = parseFloat($("#tasaMixto").val());
+                var tasaE = parseFloat($("#tasaEfectivo").val());
                 // alert(tasaM);
                 // alert('estoy en por '+porEspecial);
 
@@ -1793,64 +1829,64 @@
                     $("#cantidadj").hide();
                     $("#cantidadj").addClass('readonly');
                     $("#procesarkilos").show();
-                    pre = precio_compra*1000;
+                    pre = precio_compra * 1000;
                     $("#campoPrecio").html(pre.toFixed(2));
                     $("#precio").val(precio_compra);
                     // precio_compra = precio_compra/1000
 
-                // alert('por kilo '+precio_compra);
+                    // alert('por kilo '+precio_compra);
                     // c]antidad.classList.add('readonly');
 
 
 
 
-                }else{
+                } else {
                     $("#cantidadj").show();
                     $("#procesarkilos").hide();
                 }
 
-                if(porEspecial){
+                if (porEspecial) {
                     if (isDolar) {
                         var margenD = precio_compra * porEspecial / 100;
                         $("#porEspecial").val(porEspecial);
-                    }else{
+                    } else {
                         var margenD = precio_compra * porDolar / 100;
                         // $("#porEspecial").val(porDolar);
                     }
                     if (isPeso) {
                         var margenP = precio_compra * porEspecial / 100;
                         $("#porEspecial").val(porEspecial);
-                    }else{
+                    } else {
                         var margenP = precio_compra * porPeso / 100;
                         // $("#porEspecial").val(porPeso);
                     }
                     if (isTransPunto) {
                         var margenTP = precio_compra * porEspecial / 100;
                         $("#porEspecial").val(porEspecial);
-                    }else{
+                    } else {
                         var margenTP = precio_compra * porTP / 100;
                         // $("#porEspecial").val(porTP);
                     }
                     if (isMixto) {
                         var margenM = precio_compra * porEspecial / 100;
                         $("#porEspecial").val(porEspecial);
-                    }else{
+                    } else {
                         var margenM = precio_compra * porM / 100;
                         // $("#porEspecial").val(porM);
                     }
                     if (isEfectivo) {
                         var margenE = precio_compra * porEspecial / 100;
                         $("#porEspecial").val(porEspecial);
-                    }else{
+                    } else {
                         var margenE = precio_compra * porE / 100;
                         // $("#porEspecial").val(porE);
                     }
-                }else{
-                    var margenD     = precio_compra * porDolar / 100;
-                    var margenP     = precio_compra * porPeso / 100;
-                    var margenTP    = precio_compra * porTP / 100;
-                    var margenM     = precio_compra * porM / 100;
-                    var margenE     = precio_compra * porE / 100;
+                } else {
+                    var margenD = precio_compra * porDolar / 100;
+                    var margenP = precio_compra * porPeso / 100;
+                    var margenTP = precio_compra * porTP / 100;
+                    var margenM = precio_compra * porM / 100;
+                    var margenE = precio_compra * porE / 100;
                 }
 
 
@@ -1897,7 +1933,7 @@
 
             }
 
-            $("#jidarticulo").on("change", function () {
+            $("#jidarticulo").on("change", function() {
                 document.getElementById("jcantidad").focus();
                 // $("#jidarticulo").val('0');
                 // document.getElementById('jidarticulo').val('0');
@@ -1926,21 +1962,21 @@
                 // }
 
                 // alert(articulo);
-                cantidad        = $("#jcantidad").val();
-                descuento       = $("#jdescuento").val();
-                precio_compra   = $("#jprecio_compra").val();
-                precio_venta    = $("#jprecio_venta").val();
+                cantidad = $("#jcantidad").val();
+                descuento = $("#jdescuento").val();
+                precio_compra = $("#jprecio_compra").val();
+                precio_venta = $("#jprecio_venta").val();
 
-                jporEspecial    = porEspecial;
+                jporEspecial = porEspecial;
 
                 // alert('por especial'+jporEspecial);
 
-                precio_venta_d  = $("#jprecio_venta_d_dolar").val();
-                precio_venta_p  = $("#jprecio_venta_p_dolar").val();
+                precio_venta_d = $("#jprecio_venta_d_dolar").val();
+                precio_venta_p = $("#jprecio_venta_p_dolar").val();
                 precio_venta_tp = $("#jprecio_venta_tp_dolar").val();
-                precio_venta_m  = $("#jprecio_venta_m_dolar").val();
-                precio_venta_e  = $("#jprecio_venta_e_dolar").val();
-                precio_venta_c  = $("#precio_costo").val();
+                precio_venta_m = $("#jprecio_venta_m_dolar").val();
+                precio_venta_e = $("#jprecio_venta_e_dolar").val();
+                precio_venta_c = $("#precio_costo").val();
 
 
 
@@ -1964,14 +2000,14 @@
                     // var descuento=parseFloat(0.00);
 
                     if (stock >= cantidad) {
-                        subtotal[cont]      = (cantidad * precio_venta - descuento);
-                        subtotalPC[cont]    = (cantidad * precio_venta_c);
-                        subtotald[cont]     = (cantidad * precio_venta_d - descuento);
-                        subtotalp[cont]     = (cantidad * precio_venta_p - descuento);
-                        subtotaltp[cont]    = (cantidad * precio_venta_tp - descuento);
-                        subtotalm[cont]     = (cantidad * precio_venta_m - descuento);
-                        subtotale[cont]     = (cantidad * precio_venta_e);
-                        subtotalc[cont]     = (cantidad * precio_venta_c);
+                        subtotal[cont] = (cantidad * precio_venta - descuento);
+                        subtotalPC[cont] = (cantidad * precio_venta_c);
+                        subtotald[cont] = (cantidad * precio_venta_d - descuento);
+                        subtotalp[cont] = (cantidad * precio_venta_p - descuento);
+                        subtotaltp[cont] = (cantidad * precio_venta_tp - descuento);
+                        subtotalm[cont] = (cantidad * precio_venta_m - descuento);
+                        subtotale[cont] = (cantidad * precio_venta_e);
+                        subtotalc[cont] = (cantidad * precio_venta_c);
 
 
 
@@ -1985,19 +2021,19 @@
 
 
                         total_costo = total_costo + subtotalPC[cont];
-                        total_d     = total_d + subtotald[cont];
-                        total_p     = total_p + subtotalp[cont];
-                        total_tp    = total_tp + subtotaltp[cont];
-                        total_m     = total_m + subtotalm[cont];
-                        total_e     = total_e + subtotale[cont];
+                        total_d = total_d + subtotald[cont];
+                        total_p = total_p + subtotalp[cont];
+                        total_tp = total_tp + subtotaltp[cont];
+                        total_m = total_m + subtotalm[cont];
+                        total_e = total_e + subtotale[cont];
 
 
 
-                        verPreciod      = $("#jprecio_venta_dolar").val();
-                        verPreciop      = $("#jprecio_venta_peso").val();
-                        verPreciotp     = $("#jprecio_venta_trans_punto").val();
-                        verPreciom      = $("#jprecio_venta_mixto").val();
-                        verPrecioe      = $("#jprecio_venta_Efectivo").val();
+                        verPreciod = $("#jprecio_venta_dolar").val();
+                        verPreciop = $("#jprecio_venta_peso").val();
+                        verPreciotp = $("#jprecio_venta_trans_punto").val();
+                        verPreciom = $("#jprecio_venta_mixto").val();
+                        verPrecioe = $("#jprecio_venta_Efectivo").val();
 
                         // alert('nada');
                         if (descuento == "") {
@@ -2007,7 +2043,7 @@
                         if (isKilo) {
                             cantidadVer = cantidadMostrar;
                         } else {
-                            cantidadVer  = cantidad;
+                            cantidadVer = cantidad;
                         }
                         // $("#total_venta").val(total.toFixed(2));
                         $("#precio_costo").val(numDecimal(total_costo));
@@ -2020,27 +2056,31 @@
                         var fila = '<tr class="selected" id="fila' + cont +
                             '"><td><button type="button" class="btn btn-warning btn-xs" onclick="eliminar(' + cont +
                             ');">X</button></td><td><input type="hidden" name="idarticulo[]" value="' + idarticulo + '">' +
-                            articulo + '</td><td><input type="hidden" name="cantidad[]" value="' + cantidad + '">' + cantidadVer
-                             +
+                            articulo + '</td><td><input type="hidden" name="cantidad[]" value="' + cantidad + '">' +
+                            cantidadVer +
                             '</td><td class="success"><input type="hidden" name="precio_venta[]" value="' + precio_venta +
                             '">' + verPreciod + '</td><td class="success">' + numDecimal(subtotal[cont]) +
                             '</td><td class="warning"><input type="hidden" name="precio_venta_p[]" value="' +
                             dividir(multiplicar(precio_venta_p)) +
                             '">' + formatMoney(verPreciop, 2, ',', '.') + '</td><td class="warning">' + formatMoney(
 
-                                    numDecimal(subtotalp[cont]) * tasaP, 2, ',', '.') +
+                                numDecimal(subtotalp[cont]) * tasaP, 2, ',', '.') +
                             '</td><td  class="success"><input type="hidden" name="precio_venta_tp[]" value="' +
-                                dividir(multiplicar(precio_venta_tp)) + '">' + formatMoney(verPreciotp, 2, ',', '.') + '</td><td class="success">' +
+                            dividir(multiplicar(precio_venta_tp)) + '">' + formatMoney(verPreciotp, 2, ',', '.') +
+                            '</td><td class="success">' +
                             formatMoney(numDecimal(subtotaltp[cont]) * tasaTP, 2, ',', '.') +
                             '</td><td class="warning"><input type="hidden" name="precio_venta_m[]" value="' +
-                                dividir(multiplicar(precio_venta_m)) +
+                            dividir(multiplicar(precio_venta_m)) +
                             '">' + formatMoney(verPreciom, 2, ',', '.') + '</td><td class="warning">' + formatMoney(
                                 numDecimal(subtotalm[cont]) * tasaM, 2, ',', '.') +
-                            '</td><td class="success"><input name="precio_costo_unidad[]" type="hidden" value="'+dividir(multiplicar(precio_venta_c))+'"><input type="hidden" name="precio_venta_e[]" value="' +
-                                dividir(multiplicar(precio_venta_e)) +
+                            '</td><td class="success"><input name="precio_costo_unidad[]" type="hidden" value="' + dividir(
+                                multiplicar(precio_venta_c)) + '"><input type="hidden" name="precio_venta_e[]" value="' +
+                            dividir(multiplicar(precio_venta_e)) +
                             '">' + formatMoney(verPrecioe, 2, ',', '.') + '</td><td class="success">' + formatMoney(
-                                numDecimal(subtotale[cont]) * tasaE, 2, ',', '.') + '</td><td><input type="hidden" name="descuento[]" value="' +
-                            parseFloat(descuento) + '">' + parseFloat(descuento) + '<input type="hidden" name="porEspecial[]" value="'+jporEspecial+'"></td></tr>';
+                                numDecimal(subtotale[cont]) * tasaE, 2, ',', '.') +
+                            '</td><td><input type="hidden" name="descuento[]" value="' +
+                            parseFloat(descuento) + '">' + parseFloat(descuento) +
+                            '<input type="hidden" name="porEspecial[]" value="' + jporEspecial + '"></td></tr>';
                         cont++
 
 
@@ -2048,17 +2088,21 @@
                         clear();
                         // $("#total").html("<h4>$. " + total.toFixed(2) + "</h4>");
 
-                        $("#totald").html("<h4 class='text-bold text-primary'>$. " + numDecimal(total_d * tasaD)+
+                        $("#totald").html("<h4 class='text-bold text-primary'>$. " + numDecimal(total_d * tasaD) +
                             "</h4>");
-                        $("#totalp").html("<h4 class='text-bold text-primary'>$. " + formatMoney(numDecimal(total_p) * tasaP, 2, ',',
+                        $("#totalp").html("<h4 class='text-bold text-primary'>$. " + formatMoney(numDecimal(total_p) * tasaP, 2,
+                                ',',
                                 '.') +
                             "</h4>");
-                        $("#totaltp").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_tp) * tasaTP, 2,
+                        $("#totaltp").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_tp) *
+                            tasaTP, 2,
                             ',',
                             '.') + "</h4>");
-                        $("#totalm").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_m) * tasaM, 2, ',',
+                        $("#totalm").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_m) * tasaM,
+                            2, ',',
                             '.') + "</h4>");
-                        $("#totale").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_e) * tasaE, 2, ',',
+                        $("#totale").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_e) * tasaE,
+                            2, ',',
                             '.') + "</h4>");
 
                         $("#PagoTtotal").html(numDecimal(total)); //aqui
@@ -2140,17 +2184,17 @@
 
                 // $("#gestionpago").hide("linear");
                 total_costo = total_costo - subtotalPC[index];
-                total       = total - subtotal[index];
+                total = total - subtotal[index];
                 //  alert('total '+total);
-                total_d     = total_d - subtotald[index];
+                total_d = total_d - subtotald[index];
                 //  alert('total d '+total_d);
-                total_p     = total_p - subtotalp[index];
+                total_p = total_p - subtotalp[index];
                 // alert('total p '+total_p);
-                total_tp    = total_tp - subtotaltp[index];
+                total_tp = total_tp - subtotaltp[index];
                 // alert('total tp '+total_tp);
-                total_m     = total_m - subtotalm[index];
+                total_m = total_m - subtotalm[index];
                 // alert('total m '+total_m);
-                total_e     = total_e -subtotale[index];
+                total_e = total_e - subtotale[index];
                 // alert('total e '+total_e);
                 //precosto =  $("#precio_costo").val();
                 //total_costo = precosto - subtotalc[index];
@@ -2180,11 +2224,15 @@
                 $("#total_ventam").val(numDecimal(total_m));
                 $("#total_ventae").val(numDecimal(total_e));
 
-                $("#totald").html("<h4 class='text-bold text-primary'>$. " + numDecimal(total_d *tasaD) + "</h4>");
-                $("#totalp").html("<h4 class='text-bold text-primary'>$. " + formatMoney(numDecimal(total_p) * tasaP, 2, ',', '.') + "</h4>");
-                $("#totaltp").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_tp) * tasaTP, 2, ',', '.') + "</h4>");
-                $("#totalm").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_m) * tasaM, 2, ',', '.') + "</h4>");
-                $("#totale").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_e) * tasaE, 2, ',', '.') + "</h4>");
+                $("#totald").html("<h4 class='text-bold text-primary'>$. " + numDecimal(total_d * tasaD) + "</h4>");
+                $("#totalp").html("<h4 class='text-bold text-primary'>$. " + formatMoney(numDecimal(total_p) * tasaP, 2, ',',
+                    '.') + "</h4>");
+                $("#totaltp").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_tp) * tasaTP, 2,
+                    ',', '.') + "</h4>");
+                $("#totalm").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_m) * tasaM, 2, ',',
+                    '.') + "</h4>");
+                $("#totale").html("<h4 class='text-bold text-primary'>Bs. " + formatMoney(numDecimal(total_e) * tasaE, 2, ',',
+                    '.') + "</h4>");
 
                 $("#fila" + index).remove();
                 mostrarBonotesPago();
@@ -2196,11 +2244,11 @@
             };
 
             function multiplicar(decimal) {
-                return decimal*1000;
+                return decimal * 1000;
             }
 
             function dividir(decimal) {
-                return decimal/1000;
+                return decimal / 1000;
             }
 
             // Gestion de pagos
@@ -2208,18 +2256,18 @@
             /* Restar dos números. */
             function resta() {
                 // alert('resta');
-                const RestaTotal    = document.getElementById('RestaTtotal');
-                const PagoTtotal    = document.getElementById('PagoTtotal');
-                const spTotal       = document.getElementById('spTotal');
-                const tp            = document.getElementById('tp');
-                const r             = document.getElementById('r');
-                const tap           = document.getElementById('tap');
+                const RestaTotal = document.getElementById('RestaTtotal');
+                const PagoTtotal = document.getElementById('PagoTtotal');
+                const spTotal = document.getElementById('spTotal');
+                const tp = document.getElementById('tp');
+                const r = document.getElementById('r');
+                const tap = document.getElementById('tap');
 
 
 
-                var valor           = PagoTtotal.innerHTML;
-                var valor_restar    = spTotal.innerHTML;
-                var resta           = numDecimal(valor -valor_restar);
+                var valor = PagoTtotal.innerHTML;
+                var valor_restar = spTotal.innerHTML;
+                var resta = numDecimal(valor - valor_restar);
 
                 RestaTotal.innerHTML = numDecimal(resta); //se llena el campo resta
 
@@ -2288,152 +2336,152 @@
 
             }
 
-            function DMontoDolar(){
-                     // alert('clic');
-                     Mdolar      = $("#DMontoDolar").val();
-                    Tdolar      = $("#TasaDolar").val();
-                    Tpeso       = $("#TasaPeso").val();
-                    Tbolivar    = $("#TasaBolivar").val();
-                    Tpunto      = $("#TasaPunto").val();
-                    Ttrans      = $("#TasaTrans").val();
+            function DMontoDolar() {
+                // alert('clic');
+                Mdolar = $("#DMontoDolar").val();
+                Tdolar = $("#TasaDolar").val();
+                Tpeso = $("#TasaPeso").val();
+                Tbolivar = $("#TasaBolivar").val();
+                Tpunto = $("#TasaPunto").val();
+                Ttrans = $("#TasaTrans").val();
 
-                    DsupTotal = Mdolar * Tdolar;
-                    $("#DolarToDolar").val(DsupTotal);
-                    $("#DsubTotal").html(DsupTotal);
+                DsupTotal = Mdolar * Tdolar;
+                $("#DolarToDolar").val(DsupTotal);
+                $("#DsubTotal").html(DsupTotal);
 
-                    sumar();
-                    resta();
-                    const Resta     = document.getElementById('RestaTtotal');
-                    var valor       = Resta.innerHTML;
-                    var RmultD      = valor * Tdolar;
-                    $("#RestaDolar").val(RmultD);
-                    var RmultP      = valor * Tpeso;
-                    $("#RestaPeso").val(RmultP);
-                    var RmultB      = valor * Tbolivar;
-                    $("#RestaBolivar").val(RmultB);
-                    var RmultPu     = valor * Tpunto;
-                    $("#RestaPunto").val(RmultPu);
-                    var RmultT      = valor * Ttrans;
-                    $("#RestaTrans").val(RmultT);
-                }
+                sumar();
+                resta();
+                const Resta = document.getElementById('RestaTtotal');
+                var valor = Resta.innerHTML;
+                var RmultD = valor * Tdolar;
+                $("#RestaDolar").val(RmultD);
+                var RmultP = valor * Tpeso;
+                $("#RestaPeso").val(RmultP);
+                var RmultB = valor * Tbolivar;
+                $("#RestaBolivar").val(RmultB);
+                var RmultPu = valor * Tpunto;
+                $("#RestaPunto").val(RmultPu);
+                var RmultT = valor * Ttrans;
+                $("#RestaTrans").val(RmultT);
+            }
 
-                function DMontoPeso(){
-                    Mpeso       = $("#DMontoPeso").val();
-                    Tdolar      = $("#TasaDolar").val();
-                    Tpeso       = $("#TasaPeso").val();
-                    Tbolivar    = $("#TasaBolivar").val();
-                    Tpunto      = $("#TasaPunto").val();
-                    Ttrans      = $("#TasaTrans").val();
+            function DMontoPeso() {
+                Mpeso = $("#DMontoPeso").val();
+                Tdolar = $("#TasaDolar").val();
+                Tpeso = $("#TasaPeso").val();
+                Tbolivar = $("#TasaBolivar").val();
+                Tpunto = $("#TasaPunto").val();
+                Ttrans = $("#TasaTrans").val();
 
-                    PsupTotal = Mpeso / Tpeso;
-                    $("#PesoToDolar").val(PsupTotal);
-                    $("#PeSubTotal").html(PsupTotal);
-                    $("#RestaPeso").val();
-                    sumar();
-                    resta();
-                    const Resta = document.getElementById('RestaTtotal');
-                    var valor   = Resta.innerHTML;
-                    var RmultD  = valor * Tdolar;
-                    $("#RestaDolar").val(RmultD);
-                    var RmultP  = valor * Tpeso;
-                    $("#RestaPeso").val(RmultP);
-                    var RmultB  = valor * Tbolivar;
-                    $("#RestaBolivar").val(RmultB);
-                    var RmultPu = valor * Tpunto;
-                    $("#RestaPunto").val(RmultPu);
-                    var RmultT = valor * Ttrans;
-                    $("#RestaTrans").val(RmultT);
-                }
+                PsupTotal = Mpeso / Tpeso;
+                $("#PesoToDolar").val(PsupTotal);
+                $("#PeSubTotal").html(PsupTotal);
+                $("#RestaPeso").val();
+                sumar();
+                resta();
+                const Resta = document.getElementById('RestaTtotal');
+                var valor = Resta.innerHTML;
+                var RmultD = valor * Tdolar;
+                $("#RestaDolar").val(RmultD);
+                var RmultP = valor * Tpeso;
+                $("#RestaPeso").val(RmultP);
+                var RmultB = valor * Tbolivar;
+                $("#RestaBolivar").val(RmultB);
+                var RmultPu = valor * Tpunto;
+                $("#RestaPunto").val(RmultPu);
+                var RmultT = valor * Ttrans;
+                $("#RestaTrans").val(RmultT);
+            }
 
-                function DMontoBolivar(){
-                    Mbolivar = $("#DMontoBolivar").val();
-                    Tdolar   = $("#TasaDolar").val();
-                    Tpeso    = $("#TasaPeso").val();
-                    Tbolivar = $("#TasaBolivar").val();
-                    Tpunto   = $("#TasaPunto").val();
-                    Ttrans   = $("#TasaTrans").val();
+            function DMontoBolivar() {
+                Mbolivar = $("#DMontoBolivar").val();
+                Tdolar = $("#TasaDolar").val();
+                Tpeso = $("#TasaPeso").val();
+                Tbolivar = $("#TasaBolivar").val();
+                Tpunto = $("#TasaPunto").val();
+                Ttrans = $("#TasaTrans").val();
 
-                    peso = $("#RestaPeso").val();
-                    // 10767280  alert(Mpeso);
-                    BsupTotal = Mbolivar / Tbolivar;
-                    $("#BolivarToDolar").val(BsupTotal);
-                    $("#BoSubTotal").html(BsupTotal);
-                    $("#RestaBolivar").val();
-                    sumar();
-                    resta();
-                    const Resta = document.getElementById('RestaTtotal');
-                    var valor = Resta.innerHTML;
-                    var RmultD = valor * Tdolar;
-                    $("#RestaDolar").val(RmultD);
-                    var RmultP = valor * Tpeso;
-                    $("#RestaPeso").val(RmultP);
-                    var RmultB = valor * Tbolivar;
-                    $("#RestaBolivar").val(RmultB);
-                    var RmultPu = valor * Tpunto;
-                    $("#RestaPunto").val(RmultPu);
-                    var RmultT = valor * Ttrans;
-                    $("#RestaTrans").val(RmultT);
-                }
+                peso = $("#RestaPeso").val();
+                // 10767280  alert(Mpeso);
+                BsupTotal = Mbolivar / Tbolivar;
+                $("#BolivarToDolar").val(BsupTotal);
+                $("#BoSubTotal").html(BsupTotal);
+                $("#RestaBolivar").val();
+                sumar();
+                resta();
+                const Resta = document.getElementById('RestaTtotal');
+                var valor = Resta.innerHTML;
+                var RmultD = valor * Tdolar;
+                $("#RestaDolar").val(RmultD);
+                var RmultP = valor * Tpeso;
+                $("#RestaPeso").val(RmultP);
+                var RmultB = valor * Tbolivar;
+                $("#RestaBolivar").val(RmultB);
+                var RmultPu = valor * Tpunto;
+                $("#RestaPunto").val(RmultPu);
+                var RmultT = valor * Ttrans;
+                $("#RestaTrans").val(RmultT);
+            }
 
-                function DMontoPunto(){
-                    MPunto = $("#DMontoPunto").val();
-                    Tdolar = $("#TasaDolar").val();
-                    Tpeso = $("#TasaPeso").val();
-                    Tbolivar = $("#TasaBolivar").val();
-                    Tpunto = $("#TasaPunto").val();
-                    Ttrans = $("#TasaTrans").val();
+            function DMontoPunto() {
+                MPunto = $("#DMontoPunto").val();
+                Tdolar = $("#TasaDolar").val();
+                Tpeso = $("#TasaPeso").val();
+                Tbolivar = $("#TasaBolivar").val();
+                Tpunto = $("#TasaPunto").val();
+                Ttrans = $("#TasaTrans").val();
 
-                    peso = $("#RestaPeso").val();
-                    // 10767280  alert(Mpeso);
-                    PusupTotal = MPunto / Tpunto;
-                    $("#PuntoToDolar").val(PusupTotal);
-                    $("#PuSubTotal").html(PusupTotal);
-                    $("#RestaPunto").val();
-                    sumar();
-                    resta();
-                    const Resta = document.getElementById('RestaTtotal');
-                    var valor = Resta.innerHTML;
-                    var RmultD = valor * Tdolar;
-                    $("#RestaDolar").val(RmultD);
-                    var RmultP = valor * Tpeso;
-                    $("#RestaPeso").val(RmultP);
-                    var RmultB = valor * Tbolivar;
-                    $("#RestaBolivar").val(RmultB);
-                    var RmultPu = valor * Tpunto;
-                    $("#RestaPunto").val(RmultPu);
-                    var RmultT = valor * Ttrans;
-                    $("#RestaTrans").val(RmultT);
-                }
+                peso = $("#RestaPeso").val();
+                // 10767280  alert(Mpeso);
+                PusupTotal = MPunto / Tpunto;
+                $("#PuntoToDolar").val(PusupTotal);
+                $("#PuSubTotal").html(PusupTotal);
+                $("#RestaPunto").val();
+                sumar();
+                resta();
+                const Resta = document.getElementById('RestaTtotal');
+                var valor = Resta.innerHTML;
+                var RmultD = valor * Tdolar;
+                $("#RestaDolar").val(RmultD);
+                var RmultP = valor * Tpeso;
+                $("#RestaPeso").val(RmultP);
+                var RmultB = valor * Tbolivar;
+                $("#RestaBolivar").val(RmultB);
+                var RmultPu = valor * Tpunto;
+                $("#RestaPunto").val(RmultPu);
+                var RmultT = valor * Ttrans;
+                $("#RestaTrans").val(RmultT);
+            }
 
-                function DMontoTrans(){
-                    Mtrans = $("#DMontoTrans").val();
-                    Tdolar = $("#TasaDolar").val();
-                    Tpeso = $("#TasaPeso").val();
-                    Tbolivar = $("#TasaBolivar").val();
-                    Tpunto = $("#TasaPunto").val();
-                    Ttrans = $("#TasaTrans").val();
+            function DMontoTrans() {
+                Mtrans = $("#DMontoTrans").val();
+                Tdolar = $("#TasaDolar").val();
+                Tpeso = $("#TasaPeso").val();
+                Tbolivar = $("#TasaBolivar").val();
+                Tpunto = $("#TasaPunto").val();
+                Ttrans = $("#TasaTrans").val();
 
-                    peso = $("#RestaPeso").val();
-                    // 10767280  alert(Mpeso);
-                    TsupTotal = Mtrans / Ttrans;
-                    $("#TransToDolar").val(TsupTotal);
-                    $("#TrSubTotal").html(TsupTotal);
-                    $("#RestaTrans").val();
-                    sumar();
-                    resta();
-                    const Resta = document.getElementById('RestaTtotal');
-                    var valor = Resta.innerHTML;
-                    var RmultD = valor * Tdolar;
-                    $("#RestaDolar").val(RmultD);
-                    var RmultP = valor * Tpeso;
-                    $("#RestaPeso").val(RmultP);
-                    var RmultB = valor * Tbolivar;
-                    $("#RestaBolivar").val(RmultB);
-                    var RmultPu = valor * Tpunto;
-                    $("#RestaPunto").val(RmultPu);
-                    var RmultT = valor * Ttrans;
-                    $("#RestaTrans").val(RmultT);
-                }
+                peso = $("#RestaPeso").val();
+                // 10767280  alert(Mpeso);
+                TsupTotal = Mtrans / Ttrans;
+                $("#TransToDolar").val(TsupTotal);
+                $("#TrSubTotal").html(TsupTotal);
+                $("#RestaTrans").val();
+                sumar();
+                resta();
+                const Resta = document.getElementById('RestaTtotal');
+                var valor = Resta.innerHTML;
+                var RmultD = valor * Tdolar;
+                $("#RestaDolar").val(RmultD);
+                var RmultP = valor * Tpeso;
+                $("#RestaPeso").val(RmultP);
+                var RmultB = valor * Tbolivar;
+                $("#RestaBolivar").val(RmultB);
+                var RmultPu = valor * Tpunto;
+                $("#RestaPunto").val(RmultPu);
+                var RmultT = valor * Ttrans;
+                $("#RestaTrans").val(RmultT);
+            }
 
             $(document).ready(function() {
 
@@ -2461,8 +2509,6 @@
 
 
             });
-
         </script>
     @endpush
-
 @endsection

@@ -2,24 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-
 use Response;
+
 use App\Ingreso;
 use App\Articulo;
 use Carbon\Carbon;
-use App\DetalleVenta;
-use App\Http\Requests;
-use App\DetalleIngreso;
 use App\Articulo_Ingreso;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-
 use Barryvdh\DomPDF\Facade as PDF;
 
-use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\DB;
+
 //use Illuminate\Http\Response;
-use Illuminate\Database\MySqlConnection;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\IngresoFormRequest;
 
@@ -32,7 +26,7 @@ class IngresoController extends Controller
     public function index(Request $request)
     {
         if ($request) {
-            $title='Ingresos';
+            $title = 'Ingresos';
             // $query = trim($request->get('buscarTexto'));
             $ingresos = DB::table('ingresos as i')
                 ->join('personas as p', 'i.persona_id', '=', 'p.id')
@@ -44,7 +38,7 @@ class IngresoController extends Controller
                 ->groupBy('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
                 ->get();
 
-            return view('compras.ingreso.index', ["title"=>$title,"ingresos" => $ingresos]);
+            return view('compras.ingreso.index', ["title" => $title, "ingresos" => $ingresos]);
         }
     }
 
@@ -63,7 +57,7 @@ class IngresoController extends Controller
     {
         // return $request->all();
 
-        try{
+        try {
             DB::beginTransaction();
             $ingreso = new Ingreso; //(*) al guardar genera un idingreso automatimanente que luego se usa en la tabla detalle
             $ingreso->tipo_comprobante = $request->get('tipo_comprobante');
@@ -101,13 +95,11 @@ class IngresoController extends Controller
                 $Articulo_Ingreso->articulo_id = $articulo_id[$cont];
                 $Articulo_Ingreso->save();
 
-                $cont = $cont+1;
+                $cont = $cont + 1;
             }
 
             DB::commit();
-
-        }catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
 
             DB::rollback();
             // dd($e);
@@ -121,14 +113,14 @@ class IngresoController extends Controller
         $title = 'Reporte de Ingreso';
 
         $ingreso = DB::table('ingresos as i')
-                ->join('personas as p', 'i.persona_id', '=', 'p.id')
-                ->join('users as u', 'i.user_id', '=', 'u.id')
-                ->join('articulo__ingresos as ai', 'i.id', '=', 'ai.ingreso_id')
-                ->select('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado', DB::raw('sum(ai.cantidad*precio_costo_unidad) as total'))
-                ->where('i.id', '=', $id)
-                ->orderBy('i.id', 'desc')
-                ->groupBy('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
-                ->get();
+            ->join('personas as p', 'i.persona_id', '=', 'p.id')
+            ->join('users as u', 'i.user_id', '=', 'u.id')
+            ->join('articulo__ingresos as ai', 'i.id', '=', 'ai.ingreso_id')
+            ->select('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado', DB::raw('sum(ai.cantidad*precio_costo_unidad) as total'))
+            ->where('i.id', '=', $id)
+            ->orderBy('i.id', 'desc')
+            ->groupBy('i.id', 'u.name', 'i.fecha_hora', 'p.nombre', 'p.tipo_documento', 'p.num_documento', 'p.telefono', 'i.tipo_comprobante', 'i.serie_comprobante', 'i.num_comprobante', 'i.estado')
+            ->get();
 
         //traemos los datos de la tabla detalle_articulos
         $Articulo_Ingresos = DB::table('articulo__ingresos as ai')
@@ -136,38 +128,35 @@ class IngresoController extends Controller
             ->select('a.nombre as articulo', 'ai.cantidad', 'ai.precio_costo_unidad')
             ->where('ai.ingreso_id', '=', $id)->get();
 
-            // return $ingreso;
+        // return $ingreso;
 
-        return view("compras.ingreso.show", ["title" => $title, "ingreso" => $ingreso, "Articulo_Ingresos"=> $Articulo_Ingresos]);
+        return view("compras.ingreso.show", ["title" => $title, "ingreso" => $ingreso, "Articulo_Ingresos" => $Articulo_Ingresos]);
     }
 
     public function destroy($id)
     {
-        try{
+        try {
             DB::beginTransaction();
-        $ingreso = Ingreso::findOrFail($id);
-        $ingreso->estado = 'Cancelado';
-        $ingreso->update();
+            $ingreso = Ingreso::findOrFail($id);
+            $ingreso->estado = 'Cancelado';
+            $ingreso->update();
 
-        $detalleIngreso = Articulo_Ingreso::where('ingreso_id','=',$id)->get();
+            $detalleIngreso = Articulo_Ingreso::where('ingreso_id', '=', $id)->get();
 
-         //creamos un contador
-         $cont = 0;
+            //creamos un contador
+            $cont = 0;
 
-         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-         while ($cont < count($detalleIngreso)) {
-            $idarticulo = $detalleIngreso[$cont]->articulo_id;
-            $articulo = Articulo::findOrFail($idarticulo);
-            $articulo->stock = $articulo->stock-$detalleIngreso[$cont]->cantidad;
-            $articulo->update();
+            //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+            while ($cont < count($detalleIngreso)) {
+                $idarticulo = $detalleIngreso[$cont]->articulo_id;
+                $articulo = Articulo::findOrFail($idarticulo);
+                $articulo->stock = $articulo->stock - $detalleIngreso[$cont]->cantidad;
+                $articulo->update();
 
-            $cont = $cont+1;
-
-         };
-         DB::commit();
-
-        }catch(\Exception $e)
-        {
+                $cont = $cont + 1;
+            };
+            DB::commit();
+        } catch (\Exception $e) {
 
             DB::rollback();
             dd($e);
@@ -176,7 +165,8 @@ class IngresoController extends Controller
         return Redirect::to('compras/ingreso');
     }
 
-    public function exportToPDF(){
+    public function exportToPDF()
+    {
         $ingresos = Ingreso::get();
         $pdf = PDF::loadView('compras.ingreso.exportToPdf', Compact('ingresos'));
         $pdf->setPaper('a4', 'landscape');
@@ -194,7 +184,7 @@ class IngresoController extends Controller
         // ]);
 
         // return $pdf->download('invoice.pdf');
-//        return $pdf->stream('invoice.pdf');
+        //        return $pdf->stream('invoice.pdf');
         return $pdf->download('ListadoIngresos.pdf');
     }
 }

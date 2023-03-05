@@ -20,11 +20,13 @@ class BancosCliente extends Model
 
     protected $guarded = [];
 
-    public function persona(){
+    public function persona()
+    {
         return $this->belongsTo('App\Persona');
     }
 
-    public function banco(){
+    public function banco()
+    {
         return $this->belongsTo('App\Banco');
     }
 }
