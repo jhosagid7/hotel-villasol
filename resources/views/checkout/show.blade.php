@@ -977,7 +977,7 @@ if(isset($servicio->id)){
                                                                                         type="hidden" id="dispExcedente"
                                                                                         name="dispExcedente">
                                                                                 </div>
-                                                                                <div id="Vueltosexcedente"
+                                                                                {{--  <div id="Vueltosexcedente"
                                                                                     class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
                                                                                     <label for="VueltospagoConExcedente">
                                                                                         <h2 class="text-blue">Vueltos
@@ -993,7 +993,7 @@ if(isset($servicio->id)){
                                                                                         type="hidden"
                                                                                         id="VueltosdispExcedente"
                                                                                         name="VueltosdispExcedente">
-                                                                                </div>
+                                                                                </div>  --}}
                                                                                 <div id="nocredito"
                                                                                     class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
                                                                                     {{-- <label for="pagoConCredito"><h2 class="text-blue">Crédito disponible: <b id="dispCreditoShow">$.0.00</b></h2></label> --}}
@@ -1334,12 +1334,12 @@ if(isset($servicio->id)){
                                                                                                 <input
                                                                                                     id="base_vuelto_monto_dejado"
                                                                                                     name="base_vuelto_monto_dejado"
-                                                                                                    type="text"
+                                                                                                    type="hidden"
                                                                                                     value="">
                                                                                                 <input
                                                                                                     id="monto_dejadoResta"
                                                                                                     name="monto_dejadoResta"
-                                                                                                    type="text"
+                                                                                                    type="hidden"
                                                                                                     value="">
                                                                                                 <input id="cantidad"
                                                                                                     name="cantidad"
@@ -1883,11 +1883,11 @@ if(isset($servicio->id)){
                                                                                         <input id="vtosPendientes"
                                                                                             name="vtosPendientes"
                                                                                             value="{{ $cajas->excedenteCLiente ?? '' }}"
-                                                                                            type="text">
+                                                                                            type="hidden">
                                                                                         <input id="VueltosvtosPendientes"
                                                                                             name="VueltosvtosPendientes"
                                                                                             value="{{ $cajas->TotalSumaVueltosPendientesClienteDolar ?? '' }}"
-                                                                                            type="text">
+                                                                                            type="hidden">
 
                                                                                     </div>
 
