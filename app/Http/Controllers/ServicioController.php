@@ -1953,7 +1953,7 @@ class ServicioController extends Controller
                             $HistorialExcedente->banco_id = $banco_id;
                             $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
                             $HistorialExcedente->persona_id = $pcliente_id;
-                            $HistorialExcedente->servicio_id = $servicio->id;
+                            $HistorialExcedente->servicio_id = $id;
                             $HistorialExcedente->caja_id = $caja_id;
                             $HistorialExcedente->user_id  = $user_id;
                             $HistorialExcedente->save();
