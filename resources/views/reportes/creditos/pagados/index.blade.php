@@ -132,9 +132,10 @@
                                 alignment: "center",
                                 customize: function(doc) {
                                     doc.styles.tableHeader.alignment =
-                                    'left'; //giustifica a sinistra titoli colonne
+                                        'left'; //giustifica a sinistra titoli colonne
                                     doc.content[1].table.widths = [20, 100, 100, 100, 100,
-                                    60]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                                        60
+                                    ]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                                 },
                                 exportOptions: {
                                     columns: [0, 1, 2, 3, 4, 5, 6],
