@@ -1937,11 +1937,12 @@
                     let Vueltosexcdt = document.getElementById('Vueltosexcdt');
                     let monto_dejadoResta = $('#monto_dejadoResta').val();
                     let base_vuelto_monto_dejado = $('#base_vuelto_monto_dejado').val();
+                    console.log(RestaTtotalV);
 
-                    RestaTtotalCuenta = new Decimal(RestaTtotal.innerHTML);
-                    RestaTtotalV = new Decimal(RestaTtotalV.innerHTML);
-                    PagoExcdntesss = new Decimal(Vueltosexcdt.innerHTML);
-                    PagoTtotal = new Decimal(PagoTtotal.innerHTML);
+                    RestaTtotalCuenta = RestaTtotal.innerHTML;
+                    RestaTtotalV = RestaTtotalV.innerHTML;
+                    PagoExcdntesss = Vueltosexcdt.innerHTML;
+                    PagoTtotal = PagoTtotal.innerHTML;
 
                     if (RestaTtotalCuenta > 0) {
                         alert('Debe ingresar monto para pagar la deuda...');
