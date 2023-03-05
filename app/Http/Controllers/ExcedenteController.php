@@ -6,9 +6,11 @@ use App\Caja;
 use App\Tasa;
 use App\User;
 use App\Banco;
+use App\Cambio;
 use App\Credito;
 use App\Persona;
 use App\Articulo;
+use App\Servicio;
 use App\Excedente;
 use Carbon\Carbon;
 use App\Sessioncaja;
@@ -22,7 +24,6 @@ use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Excedentes_Recibidos_Caja_Actual;
-use App\Servicio;
 
 class ExcedenteController extends Controller
 {
@@ -374,12 +375,25 @@ class ExcedenteController extends Controller
                     }
                 }
                 if ($servicio_id) {
+
                     $update_servicio = Servicio::findOrfail($servicio_id);
 
                     $update_servicio->nombre_cliente = $nombre_cliente;
                     $update_servicio->cedula_cliente = $num_documento;
                     $update_servicio->telefono_cliente = $telefono;
                     $update_servicio->update();
+
+
+                    $buscar_servicios_relacionados = Cambio::where('servicio_id_cambio', $servicio_id)->first();
+
+                    if ($buscar_servicios_relacionados) {
+
+                        $update_servicio_cambio = Servicio::findOrfail($buscar_servicios_relacionados->servicio_id);
+                        $update_servicio_cambio->nombre_cliente = $nombre_cliente;
+                        $update_servicio_cambio->cedula_cliente = $num_documento;
+                        $update_servicio_cambio->telefono_cliente = $telefono;
+                        $update_servicio_cambio->update();
+                    }
                 }
 
                 DB::commit();
