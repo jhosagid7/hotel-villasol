@@ -2,32 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use DB;
-
 use App\Caja;
+
 use App\Tasa;
-use Response;
 use App\venta;
 use App\Credito;
 use App\Articulo;
-use App\Cortesia;
-use App\Excedente;
 use Carbon\Carbon;
 use App\Pago_Venta;
-
-use App\DetallePago;
-//use Illuminate\Http\Response;
 use App\Sessioncaja;
-use App\DetalleVenta;
-use App\Http\Requests;
+
+//use Illuminate\Http\Response;
 use App\Articulo_venta;
 use App\Detalle_credito;
-use App\Servicios_Ventas;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\VentaFormRequest;
-use Illuminate\Database\MySqlConnection;
 use Illuminate\Support\Facades\Redirect;
 
 
@@ -44,25 +34,25 @@ class VentaController extends Controller
             $mesActual = Carbon::now()->format('Y-m-d');
             $restaMes = Carbon::now()->subWeek(1);
             $restaMes = $restaMes->format('Y-m-d');
-            $title='Ventas';
+            $title = 'Ventas';
             $query = trim($request->get('buscarTexto'));
             $ventas = DB::table('ventas as v')
                 ->join('personas as p', 'v.persona_id', '=', 'p.id')
                 ->join('articulo_ventas as av', 'v.id', '=', 'av.venta_id')
                 ->join('cajas as c', 'c.sessioncaja_id', '=', 'v.caja_id')
                 ->join('users as u', 'u.id', '=', 'c.user_id')
-                ->select('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
-                ->where('v.num_comprobante', 'LIKE', '%'. $query  .'%')
-                ->where("v.created_at",">=",$restaMes)
-                ->where("v.created_at","<=",$mesActual)
+                ->select('u.name', 'c.user_id', 'v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+                ->where('v.num_comprobante', 'LIKE', '%' . $query  . '%')
+                ->where("v.created_at", ">=", $restaMes)
+                ->where("v.created_at", "<=", $mesActual)
                 ->orderBy('v.id', 'desc')
-                ->groupBy('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+                ->groupBy('u.name', 'c.user_id', 'v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_trans', 'v.num_punto', 'v.num_comprobante', 'v.total_venta', 'v.estado')
                 ->get();
-             //dd($ventas);
+            //dd($ventas);
             // return $ventas;
 
             // $ventas = Venta::take(4)->orderBy('created_at', 'desc')->get();
-            return view('ventas.venta.index', ["title" => $title,"ventas" => $ventas, "buscarTexto" => $query]);
+            return view('ventas.venta.index', ["title" => $title, "ventas" => $ventas, "buscarTexto" => $query]);
         }
     }
 
@@ -75,7 +65,7 @@ class VentaController extends Controller
         $tasa->updated_at;
         $fechaActual = Carbon::now();
         // dd($tasa->updated_at->diffInHours($fechaActual));
-        if ($tasa->tasa <= 0 || $tasa->updated_at->diffInHours($fechaActual) >= 6 ) {
+        if ($tasa->tasa <= 0 || $tasa->updated_at->diffInHours($fechaActual) >= 6) {
 
 
             // $date   = Carbon::now('America/Caracas');
@@ -91,9 +81,9 @@ class VentaController extends Controller
 
 
             return redirect()
-            ->route('tasa.index')
-            ->with('status_danger', '¡Debes Actualizar el margen de gananacia para poder acceder!');
-        }else{
+                ->route('tasa.index')
+                ->with('status_danger', '¡Debes Actualizar el margen de gananacia para poder acceder!');
+        } else {
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // este codigo maneja las fechas de los creditos vencidos
@@ -104,46 +94,44 @@ class VentaController extends Controller
             if ($creditos_clientes) {
 
 
-            foreach ($creditos_clientes as $fecha_limite) {
+                foreach ($creditos_clientes as $fecha_limite) {
 
-                $now = Carbon::parse($date);
-                $second = Carbon::parse($fecha_limite->fecha_limite_pago);
+                    $now = Carbon::parse($date);
+                    $second = Carbon::parse($fecha_limite->fecha_limite_pago);
 
-                if ($second->gte($now)) {
-                    // return 'tiene credito vigente';
-                    $credito_id = $fecha_limite->id;
-                    $upCredito = Credito::findOrFail($credito_id);
-                    if ($upCredito->total_deuda > 0) {
-                        $upCredito->estado_credito = 'Moroso';
-                        $upCredito->update();
-                    }else{
+                    if ($second->gte($now)) {
+                        // return 'tiene credito vigente';
+                        $credito_id = $fecha_limite->id;
+                        $upCredito = Credito::findOrFail($credito_id);
+                        if ($upCredito->total_deuda > 0) {
+                            $upCredito->estado_credito = 'Moroso';
+                            $upCredito->update();
+                        } else {
+                            $upCredito->estado_credito = 'Activo';
+                            $upCredito->update();
+                        }
+
                         $upCredito->estado_credito = 'Activo';
                         $upCredito->update();
-                    }
+                    } else {
+                        // return 'tiene credito vencido';
+                        $credito_id = $fecha_limite->id;
+                        $upCredito = Credito::findOrFail($credito_id);
 
-                    $upCredito->estado_credito = 'Activo';
-                        $upCredito->update();
-
-                }else{
-                    // return 'tiene credito vencido';
-                    $credito_id = $fecha_limite->id;
-                    $upCredito = Credito::findOrFail($credito_id);
-
-                    $upCredito->estado_credito = 'Moroso';
-                    $upCredito->update();
-
-
-                    if ($upCredito->total_deuda > 0) {
                         $upCredito->estado_credito = 'Moroso';
                         $upCredito->update();
-                    }else{
-                        $upCredito->estado_credito = 'Activo';
-                        $upCredito->update();
+
+
+                        if ($upCredito->total_deuda > 0) {
+                            $upCredito->estado_credito = 'Moroso';
+                            $upCredito->update();
+                        } else {
+                            $upCredito->estado_credito = 'Activo';
+                            $upCredito->update();
+                        }
                     }
                 }
-
             }
-        }
             $detalle_creditos = Detalle_credito::get();
             // return $detalle_credito;
             foreach ($detalle_creditos as $detalle_credito) {
@@ -156,27 +144,24 @@ class VentaController extends Controller
                         $upDetalleCredito->estado_credito = 'Vencido';
                         $upDetalleCredito->update();
                     }
-
-
                 }
-
-        }
+            }
             // echo $difference = $date->diff($date2)->days;
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 
             $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
             // dd($cajaSessionid);
-            $Caja = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
+            $Caja = Caja::where("estado", "=", 'Abierta')->where("sessioncaja_id", "=", $cajaSessionid->id)->first();
 
             if ($Caja) {
 
-                if($Caja->user_id == Auth::id()){
-                    $title='Nueva venta';
+                if ($Caja->user_id == Auth::id()) {
+                    $title = 'Nueva venta';
                     $personas = DB::table('personas')->where('tipo_persona', '=', 'Cliente')->get();
                     $tasaDolar = DB::table('tasas')->where('nombre', '=', 'Dolar')->first();
                     $tasaPeso = DB::table('tasas')->where('nombre', '=', 'Peso')->first();
@@ -184,7 +169,7 @@ class VentaController extends Controller
                     $tasaMixto = DB::table('tasas')->where('nombre', '=', 'Mixto')->first();
                     $tasaEfectivo = DB::table('tasas')->where('nombre', '=', 'Efectivo')->first();
                     $articulos = DB::table('articulos as art')
-                        ->select(DB::raw('CONCAT(art.codigo, " - ", art.nombre) AS articulo'), 'art.imagen', 'art.vender_al', 'art.nombre','art.id', 'precio_costo', 'porEspecial', 'isDolar', 'isPeso', 'isTransPunto', 'isMixto', 'isEfectivo', 'isKilo', 'stock', 'art.nombre')
+                        ->select(DB::raw('CONCAT(art.codigo, " - ", art.nombre) AS articulo'), 'art.imagen', 'art.vender_al', 'art.nombre', 'art.id', 'precio_costo', 'porEspecial', 'isDolar', 'isPeso', 'isTransPunto', 'isMixto', 'isEfectivo', 'isKilo', 'stock', 'art.nombre')
                         ->where('art.estado', '=', 'Activo')
                         ->where('art.stock', '>', '0')
                         ->where('art.precio_costo', '>', '0')
@@ -192,7 +177,7 @@ class VentaController extends Controller
 
                     // return $articulos;
                     $UserId = Auth::id();
-                    $caja = Caja::where("estado","=",'Abierta')->where("sessioncaja_id","=", $cajaSessionid->id)->first();
+                    $caja = Caja::where("estado", "=", 'Abierta')->where("sessioncaja_id", "=", $cajaSessionid->id)->first();
                     $ventaNum = Venta::latest('id')->first();
                     // dd(is_null($ventaNum));
                     if (is_null($ventaNum)) {
@@ -200,9 +185,9 @@ class VentaController extends Controller
                         $num_comprobante = Sessioncaja::numCodigo('C', $UserId, 1);
                         $serie_comprobante = Sessioncaja::numCodigo('N', $UserId, 1);
                         // dd($serie_comprobante);
-                    }else{
-                        $num_comprobante = Sessioncaja::numCodigo('C', $UserId, $ventaNum->id+1);
-                        $serie_comprobante = Sessioncaja::numCodigo('N', $UserId, $ventaNum->id+1);
+                    } else {
+                        $num_comprobante = Sessioncaja::numCodigo('C', $UserId, $ventaNum->id + 1);
+                        $serie_comprobante = Sessioncaja::numCodigo('N', $UserId, $ventaNum->id + 1);
                     }
 
 
@@ -212,18 +197,18 @@ class VentaController extends Controller
                         ->join('articulo_ventas as av', 'v.id', '=', 'av.venta_id')
                         ->join('cajas as c', 'v.caja_id', '=', 'c.sessioncaja_id')
                         ->join('users as u', 'u.id', '=', 'c.user_id')
-                        ->select('u.name','c.user_id','v.id', 'v.fecha_hora','v.caja_id', 'c.sessioncaja_id', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+                        ->select('u.name', 'c.user_id', 'v.id', 'v.fecha_hora', 'v.caja_id', 'c.sessioncaja_id', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
                         ->where('c.user_id', '=', Auth::user()->id)
                         ->where('c.estado', '=', 'Abierta')
                         ->orderBy('v.id', 'desc')
-                        ->groupBy('u.name','c.user_id','v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
+                        ->groupBy('u.name', 'c.user_id', 'v.id', 'v.fecha_hora', 'p.nombre', 'v.tipo_comprobante', 'v.serie_comprobante', 'v.num_comprobante', 'v.total_venta', 'v.estado')
                         ->get();
-                        // dd($tasaTransferenciaPunto);
-                        // return $ventas;
+                    // dd($tasaTransferenciaPunto);
+                    // return $ventas;
 
-                        // $sumaDivisa = Venta::find(6);
-                        // $sumaDivisa->pago_ventas;
-                        // $sumaDivisa->caja->user;
+                    // $sumaDivisa = Venta::find(6);
+                    // $sumaDivisa->pago_ventas;
+                    // $sumaDivisa->caja->user;
 
                     $cajas = Caja::find($caja->id);
                     $cajas->user;
@@ -238,30 +223,29 @@ class VentaController extends Controller
                     //     $cont = $cont+1;
                     // }
 
-                    foreach ($cajas->pago_ventas as $pago ) {
+                    foreach ($cajas->pago_ventas as $pago) {
 
                         if ($pago->Divisa == 'Dolar') {
                             $cajas->SumaTotalDolar = $cajas->SumaTotalDolar + $pago->MontoDivisa;
-                        }elseif ($pago->Divisa == 'Peso') {
+                        } elseif ($pago->Divisa == 'Peso') {
                             $cajas->SumaTotalPeso = $cajas->SumaTotalPeso + $pago->MontoDivisa;
-                        }elseif ($pago->Divisa == 'Bolivar') {
+                        } elseif ($pago->Divisa == 'Bolivar') {
                             $cajas->SumaTotalBolivar = $cajas->SumaTotalBolivar + $pago->MontoDivisa;
-                        }elseif ($pago->Divisa == 'Punto') {
+                        } elseif ($pago->Divisa == 'Punto') {
                             $cajas->SumaTotalPunto = $cajas->SumaTotalPunto + $pago->MontoDivisa;
-                        }elseif ($pago->Divisa == 'Transferencia') {
+                        } elseif ($pago->Divisa == 'Transferencia') {
                             $cajas->SumaTotalTransferencia = $cajas->SumaTotalTransferencia + $pago->MontoDivisa;
                         }
-
                     }
 
-                    foreach ($cajas->ventas as $vent ) {
+                    foreach ($cajas->ventas as $vent) {
                         if ($vent->estado == 'Aceptada') {
-                        $cajas->SumaTotalVentas = $cajas->SumaTotalVentas + $vent->total_venta;
-                        $cajas->SumaTotalCantidadVentas = $cajas->SumaTotalCantidadVentas + 1;
+                            $cajas->SumaTotalVentas = $cajas->SumaTotalVentas + $vent->total_venta;
+                            $cajas->SumaTotalCantidadVentas = $cajas->SumaTotalCantidadVentas + 1;
                         }
                     }
 
-                    foreach ($cajas->articulo_ventas as $art_vent ) {
+                    foreach ($cajas->articulo_ventas as $art_vent) {
                         $cajas->SumaArticulosVendidos = $cajas->SumaArticulosVendidos + $art_vent->cantidad;
                     }
 
@@ -269,28 +253,24 @@ class VentaController extends Controller
                     //  return $ventas;
                     //dd($ventas);
 
-                    return view('ventas.venta.create', compact('cajas','num_comprobante','serie_comprobante','caja', 'ventas','title','personas','tasaDolar','tasaPeso','tasaTransferenciaPunto','tasaMixto','tasaEfectivo','articulos'));
-                }else{
+                    return view('ventas.venta.create', compact('cajas', 'num_comprobante', 'serie_comprobante', 'caja', 'ventas', 'title', 'personas', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'articulos'));
+                } else {
                     return redirect()
-                    ->route('caja.index')
-                    ->with('status_danger', '¡Error de acceso! Solo se permite un usuario por caja para realizar ventas y ya se encuentra una caja abierta por otro usuario... ');
+                        ->route('caja.index')
+                        ->with('status_danger', '¡Error de acceso! Solo se permite un usuario por caja para realizar ventas y ya se encuentra una caja abierta por otro usuario... ');
                 }
-
             }
-                return redirect()
+            return redirect()
                 ->route('caja.index')
                 ->with('status_danger', '¡Debes crear una caja para poder acceder!');
-
-
         }
-
     }
 
     public function store(Request $request)
     {
         return $request;
-    //     dd('hola');
-        try{
+        //     dd('hola');
+        try {
             DB::beginTransaction();
             $myTime = Carbon::now('America/Caracas');
             // number_format($número, 2, '.', '');
@@ -367,7 +347,7 @@ class VentaController extends Controller
             while ($cont < count($articulo_id)) {
                 $precio_costo_final += $cantidad[$cont] * $precio_costo_unidad[$cont];
 
-                $cont = $cont+1;
+                $cont = $cont + 1;
             }
 
             // return $precio_costo_final;
@@ -409,7 +389,7 @@ class VentaController extends Controller
             // $servicioVentas->servicio_id = $servicio_id;
             // $servicioVentas->venta_id = $venta->id;
             // $servicioVentas->save();
-// return $modo_pago;
+            // return $modo_pago;
 
             // if($modo_pago == 'credito'){
             //     $credito = new Credito;
@@ -447,13 +427,13 @@ class VentaController extends Controller
 
             if ($tipo_pago == 'Dolar') {
                 $precio_venta_unidad = $request->get('precio_venta');
-            }elseif ($tipo_pago == 'Peso') {
+            } elseif ($tipo_pago == 'Peso') {
                 $precio_venta_unidad = $request->get('precio_venta_p');
-            }elseif ($tipo_pago == 'Trans/Punto') {
+            } elseif ($tipo_pago == 'Trans/Punto') {
                 $precio_venta_unidad = $request->get('precio_venta_tp');
-            }elseif ($tipo_pago == 'Mixto') {
+            } elseif ($tipo_pago == 'Mixto') {
                 $precio_venta_unidad = $request->get('precio_venta_m');
-            }elseif ($tipo_pago == 'Efectivo') {
+            } elseif ($tipo_pago == 'Efectivo') {
                 $precio_venta_unidad = $request->get('precio_venta_e');
             }
 
@@ -473,29 +453,29 @@ class VentaController extends Controller
 
                 $isDivisa = Articulo::find($articulo_id[$cont]);
 
-                if($isDivisa->isDolar){
+                if ($isDivisa->isDolar) {
                     $activoD = $isDivisa->isDolar;
-                }else{
+                } else {
                     $activoD = null;
                 }
-                if($isDivisa->isPeso){
+                if ($isDivisa->isPeso) {
                     $activoP = $isDivisa->isPeso;
-                }else{
+                } else {
                     $activoP = null;
                 }
-                if($isDivisa->isTransPunto){
+                if ($isDivisa->isTransPunto) {
                     $activoT = $isDivisa->isTransPunto;
-                }else{
+                } else {
                     $activoT = null;
                 }
-                if($isDivisa->isMixto){
+                if ($isDivisa->isMixto) {
                     $activoM = $isDivisa->isMixto;
-                }else{
+                } else {
                     $activoM = null;
                 }
-                if($isDivisa->isEfectivo){
+                if ($isDivisa->isEfectivo) {
                     $activoE = $isDivisa->isEfectivo;
-                }else{
+                } else {
                     $activoE = null;
                 }
 
@@ -512,10 +492,10 @@ class VentaController extends Controller
                 $Articulo_venta->descuento = $descuento[$cont];
                 $Articulo_venta->estado_pago = 'Pagado';
                 $Articulo_venta->articulo_id = $articulo_id[$cont];
-                $Articulo_venta->venta_id =  $venta->id;//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
+                $Articulo_venta->venta_id =  $venta->id; //este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
                 $Articulo_venta->save();
 
-                $cont = $cont+1;
+                $cont = $cont + 1;
             }
 
 
@@ -528,15 +508,14 @@ class VentaController extends Controller
             $MontoDivisaR = array_filter($MontoDivisaR);
 
 
-            foreach($MontoDivisaR as $key => $val) {
+            foreach ($MontoDivisaR as $key => $val) {
 
 
-                $divisa[]=$divisaR[$key];
-                $MontoDivisa[]=$MontoDivisaR[$key];
-                $TasaTiket[]=$TasaTikeR[$key];
-                $MontoDolar[]=$MontoDolarR[$key];
-                $Vueltos[]=$VeltosR[$key];
-
+                $divisa[] = $divisaR[$key];
+                $MontoDivisa[] = $MontoDivisaR[$key];
+                $TasaTiket[] = $TasaTikeR[$key];
+                $MontoDolar[] = $MontoDolarR[$key];
+                $Vueltos[] = $VeltosR[$key];
             }
 
 
@@ -559,13 +538,11 @@ class VentaController extends Controller
                 $Pago_Venta->venta_id = $venta->id;
                 $Pago_Venta->save();
 
-                $cont = $cont+1;
+                $cont = $cont + 1;
             }
 
             DB::commit();
-
-        }catch(\Exception $e)
-        {
+        } catch (\Exception $e) {
 
             DB::rollback();
             dd($e);
@@ -587,55 +564,52 @@ class VentaController extends Controller
         //traemos los datos de la tabla detalle_venta
         $detalles = DB::table('articulo_ventas as av')
             ->join('articulos as a', 'av.articulo_id', '=', 'a.id')
-            ->select('a.nombre as articulo', 'av.cantidad', 'av.descuento','av.precio_venta_unidad')
+            ->select('a.nombre as articulo', 'av.cantidad', 'av.descuento', 'av.precio_venta_unidad')
             ->where('av.venta_id', '=', $id)->get();
 
-        return view("ventas.venta.show", ["venta" => $venta, "detalles"=> $detalles]);
+        return view("ventas.venta.show", ["venta" => $venta, "detalles" => $detalles]);
     }
 
     public function destroy($id)
     {
         $VentaCancelada = venta::findOrFail($id);
         // return $VentaCancelada->estado;
-        if($VentaCancelada->estado != 'Cancelada'){
-            try{
+        if ($VentaCancelada->estado != 'Cancelada') {
+            try {
                 DB::beginTransaction();
-            $venta = venta::findOrFail($id);
-            $venta->estado = 'Cancelada';
-            $venta->update();
+                $venta = venta::findOrFail($id);
+                $venta->estado = 'Cancelada';
+                $venta->update();
 
-            $detalleVenta = articulo_Venta::where('venta_id','=',$id)->get();
-
-
-            //creamos un contador
-            $cont = 0;
-
-            //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            while ($cont < count($detalleVenta)) {
-                $idarticulo = $detalleVenta[$cont]->articulo_id;
-                $articulo = Articulo::findOrFail($idarticulo);
-                $articulo->stock = $articulo->stock+$detalleVenta[$cont]->cantidad;
-                $articulo->update();
-
-                $cont = $cont+1;
-
-            };
-
-            $registros = Pago_Venta::where('venta_id',$id)->get();
-            foreach($registros as $registro){
-                $ids[]=$registro->id;
-            }
+                $detalleVenta = articulo_Venta::where('venta_id', '=', $id)->get();
 
 
-            if (isset($ids)) {
-                $eliminados = Pago_Venta::destroy($ids);
-            }
+                //creamos un contador
+                $cont = 0;
+
+                //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+                while ($cont < count($detalleVenta)) {
+                    $idarticulo = $detalleVenta[$cont]->articulo_id;
+                    $articulo = Articulo::findOrFail($idarticulo);
+                    $articulo->stock = $articulo->stock + $detalleVenta[$cont]->cantidad;
+                    $articulo->update();
+
+                    $cont = $cont + 1;
+                };
+
+                $registros = Pago_Venta::where('venta_id', $id)->get();
+                foreach ($registros as $registro) {
+                    $ids[] = $registro->id;
+                }
 
 
-            DB::commit();
+                if (isset($ids)) {
+                    $eliminados = Pago_Venta::destroy($ids);
+                }
 
-            }catch(\Exception $e)
-            {
+
+                DB::commit();
+            } catch (\Exception $e) {
 
                 DB::rollback();
                 // dd($e);

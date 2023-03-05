@@ -23,17 +23,21 @@ class Excedentes_Recibidos_Caja_Actual extends Model
 
     protected $guarded = [];
 
-    public function caja(){
+    public function caja()
+    {
         return $this->belongsTo(Caja::class);
     }
 
-    public function servicio(){
+    public function servicio()
+    {
         return $this->belongsTo(Servicio::class);
     }
-    public function venta(){
+    public function venta()
+    {
         return $this->belongsTo(Venta::class);
     }
-    public function horas_extra(){
+    public function horas_extra()
+    {
         return $this->belongsTo(Horas_extra::class);
     }
 }

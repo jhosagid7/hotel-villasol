@@ -21,10 +21,12 @@ class Pago_Credito extends Model
 
     protected $guarded = [];
 
-    public function detalle_creditos_pagado(){
+    public function detalle_creditos_pagado()
+    {
         return $this->belongsTo(Detalle_Creditos_Pagado::class);
     }
-    public function caja(){
+    public function caja()
+    {
         return $this->belongsTo(Caja::class);
     }
 }

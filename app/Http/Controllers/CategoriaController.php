@@ -18,24 +18,23 @@ class CategoriaController extends Controller
     }
     public function index(Request $request)
     {
-            // return $request;
+        // return $request;
 
         $nombre = $request->get('nombre');
         $condition = $request->get('condition');
         $description = $request->get('descripcion');
         $fecha = $request->get('fecha');
 
-        if($request){
+        if ($request) {
 
-            $categorias=Categoria::orderBy('id', 'DESC')
-            ->nombre($nombre)
-            ->condition($condition)
-            ->description($description)
-            ->fecha($fecha)
-            ->get();
-            return view("almacen.categoria.index",["categorias"=>$categorias]);
+            $categorias = Categoria::orderBy('id', 'DESC')
+                ->nombre($nombre)
+                ->condition($condition)
+                ->description($description)
+                ->fecha($fecha)
+                ->get();
+            return view("almacen.categoria.index", ["categorias" => $categorias]);
         }
-
     }
     public function create()
     {
@@ -61,7 +60,7 @@ class CategoriaController extends Controller
     {
         return view("almacen.categoria.edit", ["categoria" => Categoria::findOrFail($id)]);
     }
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
         $categoria = Categoria::findOrFail($id);
         $categoria->nombre = $request->get('nombre');
@@ -69,10 +68,8 @@ class CategoriaController extends Controller
         $categoria->update();
 
         return redirect()
-        ->route('categoria.index')
-        ->with('status_success', 'Categoria actualizada exitosamente');
-
-
+            ->route('categoria.index')
+            ->with('status_success', 'Categoria actualizada exitosamente');
     }
     public function destroy($id)
     {
@@ -81,9 +78,7 @@ class CategoriaController extends Controller
         $categoria->condicion = 'Eliminada';
         $categoria->update();
         return redirect()
-        ->route('categoria.index')
-        ->with('status_success', 'Categoria eliminada exitosamente');
-
+            ->route('categoria.index')
+            ->with('status_success', 'Categoria eliminada exitosamente');
     }
-
 }

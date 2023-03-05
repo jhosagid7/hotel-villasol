@@ -47,14 +47,14 @@ class HorarioController extends Controller
     public function store(Request $request)
     {
         // return $request->is24Horas;
-        if($request->is24Horas == 'on'){
+        if ($request->is24Horas == 'on') {
             $desde      = null;
             $hasta      = null;
             $restringir = null;
-        }else{
-            $desde =date('H:i:s', strtotime( $request->get('desde')));
-            $hasta =date('H:i:s', strtotime( $request->get('hasta')));
-            $restringir =date('H:i:s', strtotime( $request->get('restringir')));
+        } else {
+            $desde = date('H:i:s', strtotime($request->get('desde')));
+            $hasta = date('H:i:s', strtotime($request->get('hasta')));
+            $restringir = date('H:i:s', strtotime($request->get('restringir')));
         }
 
         $horario = new Horario;
@@ -66,7 +66,7 @@ class HorarioController extends Controller
         $horario->is24Horas = $request->is24Horas;
         $horario->save();
 
-       return Redirect::to('config/horario')->with('status_success', 'El horario fue creado Exitosamente...!');
+        return Redirect::to('config/horario')->with('status_success', 'El horario fue creado Exitosamente...!');
     }
 
     /**
@@ -102,14 +102,14 @@ class HorarioController extends Controller
     public function update(Request $request, Horario $horario)
     {
         // return $request;
-        if($request->is24Horas == 'on'){
+        if ($request->is24Horas == 'on') {
             $desde      = null;
             $hasta      = null;
             $restringir = null;
-        }else{
-            $desde =date('H:i:s', strtotime( $request->get('desde')));
-            $hasta =date('H:i:s', strtotime( $request->get('hasta')));
-            $restringir =date('H:i:s', strtotime( $request->get('restringir')));
+        } else {
+            $desde = date('H:i:s', strtotime($request->get('desde')));
+            $hasta = date('H:i:s', strtotime($request->get('hasta')));
+            $restringir = date('H:i:s', strtotime($request->get('restringir')));
         }
 
 
@@ -122,8 +122,8 @@ class HorarioController extends Controller
         $horario->update();
 
         return redirect()
-        ->route('horario.index')
-        ->with('status_success', 'Horario actualizado exitosamente...');
+            ->route('horario.index')
+            ->with('status_success', 'Horario actualizado exitosamente...');
     }
 
     /**
@@ -137,7 +137,7 @@ class HorarioController extends Controller
         $horario->delete();
 
         return redirect()
-        ->route('horario.index')
-        ->with('status_success', 'Horario fue eliminado exitosamente...');
+            ->route('horario.index')
+            ->with('status_success', 'Horario fue eliminado exitosamente...');
     }
 }

@@ -16,11 +16,13 @@ class Sucursal extends Model
         'empresa_id'
     ];
 
-    public function empresa(){
+    public function empresa()
+    {
         return $this->belongsTo('App\Empresa');
     }
 
-    public function levels(){
+    public function levels()
+    {
         return $this->hasMany('App\Level');
     }
 
@@ -29,9 +31,8 @@ class Sucursal extends Model
         return $this->hasMany('App\Caja');
     }
 
-    public function config_sucursals(){
+    public function config_sucursals()
+    {
         return $this->hasMany(Config_Sucursal::class);
     }
-
-
 }

@@ -53,7 +53,7 @@ class CatController extends Controller
         $cat->estado = 1;
         $cat->save();
 
-       return Redirect::to('config/cat')->with('status_success', 'La categoría fue creada Exitosamente...!');
+        return Redirect::to('config/cat')->with('status_success', 'La categoría fue creada Exitosamente...!');
     }
 
     /**
@@ -93,8 +93,8 @@ class CatController extends Controller
         $cat->update();
 
         return redirect()
-        ->route('cat.index')
-        ->with('status_success', 'Categoría actualizada exitosamente...');
+            ->route('cat.index')
+            ->with('status_success', 'Categoría actualizada exitosamente...');
     }
 
     /**
@@ -109,7 +109,7 @@ class CatController extends Controller
         $cat->update();
 
         return redirect()
-        ->route('cat.index')
-        ->with('status_success', 'Categoría fue eliminada exitosamente...');
+            ->route('cat.index')
+            ->with('status_success', 'Categoría fue eliminada exitosamente...');
     }
 }

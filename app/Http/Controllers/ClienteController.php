@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Persona;
+
 use App\Http\Requests;
-use App\Http\Requests\PersonaFormRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use DB;
+use App\Http\Requests\PersonaFormRequest;
 
 class ClienteController extends Controller
 {
@@ -22,12 +22,12 @@ class ClienteController extends Controller
         if ($request) {
             $query = trim($request->get('buscarTexto'));
             $personas = DB::table('personas')
-            ->where('nombre', 'LIKE', '%' . $query . '%')
-            ->where('tipo_persona', '=', 'Cliente')
-            ->orwhere('num_documento', 'LIKE', '%' . $query . '%')
-            ->where('tipo_persona', '=', 'Cliente')
-            ->orderBy('id', 'desc')
-            ->get();
+                ->where('nombre', 'LIKE', '%' . $query . '%')
+                ->where('tipo_persona', '=', 'Cliente')
+                ->orwhere('num_documento', 'LIKE', '%' . $query . '%')
+                ->where('tipo_persona', '=', 'Cliente')
+                ->orderBy('id', 'desc')
+                ->get();
 
             return view('ventas.persona.index', ["personas" => $personas, "buscarTexto" => $query]);
         }

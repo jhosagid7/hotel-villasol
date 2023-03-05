@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Articulo extends Model
 {
     //hola esto es un conmentario
-   //Hacemos referencia a que talla se refiere este modelo
+    //Hacemos referencia a que talla se refiere este modelo
     // protected $table = 'articulo';
 
     //Decalaramos que atributo va a ser la clave primaria de la tabla
@@ -42,94 +42,111 @@ class Articulo extends Model
     //Haora especificamos los campos guarded
     protected $guarded = [];
 
-    public function articulo_ventas(){
+    public function articulo_ventas()
+    {
         return $this->hasMany(Articulo_venta::class);
     }
 
-    public function servicios_ventas(){
+    public function servicios_ventas()
+    {
         return $this->hasMany(Servicios_ventas::class);
     }
 
-    public function articulo_ingresos(){
+    public function articulo_ingresos()
+    {
         return $this->hasMany(Articulo_Ingreso::class);
     }
 
-    public function categoria(){
+    public function categoria()
+    {
         return $this->belongsTo(Categoria::class);
     }
 
 
 
-    public function scopeName($query, $name){
-        if($name)
-        return $query->where('articulos.nombre', 'LIKE', "%$name%");
+    public function scopeName($query, $name)
+    {
+        if ($name)
+            return $query->where('articulos.nombre', 'LIKE', "%$name%");
     }
 
-    public function scopeCodigo($query, $codigo){
-        if($codigo)
-        return $query->where('articulos.codigo', 'LIKE', "$codigo");
+    public function scopeCodigo($query, $codigo)
+    {
+        if ($codigo)
+            return $query->where('articulos.codigo', 'LIKE', "$codigo");
     }
 
-    public function scopeVenderaL($query, $venderal){
-        if($venderal)
-        return $query->where('articulos.vender_al', 'LIKE', "$venderal");
+    public function scopeVenderaL($query, $venderal)
+    {
+        if ($venderal)
+            return $query->where('articulos.vender_al', 'LIKE', "$venderal");
     }
-    public function scopeMayor($query){
+    public function scopeMayor($query)
+    {
 
         return $query->where('vender_al', '=', "Mayor");
     }
-    public function scopeDetal($query){
+    public function scopeDetal($query)
+    {
 
         return $query->where('vender_al', '=', "Detal");
     }
 
-    public function scopeActivo($query){
+    public function scopeActivo($query)
+    {
 
         return $query->where('estado', '=', "Activo");
     }
 
-    public function scopeInactivo($query){
+    public function scopeInactivo($query)
+    {
 
         return $query->where('estado', '=', "Inactivo");
     }
 
-    public function scopeFecha($query, $fecha){
+    public function scopeFecha($query, $fecha)
+    {
 
-        if($fecha){
-        list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-            $fecha_inicio = Carbon::parse($fecha_inicio. '00:00:00')->format('Y-m-d H:i:s');
-            $fecha_fin = Carbon::parse($fecha_fin. '23:59:59')->format('Y-m-d H:i:s');
-        return $query->whereBetween('articulos.created_at', [$fecha_inicio, $fecha_fin]);
+        if ($fecha) {
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+            $fecha_inicio = Carbon::parse($fecha_inicio . '00:00:00')->format('Y-m-d H:i:s');
+            $fecha_fin = Carbon::parse($fecha_fin . '23:59:59')->format('Y-m-d H:i:s');
+            return $query->whereBetween('articulos.created_at', [$fecha_inicio, $fecha_fin]);
         }
     }
 
-    public function setporEspecialAttribute($value){
+    public function setporEspecialAttribute($value)
+    {
         $this->attributes['porEspecial'] = ($value == '' ? null : $value);
     }
 
-    public function setIsDolarAttribute($value){
+    public function setIsDolarAttribute($value)
+    {
         $this->attributes['isDolar'] = ($value == 'on' ? '1' : null);
     }
 
-    public function setIsPesoAttribute($value){
+    public function setIsPesoAttribute($value)
+    {
         $this->attributes['isPeso'] = ($value == 'on' ? '1' : null);
     }
 
-    public function setIsTransPuntoAttribute($value){
+    public function setIsTransPuntoAttribute($value)
+    {
         $this->attributes['isTransPunto'] = ($value == 'on' ? '1' : null);
     }
 
-    public function setIsMixtoAttribute($value){
+    public function setIsMixtoAttribute($value)
+    {
         $this->attributes['isMixto'] = ($value == 'on' ? '1' : null);
     }
 
-    public function setIsEfectivoAttribute($value){
+    public function setIsEfectivoAttribute($value)
+    {
         $this->attributes['isEfectivo'] = ($value == 'on' ? '1' : null);
     }
 
-    public function setIsKiloAttribute($value){
+    public function setIsKiloAttribute($value)
+    {
         $this->attributes['isKilo'] = ($value == 'on' ? '1' : null);
     }
-
 }
-

@@ -22,7 +22,8 @@ class Habitacione extends Model
         return $this->belongsTo(Cat::class);
     }
 
-    public function servicios(){
+    public function servicios()
+    {
         return $this->hasMany(Servicio::class);
     }
 
@@ -32,16 +33,15 @@ class Habitacione extends Model
     {
         return $this->belongsTo(Level::class);
     }
-    public static function getHabitacionesId($id) {
+    public static function getHabitacionesId($id)
+    {
         // $user = Auth::user();
         // Get the currently authenticated user's ID...
         // $id = Auth::id();
 
         return Habitacione::where('level_id', $id)
-               ->orderBy('id', 'desc')
-               ->get();
+            ->orderBy('id', 'desc')
+            ->get();
         // return Sessioncaja::find($session_caja_id);
     }
-
-
 }

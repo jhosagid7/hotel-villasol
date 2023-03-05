@@ -12,31 +12,39 @@ class Venta extends Model
 
     // public $timestamps = false;
 
-    public function articulo_ventas(){
+    public function articulo_ventas()
+    {
         return $this->hasMany(Articulo_venta::class);
     }
-    public function servicios_ventas(){
+    public function servicios_ventas()
+    {
         return $this->hasMany(Servicios_Ventas::class);
     }
-    public function pago_ventas(){
+    public function pago_ventas()
+    {
         return $this->hasMany(Pago_Venta::class);
     }
-    public function pago_vueltos(){
+    public function pago_vueltos()
+    {
         return $this->hasMany(Pago_Vuelto::class);
     }
-    public function excedentes(){
+    public function excedentes()
+    {
         return $this->hasMany(Excedentes_Recibidos_Caja_Actual::class);
     }
 
 
-    public function caja(){
+    public function caja()
+    {
         return $this->belongsTo(Caja::class);
     }
-    public function servicio(){
+    public function servicio()
+    {
         return $this->belongsTo(Servicio::class);
     }
 
-    public function Persona(){
+    public function Persona()
+    {
         return $this->belongsTo(Persona::class);
     }
 
@@ -79,7 +87,6 @@ class Venta extends Model
 
 
     protected $guarded = [];
-
 }
 
 // DELIMITER //

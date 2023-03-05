@@ -2,7 +2,7 @@
 </div>
 <!-- /.box-body -->
 <div class="box-footer">
-  {{-- Footer --}}
+    {{-- Footer --}}
 </div>
 <!-- /.box-footer-->
 </div>

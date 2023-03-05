@@ -1,6 +1,5 @@
 @extends ('layouts.admin3')
 @section('contenido')
-
     <!-- Default box -->
     <!-- Content Header (Page header) -->
     {{-- <section class="content-header">
@@ -21,17 +20,20 @@
         <!-- Default box -->
         <div class="box">
             <div class="box-header with-border">
-                <h3 class="box-title">@isset($title)
+                <h3 class="box-title">
+                    @isset($title)
                         {{ $title }}
                     @else
                         {!! 'Sistema' !!}
-                    @endisset</h3>
+                    @endisset
+                </h3>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                         title="Collapse">
                         <i class="fa fa-minus"></i></button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip"
+                        title="Remove">
                         <i class="fa fa-times"></i></button>
                 </div>
             </div>

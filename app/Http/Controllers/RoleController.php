@@ -21,9 +21,9 @@ class RoleController extends Controller
     public function index()
     {
         Gate::authorize('haveaccess', 'role.index');
-        $title='Roles';
-        $roles = Role::orderBy('id','Desc')->paginate(2);
-        return view('role.index', compact('title','roles'));
+        $title = 'Roles';
+        $roles = Role::orderBy('id', 'Desc')->paginate(2);
+        return view('role.index', compact('title', 'roles'));
     }
 
     /**
@@ -34,10 +34,10 @@ class RoleController extends Controller
     public function create()
     {
         Gate::authorize('haveaccess', 'role.create');
-        $title='Nuevo Rol';
+        $title = 'Nuevo Rol';
         $permissions = Permission::get();
 
-        return view('role.create', compact('title','permissions'));
+        return view('role.create', compact('title', 'permissions'));
     }
 
     /**
@@ -60,12 +60,12 @@ class RoleController extends Controller
 
         //validamos que vengan los permisos del formulario
         // if ($request->get('permission')) {
-            //return $request->all();
-            $role->permissions()->sync($request->get('permission'));
+        //return $request->all();
+        $role->permissions()->sync($request->get('permission'));
         // }
         return redirect()
-        ->route('role.index')
-        ->with('status_success', 'Role saved successfully');
+            ->route('role.index')
+            ->with('status_success', 'Role saved successfully');
     }
 
     /**
@@ -78,9 +78,9 @@ class RoleController extends Controller
     {
         // Gate::authorize('haveaccess', 'role.show');
         $this->authorize('haveaccess', 'role.show');
-        $title='store Rol';
+        $title = 'store Rol';
         //creamos un array para optener los ides y poder validar en la vista edit
-        $permission_role=[];
+        $permission_role = [];
 
         foreach ($role->permissions as $permission) {
             $permission_role[] = $permission->id;
@@ -90,7 +90,7 @@ class RoleController extends Controller
         //el uso (Model building) de Role $role es como si usaramos $role = Role::findOrFile($id);
         $permissions = Permission::get();
 
-        return view('role.view', compact('title','permissions','role', 'permission_role'));
+        return view('role.view', compact('title', 'permissions', 'role', 'permission_role'));
     }
 
     /**
@@ -102,9 +102,9 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         Gate::authorize('haveaccess', 'role.edit');
-        $title='Editar Rol';
+        $title = 'Editar Rol';
         //creamos un array para optener los ides y poder validar en la vista edit
-        $permission_role=[];
+        $permission_role = [];
 
         foreach ($role->permissions as $permission) {
             $permission_role[] = $permission->id;
@@ -114,7 +114,7 @@ class RoleController extends Controller
         //el uso (Model building) de Role $role es  si usaramos $role = Role::findOrFile($id);
         $permissions = Permission::get();
 
-        return view('role.edit', compact('title','permissions','role', 'permission_role'));
+        return view('role.edit', compact('title', 'permissions', 'role', 'permission_role'));
     }
 
     /**
@@ -124,12 +124,12 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,Role $role)
+    public function update(Request $request, Role $role)
     {
         Gate::authorize('haveaccess', 'role.edit');
         $request->validate([
-            'name'        => 'required|max:50|unique:roles,name,'.$role->id,
-            'slug'        => 'required|max:50|unique:roles,slug,'.$role->id,
+            'name'        => 'required|max:50|unique:roles,name,' . $role->id,
+            'slug'        => 'required|max:50|unique:roles,slug,' . $role->id,
             'full-access' => 'required|in:yes,no'
         ]);
 
@@ -138,12 +138,12 @@ class RoleController extends Controller
 
         //validamos que vengan los permisos del formulario
         // if ($request->get('permission')) {
-            //return $request->all();
-            $role->permissions()->sync($request->get('permission'));
+        //return $request->all();
+        $role->permissions()->sync($request->get('permission'));
         // }
         return redirect()
-        ->route('role.index')
-        ->with('status_success', 'Role Update successfully');
+            ->route('role.index')
+            ->with('status_success', 'Role Update successfully');
     }
 
     /**
@@ -158,7 +158,7 @@ class RoleController extends Controller
         $role->delete();
 
         return redirect()
-        ->route('role.index')
-        ->with('status_success', 'Role successfully removed');
+            ->route('role.index')
+            ->with('status_success', 'Role successfully removed');
     }
 }

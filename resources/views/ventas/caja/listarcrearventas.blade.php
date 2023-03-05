@@ -7,8 +7,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="form-group">
                     <label for="cliente">Cliente</label>
-                    <select name="idcliente" id="idcliente" class="form-control selectpicker"
-                        data-live-search="true">
+                    <select name="idcliente" id="idcliente" class="form-control selectpicker" data-live-search="true">
                         @foreach ($personas as $persona)
                             <option value="{{ $persona->idpersona }}">{{ $persona->nombre }}</option>
                         @endforeach
@@ -49,8 +48,8 @@
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                                     <div class="form-group">
                                         <label for="articulo">Artículo</label>
-                                        <select name="jidarticulo" id="jidarticulo"
-                                            class="form-control selectpicker" data-live-search="true">
+                                        <select name="jidarticulo" id="jidarticulo" class="form-control selectpicker"
+                                            data-live-search="true">
                                             <option value="seleccione...">Seleccione Articulo</option>
                                             @foreach ($articulos as $articulo)
                                                 <option
@@ -88,15 +87,14 @@
                                         <label for="precio_venta_dolar">Precio Dolar</label>
                                         <h4 class="font-weight-bold" id="vprecio_venta_dolar">$. 0.00
                                         </h4>
-                                        <input type="hidden" name="jprecio_venta_d_dolar"
-                                            id="jprecio_venta_d_dolar" class="form-control">
+                                        <input type="hidden" name="jprecio_venta_d_dolar" id="jprecio_venta_d_dolar"
+                                            class="form-control">
                                         <input type="hidden" name="jprecio_compra" id="jprecio_compra"
                                             class="form-control" placeholder="Precio venta dolar...">
                                         <input type="hidden" name="jprecio_venta" id="jprecio_venta"
                                             class="form-control" placeholder="Precio dolar...">
-                                        <input type="hidden" name="jprecio_venta_dolar"
-                                            id="jprecio_venta_dolar" class="form-control"
-                                            placeholder="Precio dolar...">
+                                        <input type="hidden" name="jprecio_venta_dolar" id="jprecio_venta_dolar"
+                                            class="form-control" placeholder="Precio dolar...">
                                         <input type="hidden" name="jmarjen_ganancia_dolar"
                                             id="jmarjen_ganancia_dolar"
                                             value="{{ $tasaDolar->porcentaje_ganancia }}">
@@ -107,13 +105,11 @@
                                         <label for="jprecio_venta_peso">Precio Pesos</label>
                                         <h4 class="font-weight-bold" id="vprecio_venta_peso">$. 0.00
                                         </h4>
-                                        <input type="hidden" name="jprecio_venta_p_dolar"
-                                            id="jprecio_venta_p_dolar" class="form-control">
-                                        <input type="hidden" name="jprecio_venta_peso"
-                                            id="jprecio_venta_peso" class="form-control"
-                                            placeholder="Precio pesos...">
-                                        <input type="hidden" name="jmarjen_ganancia_peso"
-                                            id="jmarjen_ganancia_peso"
+                                        <input type="hidden" name="jprecio_venta_p_dolar" id="jprecio_venta_p_dolar"
+                                            class="form-control">
+                                        <input type="hidden" name="jprecio_venta_peso" id="jprecio_venta_peso"
+                                            class="form-control" placeholder="Precio pesos...">
+                                        <input type="hidden" name="jmarjen_ganancia_peso" id="jmarjen_ganancia_peso"
                                             value="{{ $tasaPeso->porcentaje_ganancia }}">
                                     </div>
                                 </div>
@@ -141,11 +137,10 @@
                                         <label for="jprecio_venta_mixto">Precio Mixto</label>
                                         <h4 class="font-weight-bold" id="vprecio_venta_mixto">Bs. 0.00
                                         </h4>
-                                        <input type="hidden" name="jprecio_venta_m_dolar"
-                                            id="jprecio_venta_m_dolar" class="form-control">
-                                        <input type="hidden" name="jprecio_venta_mixto"
-                                            id="jprecio_venta_mixto" class="form-control"
-                                            placeholder="Precio Mixto...">
+                                        <input type="hidden" name="jprecio_venta_m_dolar" id="jprecio_venta_m_dolar"
+                                            class="form-control">
+                                        <input type="hidden" name="jprecio_venta_mixto" id="jprecio_venta_mixto"
+                                            class="form-control" placeholder="Precio Mixto...">
                                         <input type="hidden" name="jmarjen_ganancia_mixto"
                                             id="jmarjen_ganancia_mixto"
                                             value="{{ $tasaMixto->porcentaje_ganancia }}">
@@ -159,8 +154,8 @@
                                         <h4 class="font-weight-bold" id="vprecio_venta_Efectivo">Bs.
                                             0.00
                                         </h4>
-                                        <input type="hidden" name="jprecio_venta_e_dolar"
-                                            id="jprecio_venta_e_dolar" class="form-control">
+                                        <input type="hidden" name="jprecio_venta_e_dolar" id="jprecio_venta_e_dolar"
+                                            class="form-control">
                                         <input type="hidden" name="jprecio_venta_Efectivo"
                                             id="jprecio_venta_Efectivo" class="form-control"
                                             placeholder="Precio venta efecti...">
@@ -232,14 +227,12 @@
                                                             0.00
                                                         </h4>
                                                     </th><input type="hidden" name="total_venta"
-                                                        id="total_venta"><input type="hidden"
-                                                        name="total_ventad" id="total_ventad"><input
-                                                        type="hidden" name="total_ventap"
-                                                        id="total_ventap"><input type="hidden"
-                                                        name="total_ventatp" id="total_ventatp"><input
-                                                        type="hidden" name="total_ventam"
-                                                        id="total_ventam"><input type="hidden"
-                                                        name="total_ventae" id="total_ventae">
+                                                        id="total_venta"><input type="hidden" name="total_ventad"
+                                                        id="total_ventad"><input type="hidden" name="total_ventap"
+                                                        id="total_ventap"><input type="hidden" name="total_ventatp"
+                                                        id="total_ventatp"><input type="hidden" name="total_ventam"
+                                                        id="total_ventam"><input type="hidden" name="total_ventae"
+                                                        id="total_ventae">
                                                     <th></th>
                                                 </tfoot>
                                                 <tbody>
@@ -249,28 +242,23 @@
                                     </div>
                                     <div class="container-fluit">
                                         <div class="row">
-                                            <div
-                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                            <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                 <button id='bt_addD' type='button'
                                                     class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Dolar</button>
                                             </div>
-                                            <div
-                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                            <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                 <button id='bt_addP' type='button'
                                                     class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Peso</button>
                                             </div>
-                                            <div
-                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                            <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                 <button id='bt_addTP' type='button'
                                                     class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Punto/Trans</button>
                                             </div>
-                                            <div
-                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                            <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                 <button id='bt_addM' type='button'
                                                     class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Mixto</button>
                                             </div>
-                                            <div
-                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                            <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                                 <button id='bt_addE' type='button'
                                                     class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Efectivo</button>
                                             </div>
@@ -301,17 +289,15 @@
                                                 <tr id="trD">
                                                     <td>
                                                         <h4 class="text-bold text-primary">Dolar</h4>
-                                                    </td><input name="divisa[]" value="Dolar"
-                                                        type="hidden">
-                                                    <td><input name="MontoDivisa[]" class="decimal"
-                                                            type="texto" id="DMontoDolar"></td>
+                                                    </td><input name="divisa[]" value="Dolar" type="hidden">
+                                                    <td><input name="MontoDivisa[]" class="decimal" type="texto"
+                                                            id="DMontoDolar"></td>
                                                     <td><input name="TasaTike[]" type="texto" readonly
-                                                            id="TasaDolar"
-                                                            value="{{ $tasaDolar->tasa }}">
+                                                            id="TasaDolar" value="{{ $tasaDolar->tasa }}">
                                                     </td>
                                                     <td><input name="MontoDolar[]" type="text" readonly
-                                                            id="DolarToDolar" class="monto"
-                                                            onchange="sumar();"></td>
+                                                            id="DolarToDolar" class="monto" onchange="sumar();">
+                                                    </td>
                                                     <td><input name="Veltos[]" type="text" readonly
                                                             id="RestaDolar"></td>
                                                     <td id="DsubTotal"></td>
@@ -320,16 +306,14 @@
                                                     <td>
                                                         <h4 class="text-bold text-primary">Peso</h4>
                                                     </td>
-                                                    </th><input name="divisa[]" value="Peso"
-                                                        type="hidden">
-                                                    <td><input name="MontoDivisa[]" class="decimal"
-                                                            type="texto" id="DMontoPeso"></td>
+                                                    </th><input name="divisa[]" value="Peso" type="hidden">
+                                                    <td><input name="MontoDivisa[]" class="decimal" type="texto"
+                                                            id="DMontoPeso"></td>
                                                     <td><input name="TasaTike[]" type="texto" readonly
                                                             id="TasaPeso" value="{{ $tasaPeso->tasa }}">
                                                     </td>
                                                     <td><input name="MontoDolar[]" type="text" readonly
-                                                            id="PesoToDolar" class="monto"
-                                                            onchange="sumar();"></td>
+                                                            id="PesoToDolar" class="monto" onchange="sumar();"></td>
                                                     <td><input name="Veltos[]" type="text" readonly
                                                             id="RestaPeso"></td>
                                                     <td id="PeSubTotal"></td>
@@ -338,17 +322,16 @@
                                                     <td>
                                                         <h4 class="text-bold text-primary">Efectivo</h4>
                                                     </td>
-                                                    </th><input name="divisa[]" value="Bolivar"
-                                                        type="hidden">
-                                                    <td><input name="MontoDivisa[]" class="decimal"
-                                                            type="texto" id="DMontoBolivar"></td>
+                                                    </th><input name="divisa[]" value="Bolivar" type="hidden">
+                                                    <td><input name="MontoDivisa[]" class="decimal" type="texto"
+                                                            id="DMontoBolivar"></td>
                                                     <td><input name="TasaTike[]" type="texto" readonly
                                                             id="TasaBolivar"
                                                             value="{{ $tasaTransferenciaPunto->tasa }}">
                                                     </td>
                                                     <td><input name="MontoDolar[]" type="texto" readonly
-                                                            id="BolivarToDolar" class="monto"
-                                                            onchange="sumar();"></td>
+                                                            id="BolivarToDolar" class="monto" onchange="sumar();">
+                                                    </td>
                                                     <td><input name="Veltos[]" type="text" readonly
                                                             id="RestaBolivar"></td>
                                                     <td id="BoSubTotal"></td>
@@ -357,19 +340,18 @@
                                                     <td>
                                                         <h4 class="text-bold text-primary">Punto</h4>
                                                     </td>
-                                                    </th><input name="divisa[]" value="Punto"
-                                                        type="hidden">
-                                                    <td><input name="MontoDivisa[]" class="decimal"
-                                                            type="texto" id="DMontoPunto"></td>
-                                                    <td><input name="TasaTike[]" type="texto"
-                                                            class="enteros" id="NumTiker" value=""
-                                                            placeholder="N° de tiket..."><input
-                                                            type="hidden" id="TasaPunto"
+                                                    </th><input name="divisa[]" value="Punto" type="hidden">
+                                                    <td><input name="MontoDivisa[]" class="decimal" type="texto"
+                                                            id="DMontoPunto"></td>
+                                                    <td><input name="TasaTike[]" type="texto" class="enteros"
+                                                            id="NumTiker" value=""
+                                                            placeholder="N° de tiket..."><input type="hidden"
+                                                            id="TasaPunto"
                                                             value="{{ $tasaTransferenciaPunto->tasa }}">
                                                     </td>
                                                     <td><input name="MontoDolar[]" readonly type="texto"
-                                                            id="PuntoToDolar" class="monto"
-                                                            onchange="sumar();"></td>
+                                                            id="PuntoToDolar" class="monto" onchange="sumar();">
+                                                    </td>
                                                     <td><input name="Veltos[]" readonly type="text"
                                                             id="RestaPunto"></td>
                                                     <td id="PuSubTotal"></td>
@@ -379,19 +361,18 @@
                                                         <h4 class="text-bold text-primary">Transf
                                                         </h4>
                                                     </td>
-                                                    </th><input name="divisa[]" value="Transferencia"
-                                                        type="hidden">
-                                                    <td><input name="MontoDivisa[]" class="decimal"
-                                                            class="" type="texto" id="DMontoTrans"></td>
-                                                    <td><input name="TasaTike[]" type="texto"
-                                                            class="enteros" id="NumtTrans" value=""
-                                                            placeholder="N° de Transferencia..."><input
-                                                            type="hidden" id="TasaTrans"
+                                                    </th><input name="divisa[]" value="Transferencia" type="hidden">
+                                                    <td><input name="MontoDivisa[]" class="decimal" class=""
+                                                            type="texto" id="DMontoTrans"></td>
+                                                    <td><input name="TasaTike[]" type="texto" class="enteros"
+                                                            id="NumtTrans" value=""
+                                                            placeholder="N° de Transferencia..."><input type="hidden"
+                                                            id="TasaTrans"
                                                             value="{{ $tasaTransferenciaPunto->tasa }}">
                                                     </td>
                                                     <td><input name="MontoDolar[]" type="texto" readonly
-                                                            id="TransToDolar" class="monto"
-                                                            onchange="sumar();"></td>
+                                                            id="TransToDolar" class="monto" onchange="sumar();">
+                                                    </td>
                                                     <td><input name="Veltos[]" type="text" readonly
                                                             id="RestaTrans"></td>
                                                     <td id="TrSubTotal"></td>
@@ -416,16 +397,12 @@
                                     </div>
                                 </div>
                                 <div class="panel-footer" id="guardar">
-                                    <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
-                                        id="guardar">
+                                    <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12" id="guardar">
                                         <input name="_token" value="{{ csrf_token() }}" type="hidden">
-                                        <button class="btn btn-primary btn-block"
-                                            type="submit">Guardar</button>
+                                        <button class="btn btn-primary btn-block" type="submit">Guardar</button>
                                     </div>
-                                    <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
-                                        id="guardar">
-                                        <button class="btn btn-danger btn-block"
-                                            type="reset">Cancelar</button>
+                                    <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12" id="guardar">
+                                        <button class="btn btn-danger btn-block" type="reset">Cancelar</button>
                                     </div>
                                 </div>
                             </div>
@@ -436,4 +413,3 @@
         </div>
     </form>
 </div>
-

@@ -18,10 +18,10 @@ class TasaController extends Controller
      */
     public function index()
     {
-        $title='Crear Tasa o Margen de ganancia';
+        $title = 'Crear Tasa o Margen de ganancia';
         $tasas = Tasa::get();
 
-        return view('ventas.tasa.index', compact('title','tasas'));
+        return view('ventas.tasa.index', compact('title', 'tasas'));
     }
 
     /**
@@ -32,9 +32,9 @@ class TasaController extends Controller
     public function create()
     {
         $tasas = Tasa::get();
-        $title='Actualizar tasa';
+        $title = 'Actualizar tasa';
 
-        return view('ventas.tasa.create', compact('title','tasas'));
+        return view('ventas.tasa.create', compact('title', 'tasas'));
     }
 
     /**
@@ -45,40 +45,41 @@ class TasaController extends Controller
      */
     public function store(Request $request)
     {
+        // return $request;
         // return 'store';
-    //    return $request->id;
-    //     $request->validate([
-    //         'nombre'                 => 'required|max:20',
-    //         'tasa'                   => 'required',
-    //         'porcentaje_ganancia'    => 'required',
-    //         'estado'                 => 'required'
-    //     ]);
+        //    return $request->id;
+        //     $request->validate([
+        //         'nombre'                 => 'required|max:20',
+        //         'tasa'                   => 'required',
+        //         'porcentaje_ganancia'    => 'required',
+        //         'estado'                 => 'required'
+        //     ]);
 
-            $id = $request->get('id');
-            $url = $request->get('url');
-            $tasa = $request->get('tasa');
-            $porcentaje_ganancia = $request->get('porcentaje');
+        $id = $request->get('id');
+        $url = $request->get('url');
+        $tasa = $request->get('tasa');
+        $porcentaje_ganancia = $request->get('porcentaje');
 
-            //hacemos truncate a las tablas que tienen modelos pero con eloquent
-            // Tasa::truncate();
+        //hacemos truncate a las tablas que tienen modelos pero con eloquent
+        // Tasa::truncate();
 
-            //creamos un contador
-            $cont = 0;
-         //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-         while ($cont < count($id)) {
+        //creamos un contador
+        $cont = 0;
+        //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
+        while ($cont < count($id)) {
             $idtasa = $id[$cont];
             $Ntasa = Tasa::findOrFail($idtasa);
-            $Ntasa->id = $id[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
+            $Ntasa->id = $id[$cont]; //este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
             $Ntasa->tasa = $tasa[$cont];
             $Ntasa->porcentaje_ganancia = $porcentaje_ganancia[$cont];
 
             $Ntasa->update();
 
-            $cont = $cont+1;
+            $cont = $cont + 1;
         }
 
         return redirect($url)
-        ->with('status_success', 'Tasa creada exitosamente');
+            ->with('status_success', 'Tasa creada exitosamente');
     }
 
     /**
@@ -125,9 +126,10 @@ class TasaController extends Controller
      */
     public function edit($id)
     {
+        //  return $id;
 
         // $this->authorize('update', [$user, ['user.edit', 'userown.edit']]);
-        $title='Editar Tasa';
+        $title = 'Editar Tasa';
 
         $tasa = Tasa::find($id);
         // return $roles;
@@ -144,14 +146,14 @@ class TasaController extends Controller
     public function update(Request $request)
     {
         // return $request;
-        $title='Crear Tasa o Margen de ganancia';
-        $tasa = Tasa::find($id);
+        $title = 'Crear Tasa o Margen de ganancia';
+        $tasa = Tasa::find($request->id);
         $tasa->tasa = $request->tasa;
         $tasa->porcentaje_ganancia = $request->porcentaje_ganancia;
         $tasa->save();
         return redirect()
-        ->route('tasa.index')
-        ->with('status_success', 'Role saved successfully');
+            ->route('tasa.index')
+            ->with('status_success', 'Role saved successfully');
     }
 
     /**

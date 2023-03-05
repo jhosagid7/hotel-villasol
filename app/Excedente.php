@@ -19,74 +19,87 @@ class Excedente extends Model
         'persona_id'
     ];
 
-    public function cliente(){
+    public function cliente()
+    {
         return $this->belongsTo(Persona::class);
     }
 
 
     protected $guarded = [];
 
-    public function scopeName($query, $name){
-        if($name)
-        return $query->where('articulos.nombre', 'LIKE', "%$name%");
+    public function scopeName($query, $name)
+    {
+        if ($name)
+            return $query->where('articulos.nombre', 'LIKE', "%$name%");
     }
 
-    public function scopeCodigo($query, $codigo){
-        if($codigo)
-        return $query->where('articulos.codigo', 'LIKE', "$codigo");
+    public function scopeCodigo($query, $codigo)
+    {
+        if ($codigo)
+            return $query->where('articulos.codigo', 'LIKE', "$codigo");
     }
 
-    public function scopeVenderaL($query, $venderal){
-        if($venderal)
-        return $query->where('articulos.vender_al', 'LIKE', "$venderal");
+    public function scopeVenderaL($query, $venderal)
+    {
+        if ($venderal)
+            return $query->where('articulos.vender_al', 'LIKE', "$venderal");
     }
-    public function scopeMayor($query){
+    public function scopeMayor($query)
+    {
 
         return $query->where('vender_al', '=', "Mayor");
     }
-    public function scopeDetal($query){
+    public function scopeDetal($query)
+    {
 
         return $query->where('vender_al', '=', "Detal");
     }
 
-    public function scopeActivo($query){
+    public function scopeActivo($query)
+    {
 
         return $query->where('estado', '=', "Activo");
     }
 
-    public function scopeInactivo($query){
+    public function scopeInactivo($query)
+    {
 
         return $query->where('estado', '=', "Inactivo");
     }
 
-    public function setIsTransferenciaAttribute($value){
+    public function setIsTransferenciaAttribute($value)
+    {
         $this->attributes['isTransferencia'] = ($value == 'on' ? '1' : null);
     }
-    public function setIsPagoMobilAttribute($value){
+    public function setIsPagoMobilAttribute($value)
+    {
         $this->attributes['isPagoMobil'] = ($value == 'on' ? '1' : null);
     }
-    public function setIsEfectivoAttribute($value){
+    public function setIsEfectivoAttribute($value)
+    {
         $this->attributes['isEfectivo'] = ($value == 'on' ? '1' : null);
     }
 
-    public function scopeFecha($query, $fecha){
+    public function scopeFecha($query, $fecha)
+    {
 
-        if($fecha){
-        list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-            $fecha_inicio = Carbon::parse($fecha_inicio. '00:00:00')->format('Y-m-d H:i:s');
-            $fecha_fin = Carbon::parse($fecha_fin. '23:59:59')->format('Y-m-d H:i:s');
-        return $query->whereBetween('created_at', [$fecha_inicio, $fecha_fin]);
+        if ($fecha) {
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+            $fecha_inicio = Carbon::parse($fecha_inicio . '00:00:00')->format('Y-m-d H:i:s');
+            $fecha_fin = Carbon::parse($fecha_fin . '23:59:59')->format('Y-m-d H:i:s');
+            return $query->whereBetween('created_at', [$fecha_inicio, $fecha_fin]);
         }
     }
 
-    public function scopeCliente($query, $name){
-        if($name)
-        return $query->where('nombre_cliente', 'LIKE', "%$name%");
+    public function scopeCliente($query, $name)
+    {
+        if ($name)
+            return $query->where('nombre_cliente', 'LIKE', "%$name%");
     }
 
-    public function scopeOperador($query, $codigo){
-        if($codigo)
-        return $query->where('user_id', 'LIKE', "$codigo");
+    public function scopeOperador($query, $codigo)
+    {
+        if ($codigo)
+            return $query->where('user_id', 'LIKE', "$codigo");
     }
-
 }

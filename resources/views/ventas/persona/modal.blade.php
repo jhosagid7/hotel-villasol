@@ -1,5 +1,6 @@
-<div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{$per->id}}">
-    <form action="{{ route('cliente.destroy', $per->id)}}" method="POST">
+<div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+    id="modal-delete-{{ $per->id }}">
+    <form action="{{ route('cliente.destroy', $per->id) }}" method="POST">
         @csrf
         @method('DELETE')
         <div class="modal-dialog">
@@ -11,7 +12,7 @@
                     <h4 class="modal-title">Eliminar Cliente</h4>
                 </div>
                 <div class="modal-body">
-                    <p>Confirme si decea Eliminar al cliente <b>{{$per->nombre}}</b></p>
+                    <p>Confirme si decea Eliminar al cliente <b>{{ $per->nombre }}</b></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn default" data-dismiss="modal">Cerrar</button>

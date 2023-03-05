@@ -31,16 +31,18 @@ class Credito extends Model
     //     return $this->belongsTo(Persona::class);
     // }
 
-    public function Persona(){
+    public function Persona()
+    {
         return $this->belongsTo(Persona::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function Detalle_creditos(){
+    public function Detalle_creditos()
+    {
         return $this->hasMany(Detalle_credito::class);
     }
-
 }

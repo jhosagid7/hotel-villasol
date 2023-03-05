@@ -51,7 +51,7 @@ class Caja extends Model
     ];
 
     //Ahora especificamos los campos guarded
-    protected $guarded=[];
+    protected $guarded = [];
 
     protected $dates = [
         'fecha',
@@ -72,19 +72,23 @@ class Caja extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function ventas(){
+    public function ventas()
+    {
         return $this->hasMany(Venta::class);
     }
 
-    public function detalle_creditos_pagados(){
+    public function detalle_creditos_pagados()
+    {
         return $this->hasMany(Detalle_Creditos_Pagado::class);
     }
 
-    public function pagos_servicios(){
+    public function pagos_servicios()
+    {
         return $this->hasMany(Pago_Servicio::class);
     }
 
-    public function pagos_vueltos_extra(){
+    public function pagos_vueltos_extra()
+    {
         return $this->hasMany(Pago_Vuelto::class);
     }
 
@@ -98,19 +102,23 @@ class Caja extends Model
         return $this->hasMany(Pago_Vuelto::class);
     }
 
-    public function horas_extras(){
+    public function horas_extras()
+    {
         return $this->hasMany(Horas_extra::class);
     }
 
-    public function excedente_anterior(){
+    public function excedente_anterior()
+    {
         return $this->hasMany(Excedentes_Pendientes_Caja_Anterior::class);
     }
 
-    public function excedente_actual(){
+    public function excedente_actual()
+    {
         return $this->hasMany(Excedentes_Recibidos_Caja_Actual::class);
     }
 
-    public function historial_vueltos_pendientes(){
+    public function historial_vueltos_pendientes()
+    {
         return $this->hasMany(Historial_Vueltos_Pendiente::class);
     }
 
@@ -133,22 +141,27 @@ class Caja extends Model
         return $this->hasManyThrough(Articulo_Venta::class, Venta::class);
     }
 
-    public function servicios(){
+    public function servicios()
+    {
         return $this->hasMany(Servicio::class);
     }
-    public function reintegros(){
+    public function reintegros()
+    {
         return $this->hasMany(Reintegro::class);
     }
 
-    public function historialExcedentes(){
+    public function historialExcedentes()
+    {
         return $this->hasMany(HistorialExcedente::class);
     }
 
-    public function detalle_creditos(){
+    public function detalle_creditos()
+    {
         return $this->hasMany(Detalle_credito::class);
     }
 
-    public function creditos_pagados(){
+    public function creditos_pagados()
+    {
         return $this->hasMany(Credito_Pagado::class);
     }
 
@@ -183,15 +196,18 @@ class Caja extends Model
         return $this->hasMany(Pago_Credito::class);
     }
 
-    public function detalle_pago_oficina(){
+    public function detalle_pago_oficina()
+    {
         return $this->hasMany(DetallePagoOficina::class);
     }
 
-    public function historial_creditos(){
+    public function historial_creditos()
+    {
         return $this->hasMany(HistorialCreditoCaja::class);
     }
 
-    public function Cambios(){
+    public function Cambios()
+    {
         return $this->hasMany(Cambio::class);
     }
 
@@ -199,15 +215,16 @@ class Caja extends Model
 
 
     //este metodo nos ba a verificar si existe una caja abierta en el modelo Caja
-    public static function buscarCaja() {
+    public static function buscarCaja()
+    {
         // $user = Auth::user();
         // Get the currently authenticated user's ID...
         $id = Auth::id();
 
         return Caja::where('estado', 'Abierta')
-                ->where('user_id','=' ,$id)
-               ->orderBy('id', 'desc')
-               ->first();
+            ->where('user_id', '=', $id)
+            ->orderBy('id', 'desc')
+            ->first();
         // return Sessioncaja::find($session_caja_id);
     }
 }

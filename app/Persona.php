@@ -7,45 +7,55 @@ use Illuminate\Database\Eloquent\Model;
 class Persona extends Model
 {
 
-    public function Ventas(){
+    public function Ventas()
+    {
         return $this->hasMany(Venta::class);
     }
 
 
 
-    public function ingresos(){
+    public function ingresos()
+    {
         return $this->hasMany(Ingreso::class);
     }
 
-    public function creditos(){
+    public function creditos()
+    {
         return $this->hasMany(Credito::class);
     }
 
-    public function bancos_clientes(){
+    public function bancos_clientes()
+    {
         return $this->hasMany(Banco::class);
     }
 
-    public function creditosPagados(){
+    public function creditosPagados()
+    {
         return $this->hasMany(Credito_Pagado::class);
     }
 
-    public function user(){
-        return $this->hasOneThrough(User::class,Ingreso::class);
+    public function user()
+    {
+        return $this->hasOneThrough(User::class, Ingreso::class);
     }
 
-    public function servicios(){
+    public function servicios()
+    {
         return $this->hasMany(Servicio::class);
     }
-    
-    public function excedentes(){
+
+    public function excedentes()
+    {
         return $this->hasMany(Excedente::class);
     }
 
-    public function historialExcedentes(){
+    public function historialExcedentes()
+    {
         return $this->hasMany(HistorialExcedente::class);
     }
 
-    public function detalle_pago_oficina(){
+    public function detalle_pago_oficina()
+    {
         return $this->hasMany(DetallePagoOficina::class);
     }
 
@@ -73,13 +83,13 @@ class Persona extends Model
 
     protected $guarded = [];
 
-    public function setIsCortesiaAttribute($value){
+    public function setIsCortesiaAttribute($value)
+    {
         $this->attributes['isCortesia'] = ($value == 'on' ? '1' : null);
     }
 
-    public function setIsCreditoAttribute($value){
+    public function setIsCreditoAttribute($value)
+    {
         $this->attributes['isCredito'] = ($value == 'on' ? '1' : null);
     }
-
-
 }
