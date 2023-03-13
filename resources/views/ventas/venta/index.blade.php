@@ -28,9 +28,9 @@
                 <div class="row">
                     <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
                         @can('haveaccess', 'venta.create')
-                            <h3>Ventas Realizadas <a href="{{ URL::action('VentaController@create') }}"><button
+                            <h3>Ventas Realizadas <a href="{{ asset('preventa') }}"><button
                                         class='btn btn-success'><span class='glyphicon glyphicon-plus'></span>
-                                        Nueva</button></a></h3>
+                                        Vender</button></a></h3>
                         @endcan
                         {{-- @include('compras.proveedor.buscar') --}}
                     </div>

@@ -4,13 +4,17 @@
         .bootstrap-select {
             width: 400px !important;
         }
+
+        .subirmargin{
+            margin-top: -1em;
+        }
     </style>
 
 
 
     <div class="box">
 
-        <div style="background-color: #e7eaeb" class="box-body">
+        <div style="background-color: #e7eaeb" class="box-body small">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 @include('custom.message')
                 <!-- Custom Tabs (Pulled to the right) -->
@@ -70,19 +74,22 @@
                                         <span class="info-box-icon bg-default"><i class="fa fa-bed"></i></span>
                                     @endif --}}
 
-                                            <div class="tile-body">
+                                            <div class="tile-body sm">
                                                 <h4 style="text-align: center;"><i class="fa fa-bed"></i><b>
                                                         {{ $servicio->nombre_habitacion }}</b></h4>
                                             </div>
 
-                                            <div class="info-box-content">
-                                                <span class="info-box-text">Cerrar Servicio
-                                                    {{ $servicio->tipo_habitacion }}</span>
+                                            <div class="info-box-content text-center sm subirmargin">
+                                                <small class="info-box-text">Cerrar Servicio
+                                                    {{ $servicio->tipo_habitacion }}</small>
+
+                                                <small class="info-box-text text-center text-gray">
+                                                    {{ $servicio->persona->nombre }}</small>
 
                                                 {{-- <span class="info-box-text">Cerrar <i class="fa fa-spinner"></i></span> --}}
 
-                                                <span id="bg_{{ $i }}"
-                                                    class="info-box-text contador">{{ $servicio->fecha_salida . ' ' . $servicio->hora_salida }}</span>
+                                                <small id="bg_{{ $i }}"
+                                                    class="info-box-text contador text-orange">{{ $servicio->fecha_salida . ' ' . $servicio->hora_salida }}</small>
                                                 @php
                                                     $i++;
                                                 @endphp

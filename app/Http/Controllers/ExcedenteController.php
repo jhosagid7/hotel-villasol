@@ -136,6 +136,93 @@ class ExcedenteController extends Controller
         //
     }
 
+    public function getPagoCliente($id)
+    {
+        // return $id;
+        $title = 'Editar Pago Cliente';
+
+        $pagarporoficina = Excedente::where('persona_id', $id)->first();
+        $pagarporoficina_deuda = PreExcedente::where('cliente_id', $id)->first();
+        $clientes = Persona::where('nombre', '<>', 'Proveedor Comun')->where('nombre', '<>', 'Cliente Comun')->get();
+        $bancos = Banco::get();
+
+
+
+
+        return view('pagos.oficina.editar.pagar_oficina_modal', compact('clientes', 'bancos', 'pagarporoficina', 'pagarporoficina_deuda'));
+    }
+    public function guardarPagoCliente(Request $request)
+    {
+
+
+
+        // return $request;
+        $ifCliente = Excedente::where('persona_id', $request->get('id'))
+            ->where('tipo', 'Pagar_por_oficina')
+            ->first();
+        // return $ifCliente;
+
+
+        if ($ifCliente) {
+            // return 'si';
+
+            // $upExcedente = Excedente::findOrFail($ifCliente->id);
+            // $upExcedente->telefono_pago_movil_cliente = $request->get('pago_mobil');
+            // $upExcedente->nombre_banco_cliente = $request->get('nombre_banco');
+            // $upExcedente->num_cuenta_cliente = $request->get('codigo') . ' - ' . $request->get('num_cuenta');
+            // $upExcedente->tipo_cuenta_cliente = $request->get('tipo_cuenta');
+            // $upExcedente->isTransferencia = $request->get('isTransferencia');
+            // $upExcedente->isPagoMobil = $request->get('isPagoMobil');
+            // $upExcedente->isEfectivo = $request->get('isEfectivo');
+            // $upExcedente->update();
+
+            if($request->get('isTransferencia') == 'on'){
+                $upExcedente = Excedente::findOrFail($ifCliente->id);
+                $upExcedente->nombre_banco_cliente = $request->get('nombre_banco');
+                $upExcedente->num_cuenta_cliente = $request->get('codigo') . ' - ' . $request->get('num_cuenta');
+                $upExcedente->tipo_cuenta_cliente = $request->get('tipo_cuenta');
+                $upExcedente->isTransferencia = $request->get('isTransferencia');
+                $upExcedente->update();
+            } else{
+                $upExcedente = Excedente::findOrFail($ifCliente->id);
+                $upExcedente->nombre_banco_cliente = null;
+                $upExcedente->num_cuenta_cliente = null;
+                $upExcedente->tipo_cuenta_cliente = null;
+                $upExcedente->isTransferencia = $request->get('isTransferencia');
+                $upExcedente->update();
+            }
+            if($request->get('isPagoMobil') == 'on'){
+                $upExcedente = Excedente::findOrFail($ifCliente->id);
+                $upExcedente->telefono_pago_movil_cliente = $request->get('pago_mobil');
+                $upExcedente->nombre_banco_cliente = $request->get('nombre_banco');
+                $upExcedente->tipo_cuenta_cliente = $request->get('tipo_cuenta');
+                $upExcedente->isPagoMobil = $request->get('isPagoMobil');
+                $upExcedente->update();
+            } else{
+                $upExcedente = Excedente::findOrFail($ifCliente->id);
+                $upExcedente->telefono_pago_movil_cliente = null;
+                $upExcedente->isPagoMobil = $request->get('isPagoMobil');
+                $upExcedente->update();
+            }
+            if($request->get('isEfectivo') == 'on'){
+                $upExcedente = Excedente::findOrFail($ifCliente->id);
+                $upExcedente->isEfectivo = $request->get('isEfectivo');
+                $upExcedente->update();
+            } else{
+                $upExcedente = Excedente::findOrFail($ifCliente->id);
+                $upExcedente->isEfectivo = $request->get('isEfectivo');
+                $upExcedente->update();
+            }
+
+
+
+        }
+
+        return redirect()
+            ->route('caja.show', $request->get('caja_id'))
+            ->with('status_success', '  Los datos fueron actualizados exitosamente.');
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -381,6 +468,7 @@ class ExcedenteController extends Controller
                     $update_servicio->nombre_cliente = $nombre_cliente;
                     $update_servicio->cedula_cliente = $num_documento;
                     $update_servicio->telefono_cliente = $telefono;
+                    $update_servicio->persona_id = $dcliente_id;
                     $update_servicio->update();
 
 
@@ -392,6 +480,7 @@ class ExcedenteController extends Controller
                         $update_servicio_cambio->nombre_cliente = $nombre_cliente;
                         $update_servicio_cambio->cedula_cliente = $num_documento;
                         $update_servicio_cambio->telefono_cliente = $telefono;
+                        $update_servicio_cambio->persona_id = $dcliente_id;
                         $update_servicio_cambio->update();
                     }
                 }

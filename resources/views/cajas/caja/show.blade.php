@@ -41,10 +41,12 @@
             @if ($caja->estado === 'Abierta')
             <a href="" data-target="#modal-delete-{{$caja->id}}" data-toggle="modal"><button class='btn btn-danger'><i class='glyphicon glyphicon-trash'></i> Cerrar caja</button></a>
             @can('haveaccess', 'ventas.create')
-            <a class="btn btn-success" href="{{route('venta.create')}}">{{__('Ir a ventas')}}</a>
+            <a class="btn btn-success" href="{{route('venta.index')}}">{{__('Ir a ventas')}}</a>
             @endcan
             @endif
+            @can('haveaccess', 'user.index')
             <a class="btn btn-warning" href="{{route('caja.index')}}">{{__('Ir a cajas')}}</a>
+            @endcan
             <a onClick="imprimir('imprimir')" target="_blank" class="btn btn-primary  hidden-print">
                 <i class="fa fa-print"></i>
                 Imprimir
@@ -82,6 +84,7 @@
     <div class="row invoice-info">
 
         @include('cajas.caja.pagos_pendientes')
+
 
              <!-- @php
                 if($cajas->margenActualVenta){
@@ -1496,14 +1499,10 @@
                     <td>{{ $serv->nombre_habitacion ?? '' }} {{ $cambio ?? '' }}</td>
                     <td>{{ $serv->detalle_habitacion ?? '' }}</td>
                     <td>{{ $serv->tipo_habitacion ?? '' }}
-                        @php
-                            if ($serv->cantidad > 1){
-                        @endphp
-                               / {{ $serv->cantidad ?? '' }} días
-                        @php
-                            };
-                        @endphp
 
+                        @if ($serv->cantidad > 1)
+                            {{ $serv->cantidad ?? '' }} días
+                        @endif
                     </td>
                     <td colspan="2">{{ $serv->nombre_cliente ?? '' }}</td>
                     <td>{{ $serv->cedula_cliente ?? '' }}</td>

@@ -57,11 +57,6 @@
                                                 <span class="info-box-text text-center text-gray">
                                                     {{ $habitacion->nombre_cliente }}</span>
 
-
-
-
-
-
                                             </div>
                                             <!-- /.info-box-content -->
 

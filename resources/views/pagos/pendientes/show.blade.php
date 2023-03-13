@@ -752,7 +752,7 @@
                                     <div class="col-md-12">
                                         <div class="box box-danger">
                                             <div class="box-header with-border">
-                                                <h3 class="box-title">Deuda a pagar (<b class="text-danger"
+                                                <h3 class="box-title">Deuda a pagarss (<b class="text-danger"
                                                         id="countVueltosPendientes">$0.00</b>). (Pago programado para pagar
                                                     por oficina)...!</h3>
                                             </div><!-- /.box-header -->

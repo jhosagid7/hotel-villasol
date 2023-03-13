@@ -219,7 +219,16 @@
                                 <li class="user-body">
                                     <div class="row">
                                         <div class="col-xs-4 text-center">
-                                            <a href="{{ asset('cajas/caja') }}">Cajas</a>
+                                            @php
+                                            "App\Sessioncaja"::crearsession();
+                                            @endphp
+                                            @if (isset(session('session_caja')->id))
+                                            <a href="{{route('caja.show', session('session_caja')->id) ?? ''}}">Caja</a>
+                                            @else
+                                            <a href="{{ asset('cajas/caja/') }}">Cajas</a>
+                                            @endif
+
+
                                         </div>
                                         @can('haveaccess', 'ventas.create')
                                             <div class="col-xs-4 text-center">
@@ -297,6 +306,7 @@
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu" data-widget="tree">
                     <li class="header">MENÚ DE NAVEGACIÓN</li>
+
                     {{-- <li class="treeview">
           <a href="#">
           <i class="fa fa-hotel"></i> <span>Hotel</span>
@@ -429,9 +439,9 @@
                                     <li><a href="{{ asset('ventas/cliente') }}"><i class="fa fa-user-plus"></i> Clientes</a>
                                     </li>
                                 @endcan
-                                {{-- @can('haveaccess', 'venta.index')
-                <li><a href="{{asset('ventas/venta')}}"><i class="fa fa-desktop"></i> Venta</a></li>
-                @endcan --}}
+                                @can('haveaccess', 'venta.index')
+                                    <li><a href="{{asset('ventas/venta')}}"><i class="fa fa-desktop"></i> Venta</a></li>
+                                @endcan
                                 @can('haveaccess', 'tasa.index')
                                     <li><a href="{{ asset('ventas/tasa') }}"><i class="fa fa-desktop"></i> Tasa</a></li>
                                 @endcan

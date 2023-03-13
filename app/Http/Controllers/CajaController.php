@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Caja;
 use App\Tasa;
+use App\Banco;
 use App\Venta;
 use App\Credito;
 use App\Empresa;
@@ -423,6 +424,7 @@ class CajaController extends Controller
      */
     public function show($id, $mensaje = '')
     {
+        // return session('session_caja')->id;
 
         // return $id;
         $title = 'Resumen de Caja';
@@ -2051,10 +2053,11 @@ class CajaController extends Controller
         //         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $appDate = Empresa::get();
+        $bancos = Banco::get();
         //  return $cajas;
         $verificarHorasExtras = Horas_extra::where('caja_id', $cajas->id)->get();
         // return $verificarHorasExtras;
-        return view('cajas.caja.show', compact('clientes_vueltos', 'appDate', 'verificarHorasExtras', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'title', 'cajas', 'caja', 'denominacion_dolar', 'denominacion_peso', 'denominacion_bolivar'))->with($mensaje);
+        return view('cajas.caja.show', compact('bancos', 'clientes_vueltos', 'appDate', 'verificarHorasExtras', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'title', 'cajas', 'caja', 'denominacion_dolar', 'denominacion_peso', 'denominacion_bolivar'))->with($mensaje);
     }
 
     /**

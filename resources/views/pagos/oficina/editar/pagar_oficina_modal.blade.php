@@ -1,3 +1,5 @@
+@extends ('layouts.admin3')
+@section('contenido')
 <div class="modal fade bs-example-modal-xm refrescar" id="modalPagoPendienteOpciones" role="dialog"
     aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-danger">
@@ -27,7 +29,7 @@
                                 <div class="box box-danger">
                                     <div class="box-header with-border">
                                         <h3 class="box-title">Debe devolver al cliente (<b class="text-danger"
-                                                id="countVueltosPendientes">$0.00</b>). (De vueltos pendiente)...!</h3>
+                                                id="countVueltosPendientes">${{ $pagarporoficina_deuda->deuda_total_acumulada ?? '' }}</b>). (De vueltos pendiente)...!</h3>
                                     </div><!-- /.box-header -->
                                     <div class="box-body">
                                         <div id="btnPago2Opciones">
@@ -71,8 +73,7 @@
                             </div>
                         </div>
                         <div id="contentPagarOficina">
-                            <form id="form4" action="{{ route('excedente.store') }}" enctype="multipart/form-data"
-                                method="POST" autocomplete="off">
+                            <form id="guardar_form"autocomplete="off">
 
                                 @csrf
                                 <div class="col-md-12">
@@ -88,27 +89,30 @@
                                                     <tbody style="padding: 0px;">
                                                         <tr style="padding: 0px;">
                                                             <td>
-                                                                <h4 class="text-primary"
-                                                                    style="margin-top: 0px !important;">Transferencia:
-                                                                    &nbsp;&nbsp;&nbsp; <input class="transferencia"
-                                                                        id="isTransferencia" name="isTransferencia"
-                                                                        type="checkbox"></h4>
+                                                                <h4 id="trans_" class="text-primary" style="margin-top: 0px !important;">
+                                                                    Transferencia:
+                                                                    &nbsp;&nbsp;&nbsp; <input class="transferencia" @if ($pagarporoficina->isTransferencia ==
+                                                                    '1') checked @elseif (old('isTransferencia') ==
+                                                                    '1') checked @endif
+                                                                    name="isTransferencia" type="checkbox"></h4>
                                                             </td>
 
-                                                            <td>
-                                                                <h4 class="text-primary"
-                                                                    style="margin-top: 0px !important;">Pago Mobil:
-                                                                    &nbsp;&nbsp;&nbsp;<input class="pagomobil"
-                                                                        id="isPagoMobil" name="isPagoMobil"
-                                                                        type="checkbox"></h4>
-                                                            </td>
 
                                                             <td>
-                                                                <h4 class="text-primary"
-                                                                    style="margin-top: 0px !important;">Efectivo:
-                                                                    &nbsp;&nbsp;&nbsp;<input class="efectivo"
-                                                                        id="isEfectivo" name="isEfectivo"
-                                                                        type="checkbox"></h4>
+                                                                <h4 id="mobil_" class="text-primary" style="margin-top: 0px !important;">Pago Mobil:
+                                                                    &nbsp;&nbsp;&nbsp;<input class="pagomobil" @if ($pagarporoficina->isPagoMobil == '1')
+                                                                    checked @elseif (old('isPagoMobil') == '1')
+                                                                    checked @endif
+                                                                    name="isPagoMobil" type="checkbox"></h4>
+                                                            </td>
+
+
+                                                            <td>
+                                                                <h4 class="text-primary" style="margin-top: 0px !important;">Efectivo:
+                                                                    &nbsp;&nbsp;&nbsp;<input class="efectivo" @if ($pagarporoficina->isEfectivo == '1')
+                                                                    checked @elseif (old('isEfectivo') == '1')
+                                                                    checked @endif
+                                                                    name="isEfectivo" type="checkbox"></h4>
                                                             </td>
 
 
@@ -138,63 +142,23 @@
 
                                                 <div class="row">
 
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 seleccioneCliente"
-                                                        style="display:none">
-                                                        <div class="form-group">
-                                                            <label id="titlebuscarcliente" class="text-black"
-                                                                for="nombrea">Buscar cliente</label>
-                                                            <input autofocus type="text" name="nombrea"
-                                                                id="nombrea" class="form-control"
-                                                                placeholder="Buscar cliente por nombre o C.I./RIF...">
-                                                            <!-- <select name="selec_cliente" id="selec_cliente" class="form-control selectpicker" data-live-search="true">
-                                                        <option value="default" selected="selected">Seleccione Cliente</option>
-                                                        @foreach ($clientes as $dcliente)
-<option value="{{ $dcliente->id }}_{{ $dcliente->nombre }}_{{ $dcliente->num_documento }}_{{ $dcliente->direccion }}_{{ $dcliente->telefono }}_{{ $dcliente->email }}">{{ $dcliente->nombre }} - {{ $dcliente->num_documento }}</option>
-@endforeach
-                                                    </select> -->
-                                                            <span id="nombreamesagge" class="text-red"></span>
-                                                        </div>
-
-                                                    </div>
-                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 nombre"
-                                                        style="display:none">
+                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 nombre" style="display:none">
                                                         <div class="form-group">
                                                             <label class="text-black" for="nombre">Nombre del
                                                                 cliente</label>
-                                                            <input required readonly type="text" id="nombre"
-                                                                name="nombre" class="form-control titulo"
-                                                                value="{{ old('nombre') }}" placeholder="Nombre...">
-                                                            <span id="nombre_mesagge" class="text-red"></span>
+                                                            <input required readonly type="text" id="nombre" name="nombre" class="form-control titulo"
+                                                                value="{{ $pagarporoficina->nombre_cliente ?? '' }}" placeholder="Nombre...">
                                                         </div>
                                                     </div>
 
-                                                    {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                                <div class="form-group">
-                                                    <label class="text-black" for="tipo_documento">Tipo Documento</label>
 
-                                                    <select required class="form-control" id="tipo_documento" name="tipo_documento">
-                                                        <option value="0">Seleccione tipo de documento</option>
-                                                        <option value="CI">CI.V-</option>
-                                                        <option value="CI">CI.E-</option>
-                                                        <option value="RIF">RIF</option>
-                                                        <option value="PAS">PAS</option>
-                                                    </select>
 
-                                                </div>
-                                            </div> --}}
-
-                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 cedula"
-                                                        style="display:none">
+                                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 cedula" style="display:none">
                                                         <div class="form-group">
                                                             <label class="text-black" for="num_documento">Número de
                                                                 Documento</label>
-                                                            <input required readonly type="number"
-                                                                id="num_documento_oficina" name="num_documento"
-                                                                class="form-control enteros"
-                                                                value="{{ old('num_documento') }}"
-                                                                placeholder="Número de Documento...">
-                                                            <span id="num_documento_oficina_mesagge"
-                                                                class="text-red"></span>
+                                                            <input required readonly type="number" id="num_documento" name="num_documento" class="form-control enteros"
+                                                                value="{{ $pagarporoficina->cedula_cliente ?? '' }}" placeholder="Número de Documento...">
                                                         </div>
                                                     </div>
 
@@ -256,16 +220,11 @@
                                                                     </select>
                                                                 </div>
                                                             </div>
-                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12  nombreBanco "
-                                                                style="display:none">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12  nombreBanco " style="display:none">
                                                                 <div class="form-group">
-                                                                    <label class="text-black"
-                                                                        for="nombre_banco">Nombre Banco</label>
-                                                                    <input readonly type="text" id="nombre_banco"
-                                                                        name="nombre_banco"
-                                                                        class="form-control titulo"
-                                                                        value="{{ old('nombre') }}"
-                                                                        placeholder="Nombre Banco...">
+                                                                    <label class="text-black" for="nombre_banco">Nombre Banco</label>
+                                                                    <input type="text" id="nombre_banco" name="nombre_banco" class="form-control titulo"
+                                                                        value="{{ $pagarporoficina->nombre_banco_cliente ?? '' }}" placeholder="Nombre Banco...">
                                                                 </div>
                                                             </div>
 
@@ -283,31 +242,36 @@
                                                                 </div>
                                                             </div>
 
-                                                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 numCuenta"
-                                                                style="display:none">
+                                                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 numCuenta" style="display:none">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="direccion">Número
                                                                         de cuenta</label>
-                                                                    <input type="text" id="num_cuenta"
-                                                                        name="num_cuenta"
-                                                                        class="form-control mayuscula"
-                                                                        value="{{ old('num_cuenta') }}"
-                                                                        placeholder="Número de cuenta...">
+                                                                    <input type="text" id="num_cuenta" name="num_cuenta" class="form-control mayuscula"
+                                                                        value="{{ $pagarporoficina->num_cuenta_cliente ?? '' }}" placeholder="Número de cuenta...">
                                                                 </div>
                                                             </div>
 
 
-                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 tipoCuenta"
-                                                                style="display:none">
+                                                            <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 tipoCuenta" style="display:none">
                                                                 <div class="form-group">
                                                                     <label class="text-black" for="tipo_cuenta">Tipo
                                                                         de cuenta</label>
-                                                                    <select required class="form-control"
-                                                                        id="tipo_cuenta" name="tipo_cuenta">
-                                                                        <option value="0">Seleccione tipo de
+                                                                    <select class="form-control" id="tipo_cuenta" name="tipo_cuenta">
+                                                                        @if ($pagarporoficina->tipo_cuenta_cliente
+                                                                        == 'Corriente')
+                                                                        <option value="Corriente" selected>
+                                                                            Corriente</option>
+                                                                        <option value="Ahorro">Ahorro</option>
+                                                                        @else
+                                                                        <option value="Corriente">Corriente
+                                                                        </option>
+                                                                        <option value="Ahorro" selected>Ahorro
+                                                                        </option>
+                                                                        @endif
+                                                                        {{-- <option value="0">Seleccione tipo de
                                                                             cuenta</option>
                                                                         <option value="Corriente">Corriente</option>
-                                                                        <option value="Ahorro">Ahorro</option>
+                                                                        <option value="Ahorro">Ahorro</option> --}}
                                                                     </select>
 
                                                                 </div>
@@ -318,10 +282,10 @@
                                                                 <div class="form-group">
                                                                     <label class="text-black"
                                                                         for="pago_mobil">Teléfono</label>
-                                                                    <input required type="text" name="pago_mobil"
+                                                                    <input type="text" id="pago_mobil" name="pago_mobil"
                                                                         class="form-control"
                                                                         data-inputmask='"mask": "(9999) 999-9999"'
-                                                                        data-mask value="{{ old('pago_mobil') }}"
+                                                                        data-mask value="{{ $pagarporoficina->telefono_pago_movil_cliente ?? '' }}"
                                                                         placeholder="Pago mobil...">
                                                                 </div>
                                                             </div>
@@ -344,7 +308,7 @@
                                                 <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                                                     <div class="form-group">
                                                         <input class="text-black hidden" type="text"
-                                                            id="dcliente_id" name="dcliente_id">
+                                                            id="dcliente_id" name="dcliente_id" value="{{ $pagarporoficina->persona_id }}">
                                                         <input class="text-black hidden" type="text"
                                                             id="banco_id" name="banco_id">
                                                         <input class="text-black hidden" type="text"
@@ -361,9 +325,12 @@
                                                             id="motivo" name="motivo" value="servicio">
                                                         <input class="text-black hidden" type="text"
                                                             id="caja_id" name="caja_id"
-                                                            value="{{ $servicio->caja_id ?? '' }}">
-                                                        <button class="btn btn-primary hidden" id="guardarFormaPago"
-                                                            type="button">Guardar</button>
+                                                            value="{{ session('session_caja')->id ?? '' }}">
+                                                        <button class="btn btn-primary " id="guardarFormaPago"
+                                                            type="submit">Guardar</button>
+                                                            <input id="vtosPendientes" name="vtosPendientes" value="{{ $pagarporoficina_deuda->deuda_total_acumulada ?? '' }}" type="hidden">
+                                                            <input id="VueltosvtosPendientes" name="VueltosvtosPendientes"
+                                                                value="{{ $pagarporoficina_deuda->deuda_total_acumulada ?? '' }}" type="hidden">
                                                         {{-- <a class="btn btn-danger" href="{{ url()->previous() }}">{{__('Regresar')}}</a> --}}
                                                     </div>
                                                 </div>
@@ -385,7 +352,7 @@
 
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
+    <a href="{{route('caja.show', session('session_caja')->id) ?? ''}}" class="btn btn-outline pull-left" >Cancelar</a>
 
 </div>
 {{-- </form> --}}
@@ -398,11 +365,362 @@
 </div>
 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
 {{-- //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
-
+</section>
 
 @push('sciptsMain')
+
+<script>
+    //ACTUALIZAR UN REGISTRO
+$('#guardar_form').submit(function(e){
+    e.preventDefault();
+    alert('jajaj');
+    var id2 = $('#dcliente_id').val();
+    var nombre = $('#nombre').val();
+    var num_documento = $('#num_documento').val();
+    var nombre_banco = $('#nombre_banco').val();
+    var codigo = $('#codigo').val();
+    var num_cuenta = $('#num_cuenta').val();
+    var tipo_cuenta = $('#tipo_cuenta').val();
+    var pago_mobil = $('#pago_mobil').val();
+    var caja_id = $('#caja_id').val();
+
+    var isTransferencia = $("input[name='isTransferencia']:checked").val();
+    var isPagoMobil = $("input[name='isPagoMobil']:checked").val();
+    var isEfectivo = $("input[name='isEfectivo']:checked").val();
+    var isEfectivo = $("input[name='isEfectivo']:checked").val();
+    var _token2 = $("input[name=_token]").val();
+
+    $.ajax({
+        url: "{{ route('guardar') }}",
+        type: "POST",
+        data:{
+            id:id2,
+            nombre:nombre,
+            num_documento:num_documento,
+            nombre_banco:nombre_banco,
+            codigo:codigo,
+            num_cuenta:num_cuenta,
+            tipo_cuenta:tipo_cuenta,
+            pago_mobil:pago_mobil,
+            caja_id:caja_id,
+            isTransferencia:isTransferencia,
+            isPagoMobil:isPagoMobil,
+            isEfectivo:isEfectivo,
+            _token:_token2
+        },
+        success:function(response){
+            if(response){
+                let urlback = "{{route('caja.show', session('session_caja')->id) ?? ''}}";
+                $(location).attr('href',urlback);
+                console.log('response', caja_id);
+                //$('#animal_edit_modal').modal('hide');
+                //toastr.info('El registro fue actualizado correctamente.', 'Actualizar Registro', {timeOut:3000});
+                //$('#tabla-animal').DataTable().ajax.reload();
+            }
+        }
+    })
+});
+</script>
+<script>
+$("#modalPagoPendienteOpcionesBtn").click();
+
+    var vtosPendientes = $('#vtosPendientes').val();
+
+    // alert(vtosPendientes);
+    $("#dispExcedente").val(vtosPendientes);
+    $("#modalPagoPendienteOpcionesBtn").on('click', function() {
+    fncSumar();
+
+    procesoCambioSalida = 3;
+    if (VueltosvtosPendientes > 0) {
+    $("#banderaHorasExtras").val('pagarVueltosPendientes');
+    // alert('total pendiente '+totalPendiente);
+
+    const RestaTotalV = document.getElementById('RestaTtotalV');
+
+    let totalPendt1 = new Decimal(VueltosvtosPendientes);
+
+    RestaTotalV.innerHTML = numDecimal(totalPendt1); //se llena el campo resta
+    PagoTtotalV.innerHTML = numDecimal(totalPendt1);
+    // verify();
+
+    // $("#modalPago").click();
+
+    $("#total_costo").val('');
+
+
+    $("#VueltospagoConExcedente").val('');
+
+    $("#banderaHorasExtras").val('pagarVueltosPendientes');
+
+    $("#countVueltosPendientes").html('$' + VueltosvtosPendientes);
+
+    } else {
+    // $("#banderaHorasExtras").val('');
+    alert('No posee vueltos pendiente...');
+    return false;
+    }
+
+
+    });
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    $("#selec_banco").change(showValuesBanco);
+
+    $("#selec_banco").on("change", function() {
+    // document.getElementById("tipo_documento").focus();
+    // $("#jidarticulo").val('0');
+    // document.getElementById('jidarticulo').val('0');
+    });
+    $("#selec_banco").on("change", function() {
+    $("#num_cuenta").val('');
+    document.getElementById("num_cuenta").focus();
+    // $("#jidarticulo").val('0');
+    // document.getElementById('jidarticulo').val('0');
+    });
+
+    focusMethod = function getFocus() {
+    document.getElementById("selec_banco").focus();
+
+
+    $("#num_cuenta").val('default');
+    $("#num_cuenta").selectpicker("refresh");
+    }
+
+    function showValuesBanco() {
+    // alert('show');
+    datosArticulo = document.getElementById('selec_banco').value.split('_');
+    // $("#jprecio_venta").val(datosArticulo[2]);
+    $("#banco_id").val(datosArticulo[0]);
+    $("#nombre_banco").val(datosArticulo[1]);
+    $("#codigo").val(datosArticulo[2]);
+    // $("#jstock").val(datosArticulo[2]);
+
+
+    // $("#jmarjen_venta_dolar").val(12);
+
+
+    }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+$("#contentPagarOficina").hide();
+$("#contentCrearCuenta").hide();
+const tituloPagarCrear = document.getElementById('tituloPagarCrear');
+const box_PagarCrear = document.getElementById('box_PagarCrear');
+
+$("#pagarPorOficinaBtn").on('click', function() {
+$('.pagarPorOficina').css('display', 'none');
+$("#selec_cliente").val('default').selectpicker("refresh");
+$("#selec_banco").val('default').selectpicker("refresh");
+$("#guardar_form")[0].reset();
+
+// const RestaTotal = document.getElementById('RestaTtotal');
+
+tituloPagarCrear.classList.remove('text-success');
+tituloPagarCrear.classList.add('text-warning');
+box_PagarCrear.classList.remove('box-success');
+box_PagarCrear.classList.add('box-warning');
+
+// $("#tituloPagarCrear").remove('text-success');
+// $("#tituloPagarCrear").add('text-warnning');
+$("#excedente").val(VueltosvtosPendientes);
+$("#tituloPagarCrear").html('Pagar por Oficina');
+$("#contentPagarOficina").show('swing');
+$("#datosBanco").show('swing');
+$("#contentCrearCuenta").hide('swing');
+// alert('boton '+procesoCambioSalida);
+$("#bandera").val('pagarPorOficina');
+
+});
+
+$("#crearCuentaBtn").on('click', function() {
+
+
+$("#selec_cliente").val('default').selectpicker("refresh");
+$("#selec_banco").val('default').selectpicker("refresh");
+$("#guardar_form")[0].reset();
+$("#datosBanco").hide('swing');
+// const tituloPagarCrear = document.getElementById('tituloPagarCrear');
+
+tituloPagarCrear.classList.remove('text-warning');
+tituloPagarCrear.classList.add('text-success');
+box_PagarCrear.classList.remove('box-warning');
+box_PagarCrear.classList.add('box-success');
+$("#tituloPagarCrear").html('Crear cuenta');
+
+// $("#contentCrearCuenta").show('swing');
+$("#contentPagarOficina").show('swing');
+// alert('boton '+procesoCambioSalida);
+$("#excedente").val(VueltosvtosPendientes);
+$("#bandera").val('crearCuenta');
+
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+$("#selec_cliente").change(showValuesCliente);
+
+$("#selec_cliente").on("change", function() {
+// document.getElementById("tipo_documento").focus();
+// $("#jidarticulo").val('0');
+// document.getElementById('jidarticulo').val('0');
+});
+$("#tipo_documento").on("change", function() {
+// document.getElementById("selec_banco").focus();
+// $("#jidarticulo").val('0');
+// document.getElementById('jidarticulo').val('0');
+});
+
+focusMethod = function getFocus() {
+document.getElementById("selec_banco").focus();
+$("#selec_cliente").val('default');
+$("#selec_cliente").selectpicker("refresh");
+}
+
+function showValuesCliente() {
+// alert('show');
+datosArticulo = document.getElementById('selec_cliente').value.split('_');
+// $("#jprecio_venta").val(datosArticulo[2]);
+$("#dcliente_id").val(datosArticulo[0]);
+$("#nombre").val(datosArticulo[1]);
+$("#num_documento").val(datosArticulo[2]);
+$("#direccion").val(datosArticulo[3]);
+$("#telefono").val(datosArticulo[4]);
+$("#email").val(datosArticulo[5]);
+// $("#jstock").val(datosArticulo[2]);
+
+
+// $("#jmarjen_venta_dolar").val(12);
+
+
+}
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    $("#devolverVueltos").click(function() {
+
+    $("#selec_cliente").val('default').selectpicker("refresh");
+    $("#selec_banco").val('default').selectpicker("refresh");
+    $("#guardar_form")[0].reset();
+
+    $("#contentPagarOficina").hide();
+    $("#contentCrearCuenta").hide();
+
+    // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
+
+    // console.log('todo bien');
+    if (VueltosvtosPendientes > 0) {
+
+    pagoVueltosPendiente(VueltosvtosPendientes);
+    // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
+    return false;
+    }
+
+
+    });
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    $("#dualbtn").click(function() {
+    let valorDeuda = $('#total').val();
+
+    // return false;
+    if (valorDeuda > 0) {
+    // alert(valorDeuda);
+    // return false;
+    $("#pagoPendienteBtn").click();
+    // console.log('tienes deuda pendiente'+$valorDeuda);
+    return false;
+    }
+
+    if (VueltosvtosPendientes > 0) {
+    // alert(VueltosvtosPendientes);
+    $("#modalPagoPendienteOpcionesBtn").click();
+    $("#countVueltosPendientes").html('$' + VueltosvtosPendientes);
+
+
+
+
+    return false;
+    }
+    alert('No posee deuda ni hay vueltos pendientes por entregar...');
+    return false;
+
+
+
+    });
+
+    $(document).ready(function() {
+    $("#imprimirBoleta").click(function() {
+    let valorDeuda = $('#total').val();
+
+    // return false;
+    if (valorDeuda > 0) {
+    // alert(valorDeuda);
+    // return false;
+    $("#pagoPendienteBtn").click();
+    // console.log('tienes deuda pendiente'+$valorDeuda);
+    return false;
+    }
+
+    if (VueltosvtosPendientes > 0) {
+    // alert(VueltosvtosPendientes);
+    $("#modalPagoPendienteOpcionesBtn").click();
+    $("#countVueltosPendientes").html('$' + VueltosvtosPendientes);
+
+
+
+
+    return false;
+    }
+    $("#form1").submit();
+    return false;
+
+
+
+    });
+    });
+
+
+
+
+    $("#devolverVueltos").click(function() {
+
+    $("#selec_cliente").val('default').selectpicker("refresh");
+    $("#selec_banco").val('default').selectpicker("refresh");
+    $("#guardar_form")[0].reset();
+
+    $("#contentPagarOficina").hide();
+    $("#contentCrearCuenta").hide();
+
+    // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
+
+    // console.log('todo bien');
+    if (VueltosvtosPendientes > 0) {
+
+    pagoVueltosPendiente(VueltosvtosPendientes);
+    // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
+    return false;
+    }
+
+
+    });
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+</script>
+
     <script>
         $(document).ready(function() {
+            //$('#modalPagoPendienteOpciones').modal('toggle')
+            $('#modalPagoPendienteOpciones').modal({backdrop: 'static', keyboard: false})
+
             // #####################################################################################################
             // Maneja el comportamiento de los checkbox, permite mostrar los campos en el form4
             // #####################################################################################################
@@ -761,31 +1079,31 @@
             // Controla los eventos del boton del formulario de pagar por oficina
             // #####################################################################################################
 
-            $("#guardarFormaPago").on('click', function() {
-
-                if ($('#isTransferencia').prop('checked')) {
-                    alert('isTransferencia seleccionado');
-                } else {
-                    alert('isTransferencia deseleccionado');
-                }
-
-                if ($('#isPagoMobil').prop('checked')) {
-                    alert('isPagoMobil seleccionado');
-                } else {
-                    alert('isPagoMobil deseleccionado');
-                }
-
-                if ($('#isEfectivo').prop('checked')) {
-                    alert('isEfectivo seleccionado');
-                } else {
-                    alert('isEfectivo deseleccionado');
-                }
-
-                $("#form4").submit();
-                // alert('form4 ' + isEfectivo);
-                return false;
-
-            });
+            //$("#guardarFormaPago").on('click', function() {
+//
+            //    if ($('#isTransferencia').prop('checked')) {
+            //        alert('isTransferencia seleccionado');
+            //    } else {
+            //        alert('isTransferencia deseleccionado');
+            //    }
+//
+            //    if ($('#isPagoMobil').prop('checked')) {
+            //        alert('isPagoMobil seleccionado');
+            //    } else {
+            //        alert('isPagoMobil deseleccionado');
+            //    }
+//
+            //    if ($('#isEfectivo').prop('checked')) {
+            //        alert('isEfectivo seleccionado');
+            //    } else {
+            //        alert('isEfectivo deseleccionado');
+            //    }
+//
+            //    $("#guardar_form").submit();
+            //    // alert('form4 ' + isEfectivo);
+            //    return false;
+//
+            //});
             // #####################################################################################################
             //
             // #####################################################################################################

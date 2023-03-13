@@ -1790,10 +1790,11 @@ class ServicioController extends Controller
 
                                 $historialExcedentes = HistorialExcedente::where('persona_id', $pcliente_id)->where('tipo_registro', 'Pago_por_oficina')->where('status', 'Pendiente')->get();
 
-                                // return count($historialExcedentes);
+
                                 // return $historialExcedentes;
 
-                                if (count($historialExcedentes) > 1) {
+                                // return count($historialExcedentes);
+                                if (count($historialExcedentes) >= 1) {
                                     $saldo_disponible = 0;
                                     $motivo = '';
                                     $banco_id = '';
@@ -1811,7 +1812,7 @@ class ServicioController extends Controller
                                         $HistorialExcedente->update();
                                     }
                                 }
-
+                                // return $saldo_disponible;
                                 if ($saldo_disponible > 0) {
                                     $saldo_anterior = $saldo_disponible;
                                     $saldo_disponible = $saldo_disponible - $monto_pagado;

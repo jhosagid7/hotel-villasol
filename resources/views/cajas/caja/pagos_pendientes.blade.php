@@ -1,6 +1,7 @@
 <!-- Modal -->
-<div class="modal fade" id="pagopendiente" tabindex="-1" role="dialog" aria-labelledby="pagopendiente" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
+<div class="modal fade bd-example-modal-lg" id="pagopendiente" tabindex="-1" role="dialog"
+    aria-labelledby="pagopendiente" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title" id="exampleModalLongTitle">Pagos pendientes</h1>
@@ -18,20 +19,26 @@
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                             {{-- <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12"> --}}
-                            <div class="form-group">
-                                <label for="vp">Cliente</label>
-                                <select name="vp" id="vp" class="form-control selectpicker"
-                                    data-live-search="true">
-                                    <option value=''>Seleccione</option>
-                                    @foreach ($clientes_vueltos as $vp)
+                                <div class="form-group">
+                                    <label for="vp">Cliente</label>
+                                    <select name="vp" id="vp" class="form-control selectpicker" data-live-search="true">
+                                        <option value=''>Seleccione</option>
+                                        @php
+                                        $vp_ids = [290,467];
+                                        @endphp
+                                        @foreach ($clientes_vueltos as $vp)
+                                        $vp_ids[] = $vp->cliente_id;
                                         @php $cliente = "App\Persona"::where('id', $vp->cliente_id)->first(); @endphp
                                         <option
-                                            value='{{ $vp->id }}_{{ $vp->deuda_total_acumulada }}_{{ $vp->nombre_cliente }}_{{ $vp->cliente_id ?? '' }}_{{ $vp->monto_excedente_actual ?? '' }}'>
+                                            value='{{ $vp->id }}_{{ $vp->deuda_total_acumulada }}_{{ $vp->nombre_cliente }}_{{ $vp->cliente_id ?? '' }}_{{ $vp->monto_excedente_actual ?? '' }}_{{ URL::action("ExcedenteController@getPagoCliente", $vp->cliente_id) }}'>
                                             {{ $vp->nombre_cliente ?? '' }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            {{-- </div> --}}
+
+                                        @endforeach
+
+                                    </select>
+                                </div>
+                                {{--
+                            </div> --}}
                         </div>
                     </div>
                     {{-- <div class="clearfix"></div> --}}
@@ -44,9 +51,13 @@
                                     id="total_vuelto_cliente">0.00</span></h4>
                             <h4><strong class="text-blue">Vueltos disponibles: </strong><span class='text-bold'
                                     id="deud_cliente">0.00</span></h4>
+                            <p id="edit_pago_cliente"></p>
+
                         </div>
 
                     </div>
+
+
 
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="pagar">
                         <hr>
@@ -91,25 +102,36 @@
                                             <input type="hidden" id="ppeso_sistema" name="ppeso_sistema">
                                         </tr>
                                         {{-- <tr>
-                                  <td>Punto</td>
-                                  <td><input type="text" id="pcantidad_punto_rep" name="pcantidad_punto_rep"><input type="hidden" id="pTasaPunto" name="pTasaPunto" value="{{$tasaTransferenciaPunto->tasa}}"></td>
-                                  <td><b id="pdif_moneda_punto_to_tasa">0.00</b><input type="hidden" id="pdif_moneda_punto_to_tasa_input" name="pdif_moneda_punto_to_tasa_input"></td>
-                                  <td><b id="pdif_moneda_punto_to_dolar">0.00</b><input onchange="psumar();" class="pmonto" type="hidden" id="pdif_moneda_punto_to_dolar_input" name="pdif_moneda_punto_to_dolar_input"></td>
-                                  <input type="hidden" id="ppunto_sistema" name="ppunto_sistema">
-                              </tr>
-                              <tr>
-                                  <td>Trans</td>
-                                  <td><input type="text" id="pcantidad_trans_rep" name="pcantidad_trans_rep"><input type="hidden" id="pTasaTrans" name="pTasaTrans" value="{{$tasaTransferenciaPunto->tasa}}"></td>
-                                  <td><b id="pdif_moneda_trans_to_tasa">0.00</b><input type="hidden" id="pdif_moneda_trans_to_tasa_input" name="pdif_moneda_trans_to_tasa_input"></td>
-                                  <td><b id="pdif_moneda_trans_to_dolar">0.00</b><input onchange="psumar();" class="pmonto" type="hidden" id="pdif_moneda_trans_to_dolar_input" name="pdif_moneda_trans_to_dolar_input"></td>
-                                  <input type="hidden" id="ptrans_sistema" name="ptrans_sistema">
-                              </tr> --}}
+                                            <td>Punto</td>
+                                            <td><input type="text" id="pcantidad_punto_rep"
+                                                    name="pcantidad_punto_rep"><input type="hidden" id="pTasaPunto"
+                                                    name="pTasaPunto" value="{{$tasaTransferenciaPunto->tasa}}"></td>
+                                            <td><b id="pdif_moneda_punto_to_tasa">0.00</b><input type="hidden"
+                                                    id="pdif_moneda_punto_to_tasa_input"
+                                                    name="pdif_moneda_punto_to_tasa_input"></td>
+                                            <td><b id="pdif_moneda_punto_to_dolar">0.00</b><input onchange="psumar();"
+                                                    class="pmonto" type="hidden" id="pdif_moneda_punto_to_dolar_input"
+                                                    name="pdif_moneda_punto_to_dolar_input"></td>
+                                            <input type="hidden" id="ppunto_sistema" name="ppunto_sistema">
+                                        </tr>
+                                        <tr>
+                                            <td>Trans</td>
+                                            <td><input type="text" id="pcantidad_trans_rep"
+                                                    name="pcantidad_trans_rep"><input type="hidden" id="pTasaTrans"
+                                                    name="pTasaTrans" value="{{$tasaTransferenciaPunto->tasa}}"></td>
+                                            <td><b id="pdif_moneda_trans_to_tasa">0.00</b><input type="hidden"
+                                                    id="pdif_moneda_trans_to_tasa_input"
+                                                    name="pdif_moneda_trans_to_tasa_input"></td>
+                                            <td><b id="pdif_moneda_trans_to_dolar">0.00</b><input onchange="psumar();"
+                                                    class="pmonto" type="hidden" id="pdif_moneda_trans_to_dolar_input"
+                                                    name="pdif_moneda_trans_to_dolar_input"></td>
+                                            <input type="hidden" id="ptrans_sistema" name="ptrans_sistema">
+                                        </tr> --}}
                                         <tr>
                                             <td>Efectivo</td>
                                             <td><input type="text" id="pcantidad_efectivo_rep"
-                                                    name="pcantidad_efectivo_rep"><input type="hidden"
-                                                    id="pTasaBolivar" name="pTasaBolivar"
-                                                    value="{{ $tasaEfectivo->tasa }}"></td>
+                                                    name="pcantidad_efectivo_rep"><input type="hidden" id="pTasaBolivar"
+                                                    name="pTasaBolivar" value="{{ $tasaEfectivo->tasa }}"></td>
                                             <td><b id="pdif_moneda_efectivo_to_tasa">0.00</b><input type="hidden"
                                                     id="pdif_moneda_efectivo_to_tasa_input"
                                                     name="pdif_moneda_efectivo_to_tasa_input"></td>
@@ -130,8 +152,8 @@
 
                                         </tr>
                                         {{-- @php
-                                  dd(($cajas->SumaTotalVentas + $cajas->SumaTotalServicios));
-                                  @endphp --}}
+                                        dd(($cajas->SumaTotalVentas + $cajas->SumaTotalServicios));
+                                        @endphp --}}
                                         <tr>
                                             <td colspan="3">
                                                 <h4><strong class="text-blue">Total a pagar </strong></h4>
@@ -162,7 +184,8 @@
                                             <input name="pcredito_id" id="pcredito_id" type="hidden"
                                                 value="{{ $credito_id ?? '' }}">
                                             <td colspan="4">
-                                                <textarea name="pObservaciones" id="pObservaciones" cols="50" rows="4"></textarea>
+                                                <textarea name="pObservaciones" id="pObservaciones" cols="50"
+                                                    rows="4"></textarea>
                                             </td>
 
                                         </tr>
@@ -186,8 +209,8 @@
 @endpush
 
 @push('sciptsMain')
-    <script>
-        $(document).ready(function() {
+<script>
+    $(document).ready(function() {
             $("#vp").change(showValuesCliente);
 
             var ptsri = $("#ptotal_sistema_reg_input").val();
@@ -228,6 +251,7 @@
             }
 
             function showValuesCliente() {
+
                 datosArticulo = document.getElementById('vp').value.split('_');
                 $("#ptotal_sistema_reg_input").val(datosArticulo[1]);
                 $("#nom_cliente").html(datosArticulo[2]);
@@ -236,10 +260,19 @@
                 $("#phistorial_id").val(datosArticulo[0]);
                 $("#pcliente_id").val(datosArticulo[3]);
                 $("#total_vuelto_cliente").html(datosArticulo[4]);
+                $("#edit_pago_cliente").html("<a id='modalPagoPendienteOpciones' href='"+datosArticulo[5]+"' class='btn btn-sm btn-danger btn-block col-lg-pull-2 small no-print'>EDITAR TIPO DE PAGO</a>");
+                //$("#edit_pago_cliente").html("<a class='btn btn-success' href='{{route('editar', "datosArticulo[3]")}}'>{{__('EDITAR TIPO DE PAGO')}}</a>");
 
                 var ptsri = $("#ptotal_sistema_reg_input").val();
                 $("#ptotal_sistema_reg").html(pnumDecimal(ptsri));
                 // $("#pdolar_sistema").val(ptsri);
+                $("#total_costo").val(datosArticulo[1]);
+                $("#deudaPendiente").val(datosArticulo[1]);
+                //alert(datosArticulo[1]);
+                $("#countVueltosPendientes").html('$' + datosArticulo[1]);
+
+
+
                 pDMontoDolarRep();
 
                 // historia_id           = datosArticulo[0]
@@ -403,5 +436,5 @@
                 pDMontoTransRep();
             });
         });
-    </script>
+</script>
 @endpush
