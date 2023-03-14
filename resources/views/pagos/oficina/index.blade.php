@@ -63,9 +63,9 @@
                                     @endphp
                                     @foreach ($pagarporoficinas as $pagosOfic)
                                         <tr>
-                                            <td>{{ $pagosOfic->id }}</td>
-                                            <td>{{ $pagosOfic->nombre_cliente }}</td>
-                                            <td>{{ $pagosOfic->cedula_cliente }}</td>
+                                            <td>{{ $pagosOfic->id ?? '' }}</td>
+                                            <td>{{ $pagosOfic->nombre_cliente ?? '' }}</td>
+                                            <td>{{ $pagosOfic->cedula_cliente ?? '' }}</td>
                                             <td>
                                                 @if ($pagosOfic->isTransferencia)
                                                     Transferencia:
@@ -86,10 +86,10 @@
                                                     ->orderBy('caja_id', 'ASC')
                                                     ->get();
                                             @endphp
-                                            <td>{{ $pagosOfic->telefono_cliente }}</td>
-                                            <td>{{ $pagosOfic->updated_at }}</td>
-                                            <td>{{ $pagosOfic->excedente }}</td>
-                                            <td>{{ $pago_creditos_Consumo[0]->caja_id }}</td>
+                                            <td>{{ $pagosOfic->telefono_cliente ?? '' }}</td>
+                                            <td>{{ $pagosOfic->updated_at ?? '' }}</td>
+                                            <td>{{ $pagosOfic->excedente ?? '' }}</td>
+                                            <td>{{ $pago_creditos_Consumo[0]->caja_id ?? '' }}</td>
 
                                             <td>
                                                 <a

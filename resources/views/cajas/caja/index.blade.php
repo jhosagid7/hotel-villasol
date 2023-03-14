@@ -110,7 +110,7 @@
             <div class="box-footer">
                 @can('haveaccess', 'ventas.create')
                     @if (isset($mostrarNuvaVenta) && $mostrarNuvaVenta === 0)
-                        <a class="btn btn-success" href="{{ route('venta.create') }}">{{ __('Ir a ventas') }}</a>
+                        <a class="btn btn-success" href="{{ route('venta.index') }}">{{ __('Ir a ventas') }}</a>
                     @endif
                 @endcan
             </div>

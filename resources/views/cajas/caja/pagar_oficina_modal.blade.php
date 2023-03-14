@@ -1,4 +1,4 @@
-<div class="modal fade bs-example-modal-xm refrescar" id="modalPagoPendienteOpciones" role="dialog"
+<div class="modal fade bs-example-modal-xm refrescar" id="modalPagoPendienteOpciones{{ $vp->cliente_id ?? ''}}" role="dialog"
     aria-labelledby="myModalLabel">
     <div class="modal-dialog modal-danger">
         <div class="modal-dialog">
@@ -31,16 +31,16 @@
                                     </div><!-- /.box-header -->
                                     <div class="box-body">
                                         <div id="btnPago2Opciones">
-                                            {{--  <div id="contado2Opciones"  --}}
+                                            <div id="contado2Opciones"
                                                 class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 small">
                                                 {{-- <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a> --}}
-                                                {{--  <button type="botton" name="devolverVueltos" id="devolverVueltos"
+                                                <button type="botton" name="devolverVueltos" id="devolverVueltos"
                                                     class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">
-                                                    Contado</button>  --}}
-                                            {{--  </div>  --}}
+                                                    Contado</button>
+                                            </div>
 
                                             <div id="precortesia2Opciones"
-                                                class="panel-group col-lg-12 col-sm-12 col-md-12 col-xs-12 small">
+                                                class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 small">
                                                 {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
                                                 <button type="botton" name="pagarPorOficinaBtn" id="pagarPorOficinaBtn"
                                                     class="btn btn-sm btn-warning btn-block col-lg-pull-2 small"> Pagar
@@ -148,9 +148,9 @@
                                                                 placeholder="Buscar cliente por nombre o C.I./RIF...">
                                                             <!-- <select name="selec_cliente" id="selec_cliente" class="form-control selectpicker" data-live-search="true">
                                                         <option value="default" selected="selected">Seleccione Cliente</option>
-                                                        @foreach ($clientes as $dcliente)
+                                                        {{--  @foreach ($clientes as $dcliente)
 <option value="{{ $dcliente->id }}_{{ $dcliente->nombre }}_{{ $dcliente->num_documento }}_{{ $dcliente->direccion }}_{{ $dcliente->telefono }}_{{ $dcliente->email }}">{{ $dcliente->nombre }} - {{ $dcliente->num_documento }}</option>
-@endforeach
+@endforeach  --}}
                                                     </select> -->
                                                             <span id="nombreamesagge" class="text-red"></span>
                                                         </div>
@@ -763,23 +763,23 @@
 
             $("#guardarFormaPago").on('click', function() {
 
-                //if ($('#isTransferencia').prop('checked')) {
-                //    alert('isTransferencia seleccionado');
-                //} else {
-                //    alert('isTransferencia deseleccionado');
-                //}
+                if ($('#isTransferencia').prop('checked')) {
+                    alert('isTransferencia seleccionado');
+                } else {
+                    alert('isTransferencia deseleccionado');
+                }
 
-                //if ($('#isPagoMobil').prop('checked')) {
-                //    alert('isPagoMobil seleccionado');
-                //} else {
-                //    alert('isPagoMobil deseleccionado');
-                //}
+                if ($('#isPagoMobil').prop('checked')) {
+                    alert('isPagoMobil seleccionado');
+                } else {
+                    alert('isPagoMobil deseleccionado');
+                }
 
-                //if ($('#isEfectivo').prop('checked')) {
-                //    alert('isEfectivo seleccionado');
-                //} else {
-                //    alert('isEfectivo deseleccionado');
-                //}
+                if ($('#isEfectivo').prop('checked')) {
+                    alert('isEfectivo seleccionado');
+                } else {
+                    alert('isEfectivo deseleccionado');
+                }
 
                 $("#form4").submit();
                 // alert('form4 ' + isEfectivo);

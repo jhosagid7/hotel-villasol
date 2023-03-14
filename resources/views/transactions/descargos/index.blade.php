@@ -118,11 +118,11 @@
                 {{-- fin de la cabecera de box --}}
             </div>
             <!-- /.box-body -->
-            <div class="box-footer">
+            {{--  <div class="box-footer">
                 @if (isset($mostrarNuvaVenta) && $mostrarNuvaVenta === 0)
                     <a class="btn btn-success" href="{{ route('venta.create') }}">{{ __('Ir a ventas') }}</a>
                 @endif
-            </div>
+            </div>  --}}
             <!-- /.box-footer-->
         </div>
         <!-- /.box -->
@@ -193,9 +193,10 @@
                                 alignment: "center",
                                 customize: function(doc) {
                                     doc.styles.tableHeader.alignment =
-                                    'left'; //giustifica a sinistra titoli colonne
+                                        'left'; //giustifica a sinistra titoli colonne
                                     doc.content[1].table.widths = [40, 100, 50, 150, 150, 60,
-                                    80]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
+                                        80
+                                    ]; //costringe le colonne ad occupare un dato spazio per gestire il baco del 100% width che non si concretizza mai
                                 },
                                 exportOptions: {
                                     columns: [0, 1, 2, 3, 4, 5, 6],

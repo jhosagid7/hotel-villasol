@@ -62,6 +62,9 @@ class ReporteController extends Controller
             ->groupBy('articulo_ventas.id', 'articulos.codigo', 'articulos.vender_al', 'articulos.nombre', 'articulos.porEspecial', 'articulos.isDolar', 'articulos.isPeso', 'articulos.isTransPunto', 'articulos.isMixto', 'articulos.isEfectivo', 'articulo_ventas.cantidad', 'articulo_ventas.precio_costo_unidad', 'articulo_ventas.precio_venta_unidad', 'articulo_ventas.descuento', 'articulo_ventas.created_at')
             ->get();
 
+            // $articulos = Articulo_venta::with('venta', 'articulo')->select('articulo_id','cantidad')->get();
+            // return $articulos;
+
 
         // return $articulos;
 

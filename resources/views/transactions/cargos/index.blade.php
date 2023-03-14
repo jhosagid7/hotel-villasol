@@ -116,11 +116,11 @@
                 {{-- fin de la cabecera de box --}}
             </div>
             <!-- /.box-body -->
-            <div class="box-footer">
+            {{--  <div class="box-footer">
                 @if (isset($mostrarNuvaVenta) && $mostrarNuvaVenta === 0)
                     <a class="btn btn-success" href="{{ route('venta.create') }}">{{ __('Ir a ventas') }}</a>
                 @endif
-            </div>
+            </div>  --}}
             <!-- /.box-footer-->
         </div>
         <!-- /.box -->
