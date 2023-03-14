@@ -1456,7 +1456,7 @@ if(isset($servicio->id)){
                                                                                                     data-id=""
                                                                                                     value="{{ $servicio->hora_salida ?? '' }}"
                                                                                                     placeholder="Ingrese nombre">
-                                                                                                <input type="text"
+                                                                                                <input type="hidden"
                                                                                                     class="form-control"
                                                                                                     name="cantidad"
                                                                                                     id="cantidad"
