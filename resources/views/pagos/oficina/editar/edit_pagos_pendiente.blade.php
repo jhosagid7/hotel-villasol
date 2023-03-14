@@ -362,7 +362,8 @@
 @push('sciptsMain')
 <script language="javascript">
     $(document).ready(function() {
-        $('#modalPagoPendienteOpciones').modal('toggle')
+
+            $('#modalPagoPendienteOpciones').modal('toggle')
             // Comprobacion usando funcion .is()
 
             // console.log("Checkbox transferencia");

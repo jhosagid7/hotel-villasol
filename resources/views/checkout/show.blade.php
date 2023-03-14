@@ -1456,7 +1456,7 @@ if(isset($servicio->id)){
                                                                                                     data-id=""
                                                                                                     value="{{ $servicio->hora_salida ?? '' }}"
                                                                                                     placeholder="Ingrese nombre">
-                                                                                                <input type="hidden"
+                                                                                                <input type="text"
                                                                                                     class="form-control"
                                                                                                     name="cantidad"
                                                                                                     id="cantidad"
@@ -6397,7 +6397,10 @@ if(isset($servicio->id)){
                                     let precioVieja = $("#precio_vieja").val();
 
                                     precioVieja = numDecimal(precioVieja);
-                                    let diferencia = precio - precioVieja;
+
+                                    // Esta variable nos guarda la candad de dias en los que se alquilo la habitaicon
+                                    let cantidadTiempoHabitacion = {{ $servicio->cantidad ?? '' }};
+                                    let diferencia = (precio - precioVieja) * cantidadTiempoHabitacion;
 
                                     $("#precioDolarHabitacio").val(diferencia);
                                     $("#diferenciaPrecio").html('($' + diferencia + ')');

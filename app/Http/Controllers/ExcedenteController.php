@@ -166,14 +166,14 @@ class ExcedenteController extends Controller
         if ($ifCliente) {
             // return 'si';
 
-            if($request->get('isTransferencia') == 'on'){
+            if ($request->get('isTransferencia') == 'on') {
                 $upExcedente = Excedente::findOrFail($ifCliente->id);
                 $upExcedente->nombre_banco_cliente = $request->get('nombre_banco');
                 $upExcedente->num_cuenta_cliente = $request->get('codigo') . ' - ' . $request->get('num_cuenta');
                 $upExcedente->tipo_cuenta_cliente = $request->get('tipo_cuenta');
                 $upExcedente->isTransferencia = $request->get('isTransferencia');
                 $upExcedente->update();
-            } else{
+            } else {
                 $upExcedente = Excedente::findOrFail($ifCliente->id);
                 $upExcedente->nombre_banco_cliente = null;
                 $upExcedente->num_cuenta_cliente = null;
@@ -181,31 +181,28 @@ class ExcedenteController extends Controller
                 $upExcedente->isTransferencia = $request->get('isTransferencia');
                 $upExcedente->update();
             }
-            if($request->get('isPagoMobil') == 'on'){
+            if ($request->get('isPagoMobil') == 'on') {
                 $upExcedente = Excedente::findOrFail($ifCliente->id);
                 $upExcedente->telefono_pago_movil_cliente = $request->get('pago_mobil');
                 $upExcedente->nombre_banco_cliente = $request->get('nombre_banco');
                 $upExcedente->tipo_cuenta_cliente = $request->get('tipo_cuenta');
                 $upExcedente->isPagoMobil = $request->get('isPagoMobil');
                 $upExcedente->update();
-            } else{
+            } else {
                 $upExcedente = Excedente::findOrFail($ifCliente->id);
                 $upExcedente->telefono_pago_movil_cliente = null;
                 $upExcedente->isPagoMobil = $request->get('isPagoMobil');
                 $upExcedente->update();
             }
-            if($request->get('isEfectivo') == 'on'){
+            if ($request->get('isEfectivo') == 'on') {
                 $upExcedente = Excedente::findOrFail($ifCliente->id);
                 $upExcedente->isEfectivo = $request->get('isEfectivo');
                 $upExcedente->update();
-            } else{
+            } else {
                 $upExcedente = Excedente::findOrFail($ifCliente->id);
                 $upExcedente->isEfectivo = $request->get('isEfectivo');
                 $upExcedente->update();
             }
-
-
-
         }
 
         return redirect()
