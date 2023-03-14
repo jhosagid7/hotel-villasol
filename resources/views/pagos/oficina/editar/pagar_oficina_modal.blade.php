@@ -373,7 +373,6 @@
     //ACTUALIZAR UN REGISTRO
 $('#guardar_form').submit(function(e){
     e.preventDefault();
-    alert('jajaj');
     var id2 = $('#dcliente_id').val();
     var nombre = $('#nombre').val();
     var num_documento = $('#num_documento').val();
@@ -412,7 +411,7 @@ $('#guardar_form').submit(function(e){
             if(response){
                 let urlback = "{{route('caja.show', session('session_caja')->id) ?? ''}}";
                 $(location).attr('href',urlback);
-                console.log('response', caja_id);
+                //console.log('response', caja_id);
                 //$('#animal_edit_modal').modal('hide');
                 //toastr.info('El registro fue actualizado correctamente.', 'Actualizar Registro', {timeOut:3000});
                 //$('#tabla-animal').DataTable().ajax.reload();

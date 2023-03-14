@@ -166,16 +166,6 @@ class ExcedenteController extends Controller
         if ($ifCliente) {
             // return 'si';
 
-            // $upExcedente = Excedente::findOrFail($ifCliente->id);
-            // $upExcedente->telefono_pago_movil_cliente = $request->get('pago_mobil');
-            // $upExcedente->nombre_banco_cliente = $request->get('nombre_banco');
-            // $upExcedente->num_cuenta_cliente = $request->get('codigo') . ' - ' . $request->get('num_cuenta');
-            // $upExcedente->tipo_cuenta_cliente = $request->get('tipo_cuenta');
-            // $upExcedente->isTransferencia = $request->get('isTransferencia');
-            // $upExcedente->isPagoMobil = $request->get('isPagoMobil');
-            // $upExcedente->isEfectivo = $request->get('isEfectivo');
-            // $upExcedente->update();
-
             if($request->get('isTransferencia') == 'on'){
                 $upExcedente = Excedente::findOrFail($ifCliente->id);
                 $upExcedente->nombre_banco_cliente = $request->get('nombre_banco');

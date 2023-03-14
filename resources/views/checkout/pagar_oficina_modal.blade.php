@@ -763,23 +763,23 @@
 
             $("#guardarFormaPago").on('click', function() {
 
-                if ($('#isTransferencia').prop('checked')) {
-                    alert('isTransferencia seleccionado');
-                } else {
-                    alert('isTransferencia deseleccionado');
-                }
+                //if ($('#isTransferencia').prop('checked')) {
+                //    alert('isTransferencia seleccionado');
+                //} else {
+                //    alert('isTransferencia deseleccionado');
+                //}
 
-                if ($('#isPagoMobil').prop('checked')) {
-                    alert('isPagoMobil seleccionado');
-                } else {
-                    alert('isPagoMobil deseleccionado');
-                }
+                //if ($('#isPagoMobil').prop('checked')) {
+                //    alert('isPagoMobil seleccionado');
+                //} else {
+                //    alert('isPagoMobil deseleccionado');
+                //}
 
-                if ($('#isEfectivo').prop('checked')) {
-                    alert('isEfectivo seleccionado');
-                } else {
-                    alert('isEfectivo deseleccionado');
-                }
+                //if ($('#isEfectivo').prop('checked')) {
+                //    alert('isEfectivo seleccionado');
+                //} else {
+                //    alert('isEfectivo deseleccionado');
+                //}
 
                 $("#form4").submit();
                 // alert('form4 ' + isEfectivo);
