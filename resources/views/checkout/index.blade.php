@@ -1,129 +1,130 @@
 @extends ('layouts.admin3')
 @section('contenido')
-    <style type="text/css">
-        .bootstrap-select {
-            width: 400px !important;
-        }
+<style type="text/css">
+    .bootstrap-select {
+        width: 400px !important;
+    }
 
-        .subirmargin{
-            margin-top: -1em;
-        }
-    </style>
-
-
-
-    <div class="box">
-
-        <div style="background-color: #e7eaeb" class="box-body small">
-            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                @include('custom.message')
-                <!-- Custom Tabs (Pulled to the right) -->
-                <div class="nav-tabs-custom">
-                    <ul class="nav nav-tabs pull-right">
+    .subirmargin {
+        margin-top: -1em;
+    }
+</style>
 
 
 
+<div class="box">
 
-                        <li class="pull-left header"><i class="fa fa-th"></i> @isset($title)
-                                {{ $title }}
-                            @else
-                                {!! 'Sistema' !!}
-                            @endisset
-                        </li>
-                    </ul>
-
-                    <div style="background-color: #e7eaeb" class="tab-content">
+    <div style="background-color: #e7eaeb" class="box-body small">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            @include('custom.message')
+            <!-- Custom Tabs (Pulled to the right) -->
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs pull-right">
 
 
-                        {{-- <b>How to use: {{$level->id}}</b> --}}
-                        @php
-                            $i = 0;
-                        @endphp
-                        @foreach ($servicios as $servicio)
-                            {{-- {{$habitacion->nombre}} --}}
-                            {{-- {{$servicio}} --}}
-                            @if ($servicio->habitacion->status == 'Ocupada')
-                                <a href="{{ URL::action('CheckoutController@show', $servicio->id) }}"
-                                    data-target="#myModal{{ $servicio->habitacion_id }}" class="small-box-footer">
-                                    <div class="col-md-3 col-sm-6 col-xs-12">
-
-                                        <div class="info-box">
-                                            {{-- @if ($habitacion->status == 'Disponible')
-                                        <span class="info-box-icon bg-green"><i class="fa fa-hotel"></i></span>
-                                    @elseif ($habitacion->status == 'Ocupada') --}}
-                                            @php
-
-                                                if ($servicio->modo_pago == 'Contado') {
-                                                    $color = '';
-                                                }
-                                                if ($servicio->modo_pago == 'Cortesía') {
-                                                    $color = 'bg-orange';
-                                                }
-
-                                                if ($servicio->modo_pago == 'Crédito') {
-                                                    $color = 'bg-green';
-                                                }
-                                            @endphp
-                                            <span id="bg_{{ $i }}" class="info-box-icon bg-blue-gradient"><i
-                                                    class="fa fa-bed fa-circle {{ $color ?? '' }}"></i></span>
-                                            {{-- @elseif ($habitacion->status == 'Limpieza')
-                                        <span class="info-box-icon bg-aqua"><i class="fa fa-bed"></i></span>
-                                    @elseif ($habitacion->status == 'Finalizando')
-                                        <span class="info-box-icon bg-yellow"><i class="fa fa-bed"></i></span>
-                                        @elseif ($habitacion->status == 'En reparacion')
-                                        <span class="info-box-icon bg-default"><i class="fa fa-bed"></i></span>
-                                    @endif --}}
-
-                                            <div class="tile-body sm">
-                                                <h4 style="text-align: center;"><i class="fa fa-bed"></i><b>
-                                                        {{ $servicio->nombre_habitacion }}</b></h4>
-                                            </div>
-
-                                            <div class="info-box-content text-center sm subirmargin">
-                                                <small class="info-box-text">Cerrar Servicio
-                                                    {{ $servicio->tipo_habitacion }}</small>
-
-                                                <small class="info-box-text text-center text-gray">
-                                                    {{ $servicio->persona->nombre }}</small>
-
-                                                {{-- <span class="info-box-text">Cerrar <i class="fa fa-spinner"></i></span> --}}
-
-                                                <small id="bg_{{ $i }}"
-                                                    class="info-box-text contador text-orange">{{ $servicio->fecha_salida . ' ' . $servicio->hora_salida }}</small>
-                                                @php
-                                                    $i++;
-                                                @endphp
-                                            </div>
-
-                                            <!-- /.info-box-content -->
-
-                                        </div>
-                                        <!-- /.info-box -->
-
-                                    </div>
-                                </a>
-                            @endif
-                        @endforeach
-                    </div>
-                    <!-- /.tab-pane -->
 
 
-                    <!-- /.tab-pane -->
+                    <li class="pull-left header"><i class="fa fa-th"></i> @isset($title)
+                        {{ $title }}
+                        @else
+                        {!! 'Sistema' !!}
+                        @endisset
+                    </li>
+                </ul>
+
+                <div style="background-color: #e7eaeb" class="tab-content">
+
+
+                    {{-- <b>How to use: {{$level->id}}</b> --}}
+                    @php
+                    $i = 0;
+                    @endphp
+                    @foreach ($servicios as $servicio)
+                    {{-- {{$habitacion->nombre}} --}}
+                    {{-- {{$servicio}} --}}
+                    @if ($servicio->habitacion->status == 'Ocupada')
+                    <a href="{{ URL::action('CheckoutController@show', $servicio->id) }}"
+                        data-target="#myModal{{ $servicio->habitacion_id }}" class="small-box-footer">
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+
+                            <div class="info-box">
+                                {{-- @if ($habitacion->status == 'Disponible')
+                                <span class="info-box-icon bg-green"><i class="fa fa-hotel"></i></span>
+                                @elseif ($habitacion->status == 'Ocupada') --}}
+                                @php
+
+                                if ($servicio->modo_pago == 'Contado') {
+                                $color = '';
+                                }
+                                if ($servicio->modo_pago == 'Cortesía') {
+                                $color = 'bg-orange';
+                                }
+
+                                if ($servicio->modo_pago == 'Crédito') {
+                                $color = 'bg-green';
+                                }
+                                @endphp
+                                <span id="bg_{{ $i }}" class="info-box-icon bg-blue-gradient"><i
+                                        class="fa fa-bed fa-circle {{ $color ?? '' }}"></i></span>
+                                {{-- @elseif ($habitacion->status == 'Limpieza')
+                                <span class="info-box-icon bg-aqua"><i class="fa fa-bed"></i></span>
+                                @elseif ($habitacion->status == 'Finalizando')
+                                <span class="info-box-icon bg-yellow"><i class="fa fa-bed"></i></span>
+                                @elseif ($habitacion->status == 'En reparacion')
+                                <span class="info-box-icon bg-default"><i class="fa fa-bed"></i></span>
+                                @endif --}}
+
+                                <div class="tile-body sm">
+                                    <h4 style="text-align: center;"><i class="fa fa-bed"></i><b>
+                                            {{ $servicio->nombre_habitacion }}</b></h4>
+                                </div>
+
+                                <div class="info-box-content text-center sm subirmargin">
+                                    <small class="info-box-text">Cerrar Servicio
+                                        {{ $servicio->tipo_habitacion }}</small>
+
+                                    <small class="info-box-text text-center text-gray">
+                                        {{ $servicio->persona->nombre }}</small>
+
+                                    {{-- <span class="info-box-text">Cerrar <i class="fa fa-spinner"></i></span> --}}
+
+                                    <small id="bg_{{ $i }}" class="info-box-text contador text-orange">{{
+                                        $servicio->fecha_salida . ' ' .
+                                        $servicio->hora_salida }}</small>
+                                    @php
+                                    $i++;
+                                    @endphp
+                                </div>
+
+                                <!-- /.info-box-content -->
+
+                            </div>
+                            <!-- /.info-box -->
+
+                        </div>
+                    </a>
+                    @endif
+                    @endforeach
                 </div>
-                <!-- /.tab-content -->
+                <!-- /.tab-pane -->
+
+
+                <!-- /.tab-pane -->
             </div>
-            <!-- nav-tabs-custom -->
-
+            <!-- /.tab-content -->
         </div>
-    </div>
-    </div>
+        <!-- nav-tabs-custom -->
 
-    </section>
-    <!-- /.content -->
-    <div class="clearfix"></div>
-    @push('sciptsMain')
-        <script>
-            // focusMethod = function getFocus() {
+    </div>
+</div>
+</div>
+
+</section>
+<!-- /.content -->
+<div class="clearfix"></div>
+@push('sciptsMain')
+<script>
+    // focusMethod = function getFocus() {
             //                 document.getElementById(".selval").focus();
             //                 $(".selval").val('default');
             //                 $(".selval").selectpicker("refresh");
@@ -317,6 +318,6 @@
                 }
 
             }
-        </script>
-    @endpush
+</script>
+@endpush
 @endsection
