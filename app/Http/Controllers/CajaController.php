@@ -465,6 +465,7 @@ class CajaController extends Controller
         $cajas->pago_vueltos;
         $cajas->articulo_ventas;
         $cajas->servicios;
+        // return $cajas->servicios;
         $cajas->detalle_creditos_pagados;
         // return $cajas;
         // return $cajas;
@@ -631,6 +632,7 @@ class CajaController extends Controller
         if ($cajas->estado == 'Abierta') {
 
             $valor = $cajas->excedente_actual;
+            // return $valor;
             $cajas->excedente_actual_valor  = $valor;
             // $vueltosPendientesCajaAnterior = Historial_Vueltos_Pendiente::where('caja_id', '<>', $cajas->id)->get();
         }
@@ -1020,7 +1022,7 @@ class CajaController extends Controller
             if ($vent->modo_pago == 'Contado') {
                 $cajas->SumaTotalCantidadVentasContado = $cajas->SumaTotalCantidadVentasContado + 1;
             }
-
+            // return $vent;
             if ($vent->modo_pago == 'Contado-Excedente') {
                 //////////////////////////////////////////////////////////////////////////////////////////
                 //contavilizamos cuanto hay pagado con excedente
@@ -1919,6 +1921,8 @@ class CajaController extends Controller
                     if ($serv->status_servicio == 'Iniciado') {
                         $cajas->SumaTotalServiciosExcedenteNuevoIniciado = $cajas->SumaTotalServiciosExcedenteNuevoIniciado + $serv->excedente_nuevo;
                     }
+
+                    // return $serv;
                     //////////////////////////////////////////////////////////////////////////////////////////
                     //contavilizamos cuanto hay pagado con excedente
                     $cajas->SumaTotalServiciosPagadosConExcedente = $cajas->SumaTotalServiciosPagadosConExcedente + $serv->pago_con_excedente;

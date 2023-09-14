@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Persona extends Model
 {
 
+
     public function Ventas()
     {
         return $this->hasMany(Venta::class);
@@ -48,6 +49,10 @@ class Persona extends Model
     {
         return $this->hasMany(Excedente::class);
     }
+    public function excedente()
+    {
+        return $this->hasOne(Excedente::class);
+    }
 
     public function historialExcedentes()
     {
@@ -58,6 +63,8 @@ class Persona extends Model
     {
         return $this->hasMany(DetallePagoOficina::class);
     }
+
+
 
 
     // protected $table = 'persona';

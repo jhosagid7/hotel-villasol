@@ -515,9 +515,10 @@ if(isset($servicio->id)){
                                                 <input type="hidden" name="fecha_salida" value="<?php echo $hoy . ' ' . $hora; ?>">
                                                 <input type="hidden" name="id_habitacion"
                                                     value="{{ $servicio->habitacion_id ?? '' }}">
-
-                                                {{-- <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
-                            <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> --}}
+                                                @can('haveaccess', 'boton.sistema')
+                                                <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
+                                                @endcan
+                            {{--  <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button>  --}}
                                                 <button id="dualbtn" class="btn btn-primary ">Procesar deuda/vuelto
                                                     pendiente</button>
                                                 <a id="pagoPendienteBtn" href="#" data-toggle="modal"
@@ -961,7 +962,7 @@ if(isset($servicio->id)){
                                                                                 </h2>
                                                                             </div>
                                                                             <div class="row">
-                                                                                <div id="excedente"
+                                                                                {{--  <div id="excedente"
                                                                                     class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
                                                                                     <label for="pagoConExcedente">
                                                                                         <h2 class="text-blue">Exedente
@@ -976,7 +977,7 @@ if(isset($servicio->id)){
                                                                                     <input class="form-control"
                                                                                         type="hidden" id="dispExcedente"
                                                                                         name="dispExcedente">
-                                                                                </div>
+                                                                                </div>  --}}
                                                                                 {{--  <div id="Vueltosexcedente"
                                                                                     class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
                                                                                     <label for="VueltospagoConExcedente">
@@ -994,6 +995,31 @@ if(isset($servicio->id)){
                                                                                         id="VueltosdispExcedente"
                                                                                         name="VueltosdispExcedente">
                                                                                 </div>  --}}
+                                                                                <div id="Vueltosexcedente"
+                                                                        class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
+                                                                        <label for="VueltospagoConExcedente">
+                                                                            <h1 class="text-blue"><button type="button"
+                                                                                    id="cargarExcedente"
+                                                                                    class="btn btn-blue"> <i
+                                                                                        class="fa fa-money"
+                                                                                        aria-hidden="true"> <b>USAR
+                                                                                            VUELTOS
+                                                                                            PENDIENTES: </b> <b
+                                                                                            id="VueltosdispExcedenteShow">$.0.00</b></i></button>
+                                                                                <div class="col-xs-3">
+                                                                                    <input class="form-control"
+                                                                                        type="text"
+                                                                                        id="VueltospagoConExcedente"
+                                                                                        name="VueltospagoConExcedente"
+                                                                                        readonly>
+                                                                                </div>
+                                                                            </h1>
+                                                                        </label>
+
+                                                                        <input class="form-control" type="hidden"
+                                                                            id="VueltosdispExcedente"
+                                                                            name="VueltosdispExcedente">
+                                                                    </div>
                                                                                 <div id="nocredito"
                                                                                     class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
                                                                                     {{-- <label for="pagoConCredito"><h2 class="text-blue">Crédito disponible: <b id="dispCreditoShow">$.0.00</b></h2></label> --}}
@@ -4399,14 +4425,14 @@ if(isset($servicio->id)){
             function resta() {
                 // alert('resta');
                 const RestaTotal = document.getElementById('RestaTtotal');
-                const Excdt = document.getElementById('excdt');
-                const VueltosExcdt = document.getElementById('Vueltosexcdt');
                 const PagoTtotal = document.getElementById('PagoTtotal');
                 const spTotal = document.getElementById('spTotal');
                 const tp = document.getElementById('tp');
                 const r = document.getElementById('r');
                 const tap = document.getElementById('tap');
+                const Excdt = document.getElementById('excdt');
                 const RestaTotalV = document.getElementById('RestaTtotalV');
+                const VueltosExcdt = document.getElementById('Vueltosexcdt');
 
 
 
@@ -4450,6 +4476,8 @@ if(isset($servicio->id)){
                     $("#dispExcedenteShow").html('$' + excedenteDispSet);
                 }
 
+
+                // TODO con este codigo trabajamos los vueltos pendientes
 
                 let VueltosExc = $('#VueltospagoConExcedente').val();
 

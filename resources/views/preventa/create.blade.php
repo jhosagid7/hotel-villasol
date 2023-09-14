@@ -1,76 +1,84 @@
 @extends ('layouts.admin3')
 @section('contenido')
 
-    <div class="row">
-        <div class="col-lg-6">
+<div class="row">
+    <div class="col-lg-6">
 
-            @include('custom.message')
-        </div>
+        @include('custom.message')
     </div>
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-        <div class="nav-tabs-custom margin">
-            <ul class="nav nav-tabs">
-                <li><a href="#caja" data-toggle="tab">Caja</a></li>
-                <li class="active"><a href="#ventas" data-toggle="tab">Ventas</a></li>
-                <li class="hidden"><a href="#tasa" data-toggle="tab">Configurar tasa</a></li>
-            </ul>
-            <div class="tab-content">
-                <a href="{{ URL::action('CajaController@show', $caja->id) }}"><button class='btn btn-success btn-sm'><span
-                            class='glyphicon glyphicon-arrow-up'> VER CAJA</span></button></a>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+    <div class="nav-tabs-custom margin">
+        <ul class="nav nav-tabs">
+            <li><a href="#caja" data-toggle="tab">Caja</a></li>
+            <li class="active"><a href="#ventas" data-toggle="tab">Ventas</a></li>
+            <li class="hidden"><a href="#tasa" data-toggle="tab">Configurar tasa</a></li>
+        </ul>
+        <div class="tab-content">
+            <a href="{{ URL::action('CajaController@show', $caja->id) }}"><button class='btn btn-success btn-sm'><span
+                        class='glyphicon glyphicon-arrow-up'> VER CAJA</span></button></a>
 
-                <div class="tab-pane" id="caja">
-                    <!-- Main content -->
-                    <section class="content">
-                        <!-- Info boxes -->
-                        <div class="row">
-                            {{-- <div class="col-md-4 col-sm-6 col-xs-12">
-                                <div class="info-box">
-                                    <span class="info-box-icon bg-red"><i class="fa fa-calendar-check-o"></i></span>
+            <div class="tab-pane" id="caja">
+                <!-- Main content -->
+                <section class="content">
+                    <!-- Info boxes -->
+                    <div class="row">
+                        {{-- <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-red"><i class="fa fa-calendar-check-o"></i></span>
 
-                                    <div class="info-box-content">
-                                        <span class="info-box-text">Total Operaciones</span>
-                                        <span class="info-box-number">Ventas: <b class="text-primary"> {{ $cajas->SumaTotalCantidadVentas ?? ' 0,00' }} </b></span>
-                                        <span class="info-box-number">Servicios: <b class="text-primary"> {{ $cajas->SumaTotalCantidadServicios + $cajas->SumaTotalCantidadServiciosPorPagar + $cajas->SumaTotalCantidadServiciosCortesia ?? ' 0,00' }} </b></span>
+                                <div class="info-box-content">
+                                    <span class="info-box-text">Total Operaciones</span>
+                                    <span class="info-box-number">Ventas: <b class="text-primary"> {{
+                                            $cajas->SumaTotalCantidadVentas ?? ' 0,00' }} </b></span>
+                                    <span class="info-box-number">Servicios: <b class="text-primary"> {{
+                                            $cajas->SumaTotalCantidadServicios +
+                                            $cajas->SumaTotalCantidadServiciosPorPagar +
+                                            $cajas->SumaTotalCantidadServiciosCortesia ?? ' 0,00' }} </b></span>
 
-                                    </div>
-                                    <!-- </.info-box-content -->
                                 </div>
-                                <!-- /.info-box -->
-                            </div> --}}
-                            <!-- /.col -->
+                                <!-- </.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div> --}}
+                        <!-- /.col -->
 
+                        {{-- <div class="col-md-4 col-sm-6 col-xs-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">En caja</span>
+                                    <span class="info-box-number">Ventas:<b class="text-primary"> $. {{
+                                            $cajas->SumaTotalVentas ?? ' 0' }}</b></span>
+                                    <span class="info-box-number">Servicios:<b class="text-primary"> $. {{
+                                            $cajas->SumaTotalServicios ?? ' 0,00' }} </b></span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div> --}}
+                        <!-- /.col -->
+
+
+                        <!-- fix for small devices only -->
+                        {{-- <div class="clearfix visible-sm-block"></div> --}}
+                        {{-- <div class="row"> --}}
                             {{-- <div class="col-md-4 col-sm-6 col-xs-12">
                                 <div class="info-box">
                                     <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
 
                                     <div class="info-box-content">
-                                        <span class="info-box-text">En caja</span>
-                                        <span class="info-box-number">Ventas:<b class="text-primary"> $. {{ $cajas->SumaTotalVentas ?? ' 0' }}</b></span>
-                                        <span class="info-box-number">Servicios:<b class="text-primary"> $. {{ $cajas->SumaTotalServicios ?? ' 0,00' }} </b></span>
+                                        <span class="info-box-text">Por cobrar </span>
+                                        <span class="info-box-number">Ventas:<b class="text-danger"> $. {{
+                                                $cajas->SumaTotalVentasPorCobrar ?? ' 0' }}</b></span>
+                                        <span class="info-box-number">Servicios:<b class="text-danger"> $. {{
+                                                $cajas->SumaTotalServiciosPorPagar ?? ' 0,00' }} </b></span>
                                     </div>
                                     <!-- /.info-box-content -->
                                 </div>
                                 <!-- /.info-box -->
                             </div> --}}
-                            <!-- /.col -->
-
-
-                            <!-- fix for small devices only -->
-                            {{-- <div class="clearfix visible-sm-block"></div> --}}
-                            {{-- <div class="row"> --}}
-                            {{-- <div class="col-md-4 col-sm-6 col-xs-12">
-                                    <div class="info-box">
-                                        <span class="info-box-icon bg-aqua"><i class="ion ion-ios-gear-outline"></i></span>
-
-                                        <div class="info-box-content">
-                                            <span class="info-box-text">Por cobrar </span>
-                                            <span class="info-box-number">Ventas:<b class="text-danger"> $. {{ $cajas->SumaTotalVentasPorCobrar ?? ' 0' }}</b></span>
-                                            <span class="info-box-number">Servicios:<b class="text-danger"> $. {{ $cajas->SumaTotalServiciosPorPagar ?? ' 0,00' }} </b></span>
-                                        </div>
-                                        <!-- /.info-box-content -->
-                                    </div>
-                                    <!-- /.info-box -->
-                                </div> --}}
                             <!-- /.col -->
 
 
@@ -81,8 +89,10 @@
 
                                     <div class="info-box-content">
                                         <span class="info-box-text">Serv Contado</span>
-                                        <span class="info-box-number">Servicios: <b class="text-primary"> {{ $cajas->SumaTotalCantidadServicios ?? ' 0,00' }} </b></span>
-                                        <span class="info-box-number">Pagados: <b class="text-primary"> $. {{ $cajas->SumaTotalServicios ?? ' 0,00' }} </b></span>
+                                        <span class="info-box-number">Servicios: <b class="text-primary"> {{
+                                                $cajas->SumaTotalCantidadServicios ?? ' 0,00' }} </b></span>
+                                        <span class="info-box-number">Pagados: <b class="text-primary"> $. {{
+                                                $cajas->SumaTotalServicios ?? ' 0,00' }} </b></span>
 
                                     </div>
                                     <!-- /.info-box-content -->
@@ -96,8 +106,10 @@
 
                                     <div class="info-box-content">
                                         <span class="info-box-text">Serv Crédito</span>
-                                        <span class="info-box-number">Servicios: <b class="text-danger"> {{ $cajas->SumaTotalCantidadServiciosPorPagar ?? ' 0,00' }} </b></span>
-                                        <span class="info-box-number">Pendte: <b class="text-danger"> $. {{ $cajas->SumaTotalServiciosPorPagar ?? ' 0,00' }} </b></span>
+                                        <span class="info-box-number">Servicios: <b class="text-danger"> {{
+                                                $cajas->SumaTotalCantidadServiciosPorPagar ?? ' 0,00' }} </b></span>
+                                        <span class="info-box-number">Pendte: <b class="text-danger"> $. {{
+                                                $cajas->SumaTotalServiciosPorPagar ?? ' 0,00' }} </b></span>
 
                                     </div>
                                     <!-- /.info-box-content -->
@@ -111,8 +123,10 @@
 
                                     <div class="info-box-content">
                                         <span class="info-box-text">Serv Cortesía</span>
-                                        <span class="info-box-number">Servicios: <b class="text-danger"> {{ $cajas->SumaTotalCantidadServiciosCortesia ?? ' 0,00' }} </b></span>
-                                        <span class="info-box-number">Exonerado: <b class="text-danger"> $. {{ $cajas->SumaTotalServiciosCortesia ?? ' 0,00' }} </b></span>
+                                        <span class="info-box-number">Servicios: <b class="text-danger"> {{
+                                                $cajas->SumaTotalCantidadServiciosCortesia ?? ' 0,00' }} </b></span>
+                                        <span class="info-box-number">Exonerado: <b class="text-danger"> $. {{
+                                                $cajas->SumaTotalServiciosCortesia ?? ' 0,00' }} </b></span>
 
                                     </div>
                                     <!-- /.info-box-content -->
@@ -139,9 +153,12 @@
                                             <div class="col-sm-2 col-xs-6">
                                                 <div class="description-block border-right">
                                                     <span class="description-text">INICIO DE CAJA</span>
-                                                    <h5 class="description-header">Dolar: {{ number_format($caja->monto_dolar,3,',','.') ?? '' }}</h5>
-                                                    <h5 class="description-header">Peso: {{ number_format($caja->monto_peso,2,',','.') ?? '' }}</h5>
-                                                    <h5 class="description-header">Bolivar: {{ number_format($caja->monto_bolivar,2,',','.') ?? '' }}</h5>
+                                                    <h5 class="description-header">Dolar: {{
+                                                        number_format($caja->monto_dolar,3,',','.') ?? '' }}</h5>
+                                                    <h5 class="description-header">Peso: {{
+                                                        number_format($caja->monto_peso,2,',','.') ?? '' }}</h5>
+                                                    <h5 class="description-header">Bolivar: {{
+                                                        number_format($caja->monto_bolivar,2,',','.') ?? '' }}</h5>
                                                 </div>
                                             </div>
                                             <div class="col-sm-2 col-xs-6">
@@ -149,7 +166,9 @@
                                                     <span class="description-percentage text-green"><i
                                                             class="fa fa-caret-up"></i>
                                                         {{ $tasaDolar->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">$. {{ number_format($cajas->SumaTotalDolar + $cajas->SumaTotalDolarServ,3,',','.') ?? ' 0,00' }}</h5>
+                                                    <h5 class="description-header">$. {{
+                                                        number_format($cajas->SumaTotalDolar +
+                                                        $cajas->SumaTotalDolarServ,3,',','.') ?? ' 0,00' }}</h5>
                                                     <span class="description-text">DOLAR</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -160,7 +179,9 @@
                                                     <span class="description-percentage text-yellow"><i
                                                             class="fa fa-caret-left"></i>
                                                         {{ $tasaPeso->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">$. {{ number_format($cajas->SumaTotalPeso + $cajas->SumaTotalPesoServ,2,',','.') ?? ' 0,00' }}</h5>
+                                                    <h5 class="description-header">$. {{
+                                                        number_format($cajas->SumaTotalPeso +
+                                                        $cajas->SumaTotalPesoServ,2,',','.') ?? ' 0,00' }}</h5>
                                                     <span class="description-text">PESO</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -171,7 +192,9 @@
                                                     <span class="description-percentage text-green"><i
                                                             class="fa fa-caret-up"></i>
                                                         {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalPunto + $cajas->SumaTotalPuntoServ,2,',','.') ?? ' 0,00' }}</h5>
+                                                    <h5 class="description-header">Bs. {{
+                                                        number_format($cajas->SumaTotalPunto +
+                                                        $cajas->SumaTotalPuntoServ,2,',','.') ?? ' 0,00' }}</h5>
                                                     <span class="description-text">PUNTO</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -183,7 +206,9 @@
                                                     <span class="description-percentage text-green"><i
                                                             class="fa fa-caret-up"></i>
                                                         {{ $tasaTransferenciaPunto->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalTransferencia + $cajas->SumaTotalTransferenciaServ,2,',','.') ?? ' 0,00' }}</h5>
+                                                    <h5 class="description-header">Bs. {{
+                                                        number_format($cajas->SumaTotalTransferencia +
+                                                        $cajas->SumaTotalTransferenciaServ,2,',','.') ?? ' 0,00' }}</h5>
                                                     <span class="description-text">TRANS</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -195,7 +220,9 @@
                                                     <span class="description-percentage text-red"><i
                                                             class="fa fa-caret-down"></i>
                                                         {{ $tasaEfectivo->porcentaje_ganancia }}%</span>
-                                                    <h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalBolivar + $cajas->SumaTotalBolivarServ,2,',','.') ?? ' 0,00' }}</h5>
+                                                    <h5 class="description-header">Bs. {{
+                                                        number_format($cajas->SumaTotalBolivar +
+                                                        $cajas->SumaTotalBolivarServ,2,',','.') ?? ' 0,00' }}</h5>
                                                     <span class="description-text">EFECTIVO</span>
                                                 </div>
                                                 <!-- /.description-block -->
@@ -219,7 +246,8 @@
                                                                 data-widget="collapse"><i class="fa fa-minus"></i>
                                                             </button>
                                                             <button type="button" class="btn btn-box-tool"
-                                                                data-widget="remove"><i class="fa fa-times"></i></button>
+                                                                data-widget="remove"><i
+                                                                    class="fa fa-times"></i></button>
                                                         </div>
                                                     </div>
                                                     <div class="row">
@@ -243,39 +271,39 @@
                                                                 </thead>
                                                                 <tbody>
                                                                     @foreach ($ventas as $venta)
-                                                                        <tr>
-                                                                            <td>{{ $venta->num_comprobante }}</td>
-                                                                            <td>{{ $venta->nombre }}</td>
-                                                                            <td>
-                                                                                @if ($venta->modo_pago === 'Cortesía')
-                                                                                    <span
-                                                                                        class="label label-danger">{{ $venta->modo_pago }}</span>
-                                                                                @elseif($venta->modo_pago === 'Crédito')
-                                                                                    <span
-                                                                                        class="label label-success">{{ $venta->modo_pago }}</span>
-                                                                                @else
-                                                                                    <span
-                                                                                        class="label label-primary">{{ $venta->modo_pago }}</span>
-                                                                                @endif
-                                                                            </td>
-                                                                            <td>
-                                                                                <div class="sparkbar" data-color="#00a65a"
-                                                                                    data-height="20">
-                                                                                    <a
-                                                                                        href="{{ URL::action('VentaController@show', $venta->id) }}">
-                                                                                        {{ $venta->total_venta }}
-                                                                                    </a>
-                                                                                </div>
-                                                                            </td>
-                                                                            {{-- <td>
-                                                                                <a href=""
-                                                                                    data-target="#modal-delete-{{ $venta->id }}"
-                                                                                    data-toggle="modal"><button
-                                                                                        class='btn btn-danger btn-xs'><i
-                                                                                            class='glyphicon glyphicon-trash'></i></button></a>
-                                                                            </td> --}}
-                                                                        </tr>
-                                                                        @include('ventas.venta.modal')
+                                                                    <tr>
+                                                                        <td>{{ $venta->num_comprobante }}</td>
+                                                                        <td>{{ $venta->nombre }}</td>
+                                                                        <td>
+                                                                            @if ($venta->modo_pago === 'Cortesía')
+                                                                            <span class="label label-danger">{{
+                                                                                $venta->modo_pago }}</span>
+                                                                            @elseif($venta->modo_pago === 'Crédito')
+                                                                            <span class="label label-success">{{
+                                                                                $venta->modo_pago }}</span>
+                                                                            @else
+                                                                            <span class="label label-primary">{{
+                                                                                $venta->modo_pago }}</span>
+                                                                            @endif
+                                                                        </td>
+                                                                        <td>
+                                                                            <div class="sparkbar" data-color="#00a65a"
+                                                                                data-height="20">
+                                                                                <a
+                                                                                    href="{{ URL::action('VentaController@show', $venta->id) }}">
+                                                                                    {{ $venta->total_venta }}
+                                                                                </a>
+                                                                            </div>
+                                                                        </td>
+                                                                        {{-- <td>
+                                                                            <a href=""
+                                                                                data-target="#modal-delete-{{ $venta->id }}"
+                                                                                data-toggle="modal"><button
+                                                                                    class='btn btn-danger btn-xs'><i
+                                                                                        class='glyphicon glyphicon-trash'></i></button></a>
+                                                                        </td> --}}
+                                                                    </tr>
+                                                                    @include('ventas.venta.modal')
                                                                     @endforeach
 
 
@@ -305,86 +333,86 @@
                                                                 data-widget="collapse"><i class="fa fa-minus"></i>
                                                             </button>
                                                             <button type="button" class="btn btn-box-tool"
-                                                                data-widget="remove"><i class="fa fa-times"></i></button>
+                                                                data-widget="remove"><i
+                                                                    class="fa fa-times"></i></button>
                                                         </div>
                                                     </div>
                                                     <!-- /.box-header -->
                                                     <div class="box-body">
                                                         <ul class="products-list product-list-in-box">
                                                             @php
-                                                                $count = 0;
-                                                                $actual = 0;
-                                                                $nombre = '';
-                                                                $stock = 0;
+                                                            $count = 0;
+                                                            $actual = 0;
+                                                            $nombre = '';
+                                                            $stock = 0;
 
                                                             @endphp
                                                             @foreach ($articulos as $art)
-                                                                @if ($art->vender_al !== $actual)
-                                                                    @php
-                                                                        $actual = $art->vender_al;
-                                                                    @endphp
+                                                            @if ($art->vender_al !== $actual)
+                                                            @php
+                                                            $actual = $art->vender_al;
+                                                            @endphp
 
-                                                                    Productos al {{ $actual }}
-                                                                @endif
-                                                                @if ($art->isKilo)
-                                                                    @php
-                                                                        $stock = $art->stock / 1000;
+                                                            Productos al {{ $actual }}
+                                                            @endif
+                                                            @if ($art->isKilo)
+                                                            @php
+                                                            $stock = $art->stock / 1000;
 
-                                                                    @endphp
-                                                                @else
-                                                                    @php
-                                                                        $stock = $art->stock;
-                                                                    @endphp
-                                                                @endif
-                                                                @if ($art->vender_al == 'Mayor' && $stock <= 1)
-                                                                    <li class="item">
-                                                                        <div class="product-img">
-                                                                            <img src="{{ asset('imagenes/articulos/' . $art->imagen) }}"
-                                                                                alt="{{ $art->nombre }}"
-                                                                                alt="Product Image">
-                                                                        </div>
-                                                                        <div class="product-info">
-                                                                            <a href="javascript:void(0)"
-                                                                                class="product-title">{{ $art->nombre }}
-                                                                                <span class="label label-danger pull-right">
-                                                                                    @if ($art->isKilo)
-                                                                                        {{ $art->stock / 1000 }} Kg.
-                                                                                    @else
-                                                                                        {{ $art->stock }}
-                                                                                    @endif
+                                                            @endphp
+                                                            @else
+                                                            @php
+                                                            $stock = $art->stock;
+                                                            @endphp
+                                                            @endif
+                                                            @if ($art->vender_al == 'Mayor' && $stock <= 1) <li
+                                                                class="item">
+                                                                <div class="product-img">
+                                                                    <img src="{{ asset('imagenes/articulos/' . $art->imagen) }}"
+                                                                        alt="{{ $art->nombre }}" alt="Product Image">
+                                                                </div>
+                                                                <div class="product-info">
+                                                                    <a href="javascript:void(0)"
+                                                                        class="product-title">{{ $art->nombre }}
+                                                                        <span class="label label-danger pull-right">
+                                                                            @if ($art->isKilo)
+                                                                            {{ $art->stock / 1000 }} Kg.
+                                                                            @else
+                                                                            {{ $art->stock }}
+                                                                            @endif
 
 
-                                                                                </span></a>
-                                                                            <span class="product-description">
-                                                                                {{ $art->vender_al }}
-                                                                            </span>
-                                                                        </div>
+                                                                        </span></a>
+                                                                    <span class="product-description">
+                                                                        {{ $art->vender_al }}
+                                                                    </span>
+                                                                </div>
+                                                                </li>
+                                                                @elseif($art->vender_al == 'Detal' && $stock <= 10) <li
+                                                                    class="item">
+                                                                    <div class="product-img">
+                                                                        <img src="{{ asset('imagenes/articulos/' . $art->imagen) }}"
+                                                                            alt="Product Image">
+                                                                    </div>
+                                                                    <div class="product-info">
+                                                                        <a href="javascript:void(0)"
+                                                                            class="product-title">{{ $art->nombre }}
+                                                                            <span class="label label-danger pull-right">
+                                                                                @if ($art->isKilo)
+                                                                                {{ $art->stock / 1000 }} Kg.
+                                                                                @else
+                                                                                {{ $art->stock }}
+                                                                                @endif
+
+
+                                                                            </span></a>
+                                                                        <span class="product-description">
+                                                                            {{ $art->vender_al }}
+                                                                        </span>
+                                                                    </div>
                                                                     </li>
-                                                                @elseif($art->vender_al == 'Detal' && $stock <= 10)
-                                                                    <li class="item">
-                                                                        <div class="product-img">
-                                                                            <img src="{{ asset('imagenes/articulos/' . $art->imagen) }}"
-                                                                                alt="Product Image">
-                                                                        </div>
-                                                                        <div class="product-info">
-                                                                            <a href="javascript:void(0)"
-                                                                                class="product-title">{{ $art->nombre }}
-                                                                                <span class="label label-danger pull-right">
-                                                                                    @if ($art->isKilo)
-                                                                                        {{ $art->stock / 1000 }} Kg.
-                                                                                    @else
-                                                                                        {{ $art->stock }}
-                                                                                    @endif
-
-
-                                                                                </span></a>
-                                                                            <span class="product-description">
-                                                                                {{ $art->vender_al }}
-                                                                            </span>
-                                                                        </div>
-                                                                    </li>
-                                                                @endif
-                                                            @endforeach
+                                                                    @endif
+                                                                    @endforeach
 
 
                                                         </ul>
@@ -406,675 +434,713 @@
                         </div>
 
 
-                    </section>
-                    <!-- /.content -->
-                </div>
-                <!-- /.tab-pane -->
-                <div class="active tab-pane" id="ventas">
-                    <!-- Ventas -->
-                    <div class="container-small text-sm">
-                        <form id="form1" action="{{ route('procesoventa.store') }}" method="POST" autocomplete="off"
-                            class="submit-prevent-form">
-                            @csrf
-                            <input id="modo" name="modo" type="hidden" value="">
-                            <input id="precio_costo_unidad" name="precio_costo_unidad" type="hidden" value="">
-                            <input id="servicio_id" name="servicio_id" type="hidden"
-                                value="{{ $habitacion[0]->id ?? '' }}">
-                            <input id="precio_costo" name="precio_costo" type="hidden" value="">
-                            <input id="tipo_pago" name="tipo_pago" type="hidden" value="">
-                            <input name="nombre_cliente" type="hidden"
-                                value="{{ $habitacion[0]->nombre_cliente ?? '' }}">
-                            <input name="cedula_cliente" type="hidden"
-                                value="{{ $habitacion[0]->cedula_cliente ?? '' }}">
-                            <input name="direccion_cliente" type="hidden"
-                                value="{{ $habitacion[0]->direccion_cliente ?? '' }}">
-                            <input name="telefono_cliente" type="hidden"
-                                value="{{ $habitacion[0]->telefono_cliente ?? '' }}">
-                            <input name="cliente_id" type="hidden" value="{{ $habitacion[0]->persona_id ?? '' }}">
-                            <input name="limite_fecha" id="limite_fecha" type="hidden"
-                                value="{{ $cliente->limite_fecha ?? '' }}">
-                            <input name="limite_monto" id="limite_monto" type="hidden"
-                                value="{{ $cliente->limite_monto ?? '' }}">
-                            <input type="hidden" name="total_credito_pendiente"
-                                value="{{ $credito->total_deuda ?? '' }}" id="total_credito_pendiente">
-                            <input type="hidden" name="estado_credito" value="{{ $credito->estado_credito ?? '' }}"
-                                id="estado_credito">
-                            <input id="caja_id" name="caja_id" type="hidden" value="{{ $caja->id ?? '' }}">
+                </section>
+                <!-- /.content -->
+            </div>
+            <!-- /.tab-pane -->
+            <div class="active tab-pane" id="ventas">
+                <!-- Ventas -->
+                <div class="container-small text-sm">
+                    <form id="form1" action="{{ route('procesoventa.store') }}" method="POST" autocomplete="off"
+                        class="submit-prevent-form">
+                        @csrf
+                        <input id="modo" name="modo" type="hidden" value="">
+                        <input id="precio_costo_unidad" name="precio_costo_unidad" type="hidden" value="">
+                        <input id="servicio_id" name="servicio_id" type="hidden" value="{{ $habitacion[0]->id ?? '' }}">
+                        <input id="precio_costo" name="precio_costo" type="hidden" value="">
+                        <input id="tipo_pago" name="tipo_pago" type="hidden" value="">
+                        <input name="nombre_cliente" type="hidden" value="{{ $habitacion[0]->nombre_cliente ?? '' }}">
+                        <input name="cedula_cliente" type="hidden" value="{{ $habitacion[0]->cedula_cliente ?? '' }}">
+                        <input name="direccion_cliente" type="hidden"
+                            value="{{ $habitacion[0]->direccion_cliente ?? '' }}">
+                        <input name="telefono_cliente" type="hidden"
+                            value="{{ $habitacion[0]->telefono_cliente ?? '' }}">
+                        <input name="cliente_id" type="hidden" value="{{ $habitacion[0]->persona_id ?? '' }}">
+                        <input name="limite_fecha" id="limite_fecha" type="hidden"
+                            value="{{ $cliente->limite_fecha ?? '' }}">
+                        <input name="limite_monto" id="limite_monto" type="hidden"
+                            value="{{ $cliente->limite_monto ?? '' }}">
+                        <input type="hidden" name="total_credito_pendiente" value="{{ $credito->total_deuda ?? '' }}"
+                            id="total_credito_pendiente">
+                        <input type="hidden" name="estado_credito" value="{{ $credito->estado_credito ?? '' }}"
+                            id="estado_credito">
+                        <input id="caja_id" name="caja_id" type="hidden" value="{{ $caja->id ?? '' }}">
 
+                        <div class="row">
+
+
+                            @if (isset($habitacion[0]->habitacion_id))
+                            @if ($habitacion[0]->habitacion_id > 0)
                             <div class="row">
 
 
-                                @if (isset($habitacion[0]->habitacion_id))
-                                    @if ($habitacion[0]->habitacion_id > 0)
-                                        <div class="row">
+                                <input type="hidden" name="id_operacion" value="{{ $habitacion[0]->habitacion_id }}">
+                                <section>
+
+                                    <div class="col-md-6">
+                                        <br>
+
+                                        <div class="box-body box-profile">
+
+                                            <ul class="list-group list-group-unbordered">
+                                                <li class="list-group-item" style="border-top: 2px solid black;">
+                                                    <b>Nombre habitación</b> <a class="pull-right">
+                                                        <?php echo $habitacion[0]->nombre_habitacion; ?>
+                                                    </a>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <b>Tipo habitación</b> <a class="pull-right">
+                                                        <?php echo $habitacion[0]->tipo_habitacion; ?>
+                                                    </a>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <b>Costo habitación</b> <a class="pull-right"><b>$
+                                                            {{ $habitacion[0]->total_venta }}</b></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <!-- /.box-body -->
+
+                                    </div>
+                                    <div class="col-md-6">
+                                        <br>
+
+                                        <div class="box-body box-profile">
+
+                                            <ul class="list-group list-group-unbordered">
+                                                <li class="list-group-item" style="border-top: 2px solid black;">
+                                                    <b>Nombre cliente</b> <a class="pull-right">
+                                                        <?php echo $habitacion[0]->nombre_cliente; ?>
+                                                    </a>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <b>Documento cliente</b> <a class="pull-right">
+                                                        <?php echo $habitacion[0]->cedula_cliente; ?>
+                                                    </a>
+                                                </li>
+                                                <li class="list-group-item">
+                                                    <b>Fecha entrada</b> <a class="pull-right">
+                                                        <?php echo $habitacion[0]->fecha_entrada; ?>
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <!-- /.box-body -->
+
+                                    </div>
+
+                                    {{-- <div class="col-md-12">
 
 
-                                            <input type="hidden" name="id_operacion"
-                                                value="{{ $habitacion[0]->habitacion_id }}">
-                                            <section>
-
-                                                <div class="col-md-6">
-                                                    <br>
-
-                                                    <div class="box-body box-profile">
-
-                                                        <ul class="list-group list-group-unbordered">
-                                                            <li class="list-group-item"
-                                                                style="border-top: 2px solid black;">
-                                                                <b>Nombre habitación</b> <a
-                                                                    class="pull-right"><?php echo $habitacion[0]->nombre_habitacion; ?></a>
-                                                            </li>
-                                                            <li class="list-group-item">
-                                                                <b>Tipo habitación</b> <a
-                                                                    class="pull-right"><?php echo $habitacion[0]->tipo_habitacion; ?></a>
-                                                            </li>
-                                                            <li class="list-group-item">
-                                                                <b>Costo habitación</b> <a class="pull-right"><b>$
-                                                                        {{ $habitacion[0]->total_venta }}</b></a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <!-- /.box-body -->
-
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <br>
-
-                                                    <div class="box-body box-profile">
-
-                                                        <ul class="list-group list-group-unbordered">
-                                                            <li class="list-group-item"
-                                                                style="border-top: 2px solid black;">
-                                                                <b>Nombre cliente</b> <a
-                                                                    class="pull-right"><?php echo $habitacion[0]->nombre_cliente; ?></a>
-                                                            </li>
-                                                            <li class="list-group-item">
-                                                                <b>Documento cliente</b> <a
-                                                                    class="pull-right"><?php echo $habitacion[0]->cedula_cliente; ?></a>
-                                                            </li>
-                                                            <li class="list-group-item">
-                                                                <b>Fecha entrada</b> <a
-                                                                    class="pull-right"><?php echo $habitacion[0]->fecha_entrada; ?></a>
-                                                            </li>
-                                                        </ul>
-                                                    </div>
-                                                    <!-- /.box-body -->
-
-                                                </div>
-
-                                                {{-- <div class="col-md-12">
-
-
-                                              <div class="box-footer" style="background-color: #2b3c51;">
-                                                  <div class="col-md-2">
-                                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal">
+                                        <div class="box-footer" style="background-color: #2b3c51;">
+                                            <div class="col-md-2">
+                                                <button type="button" class="btn btn-info" data-toggle="modal"
+                                                    data-target="#myModal">
                                                     <span class="glyphicon glyphicon-plus"></span> Agregar productos
                                                 </button>
-                                                </div>
+                                            </div>
 
-                                                <div class="col-md-3">
+                                            <div class="col-md-3">
                                                 <select class="form-control pull-right" name="pagado">
                                                     <option value="1">PAGADO</option>
                                                     <option value="2">FALTA PAGAR</option>
                                                 </select>
-                                                </div>
+                                            </div>
 
-                                                <button type="submit" class="btn btn-success pull-right" >
-                                                    <span class="glyphicon glyphicon-save"></span> Terminar venta
-                                                </button>
-                                              </div>
-
-
-                                        </div> --}}
-
-                                                <div class="col-md-12">
-                                                    <div id="resultados"></div>
-
-                                                </div>
-
-                                            </section>
-
+                                            <button type="submit" class="btn btn-success pull-right">
+                                                <span class="glyphicon glyphicon-save"></span> Terminar venta
+                                            </button>
                                         </div>
-                                    @else
-                                        <h4 class='alert alert-success'>NECESITA SELECCIONAR UNA HABITACIÓN CON HUESPED
-                                        </h4>
-                                    @endif
 
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                        <div class="form-group hidden">
-                                            <label for="cliente">Cliente</label>
-                                            <select name="idcliente" id="idcliente" class="form-control selectpicker"
-                                                data-live-search="true">
-                                                @foreach ($personas as $persona)
-                                                    <option value="{{ $habitacion[0]->persona_id }}">
-                                                        {{ $habitacion[0]->nombre_cliente }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                @endif
 
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="form-group hidden">
-                                        <label for="tipo_comprobante">Tipo Comprobante</label>
-                                        <select name="tipo_comprobante" class="form-control">
-                                            <option value="Orden">Orden</option>
-                                            <option value="Factura">Factura</option>
-                                            <option value="Ticket">Ticket</option>
-                                        </select>
+                                    </div> --}}
+
+                                    <div class="col-md-12">
+                                        <div id="resultados"></div>
+
                                     </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="form-group hidden">
-                                        <label for="serie_comprobante">Control Comprobante</label>
-                                        <input readonly type="text" name="serie_comprobante" class="form-control"
-                                            value="{{ old('serie_comprobante') }} {{ $num_comprobante ?? '' }}"
-                                            placeholder="Control Comprobante...">
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="form-group hidden">
-                                        <label for="num_comprobante">Número Comprobante</label>
-                                        <input readonly type="text" name="num_comprobante" required
-                                            class="form-control"
-                                            value="{{ old('num_comprobante') }} {{ $serie_comprobante ?? '' }}"
-                                            placeholder="Número Comprobante...">
-                                    </div>
+
+                                </section>
+
+                            </div>
+                            @else
+                            <h4 class='alert alert-success'>NECESITA SELECCIONAR UNA HABITACIÓN CON HUESPED
+                            </h4>
+                            @endif
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                <div class="form-group hidden">
+                                    <label for="cliente">Cliente</label>
+                                    <select name="idcliente" id="idcliente" class="form-control selectpicker"
+                                        data-live-search="true">
+                                        @foreach ($personas as $persona)
+                                        <option value="{{ $habitacion[0]->persona_id }}">
+                                            {{ $habitacion[0]->nombre_cliente }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
-                                    <div class="panel panel-primary">
-                                        <div class="panel-body">
-                                            <div class="row margin-bottom">
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                                        <div class="form-group">
-                                                            <label for="articulo">Artículo</label>
-                                                            <select autofocus name="jidarticulo" id="jidarticulo"
-                                                                class="form-control selectpicker" data-live-search="true">
-                                                                <option value="0">Seleccione Articulo</option>
-                                                                @foreach ($articulos as $articulo)
-                                                                    <option
-                                                                        value="{{ $articulo->id }}_{{ $articulo->stock }}_{{ $articulo->precio_costo }}_{{ $articulo->nombre }}_{{ $articulo->porEspecial ?? '' }}_{{ $articulo->isDolar ?? '' }}_{{ $articulo->isPeso ?? '' }}_{{ $articulo->isTransPunto ?? '' }}_{{ $articulo->isMixto ?? '' }}_{{ $articulo->isEfectivo ?? '' }}_{{ $articulo->isKilo ?? '' }}">
-                                                                        {{ $articulo->articulo }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
-                                                        <div id="procesarkilos" class="form group">
-                                                            <!-- Small modal -->
-                                                            <!-- Button trigger modal -->
-                                                            <label for="kilos">Cantidad de Kilos</label>
-                                                            <button type="button" class="btn btn-primary form-control"
-                                                                data-toggle="modal" data-target="#exampleModalCenter">
-                                                                Peso kilos
-                                                            </button>
-                                                        </div>
-                                                        <div id="cantidadj" class="form group">
-                                                            <label for="cantidad">Cantidad</label>
-                                                            <input type="text" name="jcantidad" id="jcantidad"
-                                                                class="form-control enteros" placeholder="Cantidad...">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
-                                                        <div class="form group">
-                                                            <label for="stock">Stock</label>
-                                                            <input type="text" readonly name="jstock" id="jstock"
-                                                                class="form-control" placeholder="Stock...">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <div class="form group hidden">
-                                                            <label for="descuento">Descuento</label>
-                                                            <input type="text" name="jdescuento" id="jdescuento"
-                                                                class="form-control decimal" placeholder="Descuento...">
-                                                        </div>
+                            @endif
+
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                <div class="form-group hidden">
+                                    <label for="tipo_comprobante">Tipo Comprobante</label>
+                                    <select name="tipo_comprobante" class="form-control">
+                                        <option value="Orden">Orden</option>
+                                        <option value="Factura">Factura</option>
+                                        <option value="Ticket">Ticket</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                <div class="form-group hidden">
+                                    <label for="serie_comprobante">Control Comprobante</label>
+                                    <input readonly type="text" name="serie_comprobante" class="form-control"
+                                        value="{{ old('serie_comprobante') }} {{ $num_comprobante ?? '' }}"
+                                        placeholder="Control Comprobante...">
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                <div class="form-group hidden">
+                                    <label for="num_comprobante">Número Comprobante</label>
+                                    <input readonly type="text" name="num_comprobante" required class="form-control"
+                                        value="{{ old('num_comprobante') }} {{ $serie_comprobante ?? '' }}"
+                                        placeholder="Número Comprobante...">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
+                                <div class="panel panel-primary">
+                                    <div class="panel-body">
+                                        <div class="row margin-bottom">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                                                    <div class="form-group">
+                                                        <label for="articulo">Artículo</label>
+                                                        <select autofocus name="jidarticulo" id="jidarticulo"
+                                                            class="form-control selectpicker" data-live-search="true">
+                                                            <option value="0">Seleccione Articulo</option>
+                                                            @foreach ($articulos as $articulo)
+                                                            <option
+                                                                value="{{ $articulo->id }}_{{ $articulo->stock }}_{{ $articulo->precio_costo }}_{{ $articulo->nombre }}_{{ $articulo->porEspecial ?? '' }}_{{ $articulo->isDolar ?? '' }}_{{ $articulo->isPeso ?? '' }}_{{ $articulo->isTransPunto ?? '' }}_{{ $articulo->isMixto ?? '' }}_{{ $articulo->isEfectivo ?? '' }}_{{ $articulo->isKilo ?? '' }}">
+                                                                {{ $articulo->articulo }}</option>
+                                                            @endforeach
+                                                        </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <div class="form group">
-                                                            <label for="precio_venta_dolar">Precio Dolar</label>
-                                                            <h4 class="font-weight-bold" id="vprecio_venta_dolar">$. 0.00
-                                                            </h4>
-                                                            <input type="hidden" name="jprecio_venta_d_dolar"
-                                                                id="jprecio_venta_d_dolar" class="form-control">
-                                                            <input type="hidden" name="jprecio_compra"
-                                                                id="jprecio_compra" class="form-control"
-                                                                placeholder="Precio venta dolar...">
-                                                            <input type="hidden" name="jprecio_venta" id="jprecio_venta"
-                                                                class="form-control" placeholder="Precio dolar...">
-                                                            <input type="hidden" name="jprecio_venta_dolar"
-                                                                id="jprecio_venta_dolar" class="form-control"
-                                                                placeholder="Precio dolar...">
-                                                            <input type="hidden" name="jmarjen_ganancia_dolar"
-                                                                id="jmarjen_ganancia_dolar"
-                                                                value="{{ $tasaDolar->porcentaje_ganancia }}">
-                                                            <input type="hidden" name="tasaDolars" id="tasaDolars"
-                                                                value="{{ $tasaDolar->tasa }}">
-                                                        </div>
+                                                <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
+                                                    <div id="procesarkilos" class="form group">
+                                                        <!-- Small modal -->
+                                                        <!-- Button trigger modal -->
+                                                        <label for="kilos">Cantidad de Kilos</label>
+                                                        <button type="button" class="btn btn-primary form-control"
+                                                            data-toggle="modal" data-target="#exampleModalCenter">
+                                                            Peso kilos
+                                                        </button>
                                                     </div>
-                                                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <div class="form group">
-                                                            <label for="jprecio_venta_peso">Precio Pesos</label>
-                                                            <h4 class="font-weight-bold" id="vprecio_venta_peso">$. 0.00
-                                                            </h4>
-                                                            <input type="hidden" name="jprecio_venta_p_dolar"
-                                                                id="jprecio_venta_p_dolar" class="form-control">
-                                                            <input type="hidden" name="jprecio_venta_peso"
-                                                                id="jprecio_venta_peso" class="form-control"
-                                                                placeholder="Precio pesos...">
-                                                            <input type="hidden" name="jmarjen_ganancia_peso"
-                                                                id="jmarjen_ganancia_peso"
-                                                                value="{{ $tasaPeso->porcentaje_ganancia }}">
-                                                            <input type="hidden" name="tasaPesos" id="tasaPesos"
-                                                                value="{{ $tasaPeso->tasa }}">
-                                                        </div>
+                                                    <div id="cantidadj" class="form group">
+                                                        <label for="cantidad">Cantidad</label>
+                                                        <input type="text" name="jcantidad" id="jcantidad"
+                                                            class="form-control enteros" placeholder="Cantidad...">
                                                     </div>
-                                                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <div class="form group">
-                                                            <label for="jprecio_venta_trans_punto">Precio
-                                                                Trans/Punto</label>
-                                                            <h4 class="font-weight-bold" id="vprecio_venta_trans_punto">
-                                                                Bs.
-                                                                0.00
-                                                            </h4>
-                                                            <input type="hidden" name="jprecio_venta_tp_dolar"
-                                                                id="jprecio_venta_tp_dolar" class="form-control">
-                                                            <input type="hidden" name="jprecio_venta_trans_punto"
-                                                                id="jprecio_venta_trans_punto" class="form-control"
-                                                                placeholder="Precio trans/punto...">
-                                                            <input type="hidden" name="jmarjen_ganancia_trans_punto"
-                                                                id="jmarjen_ganancia_trans_punto"
-                                                                value="{{ $tasaTransferenciaPunto->porcentaje_ganancia }}">
-                                                            <input type="hidden" name="tasaTransPunto"
-                                                                id="tasaTransPunto"
-                                                                value="{{ $tasaTransferenciaPunto->tasa }}">
-                                                        </div>
+                                                </div>
+                                                <div class="col-lg-3 col-sm-3 col-md-3 col-xs-12">
+                                                    <div class="form group">
+                                                        <label for="stock">Stock</label>
+                                                        <input type="text" readonly name="jstock" id="jstock"
+                                                            class="form-control" placeholder="Stock...">
                                                     </div>
-                                                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <div class="form group">
-                                                            <label for="jprecio_venta_mixto">Precio Mixto</label>
-                                                            <h4 class="font-weight-bold" id="vprecio_venta_mixto">Bs. 0.00
-                                                            </h4>
-                                                            <input type="hidden" name="jprecio_venta_m_dolar"
-                                                                id="jprecio_venta_m_dolar" class="form-control">
-                                                            <input type="hidden" name="jprecio_venta_mixto"
-                                                                id="jprecio_venta_mixto" class="form-control"
-                                                                placeholder="Precio Mixto...">
-                                                            <input type="hidden" name="jmarjen_ganancia_mixto"
-                                                                id="jmarjen_ganancia_mixto"
-                                                                value="{{ $tasaMixto->porcentaje_ganancia }}">
-                                                            <input type="hidden" name="tasaMixto" id="tasaMixto"
-                                                                value="{{ $tasaMixto->tasa }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <div class="form group">
-                                                            <label for="precio_venta_Efectivo">Precio Efectivo</label>
-                                                            <h4 class="font-weight-bold" id="vprecio_venta_Efectivo">Bs.
-                                                                0.00
-                                                            </h4>
-                                                            <input type="hidden" name="jprecio_venta_e_dolar"
-                                                                id="jprecio_venta_e_dolar" class="form-control">
-                                                            <input type="hidden" name="jprecio_venta_Efectivo"
-                                                                id="jprecio_venta_Efectivo" class="form-control"
-                                                                placeholder="Precio venta efecti...">
-                                                            <input type="hidden" name="jmarjen_ganancia_Efectivo"
-                                                                id="jmarjen_ganancia_Efectivo"
-                                                                value="{{ $tasaEfectivo->porcentaje_ganancia }}">
-                                                            <input type="hidden" name="tasaEfectivo" id="tasaEfectivo"
-                                                                value="{{ $tasaEfectivo->tasa }}">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                        <div class="form group">
-                                                            <button id="bt_add" type="button"
-                                                                class="btn btn-primary btn-md btn-block">Agregar</button>
-                                                        </div>
+                                                </div>
+                                                <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                    <div class="form group hidden">
+                                                        <label for="descuento">Descuento</label>
+                                                        <input type="text" name="jdescuento" id="jdescuento"
+                                                            class="form-control decimal" placeholder="Descuento...">
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
-                                                    <div class="panel panel-primary">
-                                                        <div class="panel-heading">
-                                                            <h3 class="panel-title">Cargar Artículos</h3>
-                                                        </div>
-                                                        <div class="panel-body">
-                                                            <div class="table-responsive">
-                                                                <table id="detalles"
-                                                                    class="table table-striped table-borderd table-condensed table-hover">
-                                                                    <thead>
-                                                                        <th class="info">Op</th>
-                                                                        <th class="info">Artículo</th>
-                                                                        <th class="info">Cant</th>
-                                                                        <th class="success">P/Dolar</th>
-                                                                        <th class="success">S/Total</th>
-                                                                        <th class="warning">P/Peso</th>
-                                                                        <th class="warning">S/Total</th>
-                                                                        <th class="success">P/T/P</th>
-                                                                        <th class="success">S/Total</th>
-                                                                        <th class="warning">P/Mixto</th>
-                                                                        <th class="warning">S/Total</th>
-                                                                        <th class="success">P/Efect</th>
-                                                                        <th class="success">S/Total</th>
-                                                                        <th class="info">Desto</th>
-                                                                        {{-- <th class="info">
-                                                                            Subtotal</th> --}}
-                                                                    </thead>
-                                                                    <tfoot>
-                                                                        <th colspan="3">TOTAL</th>
-                                                                        <th colspan="2">
-                                                                            <h4 class="font-weight-bold" id="totald">$.
-                                                                                0.00
-                                                                            </h4>
-                                                                        </th>
-                                                                        <th colspan="2">
-                                                                            <h4 class="font-weight-bold" id="totalp">$.
-                                                                                0.00
-                                                                            </h4>
-                                                                        </th>
-                                                                        <th colspan="2">
-                                                                            <h4 class="font-weight-bold" id="totaltp">
-                                                                                Bs.
-                                                                                0.00
-                                                                            </h4>
-                                                                        </th>
-                                                                        <th colspan="2">
-                                                                            <h4 class="font-weight-bold" id="totalm">
-                                                                                Bs.
-                                                                                0.00
-                                                                            </h4>
-                                                                        </th>
-                                                                        <th colspan="2">
-                                                                            <h4 class="font-weight-bold" id="totale">
-                                                                                Bs.
-                                                                                0.00
-                                                                            </h4>
-                                                                        </th><input type="hidden" name="total_venta"
-                                                                            id="total_venta"><input type="hidden"
-                                                                            name="total_ventad" id="total_ventad"><input
-                                                                            type="hidden" name="total_ventap"
-                                                                            id="total_ventap"><input type="hidden"
-                                                                            name="total_ventatp" id="total_ventatp"><input
-                                                                            type="hidden" name="total_ventam"
-                                                                            id="total_ventam"><input type="hidden"
-                                                                            name="total_ventae" id="total_ventae">
-                                                                        <th></th>
-                                                                    </tfoot>
-                                                                    <tbody>
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                            <div class="form-group">
-
-                                                                {{-- <label>Precio:</label>
-                                                                <div class="input-group">
-                                                                <div class="col-sm-4 col-xs-6">
-                                                                    <div class="description-block border-right">
-                                                                        <span class="description-percentage text-primary"><i class="fa fa-caret-up"></i> Dolar</span>
-                                                                        <h5 id="mostrarPrecioDolar" class="description-header">${{floatval($habitacion[0]->total_venta) ?? ''}}</h5>
-
-                                                                        <input type="hidden" id="precioDolarHabitacio" name="precioDolarHabitacion" value="{{floatval($habitacion[0]->total_venta) ?? ''}}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4 col-xs-6">
-                                                                    <div class="description-block border-right">
-                                                                        <span class="description-percentage text-primary"><i class="fa fa-caret-up"></i> Pesos</span>
-                                                                        <h5 id="mostrarPrecioPeso" class="description-header">${{number_format($habitacion[0]->total_venta*$tasaPesoHabitacion->tasa,2,',','.') ?? ''}}</h5>
-                                                                        <input type="hidden" id="precioPesoHabitacio" name="precioPesoHabitacion" value="{{$habitacion[0]->total_venta*$tasaPesoHabitacion->tasa}}">
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-sm-4 col-xs-6">
-                                                                    <div class="description-block border-right">
-                                                                        <span class="description-percentage text-primary"><i class="fa fa-caret-up"></i> Bolivares</span>
-                                                                        <h5 id="mostrarPrecioBolivar" class="description-header">Bs.{{number_format($habitacion[0]->total_venta*$tasaDolarHabitacion->tasa,2,',','.')}}</h5>
-                                                                        <input type="hidden" id="precioBolivarHabitacion" name="precioBolivarHabitacion" value="{{$habitacion[0]->total_venta*$tasaDolarHabitacion->tasa}}">
-                                                                    </div>
-                                                                </div>
-                                                                </div> --}}
-                                                                <div id="contado"
-                                                                    class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                                                    <a id="modalPago" href="#" data-toggle="modal"
-                                                                        data-target="#dolar"
-                                                                        class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
-
-                                                                </div>
-                                                                <div id="cortesia"
-                                                                    class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small submit-prevent-button">
-
-                                                                    <button id="modalPago"
-                                                                        class="btn btn-sm btn-warning btn-block col-lg-pull-2 small submit-prevent-button"
-                                                                        type="submit"><i
-                                                                            class='glyphicon glyphicon-search'></i>
-                                                                        Cortesía</button>
-
-                                                                </div>
-                                                                <div id="credito"
-                                                                    class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small submit-prevent-button">
-                                                                    <button id="modalPago"
-                                                                        class="btn btn-sm btn btn-success btn-block col-lg-pull-2 small submit-prevent-button"
-                                                                        type="submit"><i
-                                                                            class='glyphicon glyphicon-search'></i>
-                                                                        Crédito</button>
-
-
-                                                                </div>
-                                                                <!-- /.input group -->
-                                                            </div>
-                                                        </div>
-                                                        {{-- <div class="container-fluit">
-                                                            <div class="row">
-                                                                <div
-                                                                    class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                    <button id='bt_addD' type='button'
-                                                                        class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Dolar</button>
-                                                                </div>
-                                                                <div
-                                                                    class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                    <button id='bt_addP' type='button'
-                                                                        class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Peso</button>
-                                                                </div>
-                                                                <div
-                                                                    class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                    <button id='bt_addTP' type='button'
-                                                                        class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Punto/Trans</button>
-                                                                </div>
-                                                                <div
-                                                                    class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                    <button id='bt_addM' type='button'
-                                                                        class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Mixto</button>
-                                                                </div>
-                                                                <div
-                                                                    class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                    <button id='bt_addE' type='button'
-                                                                        class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Efectivo</button>
-                                                                </div>
-                                                            </div>
-                                                        </div> --}}
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                    <div class="form group">
+                                                        <label for="precio_venta_dolar">Precio Dolar</label>
+                                                        <h4 class="font-weight-bold" id="vprecio_venta_dolar">$. 0.00
+                                                        </h4>
+                                                        <input type="hidden" name="jprecio_venta_d_dolar"
+                                                            id="jprecio_venta_d_dolar" class="form-control">
+                                                        <input type="hidden" name="jprecio_compra" id="jprecio_compra"
+                                                            class="form-control" placeholder="Precio venta dolar...">
+                                                        <input type="hidden" name="jprecio_venta" id="jprecio_venta"
+                                                            class="form-control" placeholder="Precio dolar...">
+                                                        <input type="hidden" name="jprecio_venta_dolar"
+                                                            id="jprecio_venta_dolar" class="form-control"
+                                                            placeholder="Precio dolar...">
+                                                        <input type="hidden" name="jmarjen_ganancia_dolar"
+                                                            id="jmarjen_ganancia_dolar"
+                                                            value="{{ $tasaDolar->porcentaje_ganancia }}">
+                                                        <input type="hidden" name="tasaDolars" id="tasaDolars"
+                                                            value="{{ $tasaDolar->tasa }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                    <div class="form group">
+                                                        <label for="jprecio_venta_peso">Precio Pesos</label>
+                                                        <h4 class="font-weight-bold" id="vprecio_venta_peso">$. 0.00
+                                                        </h4>
+                                                        <input type="hidden" name="jprecio_venta_p_dolar"
+                                                            id="jprecio_venta_p_dolar" class="form-control">
+                                                        <input type="hidden" name="jprecio_venta_peso"
+                                                            id="jprecio_venta_peso" class="form-control"
+                                                            placeholder="Precio pesos...">
+                                                        <input type="hidden" name="jmarjen_ganancia_peso"
+                                                            id="jmarjen_ganancia_peso"
+                                                            value="{{ $tasaPeso->porcentaje_ganancia }}">
+                                                        <input type="hidden" name="tasaPesos" id="tasaPesos"
+                                                            value="{{ $tasaPeso->tasa }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                    <div class="form group">
+                                                        <label for="jprecio_venta_trans_punto">Precio
+                                                            Trans/Punto</label>
+                                                        <h4 class="font-weight-bold" id="vprecio_venta_trans_punto">
+                                                            Bs.
+                                                            0.00
+                                                        </h4>
+                                                        <input type="hidden" name="jprecio_venta_tp_dolar"
+                                                            id="jprecio_venta_tp_dolar" class="form-control">
+                                                        <input type="hidden" name="jprecio_venta_trans_punto"
+                                                            id="jprecio_venta_trans_punto" class="form-control"
+                                                            placeholder="Precio trans/punto...">
+                                                        <input type="hidden" name="jmarjen_ganancia_trans_punto"
+                                                            id="jmarjen_ganancia_trans_punto"
+                                                            value="{{ $tasaTransferenciaPunto->porcentaje_ganancia }}">
+                                                        <input type="hidden" name="tasaTransPunto" id="tasaTransPunto"
+                                                            value="{{ $tasaTransferenciaPunto->tasa }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                    <div class="form group">
+                                                        <label for="jprecio_venta_mixto">Precio Mixto</label>
+                                                        <h4 class="font-weight-bold" id="vprecio_venta_mixto">Bs. 0.00
+                                                        </h4>
+                                                        <input type="hidden" name="jprecio_venta_m_dolar"
+                                                            id="jprecio_venta_m_dolar" class="form-control">
+                                                        <input type="hidden" name="jprecio_venta_mixto"
+                                                            id="jprecio_venta_mixto" class="form-control"
+                                                            placeholder="Precio Mixto...">
+                                                        <input type="hidden" name="jmarjen_ganancia_mixto"
+                                                            id="jmarjen_ganancia_mixto"
+                                                            value="{{ $tasaMixto->porcentaje_ganancia }}">
+                                                        <input type="hidden" name="tasaMixto" id="tasaMixto"
+                                                            value="{{ $tasaMixto->tasa }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                    <div class="form group">
+                                                        <label for="precio_venta_Efectivo">Precio Efectivo</label>
+                                                        <h4 class="font-weight-bold" id="vprecio_venta_Efectivo">Bs.
+                                                            0.00
+                                                        </h4>
+                                                        <input type="hidden" name="jprecio_venta_e_dolar"
+                                                            id="jprecio_venta_e_dolar" class="form-control">
+                                                        <input type="hidden" name="jprecio_venta_Efectivo"
+                                                            id="jprecio_venta_Efectivo" class="form-control"
+                                                            placeholder="Precio venta efecti...">
+                                                        <input type="hidden" name="jmarjen_ganancia_Efectivo"
+                                                            id="jmarjen_ganancia_Efectivo"
+                                                            value="{{ $tasaEfectivo->porcentaje_ganancia }}">
+                                                        <input type="hidden" name="tasaEfectivo" id="tasaEfectivo"
+                                                            value="{{ $tasaEfectivo->tasa }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                    <div class="form group">
+                                                        <button id="bt_add" type="button"
+                                                            class="btn btn-primary btn-md btn-block">Agregar</button>
                                                     </div>
                                                 </div>
                                             </div>
-                                            {{-- <div id="gestionpago">
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-sm-12 col-md-12 col-xs-12">
                                                 <div class="panel panel-primary">
                                                     <div class="panel-heading">
-                                                        <h2 id="gestionPago" class="panel-title">Gestion de pagos efectivo
-                                                        </h2>
+                                                        <h3 class="panel-title">Cargar Artículos</h3>
                                                     </div>
                                                     <div class="panel-body">
                                                         <div class="table-responsive">
-                                                            <table id="pagos"
+                                                            <table id="detalles"
                                                                 class="table table-striped table-borderd table-condensed table-hover">
                                                                 <thead>
-                                                                    <th>Divisa</th>
-                                                                    <th>Monto</th>
-
-                                                                    <th>Tasa</th>
-                                                                    <th>Divisa a dolar</th>
-                                                                    <th>Resta</th>
-                                                                    <th>Subtotal</th>
+                                                                    <th class="info">Op</th>
+                                                                    <th class="info">Artículo</th>
+                                                                    <th class="info">Cant</th>
+                                                                    <th class="success">P/Dolar</th>
+                                                                    <th class="success">S/Total</th>
+                                                                    <th class="warning">P/Peso</th>
+                                                                    <th class="warning">S/Total</th>
+                                                                    <th class="success">P/T/P</th>
+                                                                    <th class="success">S/Total</th>
+                                                                    <th class="warning">P/Mixto</th>
+                                                                    <th class="warning">S/Total</th>
+                                                                    <th class="success">P/Efect</th>
+                                                                    <th class="success">S/Total</th>
+                                                                    <th class="info">Desto</th>
+                                                                    {{-- <th class="info">
+                                                                        Subtotal</th> --}}
                                                                 </thead>
-                                                                <tbody>
-                                                                    <tr id="trD">
-                                                                        <td>
-                                                                            <h4 class="text-bold text-primary">Dolar</h4>
-                                                                        </td><input name="divisa[]" value="Dolar"
-                                                                            type="hidden">
-                                                                        <td><input name="MontoDivisa[]" class="decimal"
-                                                                                type="texto" id="DMontoDolar">
-                                                                                <button type="button" id="cargarDolar" class="btn btn-primary btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
-                                                                        </td>
-
-                                                                        <td><input name="TasaTike[]" type="texto" readonly
-                                                                                id="TasaDolar"
-                                                                                value="{{ $tasaDolar->tasa }}">
-                                                                        </td>
-                                                                        <td><input name="MontoDolar[]" type="text" readonly
-                                                                                id="DolarToDolar" class="monto"
-                                                                                onchange="sumar();"></td>
-                                                                        <td><input name="Veltos[]" type="text" readonly
-                                                                                id="RestaDolar"></td>
-                                                                        <td id="DsubTotal"></td>
-                                                                    </tr>
-                                                                    <tr id="trP">
-                                                                        <td>
-                                                                            <h4 class="text-bold text-primary">Peso</h4>
-                                                                        </td>
-                                                                        </th><input name="divisa[]" value="Peso"
-                                                                            type="hidden">
-                                                                        <td><input name="MontoDivisa[]" class="decimal"
-                                                                                type="texto" id="DMontoPeso">
-                                                                                <button type="button" id="cargarPeso" class="btn btn-info btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
-                                                                        </td>
-                                                                        <td><input name="TasaTike[]" type="texto" readonly
-                                                                                id="TasaPeso" value="{{ $tasaPeso->tasa }}">
-                                                                        </td>
-                                                                        <td><input name="MontoDolar[]" type="text" readonly
-                                                                                id="PesoToDolar" class="monto"
-                                                                                onchange="sumar();"></td>
-                                                                        <td><input name="Veltos[]" type="text" readonly
-                                                                                id="RestaPeso"></td>
-                                                                        <td id="PeSubTotal"></td>
-                                                                    </tr>
-                                                                    <tr id="trE">
-                                                                        <td>
-                                                                            <h4 class="text-bold text-primary">Efectivo</h4>
-                                                                        </td>
-                                                                        </th><input name="divisa[]" value="Bolivar"
-                                                                            type="hidden">
-                                                                        <td><input name="MontoDivisa[]" class="decimal"
-                                                                                type="texto" id="DMontoBolivar">
-                                                                                <button type="button" id="cargarBolivar" class="btn btn-warning btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
-                                                                        </td>
-                                                                        <td><input name="TasaTike[]" type="texto" readonly
-                                                                                id="TasaBolivar"
-                                                                                value="{{ $tasaTransferenciaPunto->tasa }}">
-                                                                        </td>
-                                                                        <td><input name="MontoDolar[]" type="texto" readonly
-                                                                                id="BolivarToDolar" class="monto"
-                                                                                onchange="sumar();"></td>
-                                                                        <td><input name="Veltos[]" type="text" readonly
-                                                                                id="RestaBolivar"></td>
-                                                                        <td id="BoSubTotal"></td>
-                                                                    </tr>
-                                                                    <tr id="trTP">
-                                                                        <td>
-                                                                            <h4 class="text-bold text-primary">Punto</h4>
-                                                                        </td>
-                                                                        </th><input name="divisa[]" value="Punto"
-                                                                            type="hidden">
-                                                                        <td><input name="MontoDivisa[]" class="decimal"
-                                                                                type="texto" id="DMontoPunto">
-                                                                                <button type="button" id="cargarPunto" class="btn btn-danger btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
-                                                                            </td>
-                                                                        <td>
-                                                                            <input
-                                                                            type="text" name="num_Punto" id="num_Punto" placeholder="N° de Punto..."
-                                                                            value="">
-                                                                            <input name="TasaTike[]" type="texto"
-                                                                                class="enteros" id="TasaPunto" readonly value="{{ $tasaTransferenciaPunto->tasa }}">
-                                                                        </td>
-                                                                        <td><input name="MontoDolar[]" readonly type="texto"
-                                                                                id="PuntoToDolar" class="monto"
-                                                                                onchange="sumar();"></td>
-                                                                        <td><input name="Veltos[]" readonly type="text"
-                                                                                id="RestaPunto"></td>
-                                                                        <td id="PuSubTotal"></td>
-                                                                    </tr>
-                                                                    <tr id="trT">
-                                                                        <td>
-                                                                            <h4 class="text-bold text-primary">Transf
-                                                                            </h4>
-                                                                        </td>
-                                                                        </th><input name="divisa[]" value="Transferencia"
-                                                                            type="hidden">
-                                                                        <td><input name="MontoDivisa[]" class="decimal"
-                                                                                class="" type="texto" id="DMontoTrans">
-                                                                                <button type="button" id="cargarTrans" class="btn btn-success btn-xs"> <i class="fa fa-exchange" aria-hidden="true"> </i></button>
-                                                                            </td>
-                                                                        <td>
-                                                                            <input
-                                                                            type="text" name="num_Trans" id="num_Trans" placeholder="N° de Transferencia..."
-                                                                            value="">
-                                                                            <input name="TasaTike[]" type="texto" readonly
-                                                                                class="enteros" id="TasaTrans" value="{{ $tasaTransferenciaPunto->tasa }}">
-
-                                                                        </td>
-                                                                        <td><input name="MontoDolar[]" type="texto" readonly
-                                                                                id="TransToDolar" class="monto"
-                                                                                onchange="sumar();"></td>
-                                                                        <td><input name="Veltos[]" type="text" readonly
-                                                                                id="RestaTrans"></td>
-                                                                        <td id="TrSubTotal"></td>
-                                                                    </tr>
-                                                                </tbody>
                                                                 <tfoot>
-                                                                    <th></th>
-                                                                    <th></th>
-                                                                    <th></th>
-                                                                    <th></th>
-                                                                    <th>
-                                                                        <h4 id="tp" class="text-bold">TOTAL PAGADO</h4>
-                                                                        <h4 id="r" class="text-bold">RESTA</h4>
-                                                                        <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
-                                                                    <th>
-                                                                        <h4 class="text-bold" id="spTotal">0.00</h4>
-                                                                        <h4 class="text-bold" id="RestaTtotal">0.00</h4>
-                                                                        <h4 class="text-bold" id="PagoTtotal">0.00</h4>
+                                                                    <th colspan="3">TOTAL</th>
+                                                                    <th colspan="2">
+                                                                        <h4 class="font-weight-bold" id="totald">$.
+                                                                            0.00
+                                                                        </h4>
                                                                     </th>
+                                                                    <th colspan="2">
+                                                                        <h4 class="font-weight-bold" id="totalp">$.
+                                                                            0.00
+                                                                        </h4>
+                                                                    </th>
+                                                                    <th colspan="2">
+                                                                        <h4 class="font-weight-bold" id="totaltp">
+                                                                            Bs.
+                                                                            0.00
+                                                                        </h4>
+                                                                    </th>
+                                                                    <th colspan="2">
+                                                                        <h4 class="font-weight-bold" id="totalm">
+                                                                            Bs.
+                                                                            0.00
+                                                                        </h4>
+                                                                    </th>
+                                                                    <th colspan="2">
+                                                                        <h4 class="font-weight-bold" id="totale">
+                                                                            Bs.
+                                                                            0.00
+                                                                        </h4>
+                                                                    </th><input type="hidden" name="total_venta"
+                                                                        id="total_venta"><input type="hidden"
+                                                                        name="total_ventad" id="total_ventad"><input
+                                                                        type="hidden" name="total_ventap"
+                                                                        id="total_ventap"><input type="hidden"
+                                                                        name="total_ventatp" id="total_ventatp"><input
+                                                                        type="hidden" name="total_ventam"
+                                                                        id="total_ventam"><input type="hidden"
+                                                                        name="total_ventae" id="total_ventae">
+                                                                    <th></th>
                                                                 </tfoot>
+                                                                <tbody>
+                                                                </tbody>
                                                             </table>
                                                         </div>
+                                                        <div class="form-group">
+
+                                                            {{-- <label>Precio:</label>
+                                                            <div class="input-group">
+                                                                <div class="col-sm-4 col-xs-6">
+                                                                    <div class="description-block border-right">
+                                                                        <span
+                                                                            class="description-percentage text-primary"><i
+                                                                                class="fa fa-caret-up"></i> Dolar</span>
+                                                                        <h5 id="mostrarPrecioDolar"
+                                                                            class="description-header">
+                                                                            ${{floatval($habitacion[0]->total_venta) ??
+                                                                            ''}}</h5>
+
+                                                                        <input type="hidden" id="precioDolarHabitacio"
+                                                                            name="precioDolarHabitacion"
+                                                                            value="{{floatval($habitacion[0]->total_venta) ?? ''}}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4 col-xs-6">
+                                                                    <div class="description-block border-right">
+                                                                        <span
+                                                                            class="description-percentage text-primary"><i
+                                                                                class="fa fa-caret-up"></i> Pesos</span>
+                                                                        <h5 id="mostrarPrecioPeso"
+                                                                            class="description-header">
+                                                                            ${{number_format($habitacion[0]->total_venta*$tasaPesoHabitacion->tasa,2,',','.')
+                                                                            ?? ''}}</h5>
+                                                                        <input type="hidden" id="precioPesoHabitacio"
+                                                                            name="precioPesoHabitacion"
+                                                                            value="{{$habitacion[0]->total_venta*$tasaPesoHabitacion->tasa}}">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-sm-4 col-xs-6">
+                                                                    <div class="description-block border-right">
+                                                                        <span
+                                                                            class="description-percentage text-primary"><i
+                                                                                class="fa fa-caret-up"></i>
+                                                                            Bolivares</span>
+                                                                        <h5 id="mostrarPrecioBolivar"
+                                                                            class="description-header">
+                                                                            Bs.{{number_format($habitacion[0]->total_venta*$tasaDolarHabitacion->tasa,2,',','.')}}
+                                                                        </h5>
+                                                                        <input type="hidden"
+                                                                            id="precioBolivarHabitacion"
+                                                                            name="precioBolivarHabitacion"
+                                                                            value="{{$habitacion[0]->total_venta*$tasaDolarHabitacion->tasa}}">
+                                                                    </div>
+                                                                </div>
+                                                            </div> --}}
+                                                            <div id="contado"
+                                                                class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                                <a id="modalPago" href="#" data-toggle="modal"
+                                                                    data-target="#dolar"
+                                                                    class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
+
+                                                            </div>
+                                                            <div id="cortesia"
+                                                                class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small submit-prevent-button">
+
+                                                                <button id="modalPago"
+                                                                    class="btn btn-sm btn-warning btn-block col-lg-pull-2 small submit-prevent-button"
+                                                                    type="submit"><i
+                                                                        class='glyphicon glyphicon-search'></i>
+                                                                    Cortesía</button>
+
+                                                            </div>
+                                                            <div id="credito"
+                                                                class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small submit-prevent-button">
+                                                                <button id="modalPago"
+                                                                    class="btn btn-sm btn btn-success btn-block col-lg-pull-2 small submit-prevent-button"
+                                                                    type="submit"><i
+                                                                        class='glyphicon glyphicon-search'></i>
+                                                                    Crédito</button>
+
+
+                                                            </div>
+                                                            <!-- /.input group -->
+                                                        </div>
                                                     </div>
-                                                    <div class="panel-footer" id="guardar">
-                                                        <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
-                                                            id="guardar">
-                                                            <input name="_token" value="{{ csrf_token() }}" type="hidden">
-                                                            <button id="enviar" class="btn btn-primary btn-block"
-                                                                type="button">Guardar</button>
+                                                    {{-- <div class="container-fluit">
+                                                        <div class="row">
+                                                            <div
+                                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                <button id='bt_addD' type='button'
+                                                                    class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Dolar</button>
+                                                            </div>
+                                                            <div
+                                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                <button id='bt_addP' type='button'
+                                                                    class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Peso</button>
+                                                            </div>
+                                                            <div
+                                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                <button id='bt_addTP' type='button'
+                                                                    class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Punto/Trans</button>
+                                                            </div>
+                                                            <div
+                                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                <button id='bt_addM' type='button'
+                                                                    class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Mixto</button>
+                                                            </div>
+                                                            <div
+                                                                class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                <button id='bt_addE' type='button'
+                                                                    class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Efectivo</button>
+                                                            </div>
                                                         </div>
-                                                        <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
-                                                            id="guardar">
-                                                            <button class="btn btn-danger btn-block"
-                                                                type="reset">Cancelar</button>
-                                                        </div>
+                                                    </div> --}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{-- <div id="gestionpago">
+                                            <div class="panel panel-primary">
+                                                <div class="panel-heading">
+                                                    <h2 id="gestionPago" class="panel-title">Gestion de pagos efectivo
+                                                    </h2>
+                                                </div>
+                                                <div class="panel-body">
+                                                    <div class="table-responsive">
+                                                        <table id="pagos"
+                                                            class="table table-striped table-borderd table-condensed table-hover">
+                                                            <thead>
+                                                                <th>Divisa</th>
+                                                                <th>Monto</th>
+
+                                                                <th>Tasa</th>
+                                                                <th>Divisa a dolar</th>
+                                                                <th>Resta</th>
+                                                                <th>Subtotal</th>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr id="trD">
+                                                                    <td>
+                                                                        <h4 class="text-bold text-primary">Dolar</h4>
+                                                                    </td><input name="divisa[]" value="Dolar"
+                                                                        type="hidden">
+                                                                    <td><input name="MontoDivisa[]" class="decimal"
+                                                                            type="texto" id="DMontoDolar">
+                                                                        <button type="button" id="cargarDolar"
+                                                                            class="btn btn-primary btn-xs"> <i
+                                                                                class="fa fa-exchange"
+                                                                                aria-hidden="true"> </i></button>
+                                                                    </td>
+
+                                                                    <td><input name="TasaTike[]" type="texto" readonly
+                                                                            id="TasaDolar"
+                                                                            value="{{ $tasaDolar->tasa }}">
+                                                                    </td>
+                                                                    <td><input name="MontoDolar[]" type="text" readonly
+                                                                            id="DolarToDolar" class="monto"
+                                                                            onchange="sumar();"></td>
+                                                                    <td><input name="Veltos[]" type="text" readonly
+                                                                            id="RestaDolar"></td>
+                                                                    <td id="DsubTotal"></td>
+                                                                </tr>
+                                                                <tr id="trP">
+                                                                    <td>
+                                                                        <h4 class="text-bold text-primary">Peso</h4>
+                                                                    </td>
+                                                                    </th><input name="divisa[]" value="Peso"
+                                                                        type="hidden">
+                                                                    <td><input name="MontoDivisa[]" class="decimal"
+                                                                            type="texto" id="DMontoPeso">
+                                                                        <button type="button" id="cargarPeso"
+                                                                            class="btn btn-info btn-xs"> <i
+                                                                                class="fa fa-exchange"
+                                                                                aria-hidden="true"> </i></button>
+                                                                    </td>
+                                                                    <td><input name="TasaTike[]" type="texto" readonly
+                                                                            id="TasaPeso" value="{{ $tasaPeso->tasa }}">
+                                                                    </td>
+                                                                    <td><input name="MontoDolar[]" type="text" readonly
+                                                                            id="PesoToDolar" class="monto"
+                                                                            onchange="sumar();"></td>
+                                                                    <td><input name="Veltos[]" type="text" readonly
+                                                                            id="RestaPeso"></td>
+                                                                    <td id="PeSubTotal"></td>
+                                                                </tr>
+                                                                <tr id="trE">
+                                                                    <td>
+                                                                        <h4 class="text-bold text-primary">Efectivo</h4>
+                                                                    </td>
+                                                                    </th><input name="divisa[]" value="Bolivar"
+                                                                        type="hidden">
+                                                                    <td><input name="MontoDivisa[]" class="decimal"
+                                                                            type="texto" id="DMontoBolivar">
+                                                                        <button type="button" id="cargarBolivar"
+                                                                            class="btn btn-warning btn-xs"> <i
+                                                                                class="fa fa-exchange"
+                                                                                aria-hidden="true"> </i></button>
+                                                                    </td>
+                                                                    <td><input name="TasaTike[]" type="texto" readonly
+                                                                            id="TasaBolivar"
+                                                                            value="{{ $tasaTransferenciaPunto->tasa }}">
+                                                                    </td>
+                                                                    <td><input name="MontoDolar[]" type="texto" readonly
+                                                                            id="BolivarToDolar" class="monto"
+                                                                            onchange="sumar();"></td>
+                                                                    <td><input name="Veltos[]" type="text" readonly
+                                                                            id="RestaBolivar"></td>
+                                                                    <td id="BoSubTotal"></td>
+                                                                </tr>
+                                                                <tr id="trTP">
+                                                                    <td>
+                                                                        <h4 class="text-bold text-primary">Punto</h4>
+                                                                    </td>
+                                                                    </th><input name="divisa[]" value="Punto"
+                                                                        type="hidden">
+                                                                    <td><input name="MontoDivisa[]" class="decimal"
+                                                                            type="texto" id="DMontoPunto">
+                                                                        <button type="button" id="cargarPunto"
+                                                                            class="btn btn-danger btn-xs"> <i
+                                                                                class="fa fa-exchange"
+                                                                                aria-hidden="true"> </i></button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="num_Punto"
+                                                                            id="num_Punto" placeholder="N° de Punto..."
+                                                                            value="">
+                                                                        <input name="TasaTike[]" type="texto"
+                                                                            class="enteros" id="TasaPunto" readonly
+                                                                            value="{{ $tasaTransferenciaPunto->tasa }}">
+                                                                    </td>
+                                                                    <td><input name="MontoDolar[]" readonly type="texto"
+                                                                            id="PuntoToDolar" class="monto"
+                                                                            onchange="sumar();"></td>
+                                                                    <td><input name="Veltos[]" readonly type="text"
+                                                                            id="RestaPunto"></td>
+                                                                    <td id="PuSubTotal"></td>
+                                                                </tr>
+                                                                <tr id="trT">
+                                                                    <td>
+                                                                        <h4 class="text-bold text-primary">Transf
+                                                                        </h4>
+                                                                    </td>
+                                                                    </th><input name="divisa[]" value="Transferencia"
+                                                                        type="hidden">
+                                                                    <td><input name="MontoDivisa[]" class="decimal"
+                                                                            class="" type="texto" id="DMontoTrans">
+                                                                        <button type="button" id="cargarTrans"
+                                                                            class="btn btn-success btn-xs"> <i
+                                                                                class="fa fa-exchange"
+                                                                                aria-hidden="true"> </i></button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <input type="text" name="num_Trans"
+                                                                            id="num_Trans"
+                                                                            placeholder="N° de Transferencia..."
+                                                                            value="">
+                                                                        <input name="TasaTike[]" type="texto" readonly
+                                                                            class="enteros" id="TasaTrans"
+                                                                            value="{{ $tasaTransferenciaPunto->tasa }}">
+
+                                                                    </td>
+                                                                    <td><input name="MontoDolar[]" type="texto" readonly
+                                                                            id="TransToDolar" class="monto"
+                                                                            onchange="sumar();"></td>
+                                                                    <td><input name="Veltos[]" type="text" readonly
+                                                                            id="RestaTrans"></td>
+                                                                    <td id="TrSubTotal"></td>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tfoot>
+                                                                <th></th>
+                                                                <th></th>
+                                                                <th></th>
+                                                                <th></th>
+                                                                <th>
+                                                                    <h4 id="tp" class="text-bold">TOTAL PAGADO</h4>
+                                                                    <h4 id="r" class="text-bold">RESTA</h4>
+                                                                    <h4 id="tap" class="text-bold">TOTAL A PAGAR</h4>
+                                                                <th>
+                                                                    <h4 class="text-bold" id="spTotal">0.00</h4>
+                                                                    <h4 class="text-bold" id="RestaTtotal">0.00</h4>
+                                                                    <h4 class="text-bold" id="PagoTtotal">0.00</h4>
+                                                                </th>
+                                                            </tfoot>
+                                                        </table>
                                                     </div>
                                                 </div>
-                                            </div> --}}
-                                        </div>
+                                                <div class="panel-footer" id="guardar">
+                                                    <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
+                                                        id="guardar">
+                                                        <input name="_token" value="{{ csrf_token() }}" type="hidden">
+                                                        <button id="enviar" class="btn btn-primary btn-block"
+                                                            type="button">Guardar</button>
+                                                    </div>
+                                                    <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
+                                                        id="guardar">
+                                                        <button class="btn btn-danger btn-block"
+                                                            type="reset">Cancelar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div> --}}
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal fade bd-example-modal-lg refrescar" id="dolar" role="dialog"
-                                aria-labelledby="myModalLabel">
-                                <div class="modal-dialog modal-lg modal-primary">
-                                    <div class="modal-dialog modal-lg">
-                                        <div class="modal-content">
-                                            {{-- <form action="{{route('proceso')}}" method="post">
-                                                @csrf --}}
+                        </div>
+                        <div class="modal fade bd-example-modal-lg refrescar" id="dolar" role="dialog"
+                            aria-labelledby="myModalLabel">
+                            <div class="modal-dialog modal-lg modal-primary">
+                                <div class="modal-dialog modal-lg">
+                                    <div class="modal-content">
+                                        {{-- <form action="{{route('proceso')}}" method="post">
+                                            @csrf --}}
                                             <div class="modal-header">
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
@@ -1091,37 +1157,38 @@
                                                             <label>Forma de pago:</label>
                                                             {{-- <div class="input-group"> --}}
 
-                                                            <div class="container-fluit">
-                                                                <div class="row">
-                                                                    <div
-                                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                        <button id='bt_addD' type='button'
-                                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Dolar</button>
-                                                                    </div>
-                                                                    <div
-                                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                        <button id='bt_addP' type='button'
-                                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Peso</button>
-                                                                    </div>
-                                                                    <div
-                                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                        <button id='bt_addTP' type='button'
-                                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Punto/Trans</button>
-                                                                    </div>
-                                                                    <div
-                                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                        <button id='bt_addM' type='button'
-                                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Mixto</button>
-                                                                    </div>
-                                                                    <div
-                                                                        class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
-                                                                        <button id='bt_addE' type='button'
-                                                                            class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Efectivo</button>
+                                                                <div class="container-fluit">
+                                                                    <div class="row">
+                                                                        <div
+                                                                            class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                            <button id='bt_addD' type='button'
+                                                                                class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Dolar</button>
+                                                                        </div>
+                                                                        <div
+                                                                            class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                            <button id='bt_addP' type='button'
+                                                                                class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Peso</button>
+                                                                        </div>
+                                                                        <div
+                                                                            class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                            <button id='bt_addTP' type='button'
+                                                                                class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Punto/Trans</button>
+                                                                        </div>
+                                                                        <div
+                                                                            class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                            <button id='bt_addM' type='button'
+                                                                                class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Mixto</button>
+                                                                        </div>
+                                                                        <div
+                                                                            class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
+                                                                            <button id='bt_addE' type='button'
+                                                                                class='btn btn-sm btn-primary btn-block col-lg-pull-2'>Efectivo</button>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
 
-                                                            {{-- </div> --}}
+                                                                {{--
+                                                            </div> --}}
                                                         </div>
                                                         <div id="gestionpago">
                                                             <div class="panel panel-primary">
@@ -1131,11 +1198,20 @@
                                                                     </h2>
                                                                 </div>
                                                                 <div class="row">
-                                                                    {{-- <div id="excedente" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
-                                                                        <label for="pagoConExcedente"><h2 class="text-blue">Exedente disponible:ff <b id="dispExcedenteShow">$.0.00</b></h2></label>
-                                                                        <input class="form-control" type="text" id="pagoConExcedente" name="pagoConExcedente" >
-                                                                        <input class="form-control" type="hidden" id="dispExcedente" name="dispExcedente" >
-                                                                    </div> --}}
+                                                                    {{--  <div id="excedente"
+                                                                        class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
+                                                                        <label for="pagoConExcedente">
+                                                                            <h2 class="text-blue">Exedente disponible:{{
+                                                                                $service->excedente_nuevo }}
+                                                                                <b id="dispExcedenteShow">$.0.00</b>
+                                                                            </h2>
+                                                                        </label>
+                                                                        <input class="form-control" type="text"
+                                                                            id="pagoConExcedente"
+                                                                            name="pagoConExcedente">
+                                                                        <input class="form-control" type="text"
+                                                                            id="dispExcedente" name="dispExcedente">
+                                                                    </div>  --}}
                                                                     <div id="Vueltosexcedente"
                                                                         class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
                                                                         <label for="VueltospagoConExcedente">
@@ -1143,7 +1219,8 @@
                                                                                     id="cargarExcedente"
                                                                                     class="btn btn-blue"> <i
                                                                                         class="fa fa-money"
-                                                                                        aria-hidden="true"> <b>USAR VUELTOS
+                                                                                        aria-hidden="true"> <b>USAR
+                                                                                            VUELTOS
                                                                                             PENDIENTES: </b> <b
                                                                                             id="VueltosdispExcedenteShow">$.0.00</b></i></button>
                                                                                 <div class="col-xs-3">
@@ -1160,10 +1237,16 @@
                                                                             id="VueltosdispExcedente"
                                                                             name="VueltosdispExcedente">
                                                                     </div>
-                                                                    {{-- <div id="nocredito" class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
-                                                                        <label for="pagoConCredito"><h2 class="text-blue">Crédito disponible: <b id="dispCreditoShow">$.0.00</b></h2></label>
-                                                                        <input class="form-control" type="text" id="pagoConCredito" name="pagoConCredito" >
-                                                                        <input class="form-control" type="hidden" id="dispCredito" name="dispCredito" >
+                                                                    {{-- <div id="nocredito"
+                                                                        class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
+                                                                        <label for="pagoConCredito">
+                                                                            <h2 class="text-blue">Crédito disponible: <b
+                                                                                    id="dispCreditoShow">$.0.00</b></h2>
+                                                                        </label>
+                                                                        <input class="form-control" type="text"
+                                                                            id="pagoConCredito" name="pagoConCredito">
+                                                                        <input class="form-control" type="hidden"
+                                                                            id="dispCredito" name="dispCredito">
                                                                     </div> --}}
                                                                 </div>
                                                                 <div class="panel-body">
@@ -1182,7 +1265,8 @@
                                                                             <tbody>
                                                                                 <tr id="trD">
                                                                                     <td>
-                                                                                        <h4 class="text-bold text-primary">
+                                                                                        <h4
+                                                                                            class="text-bold text-primary">
                                                                                             Dolar</h4>
                                                                                     </td><input name="divisa[]"
                                                                                         value="Dolar" type="hidden">
@@ -1210,12 +1294,14 @@
                                                                                             onchange="sumar();"></td>
                                                                                     <td><input name="Veltos[]"
                                                                                             size="10px" type="text"
-                                                                                            readonly id="RestaDolar"></td>
+                                                                                            readonly id="RestaDolar">
+                                                                                    </td>
                                                                                     <td id="DsubTotal"></td>
                                                                                 </tr>
                                                                                 <tr id="trP">
                                                                                     <td>
-                                                                                        <h4 class="text-bold text-primary">
+                                                                                        <h4
+                                                                                            class="text-bold text-primary">
                                                                                             Peso</h4>
                                                                                     </td>
                                                                                     </th><input name="divisa[]"
@@ -1226,8 +1312,8 @@
                                                                                             id="DMontoPeso">
                                                                                         <button type="button"
                                                                                             id="cargarPeso"
-                                                                                            class="btn btn-info btn-sm"> <i
-                                                                                                class="fa fa-exchange"
+                                                                                            class="btn btn-info btn-sm">
+                                                                                            <i class="fa fa-exchange"
                                                                                                 aria-hidden="true">
                                                                                             </i></button>
                                                                                     </td>
@@ -1243,12 +1329,14 @@
                                                                                             onchange="sumar();"></td>
                                                                                     <td><input name="Veltos[]"
                                                                                             size="10px" type="text"
-                                                                                            readonly id="RestaPeso"></td>
+                                                                                            readonly id="RestaPeso">
+                                                                                    </td>
                                                                                     <td id="PeSubTotal"></td>
                                                                                 </tr>
                                                                                 <tr id="trE">
                                                                                     <td>
-                                                                                        <h4 class="text-bold text-primary">
+                                                                                        <h4
+                                                                                            class="text-bold text-primary">
                                                                                             Efectivo</h4>
                                                                                     </td>
                                                                                     </th><input name="divisa[]"
@@ -1282,7 +1370,8 @@
                                                                                 </tr>
                                                                                 <tr id="trTP">
                                                                                     <td>
-                                                                                        <h4 class="text-bold text-primary">
+                                                                                        <h4
+                                                                                            class="text-bold text-primary">
                                                                                             Punto</h4>
                                                                                     </td>
                                                                                     </th><input name="divisa[]"
@@ -1299,16 +1388,15 @@
                                                                                             </i></button>
                                                                                     </td>
                                                                                     <td>
-                                                                                        <input type="text"
-                                                                                            size="10px"
+                                                                                        <input type="text" size="10px"
                                                                                             name="num_Punto"
                                                                                             id="num_Punto"
                                                                                             placeholder="N° de Punto..."
                                                                                             value="">
                                                                                         <input name="TasaTike[]"
                                                                                             size="10px" type="texto"
-                                                                                            class="enteros" id="TasaPunto"
-                                                                                            readonly
+                                                                                            class="enteros"
+                                                                                            id="TasaPunto" readonly
                                                                                             value="{{ $tasaTransferenciaPunto->tasa }}">
                                                                                     </td>
                                                                                     <td><input name="MontoDolar[]"
@@ -1324,7 +1412,8 @@
                                                                                 </tr>
                                                                                 <tr id="trT">
                                                                                     <td>
-                                                                                        <h4 class="text-bold text-primary">
+                                                                                        <h4
+                                                                                            class="text-bold text-primary">
                                                                                             Transf
                                                                                         </h4>
                                                                                     </td>
@@ -1343,8 +1432,7 @@
                                                                                             </i></button>
                                                                                     </td>
                                                                                     <td>
-                                                                                        <input type="text"
-                                                                                            size="10px"
+                                                                                        <input type="text" size="10px"
                                                                                             name="num_Trans"
                                                                                             id="num_Trans"
                                                                                             placeholder="N° de Transferencia..."
@@ -1363,7 +1451,8 @@
                                                                                             onchange="sumar();"></td>
                                                                                     <td><input name="Veltos[]"
                                                                                             size="10px" type="text"
-                                                                                            readonly id="RestaTrans"></td>
+                                                                                            readonly id="RestaTrans">
+                                                                                    </td>
                                                                                     <td id="TrSubTotal"></td>
                                                                                 </tr>
                                                                             </tbody>
@@ -1375,31 +1464,46 @@
                                                                                 <th>
                                                                                     <h4 id="tp" class="text-bold">
                                                                                         TOTAL PAGADO</h4>
-                                                                                    <h4 id="Vueltosex" class="text-bold">
+                                                                                    <h4 id="Vueltosex"
+                                                                                        class="text-bold">
                                                                                         TOTAL VTOS/DISP</h4>
-                                                                                    {{-- <h4 id="ex" class="text-bold">TOTAL EXCEDENTE</h4> --}}
+                                                                                    {{-- <h4 id="ex" class="text-bold">
+                                                                                        TOTAL EXCEDENTE</h4> --}}
                                                                                     <h4 id="r" class="text-bold">
                                                                                         RESTA</h4>
                                                                                     <h4 id="tap" class="text-bold">
                                                                                         TOTAL A PAGAR</h4>
-                                                                                    <input id="isVueltos" name="isVueltos"
-                                                                                        type="hidden" value="0">
+                                                                                    <input id="isVueltos"
+                                                                                        name="isVueltos" type="hidden"
+                                                                                        value="0">
                                                                                     <input id="monto_dejado"
-                                                                                        name="monto_dejado" type="hidden"
-                                                                                        value="">
-                                                                                    {{-- <input id="isVueltos" name="isVueltos" type="text" value="0"> --}}
-                                                                                    {{-- <input id="cantidad" name="cantidad" type="hidden" value=""> --}}
-                                                                                    {{-- <input id="num_servicio" name="num_servicio" type="hidden" value="{{$num_servicio}}"> --}}
+                                                                                        name="monto_dejado"
+                                                                                        type="hidden" value="">
+                                                                                    {{-- <input id="isVueltos"
+                                                                                        name="isVueltos" type="text"
+                                                                                        value="0"> --}}
+                                                                                    {{-- <input id="cantidad"
+                                                                                        name="cantidad" type="hidden"
+                                                                                        value=""> --}}
+                                                                                    {{-- <input id="num_servicio"
+                                                                                        name="num_servicio"
+                                                                                        type="hidden"
+                                                                                        value="{{$num_servicio}}"> --}}
                                                                                     <input id="operador" name="operador"
                                                                                         type="hidden"
                                                                                         value="{{ $UserName }}">
                                                                                     <input id="total_costo"
                                                                                         name="total_costo" type="hidden"
                                                                                         value="">
-                                                                                    {{-- <input id="precio_costo" name="precio_costo" type="hidden" value=""> --}}
-                                                                                    {{-- <input id="tipo_pago" name="tipo_pago" type="hidden" value=""> --}}
-                                                                                    <input id="modo_pago" name="modo_pago"
-                                                                                        type="hidden" value="">
+                                                                                    {{-- <input id="precio_costo"
+                                                                                        name="precio_costo"
+                                                                                        type="hidden" value=""> --}}
+                                                                                    {{-- <input id="tipo_pago"
+                                                                                        name="tipo_pago" type="hidden"
+                                                                                        value=""> --}}
+                                                                                    <input id="modo_pago"
+                                                                                        name="modo_pago" type="hidden"
+                                                                                        value="">
                                                                                     <input id="caja_id" name="caja_id"
                                                                                         type="hidden"
                                                                                         value="{{ $caja->id }}">
@@ -1418,10 +1522,12 @@
                                                                                         0.00</h4>
                                                                                     <h4 class="text-bold"
                                                                                         id="Vueltosexcdt">0.00</h4>
-                                                                                    {{-- <h4 class="text-bold" id="excdt">0.00</h4> --}}
+                                                                                    {{-- <h4 class="text-bold"
+                                                                                        id="excdt">0.00</h4> --}}
                                                                                     <h4 class="text-bold"
                                                                                         id="RestaTtotal">0.00</h4>
-                                                                                    <h4 class="text-bold" id="PagoTtotal">
+                                                                                    <h4 class="text-bold"
+                                                                                        id="PagoTtotal">
                                                                                         0.00</h4>
                                                                                 </th>
                                                                             </tfoot>
@@ -1433,7 +1539,8 @@
 
                                                                         <div class="box  text-black">
                                                                             <div class="box-header">
-                                                                                <h3 class="box-title">Procesar Vueltos</h3>
+                                                                                <h3 class="box-title">Procesar Vueltos
+                                                                                </h3>
                                                                             </div>
                                                                             <!-- /.box-header -->
                                                                             <div class="box-body no-padding">
@@ -1465,7 +1572,12 @@
                                                                                                     <h5
                                                                                                         class="description-header text-bold">
                                                                                                         $.
-                                                                                                        {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso, 2, ',', '.') ?? ' 0,00' }}
+                                                                                                        {{
+                                                                                                        number_format($cajas->SumaTotalPeso
+                                                                                                        +
+                                                                                                        $caja->monto_peso,
+                                                                                                        2, ',', '.') ??
+                                                                                                        ' 0,00' }}
                                                                                                     </h5>
                                                                                                 </td>
                                                                                                 <td><input
@@ -1474,7 +1586,8 @@
                                                                                                         class="decimal"
                                                                                                         type="texto"
                                                                                                         id="DMontoDolarV">
-                                                                                                    <button type="button"
+                                                                                                    <button
+                                                                                                        type="button"
                                                                                                         id="cargarDolarV"
                                                                                                         class="btn btn-primary btn-sm">
                                                                                                         <i class="fa fa-exchange"
@@ -1499,13 +1612,15 @@
                                                                                                         class="montoV"
                                                                                                         onchange="sumarV();">
                                                                                                 </td>
-                                                                                                <td><input name="VeltosV[]"
+                                                                                                <td><input
+                                                                                                        name="VeltosV[]"
                                                                                                         size="10px"
                                                                                                         type="text"
                                                                                                         readonly
                                                                                                         id="RestaDolarV">
                                                                                                 </td>
-                                                                                                <td id="DsubTotalV"></td>
+                                                                                                <td id="DsubTotalV">
+                                                                                                </td>
                                                                                             </tr>
                                                                                             <tr id="trPV">
                                                                                                 <td>
@@ -1521,7 +1636,12 @@
                                                                                                     <h5
                                                                                                         class="description-header text-bold">
                                                                                                         $.
-                                                                                                        {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso, 2, ',', '.') ?? ' 0,00' }}
+                                                                                                        {{
+                                                                                                        number_format($cajas->SumaTotalPeso
+                                                                                                        +
+                                                                                                        $caja->monto_peso,
+                                                                                                        2, ',', '.') ??
+                                                                                                        ' 0,00' }}
                                                                                                     </h5>
                                                                                                 </td>
                                                                                                 <td><input
@@ -1530,7 +1650,8 @@
                                                                                                         class="decimal"
                                                                                                         type="texto"
                                                                                                         id="DMontoPesoV">
-                                                                                                    <button type="button"
+                                                                                                    <button
+                                                                                                        type="button"
                                                                                                         id="cargarPesoV"
                                                                                                         class="btn btn-info btn-sm">
                                                                                                         <i class="fa fa-exchange"
@@ -1554,13 +1675,15 @@
                                                                                                         class="montoV"
                                                                                                         onchange="sumarV();">
                                                                                                 </td>
-                                                                                                <td><input name="VeltosV[]"
+                                                                                                <td><input
+                                                                                                        name="VeltosV[]"
                                                                                                         size="10px"
                                                                                                         type="text"
                                                                                                         readonly
                                                                                                         id="RestaPesoV">
                                                                                                 </td>
-                                                                                                <td id="PeSubTotalV"></td>
+                                                                                                <td id="PeSubTotalV">
+                                                                                                </td>
                                                                                             </tr>
                                                                                             <tr id="trEV">
                                                                                                 <td>
@@ -1576,7 +1699,12 @@
                                                                                                     <h5
                                                                                                         class="description-header  text-bold">
                                                                                                         Bs.
-                                                                                                        {{ number_format($cajas->SumaTotalPunto + $caja->monto_bolivar, 2, ',', '.') ?? ' 0,00' }}
+                                                                                                        {{
+                                                                                                        number_format($cajas->SumaTotalPunto
+                                                                                                        +
+                                                                                                        $caja->monto_bolivar,
+                                                                                                        2, ',', '.') ??
+                                                                                                        ' 0,00' }}
                                                                                                     </h5>
                                                                                                 </td>
                                                                                                 <td><input
@@ -1585,7 +1713,8 @@
                                                                                                         type="texto"
                                                                                                         size="10px"
                                                                                                         id="DMontoBolivarV">
-                                                                                                    <button type="button"
+                                                                                                    <button
+                                                                                                        type="button"
                                                                                                         id="cargarBolivarV"
                                                                                                         class="btn btn-warning btn-sm">
                                                                                                         <i class="fa fa-exchange"
@@ -1609,13 +1738,15 @@
                                                                                                         class="montoV"
                                                                                                         onchange="sumarV();">
                                                                                                 </td>
-                                                                                                <td><input name="VeltosV[]"
+                                                                                                <td><input
+                                                                                                        name="VeltosV[]"
                                                                                                         size="10px"
                                                                                                         type="text"
                                                                                                         readonly
                                                                                                         id="RestaBolivarV">
                                                                                                 </td>
-                                                                                                <td id="BoSubTotalV"></td>
+                                                                                                <td id="BoSubTotalV">
+                                                                                                </td>
                                                                                             </tr>
 
 
@@ -1628,67 +1759,110 @@
                                                                                             <th></th>
                                                                                             <th>
                                                                                                 <h4 id="tpV"
-                                                                                                    class="text-bold">TOTAL
+                                                                                                    class="text-bold">
+                                                                                                    TOTAL
                                                                                                     PAGADO</h4>
                                                                                                 <h4 id="rV"
-                                                                                                    class="text-bold">RESTA
+                                                                                                    class="text-bold">
+                                                                                                    RESTA
                                                                                                 </h4>
                                                                                                 <h4 id="tapV"
-                                                                                                    class="text-bold">TOTAL
+                                                                                                    class="text-bold">
+                                                                                                    TOTAL
                                                                                                     A PAGAR</h4>
                                                                                             <th>
                                                                                                 <h4 class="text-bold"
                                                                                                     id="spTotalV">0.00
                                                                                                 </h4>
                                                                                                 <h4 class="text-bold"
-                                                                                                    id="RestaTtotalV">0.00
+                                                                                                    id="RestaTtotalV">
+                                                                                                    0.00
                                                                                                 </h4>
                                                                                                 <h4 class="text-bold"
-                                                                                                    id="PagoTtotalV">0.00
+                                                                                                    id="PagoTtotalV">
+                                                                                                    0.00
                                                                                                 </h4>
                                                                                             </th>
                                                                                         </tfoot>
                                                                                     </table>
                                                                                 </div>
 
-                                                                                {{-- <table class="table table-condensed">
-                                                                                <tbody><tr>
-                                                                                    <th>Divisa</th>
-                                                                                    <th>Disponible</th>
-                                                                                    <th>Vuelto</th>
-                                                                                    <th >Monto a devitar</th>
-                                                                                    <th>Quedan</th>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                <td>Dolar</td>
-                                                                                <td>
-                                                                                    <h5 class="description-header">$. {{ number_format($cajas->SumaTotalDolar + $caja->monto_dolar,3,',','.') ?? ' 0,00' }}</h5>
-                                                                                    <input type="hidden" value=""  id="deuda">
+                                                                                {{-- <table
+                                                                                    class="table table-condensed">
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <th>Divisa</th>
+                                                                                            <th>Disponible</th>
+                                                                                            <th>Vuelto</th>
+                                                                                            <th>Monto a devitar</th>
+                                                                                            <th>Quedan</th>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>Dolar</td>
+                                                                                            <td>
+                                                                                                <h5
+                                                                                                    class="description-header">
+                                                                                                    $. {{
+                                                                                                    number_format($cajas->SumaTotalDolar
+                                                                                                    +
+                                                                                                    $caja->monto_dolar,3,',','.')
+                                                                                                    ?? ' 0,00' }}</h5>
+                                                                                                <input type="hidden"
+                                                                                                    value="" id="deuda">
 
-                                                                                </td>
-                                                                                <td>
-                                                                                    <input type="text" value=""  id="deuda2">
-                                                                                </td>
-                                                                                <td><input type="text" class="Can_Dolar"><br/></td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                <td>Peso</td>
-                                                                                <td><h5 class="description-header">$. {{ number_format($cajas->SumaTotalPeso + $caja->monto_peso,2,',','.') ?? ' 0,00' }}</h5></td>
-                                                                                <td>
-                                                                                    <input type="text" value=""  id="deuda2Peso">
-                                                                                </td>
-                                                                                <td><input type="text" class="Can_Peso"></td>
-                                                                                </tr>
-                                                                                <tr>
-                                                                                <td>Bolivar</td>
-                                                                                <td><h5 class="description-header">Bs. {{ number_format($cajas->SumaTotalPunto + $caja->monto_bolivar,2,',','.') ?? ' 0,00' }}</h5></td>
-                                                                                <td>
-                                                                                    <input type="text" value=""  id="deuda2Bolivar">
-                                                                                </td>
-                                                                                <td><input type="text" class="Can_Bolivar"><br/></td>
-                                                                                </tr>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <input type="text"
+                                                                                                    value=""
+                                                                                                    id="deuda2">
+                                                                                            </td>
+                                                                                            <td><input type="text"
+                                                                                                    class="Can_Dolar"><br />
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>Peso</td>
+                                                                                            <td>
+                                                                                                <h5
+                                                                                                    class="description-header">
+                                                                                                    $. {{
+                                                                                                    number_format($cajas->SumaTotalPeso
+                                                                                                    +
+                                                                                                    $caja->monto_peso,2,',','.')
+                                                                                                    ?? ' 0,00' }}</h5>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <input type="text"
+                                                                                                    value=""
+                                                                                                    id="deuda2Peso">
+                                                                                            </td>
+                                                                                            <td><input type="text"
+                                                                                                    class="Can_Peso">
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <td>Bolivar</td>
+                                                                                            <td>
+                                                                                                <h5
+                                                                                                    class="description-header">
+                                                                                                    Bs. {{
+                                                                                                    number_format($cajas->SumaTotalPunto
+                                                                                                    +
+                                                                                                    $caja->monto_bolivar,2,',','.')
+                                                                                                    ?? ' 0,00' }}</h5>
+                                                                                            </td>
+                                                                                            <td>
+                                                                                                <input type="text"
+                                                                                                    value=""
+                                                                                                    id="deuda2Bolivar">
+                                                                                            </td>
+                                                                                            <td><input type="text"
+                                                                                                    class="Can_Bolivar"><br />
+                                                                                            </td>
+                                                                                        </tr>
 
-                                                                            </tbody></table> --}}
+                                                                                    </tbody>
+                                                                                </table> --}}
                                                                             </div>
                                                                             <!-- /.box-body -->
                                                                         </div>
@@ -1750,22 +1924,21 @@
                                                                             <input id="vtosPendientes"
                                                                                 name="vtosPendientes"
                                                                                 value="{{ $cajas->excedenteCLiente ?? '' }}"
-                                                                                type="hidden">
+                                                                                type="text">
                                                                             <input id="VueltosvtosPendientes"
                                                                                 name="VueltosvtosPendientes"
-                                                                                value="<?php $excedente_cliente = ('App\Excedente')
-                                                                                    ::where('persona_id', $cliente->id)
-                                                                                    ->select('excedente', 'persona_id', 'id')
-                                                                                    ->first(); ?>{{ $excedente_cliente['excedente'] }}"
-                                                                                type="hidden">
-                                                                            {{-- <button id="enviar" class="btn btn-primary btn-block"
-                                                                            type="button">Guardar</button> --}}
+                                                                                value="{{ $excedente_cliente }}"
+                                                                                type="text">
+                                                                            {{-- <button id="enviar"
+                                                                                class="btn btn-primary btn-block"
+                                                                                type="button">Guardar</button> --}}
                                                                         </div>
-                                                                        {{-- <div class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
-                                                                        id="guardar1">
-                                                                        <button class="btn btn-danger btn-block"
-                                                                            type="reset">Cancelar</button>
-                                                                    </div> --}}
+                                                                        {{-- <div
+                                                                            class="panel-group col-lg-2 col-sm-2 col-md-2 col-xs-12"
+                                                                            id="guardar1">
+                                                                            <button class="btn btn-danger btn-block"
+                                                                                type="reset">Cancelar</button>
+                                                                        </div> --}}
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -1779,43 +1952,46 @@
                                                     data-dismiss="modal">Cancelar</button>
                                                 <div class="" id="guardar">
                                                     <button id="enviar" class="btn btn-outline submit-prevent-button"
-                                                        type="submit"><i class='glyphicon glyphicon-search'></i> Procesar
+                                                        type="submit"><i class='glyphicon glyphicon-search'></i>
+                                                        Procesar
                                                         Servicio</button>
                                                 </div>
-                                                {{-- <a href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}"> class="btn btn-outline">Procesar Servicio</a> --}}
+                                                {{-- <a
+                                                    href="{{URL::action('ResepcionController@show', $habitacion->id.'_'.$habitacion->cat->id)}}">
+                                                    class="btn btn-outline">Procesar Servicio</a> --}}
                                             </div>
-                        </form>
-                    </div>
-                    <!-- /.modal-content -->
+                                        </form>
+                                    </div>
+                                    <!-- /.modal-content -->
+                                </div>
+                                <!-- /.modal-dialog -->
+                            </div>
+                            <!-- /.modal -->
+                        </div>
+                    </form>
                 </div>
-                <!-- /.modal-dialog -->
             </div>
-            <!-- /.modal -->
+            <!-- /.tab-pane -->
+
+            <div class="hidden tab-pane" id="tasa">
+
+
+
+            </div>
+            <!-- /.tab-pane -->
         </div>
-        </form>
-    </div>
-    </div>
-    <!-- /.tab-pane -->
-
-    <div class="hidden tab-pane" id="tasa">
-
-
-
-    </div>
-    <!-- /.tab-pane -->
-    </div>
-    <!-- /.tab-content -->
+        <!-- /.tab-content -->
     </div>
     <!-- /.nav-tabs-custom -->
-    </div>
-    @include('modal.kilo')
+</div>
+@include('modal.kilo')
 
 
-    {{-- {!! Form::close() !!} --}}
+{{-- {!! Form::close() !!} --}}
 
-    @push('sciptsMain')
-        <script>
-            // alert('hola');
+@push('sciptsMain')
+<script>
+    // alert('hola');
             $(document).ready(function() {
                 var dataTable = $('#ven').dataTable({
                     "language": {
@@ -1846,9 +2022,9 @@
                     dataTable.fnFilter(this.value);
                 });
             });
-        </script>
-        <script>
-            var cont = 0;
+</script>
+<script>
+    var cont = 0;
             var total = parseFloat(0.00);
             var porEspecial = null;
             var isDolar = null;
@@ -3346,16 +3522,14 @@
                 const tp = document.getElementById('tp');
                 const r = document.getElementById('r');
                 const tap = document.getElementById('tap');
-                const RestaTotalV = document.getElementById('RestaTtotalV');
                 const Excdt = document.getElementById('excdt');
+                const RestaTotalV = document.getElementById('RestaTtotalV');
                 const VueltosExcdt = document.getElementById('Vueltosexcdt');
 
 
                 // TODO con este codigo trabajamos los vueltos pendientes
 
                 let VueltosExc = $('#VueltospagoConExcedente').val();
-
-
 
 
                 if (VueltosExc > 0) {
@@ -4558,7 +4732,7 @@
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        </script>
-    @endpush
+</script>
+@endpush
 
 @endsection
