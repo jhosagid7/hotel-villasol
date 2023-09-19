@@ -6,6 +6,8 @@ use App\Caja;
 use App\Servicio;
 use App\Pago_Vuelto;
 use App\Pago_Venta;
+use App\Pago_Extra;
+use App\Pago_Servicio;
 use App\Temp_Pago_Vuelto;
 use Illuminate\Http\Request;
 use App\Excedentes_Recibidos_Caja_Actual;
@@ -22,14 +24,14 @@ trait ChangeInBoxTrait
     use UtilsTrait;
     use SaleTrait;
 
-    public function payWithChangeInBox(int $service_id, float $amount = 0, $box_id, int $sale_id = 0)
+    public function payWithChangeInBox(int $service_id, float $amount = 0,$box_id, $tipo,  int $sale_id = 0, int $horasExtrasId = 0)
     {
 
         //* This function pays with a change (Esta función paga con un vuelto)
         if ($service_id) {
             $array = $this->getTotalUndeliveredChangeByCurrencyTypeForServiceId3($service_id);
 
-            $this->subtractMoney($array, $amount, $service_id, $box_id, $sale_id);
+            $this->subtractMoney($array, $amount, $service_id, $box_id, $tipo, $sale_id, $horasExtrasId);
         }
 
     }
@@ -132,7 +134,7 @@ trait ChangeInBoxTrait
      * @param float $amount The amount to subtract.
      * @return array The resulting array after subtracting the amount from coins.
      */
-    public function subtractMoney(array $coins, float $amount, int $service_id, int $box_id, int $sale_id = 0): void
+    public function subtractMoney(array $coins, float $amount, int $service_id, int $box_id,string $tipo, int $sale_id = 0,int $horasExtrasId = 0): void
     {
         $coins = $this->sortCoins($coins);
         // dd($coins);
@@ -150,14 +152,14 @@ trait ChangeInBoxTrait
                             'Divisa' => 'Bolivar',
                             'MontoDolar' => $quantity - $amount
                         ];
-                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $sale_id);
+                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $tipo, $sale_id, $horasExtrasId);
                         $amount = 0;
                     } else {
                         $result[] = [
                             'Divisa' => 'Bolivar',
                             'MontoDolar' => 0
                         ];
-                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $sale_id);
+                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $tipo, $sale_id, $horasExtrasId);
                         $amount -= $quantity;
                     }
                     break;
@@ -167,14 +169,14 @@ trait ChangeInBoxTrait
                             'Divisa' => 'Peso',
                             'MontoDolar' => $quantity - $amount
                         ];
-                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $sale_id);
+                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $tipo, $sale_id, $horasExtrasId);
                         $amount = 0;
                     } else {
                         $result[] = [
                             'Divisa' => 'Peso',
                             'MontoDolar' => 0
                         ];
-                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $sale_id);
+                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $tipo, $sale_id, $horasExtrasId);
                         $amount -= $quantity;
                     }
                     break;
@@ -185,7 +187,7 @@ trait ChangeInBoxTrait
                             'Divisa' => 'Dolar',
                             'MontoDolar' => $quantity - $amount
                         ];
-                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $sale_id);
+                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $tipo, $sale_id, $horasExtrasId);
                         $amount = 0;
                     } else {
 
@@ -193,7 +195,7 @@ trait ChangeInBoxTrait
                             'Divisa' => 'Dolar',
                             'MontoDolar' => 0
                         ];
-                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $sale_id);
+                        $this->subtractExcess($currency_id, $amount, $currency, $quantity, $box_id, $service_id, $tipo, $sale_id, $horasExtrasId);
                         $amount -= $quantity;
 
                     }
@@ -224,12 +226,13 @@ trait ChangeInBoxTrait
      * @param int $saleId
      * @return void
      */
-    public function subtractExcess($currencyId, $amount, $currency, $quantity, $box_id, $serviceId, $saleId = 0): void
+    public function subtractExcess($currencyId, $amount, $currency, $quantity, $box_id, $serviceId, $tipo, $saleId = 0, $horasExtrasId = 0): void
     {
         // Obtain the excess
         if ($amount >= $quantity) {
             // Update the excedentes_actuals table with returned status
             $excess = Excedentes_Recibidos_Caja_Actual::findOrFail($currencyId);
+            // dd($excess);
 
             if ($excess) {
                 $excess->Estado = 'Devueltos';
@@ -245,23 +248,55 @@ trait ChangeInBoxTrait
             $paymentChange->MontoDolar = floatval($quantity);
             $paymentChange->servicio_id = $serviceId;
             $paymentChange->venta_id = $saleId;
-            $paymentChange->horas_extra_id = 0;
+            $paymentChange->horas_extra_id = $horasExtrasId;
             $paymentChange->detalle__creditos__pagado_id = 0;
             $paymentChange->caja_id = $box_id;
             $paymentChange->save();
 
-            $paymentSale = new Pago_Venta();
-            $paymentSale->Divisa = $currency;
-            $paymentSale->MontoDivisa = floatval($quantity * $this->getRateByName($currency));
-            $paymentSale->TasaTiket = $this->getRateByName($currency);
-            $paymentSale->MontoDolar = floatval($quantity);
-            $paymentSale->MontoDolarConsumo = floatval($quantity);
-            $paymentSale->Excedente = 0;
-            $paymentSale->Vueltos = 0;
-            $paymentSale->servicio_id = $serviceId;
-            $paymentSale->caja_id = $box_id;
-            $paymentSale->venta_id = $saleId;
-            $paymentSale->save();
+            if($tipo == 'Consumo'){
+                $paymentSale = new Pago_Venta();
+                $paymentSale->Divisa = $currency;
+                $paymentSale->MontoDivisa = floatval($quantity * $this->getRateByName($currency));
+                $paymentSale->TasaTiket = $this->getRateByName($currency);
+                $paymentSale->MontoDolar = floatval($quantity);
+                $paymentSale->MontoDolarConsumo = floatval($quantity);
+                $paymentSale->Excedente = 0;
+                $paymentSale->Vueltos = 0;
+                $paymentSale->servicio_id = $serviceId;
+                $paymentSale->caja_id = $box_id;
+                $paymentSale->venta_id = $saleId;
+                $paymentSale->save();
+            }
+
+            if ($tipo == 'Servicio') {
+                $paymentSale = new Pago_Servicio();
+                $paymentSale->Divisa = $currency;
+                $paymentSale->MontoDivisa = floatval($quantity * $this->getRateByName($currency));
+                $paymentSale->TasaTiket = $this->getRateByName($currency);
+                $paymentSale->MontoDolar = floatval($quantity);
+                $paymentSale->MontoDolarServicio = floatval($quantity);
+                $paymentSale->Excedente = 0;
+                $paymentSale->Vueltos = 0;
+                $paymentSale->servicio_id = $serviceId;
+                $paymentSale->caja_id = $box_id;
+                $paymentSale->save();
+            }
+
+            if ($tipo == 'Horas_Extras') {
+                $paymentSale = new Pago_Extra();
+                $paymentSale->Divisa = $currency;
+                $paymentSale->MontoDivisa = floatval($quantity * $this->getRateByName($currency));
+                $paymentSale->TasaTiket = $this->getRateByName($currency);
+                $paymentSale->MontoDolar = floatval($quantity);
+                $paymentSale->MontoDolarHoraExctra = floatval($quantity);
+                $paymentSale->Excedente = 0;
+                $paymentSale->Vueltos = 0;
+                $paymentSale->horas_extra_id = $horasExtrasId;
+                $paymentSale->servicio_id = $serviceId;
+                $paymentSale->caja_id = $box_id;
+                $paymentSale->save();
+            }
+
         } else {
             $excess = Excedentes_Recibidos_Caja_Actual::findOrFail($currencyId);
 
@@ -283,7 +318,7 @@ trait ChangeInBoxTrait
             $newExcess->MontoDolar = floatval($amount);
             $newExcess->servicio_id = $serviceId;
             $newExcess->venta_id = $saleId;
-            $newExcess->horas_extra_id = 0;
+            $newExcess->horas_extra_id = $horasExtrasId;
             $newExcess->caja_id = $box_id;
             $newExcess->save();
 
@@ -296,23 +331,54 @@ trait ChangeInBoxTrait
             $paymentChange->MontoDolar = floatval($amount);
             $paymentChange->servicio_id = $serviceId;
             $paymentChange->venta_id = $saleId;
-            $paymentChange->horas_extra_id = 0;
+            $paymentChange->horas_extra_id = $horasExtrasId;
             $paymentChange->detalle__creditos__pagado_id = 0;
             $paymentChange->caja_id = $box_id;
             $paymentChange->save();
 
-            $paymentSale = new Pago_Venta();
-            $paymentSale->Divisa = $currency;
-            $paymentSale->MontoDivisa = floatval($amount * $this->getRateByName($currency));
-            $paymentSale->TasaTiket = $this->getRateByName($currency);
-            $paymentSale->MontoDolar = floatval($amount);
-            $paymentSale->MontoDolarConsumo = floatval($amount);
-            $paymentSale->Excedente = 0;
-            $paymentSale->Vueltos = 0;
-            $paymentSale->servicio_id = $serviceId;
-            $paymentSale->caja_id = $box_id;
-            $paymentSale->venta_id = $saleId;
-            $paymentSale->save();
+            if ($tipo == 'Consumo') {
+                $paymentSale = new Pago_Venta();
+                $paymentSale->Divisa = $currency;
+                $paymentSale->MontoDivisa = floatval($amount * $this->getRateByName($currency));
+                $paymentSale->TasaTiket = $this->getRateByName($currency);
+                $paymentSale->MontoDolar = floatval($amount);
+                $paymentSale->MontoDolarConsumo = floatval($amount);
+                $paymentSale->Excedente = 0;
+                $paymentSale->Vueltos = 0;
+                $paymentSale->servicio_id = $serviceId;
+                $paymentSale->caja_id = $box_id;
+                $paymentSale->venta_id = $saleId;
+                $paymentSale->save();
+            }
+
+            if ($tipo == 'Servicio') {
+                $paymentServicio = new Pago_Servicio();
+                $paymentServicio->Divisa = $currency;
+                $paymentServicio->MontoDivisa = floatval($amount * $this->getRateByName($currency));
+                $paymentServicio->TasaTiket = $this->getRateByName($currency);
+                $paymentServicio->MontoDolar = floatval($amount);
+                $paymentServicio->MontoDolarServicio = floatval($amount);
+                $paymentServicio->Excedente = 0;
+                $paymentServicio->Vueltos = 0;
+                $paymentServicio->servicio_id = $serviceId;
+                $paymentServicio->caja_id = $box_id;
+                $paymentServicio->save();
+            }
+
+            if ($tipo == 'Horas_Extras') {
+                $paymentServicio = new Pago_Extra();
+                $paymentServicio->Divisa = $currency;
+                $paymentServicio->MontoDivisa = floatval($amount * $this->getRateByName($currency));
+                $paymentServicio->TasaTiket = $this->getRateByName($currency);
+                $paymentServicio->MontoDolar = floatval($amount);
+                $paymentServicio->MontoDolarHoraExctra = floatval($amount);
+                $paymentServicio->Excedente = 0;
+                $paymentServicio->Vueltos = 0;
+                $paymentServicio->horas_extra_id = $horasExtrasId;
+                $paymentServicio->servicio_id = $serviceId;
+                $paymentServicio->caja_id = $box_id;
+                $paymentServicio->save();
+            }
         }
     }
 

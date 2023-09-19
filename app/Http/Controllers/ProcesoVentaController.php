@@ -61,7 +61,7 @@ class ProcesoVentaController extends Controller
      */
     public function store(Request $request)
     {
-        return $request;
+        // return $request;
         try {
 
             // Todo este codigo maneja las fechas de los creditos vencidos
@@ -71,7 +71,7 @@ class ProcesoVentaController extends Controller
 
             $total_venta = $request->get('total_venta');
             $pagoConExcedente = $request->get('VueltospagoConExcedente');
-            $cliente_id = $request->get('idcliente');
+            $cliente_id = $request->get('cliente_id');
             $servicio_id = $request->get('servicio_id');
             $serie_comprobante = $request->get('serie_comprobante');
             $pnombre_cliente = $request->get('nombre_cliente');
@@ -80,7 +80,12 @@ class ProcesoVentaController extends Controller
             $tasa_bolivar = $request->get('tasaEfectivo');
             $tasa_trans = $request->get('tasaTransPunto');
             $monto_dejado = $request->get('monto_dejado');
-
+            $myTime = Carbon::now('America/Caracas');
+            $tipo_pago = $request->get('tipo_pago');
+            $total_costo = $request->get('total_costo');
+            $status = '';
+            $operador = $request->get('operador');
+            $modo_pago = $request->get('modo_pago');
 
 
 
@@ -88,36 +93,6 @@ class ProcesoVentaController extends Controller
             $this->setTotalAmount($total_venta);
 
 
-
-
-
-
-
-
-
-
-            // return $this->getTotalAmount();
-            // return $this->getVista();
-            // return $this->getTotalExcedente();
-            // return 'aqui';
-
-
-            $myTime = Carbon::now('America/Caracas');
-            $tipo_pago = $request->get('tipo_pago');
-            $monto_dejado = $request->get('monto_dejado');
-            $pagoConExcedente = $request->get('VueltospagoConExcedente');
-            $total_costo = $request->get('total_costo');
-
-
-            // $this->amountDue = $total_venta;
-            // $this->payWithChange(2, $this->amount);
-            // $this->payWithChangeSaved(1, $this->amount, 250);
-            // $this->payWithCash(2, $this->amount);
-            // return $this->amount;
-            $status = '';
-            $serie_comprobante = $request->get('serie_comprobante');
-            $operador = $request->get('operador');
-            $modo_pago = $request->get('modo_pago');
 
             $nuevo_excedente = 0;
 
@@ -127,9 +102,7 @@ class ProcesoVentaController extends Controller
             $isVueltos = $request->get('isVueltos');
 
             $VueltosdispExcedente = $request->get('VueltosdispExcedente');
-            $cliente_id = $request->get('cliente_id');
 
-            $servicio_id = $request->get('servicio_id');
 
 
             if ($tipo_pago == null) {
@@ -803,11 +776,7 @@ class ProcesoVentaController extends Controller
                     $this->payWithChangeSaved(
                         $this->getTotalAmount(),
                         $serie_comprobante,
-                        $pnombre_cliente,
-                        $tasa_dolar,
-                        $tasa_peso,
-                        $tasa_bolivar,
-                        $tasa_trans,
+                        'Consumo',
                         $request->get('caja_id'),
                         $servicio_id,
                         $cliente_id,
@@ -815,12 +784,12 @@ class ProcesoVentaController extends Controller
                     );
 
                     // Todo: Verificar si hay vueltos en caja, para realizar el pago.
-                    $this->payWithChangeInBox($servicio_id, $this->getTotalAmount(), $request->get('caja_id'), $sale_id);
+                    $this->payWithChangeInBox($servicio_id, $this->getTotalAmount(), $request->get('caja_id'), 'Consumo', $sale_id);
                 }
 
                 // Todo: Verificar si pago con Transferencia, Punto, Dolar, Peso, Bolivar, para realizar el pago.
-                $cash = 0;
-                $this->payWithCash2($cash, $this->getTotalAmount(), $sale_id, $servicio_id, $request, 'Consumo');
+
+                $this->payWithCash2($this->getTotalAmount(), $servicio_id,$request, 'Consumo', $sale_id);
             }
 
 

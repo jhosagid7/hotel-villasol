@@ -4,7 +4,9 @@ namespace App\Traits;
 
 use App\Venta;
 use App\Persona;
+use App\Servicio;
 use App\Excedente;
+use App\Horas_extra;
 use App\Reintegro;
 use Carbon\Carbon;
 use App\PreExcedente;
@@ -36,15 +38,12 @@ trait ChangeSavedTrait
     public function payWithChangeSaved(
         float $amount,
         string $serie_comprobante,
-        string $pnombre_cliente,
-        float $tasa_dolar,
-        float $tasa_peso,
-        float $tasa_bolivar,
-        float $tasa_trans,
+        string $tipo,
         int $caja_id,
         int $servicio_id,
         int $costumer_id,
-        int $sale_id
+        int $sale_id = 0,
+        int $horasExtrasId = 0
     ): void {
         $surplusSaved = $this->getExcedentByCostumerId($costumer_id);
         // Check if there is a surplus saved for the customer
@@ -85,13 +84,28 @@ trait ChangeSavedTrait
                 if ($eliminarRegistroExcedente) {
                     Excedente::destroy($eliminarRegistroExcedente->id);
                 }
-                // Update Ventas table
-                $UpdateVenta = Venta::findOrFail($sale_id);
 
-                if ($UpdateVenta) {
-                    $UpdateVenta->pago_con_excedente = $monto_pagado;
-                    $UpdateVenta->update();
+                if($tipo == "Consumo"){
+                    // Update Ventas table
+                    $UpdateModel = Venta::findOrFail($sale_id);
                 }
+
+                if($tipo == "Servicio"){
+                    // Update Ventas table
+                    $UpdateModel = Servicio::findOrFail($servicio_id);
+                }
+
+                if($tipo == "Horas_Extras"){
+                    // Update Ventas table
+                    $UpdateModel = Horas_extra::findOrFail($horasExtrasId);
+                }
+
+                $this->UpdatePagoConExcedente($UpdateModel, $monto_pagado);
+
+                // if ($UpdateVenta) {
+                //     $UpdateVenta->pago_con_excedente = $monto_pagado;
+                //     $UpdateVenta->update();
+                // }
                 $this->setTotalAmount($amount - $surplusSaved->excedente);
             }
             // If the amount is less than the surplus saved
@@ -155,12 +169,27 @@ trait ChangeSavedTrait
                 $UpdateExcedente->excedente -= $amount;
                 $UpdateExcedente->update();
 
-                $UpdateVenta = Venta::findOrFail($sale_id);
-
-                if ($UpdateVenta) {
-                    $UpdateVenta->pago_con_excedente = $amount;
-                    $UpdateVenta->update();
+                if ($tipo == "Consumo") {
+                    // Update Ventas table
+                    $UpdateModel = Venta::findOrFail($sale_id);
                 }
+
+                if ($tipo == "Servicio") {
+                    // Update Ventas table
+                    $UpdateModel = Servicio::findOrFail($servicio_id);
+                }
+
+                if ($tipo == "Horas_Extras") {
+                    // Update Ventas table
+                    $UpdateModel = Horas_extra::findOrFail($horasExtrasId);
+                }
+
+                $this->UpdatePagoConExcedente($UpdateModel, $amount);
+
+                // if ($UpdateVenta) {
+                //     $UpdateVenta->pago_con_excedente = $amount;
+                //     $UpdateVenta->update();
+                // }
 
                 $this->setTotalAmount();
             }
@@ -168,6 +197,14 @@ trait ChangeSavedTrait
         // If there is no surplus saved for the customer
         else {
             $this->setTotalAmount($amount);
+        }
+    }
+
+    public function UpdatePagoConExcedente(object $object, float $amount)
+    {
+        if ($object) {
+            $object->pago_con_excedente = $amount;
+            $object->update();
         }
     }
 

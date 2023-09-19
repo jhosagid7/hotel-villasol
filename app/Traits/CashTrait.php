@@ -3,11 +3,14 @@
 namespace App\Traits;
 
 
+use App\Servicio;
 use App\Pago_Venta;
+use App\Pago_Servicio;
+use App\Pago_Extra;
 use App\Pago_Vuelto;
-use App\Excedentes_Recibidos_Caja_Actual;
 use App\Traits\SaleTrait;
 use App\Traits\ChangeInBoxTrait;
+use App\Excedentes_Recibidos_Caja_Actual;
 
 trait CashTrait
 {
@@ -23,7 +26,7 @@ trait CashTrait
         return $this->amount = $amount - $cash;
     }
 
-    public function payWithCash2($cash = 0, $amount = 0,  $sale_id, $service_id, $request, $tipo)
+    public function payWithCash2($amount = 0, $service_id,$request, $tipo, $sale_id = 0, $horas_extra_id = 0)
     {
 
         $array = $this->convertirArrays(
@@ -34,7 +37,7 @@ trait CashTrait
             $request->get('Veltos')
         );
         // dd($array);
-        $this->subtractCachPaymment($array, $this->getTotalAmount(), $service_id, $sale_id, $request, $tipo);
+        $this->subtractCachPaymment($array, $this->getTotalAmount(), $request, $tipo, $service_id, $sale_id, $horas_extra_id);
 
 
         //* This function pays with a change (Esta función paga con un vuelto)
@@ -76,6 +79,39 @@ trait CashTrait
 
             // Guardar el registro en la base de datos
             $pagosVenta->save();
+        }
+
+        if ($tipo == 'Servicio') {
+            $pagosServicio = new Pago_Servicio();
+            $pagosServicio->Divisa = $divisa;
+            $pagosServicio->MontoDivisa = $montoDivisa;
+            $pagosServicio->TasaTiket = $this->getRateByName($divisa);
+            $pagosServicio->MontoDolar = number_format($montoDolar, 2);
+            $pagosServicio->MontoDolarServicio = number_format($montoDolarTipo, 2);
+            $pagosServicio->Excedente = $getTotalExcedente;
+            $pagosServicio->Vueltos = $getTotalVueltos;
+            $pagosServicio->servicio_id = $service_id;
+            $pagosServicio->caja_id = $caja_id;
+
+            // Guardar el registro en la base de datos
+            $pagosServicio->save();
+        }
+
+        if ($tipo == 'Horas_Extras') {
+            $pagosHorasExtra = new Pago_Extra();
+            $pagosHorasExtra->Divisa = $divisa;
+            $pagosHorasExtra->MontoDivisa = $montoDivisa;
+            $pagosHorasExtra->TasaTiket = $this->getRateByName($divisa);
+            $pagosHorasExtra->MontoDolar = number_format($montoDolar, 2);
+            $pagosHorasExtra->MontoDolarHoraExctra = number_format($montoDolarTipo, 2);
+            $pagosHorasExtra->Excedente = $getTotalExcedente;
+            $pagosHorasExtra->Vueltos = $getTotalVueltos;
+            $pagosHorasExtra->horas_extra_id = $horas_extra_id;
+            $pagosHorasExtra->servicio_id = $service_id;
+            $pagosHorasExtra->caja_id = $caja_id;
+
+            // Guardar el registro en la base de datos
+            $pagosHorasExtra->save();
         }
     }
     public function setTotalVueltos($quantity, $amount, $isVueltos, $lastIteration = null, $iteration = null)
@@ -166,8 +202,8 @@ trait CashTrait
                 $Pago_Extras_Vueltos->MontoDolar = floatval($MontoDolarVueltos[$key]);
                 $Pago_Extras_Vueltos->servicio_id = $service_id;
                 $Pago_Extras_Vueltos->venta_id = $sale_id;
-                $Pago_Extras_Vueltos->horas_extra_id = 0;
-                $Pago_Extras_Vueltos->detalle__creditos__pagado_id = 0;
+                $Pago_Extras_Vueltos->horas_extra_id = $horas_extra_id;
+                $Pago_Extras_Vueltos->detalle__creditos__pagado_id = $detalle__creditos__pagado_id;
                 $Pago_Extras_Vueltos->caja_id = $caja_id;
                 $Pago_Extras_Vueltos->save();
             }
@@ -193,7 +229,7 @@ trait CashTrait
         }
     }
 
-    public function subtractCachPaymment(array $coins, float $amount, int $service_id, int $sale_id, $request, $tipo)
+    public function subtractCachPaymment(array $coins, float $amount, $request, $tipo, int $service_id, int $sale_id = 0, int $horas_extra_id = 0)
     {
         $coins = $this->sortCoinsByAmount($coins, TRUE, 'ASC');
 
@@ -201,7 +237,7 @@ trait CashTrait
         $iteration = 0;
 
         $isVueltos = $request->get('isVueltos');
-        $this->saveVueltos($tipo, $isVueltos, $request, $service_id, $request->get('caja_id'), $sale_id);
+        $this->saveVueltos($tipo, $isVueltos, $request, $service_id, $request->get('caja_id'), $sale_id, $horas_extra_id);
 
         foreach ($coins as $coin) {
 
@@ -215,7 +251,7 @@ trait CashTrait
                     if ($quantity >= $amount) {
                         $this->setTotalVueltos($quantity, $amount, $isVueltos, $lastIteration,  $iteration);
                         $this->setTotalExcedente($quantity, $amount);
-                        $this->saveExcedente($tipo, $currency, $this->getTotalExcedente(), $service_id, $request->get('caja_id'), $sale_id);
+                        $this->saveExcedente($tipo, $currency, $this->getTotalExcedente(), $service_id, $request->get('caja_id'), $sale_id, $horas_extra_id);
 
                         $this->savePaymment(
                             $currency,
@@ -227,7 +263,8 @@ trait CashTrait
                             $service_id,
                             $request->get('caja_id'),
                             $tipo,
-                            $sale_id
+                            $sale_id,
+                            $horas_extra_id
 
                         );
 
@@ -244,7 +281,8 @@ trait CashTrait
                             $service_id,
                             $request->get('caja_id'),
                             $tipo,
-                            $sale_id
+                            $sale_id,
+                            $horas_extra_id
 
                         );
 
@@ -256,7 +294,7 @@ trait CashTrait
                     if ($quantity >= $amount) {
                         $this->setTotalVueltos($quantity, $amount, $isVueltos, $lastIteration,  $iteration);
                         $this->setTotalExcedente($quantity, $amount);
-                        $this->saveExcedente($tipo, $currency, $this->getTotalExcedente(), $service_id, $request->get('caja_id'), $sale_id);
+                        $this->saveExcedente($tipo, $currency, $this->getTotalExcedente(), $service_id, $request->get('caja_id'), $sale_id, $horas_extra_id);
 
                         $this->savePaymment(
                             $currency,
@@ -268,7 +306,8 @@ trait CashTrait
                             $service_id,
                             $request->get('caja_id'),
                             $tipo,
-                            $sale_id
+                            $sale_id,
+                            $horas_extra_id
 
                         );
 
@@ -285,7 +324,8 @@ trait CashTrait
                             $service_id,
                             $request->get('caja_id'),
                             $tipo,
-                            $sale_id
+                            $sale_id,
+                            $horas_extra_id
 
                         );
 
@@ -297,7 +337,7 @@ trait CashTrait
                     if ($quantity >= $amount) {
                         $this->setTotalVueltos($quantity, $amount, $isVueltos, $lastIteration,  $iteration);
                         $this->setTotalExcedente($quantity, $amount);
-                        $this->saveExcedente($tipo, $currency, $this->getTotalExcedente(), $service_id, $request->get('caja_id'), $sale_id);
+                        $this->saveExcedente($tipo, $currency, $this->getTotalExcedente(), $service_id, $request->get('caja_id'), $sale_id, $horas_extra_id);
 
                         $this->savePaymment(
                             $currency,
@@ -309,7 +349,8 @@ trait CashTrait
                             $service_id,
                             $request->get('caja_id'),
                             $tipo,
-                            $sale_id
+                            $sale_id,
+                            $horas_extra_id
 
                         );
 
@@ -326,7 +367,8 @@ trait CashTrait
                             $service_id,
                             $request->get('caja_id'),
                             $tipo,
-                            $sale_id
+                            $sale_id,
+                            $horas_extra_id
 
                         );
 
@@ -338,7 +380,7 @@ trait CashTrait
                     if ($quantity >= $amount) {
                         $this->setTotalVueltos($quantity, $amount, $isVueltos, $lastIteration,  $iteration);
                         $this->setTotalExcedente($quantity, $amount);
-                        $this->saveExcedente($tipo, $currency, $this->getTotalExcedente(), $service_id, $request->get('caja_id'), $sale_id);
+                        $this->saveExcedente($tipo, $currency, $this->getTotalExcedente(), $service_id, $request->get('caja_id'), $sale_id, $horas_extra_id);
 
                         $this->savePaymment(
                             $currency,
@@ -350,7 +392,8 @@ trait CashTrait
                             $service_id,
                             $request->get('caja_id'),
                             $tipo,
-                            $sale_id
+                            $sale_id,
+                            $horas_extra_id
 
                         );
 
@@ -367,7 +410,8 @@ trait CashTrait
                             $service_id,
                             $request->get('caja_id'),
                             $tipo,
-                            $sale_id
+                            $sale_id,
+                            $horas_extra_id
 
                         );
 
@@ -379,7 +423,7 @@ trait CashTrait
                     if ($quantity >= $amount) {
                         $this->setTotalVueltos($quantity, $amount, $isVueltos, $lastIteration,  $iteration);
                         $this->setTotalExcedente($quantity, $amount);
-                        $this->saveExcedente($tipo, $currency, $this->getTotalExcedente(), $service_id, $request->get('caja_id'), $sale_id);
+                        $this->saveExcedente($tipo, $currency, $this->getTotalExcedente(), $service_id, $request->get('caja_id'), $sale_id, $horas_extra_id);
 
                         $this->savePaymment(
                             $currency,
@@ -391,7 +435,8 @@ trait CashTrait
                             $service_id,
                             $request->get('caja_id'),
                             $tipo,
-                            $sale_id
+                            $sale_id,
+                            $horas_extra_id
 
                         );
 
@@ -408,7 +453,8 @@ trait CashTrait
                             $service_id,
                             $request->get('caja_id'),
                             $tipo,
-                            $sale_id
+                            $sale_id,
+                            $horas_extra_id
 
                         );
 

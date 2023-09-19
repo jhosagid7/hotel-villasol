@@ -556,7 +556,7 @@ if(isset($servicio->id)){
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     {{-- <form id="form2" action="{{route('proceso')}}" method="post">
-                                    @csrf --}}
+                                                    @csrf --}}
                                                     <div class="modal-header">
                                                         <button type="button" class="close" data-dismiss="modal"
                                                             aria-label="Close">
@@ -577,58 +577,47 @@ if(isset($servicio->id)){
 
                                                             </div>
                                                             <div id="infoPago2">
-                                                                <div class="col-md-12">
-                                                                    <div class="box box-danger">
-                                                                        <div class="box-header with-border">
-                                                                            <h3 class="box-title">Debe cancelar la deuda
-                                                                                pendiente...! (<b class="text-danger"
-                                                                                    id="diferenciaPrecio2">$0.00</b>)</h3>
-                                                                        </div><!-- /.box-header -->
-                                                                        <div class="box-body">
-                                                                            <div id="btnPago2">
-                                                                                <div id="contado2"
-                                                                                    class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                                                                    <a id="modalPago" href="#"
-                                                                                        data-toggle="modal"
-                                                                                        data-target="#dolar"
-                                                                                        class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
-                                                                                    {{-- <button type="botton"  name="devolverVueltos"  id="devolverVueltos" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small"> Contado</button> --}}
-                                                                                </div>
+                                        <div class="col-md-12">
+                                            <div class="box box-danger">
+                                            <div class="box-header with-border">
+                                                <h3 class="box-title">Debe cancelar la deuda pendiente...! (<b class="text-danger" id="diferenciaPrecio2">$0.00</b>)</h3>
+                                            </div><!-- /.box-header -->
+                                            <div class="box-body">
+                                                <div id="btnPago2">
+                                                    <div id="contado2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        <a id="modalPago" href="#" data-toggle="modal" data-target="#dolar" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small">Contado</a>
+                                                        {{-- <button type="botton"  name="devolverVueltos"  id="devolverVueltos" class="btn btn-sm btn-primary btn-block col-lg-pull-2 small"> Contado</button> --}}
+                                                    </div>
 
-                                                                                <div id="precortesia2"
-                                                                                    class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                                                                    {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
-                                                                                    <a href="#" data-toggle="modal"
-                                                                                        data-target="#precortesiamodal"
-                                                                                        class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
-                                                                                </div>
+                                                    <div id="precortesia2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
+                                                        <a href="#" data-toggle="modal" data-target="#precortesiamodal"  class="btn btn-sm btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
+                                                    </div>
 
-                                                                                {{-- <div id="cortesia"
+                                                    {{-- <div id="cortesia"
                                                         class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
                                                         <a id="modalPago" href="#"   class="btn btn-xs btn-warning btn-block col-lg-pull-2 small">Cortesía</a>
 
                                                     </div> --}}
 
-                                                                                {{-- <div id="creditoa"
+                                                    {{-- <div id="creditoa"
                                                         class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
                                                         <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Crédito</a>
 
                                                     </div> --}}
 
-                                                                                <div id="precredito2"
-                                                                                    class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
-                                                                                    {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
-                                                                                    <a href="#" data-toggle="modal"
-                                                                                        data-target="#precreditomodal"
-                                                                                        class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crédito</a>
-                                                                                </div>
+                                                    <div id="precredito2" class="panel-group col-lg-4 col-sm-4 col-md-4 col-xs-12 small">
+                                                        {{-- <a id="modalPago" href="#"  class="btn btn-xs btn btn-success btn-block col-lg-pull-2 small">Activar Crédito</a> --}}
+                                                        <a href="#" data-toggle="modal" data-target="#precreditomodal"  class="btn btn-sm btn-success btn-block col-lg-pull-2 small">Crédito</a>
+                                                    </div>
 
-                                                                            </div>
-                                                                        </div><!-- /.box-body -->
-                                                                    </div><!-- /.box -->
-                                                                </div>
-                                                            </div>
+                                                </div>
+                                            </div><!-- /.box-body -->
+                                            </div><!-- /.box -->
+                                        </div>
+                                    </div>
                                                         </div>
+
 
                                                     </div>
                                                     <div class="modal-footer">
@@ -978,23 +967,7 @@ if(isset($servicio->id)){
                                                                                         type="hidden" id="dispExcedente"
                                                                                         name="dispExcedente">
                                                                                 </div>  --}}
-                                                                                {{--  <div id="Vueltosexcedente"
-                                                                                    class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
-                                                                                    <label for="VueltospagoConExcedente">
-                                                                                        <h2 class="text-blue">Vueltos
-                                                                                            pendientes: <b>$.</b><b
-                                                                                                id="VueltosdispExcedenteShow">0.00</b>
-                                                                                        </h2>
-                                                                                    </label>
-                                                                                    <input class="form-control"
-                                                                                        type="text"
-                                                                                        id="VueltospagoConExcedente"
-                                                                                        name="VueltospagoConExcedente">
-                                                                                    <input class="form-control"
-                                                                                        type="hidden"
-                                                                                        id="VueltosdispExcedente"
-                                                                                        name="VueltosdispExcedente">
-                                                                                </div>  --}}
+
                                                                                 <div id="Vueltosexcedente"
                                                                         class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
                                                                         <label for="VueltospagoConExcedente">
@@ -1016,7 +989,7 @@ if(isset($servicio->id)){
                                                                             </h1>
                                                                         </label>
 
-                                                                        <input class="form-control" type="hidden"
+                                                                        <input class="form-control hidden" type="text"
                                                                             id="VueltosdispExcedente"
                                                                             name="VueltosdispExcedente">
                                                                     </div>
@@ -1328,7 +1301,7 @@ if(isset($servicio->id)){
                                                                                                 <input
                                                                                                     id="banderaHorasExtras"
                                                                                                     name="banderaHorasExtras"
-                                                                                                    type="hidden"
+                                                                                                    type="text"
                                                                                                     value="">
                                                                                                 <input id="cantHorasExtras"
                                                                                                     name="cantHorasExtras"
@@ -2725,6 +2698,8 @@ if(isset($servicio->id)){
             var vcargarpto = 0;
             var vcargart = 0;
 
+            var vcarexcdt = 0;
+
             var vcargarV = 0;
             var vcargarpV = 0;
             var vcargarbV = 0;
@@ -2746,6 +2721,53 @@ if(isset($servicio->id)){
             $("#cortesia").hide();
             $("#precredito").hide();
             $("#credito").hide();
+
+            $("#cargarExcedente").on('click', function() {
+                let band = $("#banderaHorasExtras").val();
+                let VueltosdispExcedente = $("#VueltosdispExcedente").val();
+                let PagoTtotal = document.getElementById('PagoTtotal');
+
+                if(band == 'pagarVueltosPendientes'){
+                     if (vcarexcdt == 0) {
+                        // alert(PagoTtotalinnerHTML);
+                        if (parseFloat(VueltosdispExcedente) >= parseFloat(PagoTtotal.innerHTML)) {
+                            // alert('mayor');
+                            $('#VueltospagoConExcedente').val(parseFloat(VueltosdispExcedente));
+                            DMontoDolar();
+                            vcarexcdt = 1;
+                        }
+
+                    } else {
+                        $('#VueltospagoConExcedente').val('');
+                        DMontoDolar();
+                        vcarexcdt = 0;
+                    }
+
+                }else{
+                    if (vcarexcdt == 0) {
+
+                        // alert(PagoTtotalinnerHTML);
+                        if (parseFloat(VueltosdispExcedente) >= parseFloat(PagoTtotal.innerHTML)) {
+                            // alert('mayor');
+                            $('#VueltospagoConExcedente').val(parseFloat(PagoTtotal.innerHTML));
+                            DMontoDolar();
+                        } else {
+                            // alert('menor');
+                            $('#VueltospagoConExcedente').val(parseFloat(VueltosdispExcedente));
+                            DMontoDolar();
+                        }
+
+                        vcarexcdt = 1;
+                    } else {
+
+                        $('#VueltospagoConExcedente').val('');
+                        DMontoDolar();
+                        vcarexcdt = 0;
+                    }
+                }
+
+
+                });
 
             function is_negative_number(number = 0) {
 
@@ -3822,6 +3844,7 @@ if(isset($servicio->id)){
                     $('#trT').hide("linear");
                     $('#trM').hide("linear");
                     $('#trE').hide("linear");
+
 
                 });
             });
