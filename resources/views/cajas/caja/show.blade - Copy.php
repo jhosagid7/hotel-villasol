@@ -1900,12 +1900,10 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                             class="text-black detalleAzul">
                                                                     @endif
                                                                     <?php
-                                                                        $cambios = "App\Cambio"::where('servicio_id_cambio', $serv->id)->first();
-                                                                        if($cambios){
-                                                                            if ($cambios->habitacion) {
-                                                                                $cambio = '/' . $cambios->habitacion;
-                                                                                $cambioObservacion = $cambios->observacion;
-                                                                            }
+                                                                        $dd = "App\Cambio"::where('servicio_id_cambio', $serv->id)->first();
+                                                                        if ($dd['habitacion']) {
+                                                                            $cambio = '/' . $dd['habitacion'];
+                                                                            $cambioObservacion = $dd['observacion'];
                                                                         } else {
                                                                             $cambio = '';
                                                                             $cambioObservacion = '';

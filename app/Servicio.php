@@ -90,6 +90,11 @@ class Servicio extends Model
         return $this->hasMany(Cambio::class);
     }
 
+    public function undeliveredChanges()
+    {
+        return $this->hasMany(Excedentes_Recibidos_Caja_Actual::class);
+    }
+
 
 
     // public function habitacion()

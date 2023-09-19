@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class DetallePagoOficina extends Model
 {
+
+
     protected $fillabel = [
         'tipo_pago',
         'telefono_pago_movil_cliente',
@@ -34,14 +36,14 @@ class DetallePagoOficina extends Model
 
     public function cliente()
     {
-        return $this->belongsTo(Persona::class);
+        return $this->belongsTo(Persona::class, 'persona_id', 'id');
     }
 
 
 
     public function operador()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function historiaExcedentes()

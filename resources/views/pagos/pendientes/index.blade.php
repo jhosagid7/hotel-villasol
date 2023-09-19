@@ -1,124 +1,124 @@
 @extends ('layouts.admin3')
 @section('contenido')
-    <!-- Main content -->
-    <section class="content">
+<!-- Main content -->
+<section class="content">
 
-        <!-- Default box -->
-        <div class="box">
-            <div class="box-header with-border">
-                <h3 class="box-title">
-                    @isset($title)
-                        {{ $title }}
-                    @else
-                        {!! 'Sistema' !!}
-                    @endisset
-                </h3>
+    <!-- Default box -->
+    <div class="box">
+        <div class="box-header with-border">
+            <h3 class="box-title">
+                @isset($title)
+                {{ $title }}
+                @else
+                {!! 'Sistema' !!}
+                @endisset
+            </h3>
 
-                <div class="box-tools pull-right">
-                    <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                        title="Collapse">
-                        <i class="fa fa-minus"></i></button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip"
-                        title="Remove">
-                        <i class="fa fa-times"></i></button>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
+                    title="Collapse">
+                    <i class="fa fa-minus"></i></button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip"
+                    title="Remove">
+                    <i class="fa fa-times"></i></button>
+            </div>
+        </div>
+        <div class="box-body">
+            {{-- cabecera de box --}}
+            <div class="row">
+                <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+                    @can('haveaccess', 'venta.create')
+                    <h3>Historial pagos por oficina</h3>
+                    @endcan
+                    {{-- @include('compras.proveedor.buscar') --}}
                 </div>
             </div>
-            <div class="box-body">
-                {{-- cabecera de box --}}
-                <div class="row">
-                    <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-                        @can('haveaccess', 'venta.create')
-                            <h3>Historial pagos por oficina</h3>
-                        @endcan
-                        {{-- @include('compras.proveedor.buscar') --}}
-                    </div>
+
+            <div class="row">
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+                    {{-- <canvas id="myChart" width="400" height="400"></canvas> --}}
                 </div>
+            </div>
+            <div class="row">
 
-                <div class="row">
-                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
-                        {{-- <canvas id="myChart" width="400" height="400"></canvas> --}}
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="table-responsive">
+                        @include('custom.message')
+                        <table id="ven" class="table table-striped table-bordered table-condensed table-hover">
+                            <thead>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Num Transaccion</th>
+                                <th>Tipo pago</th>
+                                <th>Total Pagado</th>
+                                <th>Fecha de Pago</th>
+                                <th>Operador</th>
+                                <th>Ver</th>
+
+                                {{-- <th>Opciones</th> --}}
+                            </thead>
+                            <tbody>
+                                @php
+                                $total = 0;
+                                @endphp
+                                @foreach ($pagarporoficinas as $pagosOfic)
+                                <tr>
+                                    <td>{{ $pagosOfic->id ?? '' }}</td>
+                                    <td>
+
+                                        {{ $pagosOfic->cliente->nombre ?? '' }}
+                                    </td>
+                                    <td>{{ $pagosOfic->num_transaccion ?? '' }}</td>
+                                    <td>{{ $pagosOfic->tipo_pago ?? '' }}</td>
+                                    <td>{{ $pagosOfic->saldo_pagado ?? '' }}</td>
+                                    <td>{{ $pagosOfic->fecha_pago ?? '' }}</td>
+                                    <td>
+                                        {{ $pagosOfic->operador->name ?? '' }}
+                                    </td>
+
+                                    <td>
+                                        <a href="{{ URL::action('PagarPorOficinaController@show', $pagosOfic->id) }}"><button
+                                                class='btn btn-primary btn-sm'><span
+                                                    class='glyphicon glyphicon-edit'></span></button></a>
+                                        {{-- <a href="" data-target="#modal-delete-{{$venta->id}}"
+                                            data-toggle="modal"><button class='btn btn-danger btn-sm'><i
+                                                    class='glyphicon glyphicon-trash'></i></button></a> --}}
+                                    </td>
+                                </tr>
+                                {{-- @include('ventas.venta.modal') --}}
+                                @php
+                                $total += $pagosOfic->saldo_pagado;
+                                @endphp
+                                @endforeach
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+
+                                    <td class="text-bold">
+                                        <h3>Total:</h3>
+                                    </td>
+                                    <td class="text-bold">
+                                        <h3>{{ $total ?? '' }}</h3>
+                                    </td>
+
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+
+                        </table>
                     </div>
+
                 </div>
-                <div class="row">
+            </div>
 
-                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <div class="table-responsive">
-                            @include('custom.message')
-                            <table id="ven" class="table table-striped table-bordered table-condensed table-hover">
-                                <thead>
-                                    <th>ID</th>
-                                    <th>Cliente</th>
-                                    <th>Num Transaccion</th>
-                                    <th>Tipo pago</th>
-                                    <th>Total Pagado</th>
-                                    <th>Fecha de Pago</th>
-                                    <th>Operador</th>
-                                    <th>Ver</th>
-
-                                    {{-- <th>Opciones</th> --}}
-                                </thead>
-                                <tbody>
-                                    @php
-                                        $total = 0;
-                                    @endphp
-                                    @foreach ($pagarporoficinas as $pagosOfic)
-                                        <tr>
-                                            <td>{{ $pagosOfic->id ?? '' }}</td>
-                                            <td><?php $nombre_cliente = ('App\Persona')
-                                                ::where('id', $pagosOfic->persona_id)
-                                                ->select('nombre')
-                                                ->first(); ?> {{ $nombre_cliente['nombre'] ?? '' }}</td>
-                                            <td>{{ $pagosOfic->num_transaccion ?? '' }}</td>
-                                            <td>{{ $pagosOfic->tipo_pago ?? '' }}</td>
-                                            <td>{{ $pagosOfic->saldo_pagado ?? '' }}</td>
-                                            <td>{{ $pagosOfic->fecha_pago ?? '' }}</td>
-                                            <td><?php $nombre_operador = ('App\User')
-                                                ::where('id', $pagosOfic->user_id)
-                                                ->select('name')
-                                                ->first(); ?> {{ $nombre_operador['name'] ?? '' }}</td>
-
-                                            <td>
-                                                <a
-                                                    href="{{ URL::action('PagarPorOficinaController@show', $pagosOfic->id) }}"><button
-                                                        class='btn btn-primary btn-sm'><span
-                                                            class='glyphicon glyphicon-edit'></span></button></a>
-                                                {{-- <a href="" data-target="#modal-delete-{{$venta->id}}" data-toggle="modal"><button class='btn btn-danger btn-sm'><i class='glyphicon glyphicon-trash'></i></button></a> --}}
-                                            </td>
-                                        </tr>
-                                        {{-- @include('ventas.venta.modal') --}}
-                                        @php
-                                            $total += $pagosOfic->saldo_pagado;
-                                        @endphp
-                                    @endforeach
-
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-
-                                        <td class="text-bold">
-                                            <h3>Total:</h3>
-                                        </td>
-                                        <td class="text-bold">
-                                            <h3>{{ $total ?? '' }}</h3>
-                                        </td>
-
-                                        <td></td>
-                                    </tr>
-                                </tfoot>
-
-                            </table>
-                        </div>
-
-                    </div>
-                </div>
-
-                @push('sciptsMain')
-                    <script>
-                        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            @push('sciptsMain')
+            <script>
+                ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
                         // var ctx = document.getElementById('myChart').getContext('2d');
                         // var myChart = new Chart(ctx, {
                         //     type: 'bar',
@@ -272,6 +272,6 @@
 
 
                         });
-                    </script>
-                @endpush
+            </script>
+            @endpush
             @endsection

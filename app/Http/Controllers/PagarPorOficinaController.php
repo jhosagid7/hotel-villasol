@@ -17,8 +17,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
+use App\Traits\CreditCostumerTrait;
+
 class PagarPorOficinaController extends Controller
 {
+
+    use CreditCostumerTrait;
 
     public function __construct()
     {
@@ -29,96 +33,15 @@ class PagarPorOficinaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request) {
-            $mesActual = Carbon::now()->format('Y-m-d');
-            $restaMes = Carbon::now()->subWeek(1);
-            $restaMes = $restaMes->format('Y-m-d');
-            $title = 'Historial Pagos por oficina';
-            $pagarporoficinas = DetallePagoOficina::get();
-            // return $pagarporoficinas;
+        $title = 'Historial Pagos por oficina';
+        $pagarporoficinas = DetallePagoOficina::with('cliente', 'operador')->get();
 
-            // return $pagarporoficinas->cliente;
+        // Todo este codigo maneja las fechas de los creditos vencidos
+        $this->checkDateCredit();
 
-
-
-
-
-
-
-
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // este codigo maneja las fechas de los creditos vencidos
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            $date   = Carbon::now('America/Caracas');
-
-            $creditos_clientes = Credito::get();
-            if ($creditos_clientes) {
-
-
-                foreach ($creditos_clientes as $fecha_limite) {
-
-                    $now = Carbon::parse($date);
-                    $second = Carbon::parse($fecha_limite->fecha_limite_pago);
-
-                    if ($second->gte($now)) {
-                        // return 'tiene credito vigente';
-                        $credito_id = $fecha_limite->id;
-                        $upCredito = Credito::findOrFail($credito_id);
-                        if ($upCredito->total_deuda > 0) {
-                            $upCredito->estado_credito = 'Moroso';
-                            $upCredito->update();
-                        } else {
-                            $upCredito->estado_credito = 'Activo';
-                            $upCredito->update();
-                        }
-
-                        $upCredito->estado_credito = 'Activo';
-                        $upCredito->update();
-                    } else {
-                        // return 'tiene credito vencido';
-                        $credito_id = $fecha_limite->id;
-                        $upCredito = Credito::findOrFail($credito_id);
-
-                        $upCredito->estado_credito = 'Moroso';
-                        $upCredito->update();
-
-
-                        if ($upCredito->total_deuda > 0) {
-                            $upCredito->estado_credito = 'Moroso';
-                            $upCredito->update();
-                        } else {
-                            $upCredito->estado_credito = 'Activo';
-                            $upCredito->update();
-                        }
-                    }
-                }
-            }
-            $detalle_creditos = Detalle_credito::get();
-            // return $detalle_credito;
-            foreach ($detalle_creditos as $detalle_credito) {
-
-                if ($date >= $detalle_credito->fecha_vencimiento) {
-
-                    $detalle_credito_id = $detalle_credito->id;
-                    $upDetalleCredito = Detalle_credito::findOrFail($detalle_credito_id);
-                    if ($upDetalleCredito->estado_pago == 'Pendiente') {
-                        $upDetalleCredito->estado_credito = 'Vencido';
-                        $upDetalleCredito->update();
-                    }
-                }
-            }
-            // echo $difference = $date->diff($date2)->days;
-
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-            return view('pagos.pendientes.index', compact('title', 'pagarporoficinas'));
-        }
+        return view('pagos.pendientes.index', compact('title', 'pagarporoficinas'));
     }
 
     /**
