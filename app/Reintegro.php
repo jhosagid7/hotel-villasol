@@ -31,11 +31,13 @@ class Reintegro extends Model
 
     protected $guarded = [];
 
-    public function caja(){
+    public function caja()
+    {
         return $this->belongsTo(Caja::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

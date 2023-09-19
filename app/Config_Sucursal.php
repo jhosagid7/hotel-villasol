@@ -13,7 +13,7 @@ class Config_Sucursal extends Model
     ];
 
     //Ahora especificamos los campos guarded
-    protected $guarded=[];
+    protected $guarded = [];
 
     public function sucursal()
     {

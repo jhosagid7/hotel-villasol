@@ -12,6 +12,11 @@ use Illuminate\Http\Request;
 
 class PreventaController extends Controller
 {
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -29,12 +34,12 @@ class PreventaController extends Controller
         // $tasaDolarHabitacion = Tasa::where('nombre','=','DolarHabitacion')->first();
         // return $tasaDolarHabitacion->tasa;
         // $tasaPesoHabitacion = Tasa::where('nombre','=','PesoHabitacion')->first();
-        $users = User::with('roles')->orderBy('id','Desc')->get();
+        $users = User::with('roles')->orderBy('id', 'Desc')->get();
 
 
 
 
-        return view('preventa.index', compact('title','habitaciones', 'users'));
+        return view('preventa.index', compact('title', 'habitaciones', 'users'));
     }
 
     /**

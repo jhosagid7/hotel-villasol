@@ -25,7 +25,8 @@ class Transaction extends Model
 
     protected $guarded = [];
 
-    public function articulo_transactions(){
+    public function articulo_transactions()
+    {
         return $this->hasMany(Articulo_transactions::class);
     }
 
@@ -34,28 +35,32 @@ class Transaction extends Model
         return $this->hasManyThrough(Articulo::class, Articulo_transactions::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function scopeFecha($query, $fecha){
+    public function scopeFecha($query, $fecha)
+    {
 
-        if($fecha){
-        list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-            $fecha_inicio = Carbon::parse($fecha_inicio. '00:00:00')->format('Y-m-d H:i:s');
-            $fecha_fin = Carbon::parse($fecha_fin. '23:59:59')->format('Y-m-d H:i:s');
-        return $query->whereBetween('transactions.created_at', [$fecha_inicio, $fecha_fin]);
+        if ($fecha) {
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+            $fecha_inicio = Carbon::parse($fecha_inicio . '00:00:00')->format('Y-m-d H:i:s');
+            $fecha_fin = Carbon::parse($fecha_fin . '23:59:59')->format('Y-m-d H:i:s');
+            return $query->whereBetween('transactions.created_at', [$fecha_inicio, $fecha_fin]);
         }
     }
 
-    public function scopeOperador($query, $operador){
-        if($operador)
-        return $query->where('transactions.user_id', '=', "$operador");
+    public function scopeOperador($query, $operador)
+    {
+        if ($operador)
+            return $query->where('transactions.user_id', '=', "$operador");
     }
 
-    public function scopeAutorizadoPor($query, $proveedor){
-        if($proveedor)
-        return $query->where('transactions.autorizado_por', '=', "$autorizado_por");
+    public function scopeAutorizadoPor($query, $autorizado_por)
+    {
+        if ($autorizado_por)
+            return $query->where('transactions.autorizado_por', '=', "$autorizado_por");
     }
 
     // public function scopeFecha($query, $fecha){
@@ -79,7 +84,8 @@ class Transaction extends Model
     // }
 
     //este metodo nos permite dar formato al numero de la factura
-    public static function numCodigo($proseso, $op, $id_cod) {
+    public static function numCodigo($proseso, $op, $id_cod)
+    {
         if (empty($proseso) || empty($op) || empty($id_cod)) {
             throw new Exception('!La funcion numCodigo esperaba 3 parametros y uno no fue dado...');
             exit;

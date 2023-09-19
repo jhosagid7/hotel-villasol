@@ -22,11 +22,13 @@ class Pago_Servicio extends Model
 
     protected $guarded = [];
 
-    public function servicio(){
+    public function servicio()
+    {
         return $this->belongsTo(Servicio::class);
     }
 
-    public function caja(){
+    public function caja()
+    {
         return $this->belongsTo(Caja::class);
     }
 }

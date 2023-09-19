@@ -24,18 +24,22 @@ class Pago_Vuelto extends Model
 
     protected $guarded = [];
 
-    public function servicio(){
+    public function servicio()
+    {
         return $this->belongsTo(Servicio::class);
     }
 
-    public function venta(){
+    public function venta()
+    {
         return $this->belongsTo(Venta::class);
     }
 
-    public function detalle_creditos_pagado(){
+    public function detalle_creditos_pagado()
+    {
         return $this->belongsTo(Detalle_Creditos_Pagado::class);
     }
-    public function cajas(){
+    public function cajas()
+    {
         return $this->belongsTo(Caja::class);
     }
 }

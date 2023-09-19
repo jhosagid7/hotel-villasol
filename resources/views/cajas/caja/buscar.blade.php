@@ -1,4 +1,3 @@
-
 {{-- <form action="{{ route('articulo.index')}}" method="GET" autocomplete="off" role="buscar"> --}}
 {{-- @csrf --}}
 <div class="form-group">

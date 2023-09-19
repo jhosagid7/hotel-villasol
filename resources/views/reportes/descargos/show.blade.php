@@ -1,27 +1,25 @@
 @extends ('layouts.admin3')
 @section('contenido')
-
-
-
-
-
     <!-- Main content -->
     <section class="content">
 
         <!-- Default box -->
         <div class="box">
             <div class="box-header with-border  no-print">
-                <h3 class="box-title">@isset($title)
+                <h3 class="box-title">
+                    @isset($title)
                         {{ $title }}
                     @else
                         {!! 'Sistema' !!}
-                    @endisset</h3>
+                    @endisset
+                </h3>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                         title="Collapse">
                         <i class="fa fa-minus"></i></button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip"
+                        title="Remove">
                         <i class="fa fa-times"></i></button>
                 </div>
             </div>
@@ -34,7 +32,6 @@
                     <!-- /.box-body -->
                     <div class="box-footer no-print">
                         @if (1 == 1)
-
                             <a class="btn btn-success"
                                 href="{{ route('reporte-descargos') }}">{{ __('Nueva Busqueda') }}</a>
                         @endif
@@ -62,11 +59,13 @@
                         </div>
                         <!-- /.col -->
                     </div>
-                    <h3 class="box-title">@isset($title)
+                    <h3 class="box-title">
+                        @isset($title)
                             {{ $title }}
                         @else
                             {!! 'Sistema' !!}
-                        @endisset</h3>
+                        @endisset
+                    </h3>
                     <!-- info row -->
                     @php
 
@@ -112,7 +111,6 @@
                                     }
                                 }
                             @endphp
-
                         @endforeach
                     @endforeach
                     <div class="row invoice-info">
@@ -153,7 +151,8 @@
                                         <tr>
                                             <th style="width:50%">Total Descargos:</th>
                                             <td>
-                                                <h4><strong>$ {{ number_format($totalCompras, 3, ',', '.') ?? '0' }}</strong>
+                                                <h4><strong>$
+                                                        {{ number_format($totalCompras, 3, ',', '.') ?? '0' }}</strong>
                                                 </h4>
                                             </td>
                                         </tr>
@@ -275,7 +274,6 @@
 
 
                                                 </tr>
-
                                             @endforeach
                                         @endforeach
                                         {{-- @endforeach --}}

@@ -8,13 +8,13 @@ class DetallePago extends Model
 {
     protected $table = 'detalle_pago';
 
-    
+
     protected $primaryKey = 'iddetalle_pago';
 
-    
+
     public $timestamps = false;
 
-    
+
     protected $fillabel = [
         'idventa',
         'Divisa',
@@ -24,6 +24,6 @@ class DetallePago extends Model
         'Vueltos'
     ];
 
-    
+
     protected $guarded = [];
 }

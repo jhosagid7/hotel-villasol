@@ -18,11 +18,13 @@ class Articulo_transactions extends Model
 
     protected $guarded = [];
 
-    public function transaction(){
+    public function transaction()
+    {
         return $this->belongsTo(Transaction::class);
     }
 
-    public function articulo(){
+    public function articulo()
+    {
         return $this->belongsTo(Articulo::class);
     }
 }

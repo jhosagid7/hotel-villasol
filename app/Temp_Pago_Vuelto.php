@@ -20,11 +20,13 @@ class Temp_Pago_Vuelto extends Model
 
     protected $guarded = [];
 
-    public function servicio(){
+    public function servicio()
+    {
         return $this->belongsTo(Servicio::class);
     }
 
-    public function cajas(){
+    public function cajas()
+    {
         return $this->belongsTo(Caja::class);
     }
 }

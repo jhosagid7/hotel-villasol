@@ -1,7 +1,8 @@
-<div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1" id="modal-delete-{{$tasa->id}}">
+<div class="modal fade modal-slide-in-right" aria-hidden="true" role="dialog" tabindex="-1"
+    id="modal-delete-{{ $tasa->id }}">
     {{-- {{ Form::open(array('action'=>array('VentaController@destroy',$venta->idventa),'method'=>'delete'))}} --}}
 
-    <form action="{{route('venta.destroy', $tasa->id)}}" method="POST">
+    <form action="{{ route('venta.destroy', $tasa->id) }}" method="POST">
         @csrf
         @method('DELETE')<div class="modal-dialog">
             <div class="modal-content">
@@ -23,4 +24,3 @@
     </form>
     {{-- {{ Form::Close()}} --}}
 </div>
-

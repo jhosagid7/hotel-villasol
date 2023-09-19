@@ -27,7 +27,8 @@ class Excedentes_Pendientes_Caja_Anterior extends Model
 
     protected $guarded = [];
 
-    public function caja(){
+    public function caja()
+    {
         return $this->belongsTo(Caja::class);
     }
 }

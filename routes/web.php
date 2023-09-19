@@ -92,22 +92,23 @@ Route::get('/test', function () {
 });
 
 // Route::get('/test', function () {
-//     $user = User::find(2);
-//     $empre = App\Empresa::orderBy('id','Desc')->get();
-//     $empresa = App\Empresa::find(1)->cajas()->orderBy('nombre')->get();
-//     $cajas = App\Sucursal::find(1)->cajas()->orderBy('nombre')->get();
-//     $tasa1 = App\Tasa::get();
-//     $tasa2 = App\Empresa::orderBy('id','Desc')->get();
-//     $tasa1 = App\Tasa::get();
-//     $tasa = App\Tasa::find(1);
+//     // $user = User::find(2);
+//     // $empre = App\Empresa::orderBy('id','Desc')->get();
+//     // $empresa = App\Empresa::find(1)->cajas()->orderBy('nombre')->get();
+//     // $cajas = App\Sucursal::find(1)->cajas()->orderBy('nombre')->get();
+//     // $tasa1 = App\Tasa::get();
+//     // $tasa2 = App\Empresa::orderBy('id','Desc')->get();
+//     // $tasa1 = App\Tasa::get();
+//     // $tasa = App\Tasa::find(1);
 
 
-//     return $tasa;
 // });
-
+Route::get('editar/{id}', 'ExcedenteController@getPagoCliente')->name('editar');
+Route::POST('guardar', 'ExcedenteController@guardarPagoCliente')->name('guardar');
+// Route::get('/ingreso/exportToPDF', 'IngresoController@exportToPDF')->name('pdf');
 Route::resource('/role', 'RoleController')->names('role');
 
-Route::resource('/user', 'UserController', ['except'=>[
+Route::resource('/user', 'UserController', ['except' => [
     'create', 'store'
 ]])->names('user');
 
@@ -123,7 +124,7 @@ Route::resource('ventas/venta', 'VentaController');
 
 
 Route::resource('ventas/tasa', 'TasaController');
-Route::resource('almacen/transferencia', 'TransferenciaController', ['except'=>[
+Route::resource('almacen/transferencia', 'TransferenciaController', ['except' => [
     'edit', 'update', 'destroy'
 ]]);
 Route::resource('cajas/caja', 'CajaController');
@@ -132,8 +133,8 @@ Route::get('listarcaja', 'cajaController@listarcaja')->name('listarcaja');
 
 // Route::get('ventas/tasa', 'TasaController@crearTasas')->name('creartasas');
 
-Route::get('/ingreso/exportToPDF','IngresoController@exportToPDF')->name('pdf');
-Route::get('/cajas/caja/{caja}/print ','CajaController@print')->name('print');
+Route::get('/ingreso/exportToPDF', 'IngresoController@exportToPDF')->name('pdf');
+Route::get('/cajas/caja/{caja}/print ', 'CajaController@print')->name('print');
 
 Route::get('/origen', 'TransferenciaController@getProductoOrigenes')->name('origen');
 Route::get('/destino', 'TransferenciaController@getProductoDestinos')->name('destino');
@@ -152,11 +153,11 @@ Route::get('/reporte-descargos', 'ReporteController@reportDescargosIndex')->name
 Route::get('/reporte-descargos-detalle', 'ReporteController@reportDescargosShow')->name('reporte-descargos-detalle');
 
 
-Route::resource('/cargos', 'CargoController', ['except'=>[
+Route::resource('/cargos', 'CargoController', ['except' => [
     'edit', 'update'
 ]])->names('cargo');
 
-Route::resource('/descargos', 'DescargoController', ['except'=>[
+Route::resource('/descargos', 'DescargoController', ['except' => [
     'edit', 'update'
 ]])->names('descargo');
 
@@ -180,9 +181,9 @@ Route::resource('/procesoventa', 'ProcesoVentaController');
 Route::resource('/creditos', 'PagoCreditoController');
 
 //Creamos rutas para la Impresion de tickets
-Route::get('print/servicio/{$id}','PrinterController@ticketServicio');
+Route::get('print/servicio/{$id}', 'PrinterController@ticketServicio');
 
-Route::get('print/credito-pagado/{$id}','PrinterController@ticketCreditoPagado');
+Route::get('print/credito-pagado/{$id}', 'PrinterController@ticketCreditoPagado');
 
 Route::resource('/excedente', 'ExcedenteController');
 Route::resource('pagos/oficina', 'ExcedenteController');

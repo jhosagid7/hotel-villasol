@@ -31,33 +31,39 @@ class Detalle_Creditos_Pagado extends Model
         'fecha_pago',
     ];
 
-    public function Persona(){
+    public function Persona()
+    {
         return $this->belongsTo(Persona::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function Caja(){
+    public function Caja()
+    {
         return $this->belongsTo(Caja::class);
     }
 
-    public function creditos_pagados(){
+    public function creditos_pagados()
+    {
         return $this->hasMany(Credito_Pagado::class);
     }
 
-    public function pagos_creditos(){
+    public function pagos_creditos()
+    {
         return $this->hasMany(Pagos_Creditos::class);
     }
 
-    public function scopeFecha($query, $fecha){
+    public function scopeFecha($query, $fecha)
+    {
 
-        if($fecha){
-        list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
-            $fecha_inicio = Carbon::parse($fecha_inicio. '00:00:00')->format('Y-m-d H:i:s');
-            $fecha_fin = Carbon::parse($fecha_fin. '23:59:59')->format('Y-m-d H:i:s');
-        return $query->whereBetween('detalle__creditos__pagados.created_at', [$fecha_inicio, $fecha_fin]);
+        if ($fecha) {
+            list($fecha_inicio, $fecha_fin) = explode(" - ", $fecha);
+            $fecha_inicio = Carbon::parse($fecha_inicio . '00:00:00')->format('Y-m-d H:i:s');
+            $fecha_fin = Carbon::parse($fecha_fin . '23:59:59')->format('Y-m-d H:i:s');
+            return $query->whereBetween('detalle__creditos__pagados.created_at', [$fecha_inicio, $fecha_fin]);
         }
     }
 
@@ -66,15 +72,15 @@ class Detalle_Creditos_Pagado extends Model
     //     return $query->where('detalle__creditos__pagados.estado', 'LIKE', "$tipo");
     // }
 
-    public function scopeOperador($query, $operador){
-        if($operador)
-        return $query->where('detalle__creditos__pagados.user_id', '=', "$operador");
+    public function scopeOperador($query, $operador)
+    {
+        if ($operador)
+            return $query->where('detalle__creditos__pagados.user_id', '=', "$operador");
     }
 
-    public function scopeCliente($query, $cliente){
-        if($cliente)
-        return $query->where('detalle__creditos__pagados.persona_id', '=', "$cliente");
+    public function scopeCliente($query, $cliente)
+    {
+        if ($cliente)
+            return $query->where('detalle__creditos__pagados.persona_id', '=', "$cliente");
     }
-
-
 }

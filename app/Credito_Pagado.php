@@ -26,22 +26,23 @@ class Credito_Pagado extends Model
 
     protected $guarded = [];
 
-    public function cliente(){
+    public function cliente()
+    {
         return $this->belongsTo(Persona::class);
     }
 
-    public function operador(){
+    public function operador()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function detalle_creditos_pagado(){
+    public function detalle_creditos_pagado()
+    {
         return $this->belongsTo(Detalle_Creditos_Pagado::class);
     }
 
-    public function caja(){
+    public function caja()
+    {
         return $this->belongsTo(Caja::class);
     }
-
-
-
 }

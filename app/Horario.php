@@ -18,11 +18,13 @@ class Horario extends Model
 
     protected $guarded = [];
 
-    public function precios(){
+    public function precios()
+    {
         return $this->hasMany('App\Precio');
     }
 
-    public function setIs24HorasAttribute($value){
+    public function setIs24HorasAttribute($value)
+    {
         $this->attributes['is24Horas'] = ($value == 'on' ? '1' : null);
     }
 }

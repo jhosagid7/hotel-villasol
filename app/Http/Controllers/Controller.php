@@ -11,14 +11,13 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public static function is_negative_number($number=0){
+    public static function is_negative_number($number = 0)
+    {
 
-        if( is_numeric($number) AND ($number<0) ){
+        if (is_numeric($number) and ($number < 0)) {
             return true;
-        }else{
+        } else {
             return false;
         }
-
     }
-
 }

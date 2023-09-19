@@ -19,13 +19,16 @@ class Pago_Venta extends Model
         'venta_id'
     ];
 
-    public function venta(){
+    public function venta()
+    {
         return $this->belongsTo(Venta::class);
     }
-    public function servicio(){
+    public function servicio()
+    {
         return $this->belongsTo(Servicio::class);
     }
-    public function caja(){
+    public function caja()
+    {
         return $this->belongsTo(Caja::class);
     }
 }

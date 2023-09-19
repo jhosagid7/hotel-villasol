@@ -1,27 +1,25 @@
 @extends ('layouts.admin3')
 @section('contenido')
-
-
-
-
-
     <!-- Main content -->
     <section class="content">
 
         <!-- Default box -->
         <div class="box">
             <div class="box-header with-border  no-print">
-                <h3 class="box-title">@isset($title)
+                <h3 class="box-title">
+                    @isset($title)
                         {{ $title }}
                     @else
                         {!! 'Sistema' !!}
-                    @endisset</h3>
+                    @endisset
+                </h3>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
                         title="Collapse">
                         <i class="fa fa-minus"></i></button>
-                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
+                    <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip"
+                        title="Remove">
                         <i class="fa fa-times"></i></button>
                 </div>
             </div>
@@ -34,9 +32,7 @@
                     <!-- /.box-body -->
                     <div class="box-footer no-print">
                         @if (1 == 1)
-
-                            <a class="btn btn-success"
-                                href="{{ route('reporte-cargos') }}">{{ __('Nueva Busqueda') }}</a>
+                            <a class="btn btn-success" href="{{ route('reporte-cargos') }}">{{ __('Nueva Busqueda') }}</a>
                         @endif
                         <a class="btn btn-warning" href="{{ route('cargo.index') }}">{{ __('Ir a ingresos') }}</a>
                         <a onClick="imprimir('imprimir')" target="_blank" class="btn btn-primary  hidden-print">
@@ -62,11 +58,13 @@
                         </div>
                         <!-- /.col -->
                     </div>
-                    <h3 class="box-title">@isset($title)
+                    <h3 class="box-title">
+                        @isset($title)
                             {{ $title }}
                         @else
                             {!! 'Sistema' !!}
-                        @endisset</h3>
+                        @endisset
+                    </h3>
                     <!-- info row -->
                     @php
 
@@ -112,7 +110,6 @@
                                     }
                                 }
                             @endphp
-
                         @endforeach
                     @endforeach
                     <div class="row invoice-info">
@@ -278,7 +275,6 @@
 
 
                                                 </tr>
-
                                             @endforeach
                                         @endforeach
                                         {{-- @endforeach --}}

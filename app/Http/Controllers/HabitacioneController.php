@@ -38,8 +38,8 @@ class HabitacioneController extends Controller
     public function create()
     {
         $title = 'Crear Habitaciones';
-        $levels = Level::where('estado','<>','Eliminado')->get();
-        $categorias = Cat::where('estado','<>','Eliminada')->get();
+        $levels = Level::where('estado', '<>', 'Eliminado')->get();
+        $categorias = Cat::where('estado', '<>', 'Eliminada')->get();
         return view('config.habitacion.create', compact('levels', 'categorias'));
     }
 
@@ -59,7 +59,7 @@ class HabitacioneController extends Controller
         $hab->status = 1;
         $hab->save();
 
-       return Redirect::to('config/habitacion')->with('status_success', 'La Habitación fue creada Exitosamente...!');
+        return Redirect::to('config/habitacion')->with('status_success', 'La Habitación fue creada Exitosamente...!');
     }
 
     /**
@@ -78,8 +78,8 @@ class HabitacioneController extends Controller
         $habitacion->update();
 
         return redirect()
-        ->route('checkout.index')
-        ->with('status_success', 'La habitacion fue cerrada  exitosamente');
+            ->route('checkout.index')
+            ->with('status_success', 'La habitacion fue cerrada  exitosamente');
     }
 
     /**
@@ -114,8 +114,8 @@ class HabitacioneController extends Controller
         $habitacione->level_id = $request->get('level_id');
         $habitacione->update();
         return redirect()
-        ->route('habitacion.index')
-        ->with('status_success', 'La habitación fue actualizada exitosamente...');
+            ->route('habitacion.index')
+            ->with('status_success', 'La habitación fue actualizada exitosamente...');
     }
 
     /**
@@ -131,7 +131,7 @@ class HabitacioneController extends Controller
         $hab->update();
 
         return redirect()
-        ->route('habitacion.index')
-        ->with('status_success', 'La habitación fue eliminada exitosamente...');
+            ->route('habitacion.index')
+            ->with('status_success', 'La habitación fue eliminada exitosamente...');
     }
 }

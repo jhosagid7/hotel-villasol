@@ -15,7 +15,8 @@ class Level extends Model
 
     protected $guarded = [];
 
-    public function habitaciones(){
+    public function habitaciones()
+    {
         return $this->hasMany('App\Habitacione');
     }
 

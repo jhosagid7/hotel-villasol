@@ -30,18 +30,22 @@ class Horas_extra extends Model
 
     protected $guarded = [];
 
-    public function servicio(){
+    public function servicio()
+    {
         return $this->belongsTo(Servicio::class);
     }
 
-    public function pagos_extras(){
+    public function pagos_extras()
+    {
         return $this->hasMany(Pago_extra::class);
     }
-    public function excedentes(){
+    public function excedentes()
+    {
         return $this->hasMany(Excedentes_Recibidos_Caja_Actual::class);
     }
 
-    public function cajas(){
+    public function cajas()
+    {
         return $this->belongsTo(Caja::class);
     }
 }
