@@ -1237,6 +1237,15 @@
                                                                             id="VueltosdispExcedente"
                                                                             name="VueltosdispExcedente">
                                                                     </div>
+                                                                    <div
+                                                                        class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
+                                                                        @if ($vueltos_oficina)
+                                                                            <h5 class='text-bold  text-primary'>Vueltos en oficina: <b class='text-black'>{{ $vueltos_oficina ?? 0 }}</b></h5>
+                                                                        @endif
+                                                                        @if ($vueltos_caja)
+                                                                            <h5 class='text-bold text-primary'>Vueltos en caja: <b class='text-black'>{{ $vueltos_caja ?? 0 }}</b></h5>
+                                                                        @endif
+                                                                    </div>
                                                                     {{-- <div id="nocredito"
                                                                         class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
                                                                         <label for="pagoConCredito">

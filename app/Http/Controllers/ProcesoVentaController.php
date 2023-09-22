@@ -1428,29 +1428,20 @@ class ProcesoVentaController extends Controller
                     $UserName = Auth::user()->name;
                     $UserId = Auth::user()->id;
                     // return $service;
-                    $excedente = Excedente::where('persona_id', '=', $service->persona_id)->first();
-                    $excedentesPendientes = Excedentes_Recibidos_Caja_Actual::where('Estado', 'Pendiente')->get();
-                    // return $excedente->excedente;
-                    $excedente_excedente = 0;
-                    $sevice_excedente = 0;
 
-                    if ($excedente) {
-                        $excedente_excedente = $excedente->excedente ? $excedente->excedente : 0;
-                    }
 
-                    $sevice_excedente = $service->excedente_nuevo ? $service->excedente_nuevo : 0;
 
-                    // return $excedente_excedente;
+                    $vueltos_caja = $this->getTotalUndeliveredChangeInDolar($service->id);
+                    $vueltos_oficina = $this->getTotalChangeBoxInDolar($service->persona_id);
 
-                    $excedente_cliente = $excedente_excedente + $this->getTotalUndeliveredChangeInDolar($service->id);
-                    // return $excedente_cliente;
+                    $excedente_cliente = $vueltos_oficina + $vueltos_caja;
 
                     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
                     //  return $cajas;
                     //dd($ventas);
                     // return $service->excedente_nuevo;
 
-                    return view('preventa.create', compact('excedente_cliente', 'service', 'cajas', 'dolarDisponible', 'pesoDisponible', 'bolivarDisponible', 'credito', 'cliente', 'UserName', 'UserId', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'cajas', 'habitacion', 'num_comprobante', 'serie_comprobante', 'caja', 'ventas', 'title', 'personas', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'articulos'));
+                    return view('preventa.create', compact('vueltos_caja', 'vueltos_oficina', 'excedente_cliente', 'service', 'cajas', 'dolarDisponible', 'pesoDisponible', 'bolivarDisponible', 'credito', 'cliente', 'UserName', 'UserId', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'cajas', 'habitacion', 'num_comprobante', 'serie_comprobante', 'caja', 'ventas', 'title', 'personas', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'articulos'));
                 } else {
                     return redirect()
                         ->route('caja.index')

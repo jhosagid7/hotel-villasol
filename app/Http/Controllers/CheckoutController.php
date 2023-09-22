@@ -25,8 +25,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use App\Excedentes_Recibidos_Caja_Actual;
 
+use App\Traits\ChangeInBoxTrait;
+
 class CheckoutController extends Controller
 {
+    use ChangeInBoxTrait;
 
     // TODO nuevo comentario
 
@@ -768,7 +771,15 @@ class CheckoutController extends Controller
                     // return $servicio;
                     // return redirect()->route('proceso', array('title' => $title,'levels' => $levels,'habitacion' => $habitacion,'horarios' => $horarios, 'tasaDolarHabitacion' => $tasaDolarHabitacion, 'tasaPesoHabitacion' => $tasaPesoHabitacion, 'users' => $users));
 
-                    return view('checkout.show', compact('clientes', 'bancos', 'dolarDisponible', 'pesoDisponible', 'bolivarDisponible', 'verificarHorasExtras', 'mismaHabitacion', 'cajas', 'servicio', 'UserId', 'UserName', 'caja', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'title', 'habitacionese', 'horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente', 'num_servicio'));
+
+
+                     $vueltos_caja = $this->getTotalUndeliveredChangeInDolar($servicio->id);
+                     $vueltos_oficina = $this->getTotalChangeBoxInDolar($servicio->persona_id);
+
+                    $excedente_cliente = $vueltos_oficina + $vueltos_caja;
+                    // return $excedente_cliente;
+
+                    return view('checkout.show', compact('vueltos_caja', 'vueltos_oficina', 'excedente_cliente', 'clientes', 'bancos', 'dolarDisponible', 'pesoDisponible', 'bolivarDisponible', 'verificarHorasExtras', 'mismaHabitacion', 'cajas', 'servicio', 'UserId', 'UserName', 'caja', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'title', 'habitacionese', 'horarios', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'users', 'cliente', 'num_servicio'));
                 } else {
                     return redirect()
                         ->route('caja.index')

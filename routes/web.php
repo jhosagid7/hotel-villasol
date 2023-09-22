@@ -169,7 +169,6 @@ Route::resource('config/precio', 'PrecioController');
 
 Route::get('/recepcion', 'RecepcionController@index')->name('recepcion');
 Route::post('/proceso', 'RecepcionController@proceso')->name('proceso');
-// Route::post('/registrar', 'RecepcionController@registrarHabitacion')->name('registrar');
 
 Route::get('/precio', 'RecepcionController@getPrecio')->name('precio');
 Route::post('/buscarcliente', 'RecepcionController@getCliente')->name('buscarcliente');
@@ -203,3 +202,5 @@ Route::get('search/articulos/ventas', 'SearchController@articulosVentas')->name(
 Route::get('search/articulos/cargos', 'SearchController@articulosCargos')->name('search.articulos.cargos');
 
 Route::get('search/personas', 'SearchController@personas')->name('search.personas');
+
+Route::POST('registrar', 'ClienteController@registrarCliente')->name('registrar');

@@ -4,16 +4,17 @@ namespace App\Traits;
 
 use App\Caja;
 use App\Servicio;
-use App\Pago_Vuelto;
-use App\Pago_Venta;
+use App\Excedente;
 use App\Pago_Extra;
+use App\Pago_Venta;
+use App\Pago_Vuelto;
 use App\Pago_Servicio;
-use App\Temp_Pago_Vuelto;
+use App\Horas_extra;
+use App\Traits\SaleTrait;
+
+use App\Traits\UtilsTrait;
 use Illuminate\Http\Request;
 use App\Excedentes_Recibidos_Caja_Actual;
-
-use App\Traits\SaleTrait;
-use App\Traits\UtilsTrait;
 
 
 trait ChangeInBoxTrait
@@ -28,7 +29,7 @@ trait ChangeInBoxTrait
     {
 
         //* This function pays with a change (Esta función paga con un vuelto)
-        if ($service_id) {
+        if ($service_id && $amount > 0) {
             $array = $this->getTotalUndeliveredChangeByCurrencyTypeForServiceId3($service_id);
 
             $this->subtractMoney($array, $amount, $service_id, $box_id, $tipo, $sale_id, $horasExtrasId);
@@ -280,6 +281,9 @@ trait ChangeInBoxTrait
                 $paymentSale->servicio_id = $serviceId;
                 $paymentSale->caja_id = $box_id;
                 $paymentSale->save();
+
+                $UpdateModel = Servicio::findOrFail($serviceId);
+                $this->updateLeftoverMoneyField($UpdateModel, $quantity);
             }
 
             if ($tipo == 'Horas_Extras') {
@@ -295,6 +299,9 @@ trait ChangeInBoxTrait
                 $paymentSale->servicio_id = $serviceId;
                 $paymentSale->caja_id = $box_id;
                 $paymentSale->save();
+
+                $UpdateModel = Horas_extra::findOrFail($horasExtrasId);
+                $this->updateLeftoverMoneyField($UpdateModel, $quantity);
             }
 
         } else {
@@ -363,6 +370,9 @@ trait ChangeInBoxTrait
                 $paymentServicio->servicio_id = $serviceId;
                 $paymentServicio->caja_id = $box_id;
                 $paymentServicio->save();
+
+                $UpdateModel = Servicio::findOrFail($serviceId);
+                $this->updateLeftoverMoneyField($UpdateModel, $amount);
             }
 
             if ($tipo == 'Horas_Extras') {
@@ -378,6 +388,9 @@ trait ChangeInBoxTrait
                 $paymentServicio->servicio_id = $serviceId;
                 $paymentServicio->caja_id = $box_id;
                 $paymentServicio->save();
+
+                $UpdateModel = Horas_extra::findOrFail($horasExtrasId);
+                $this->updateLeftoverMoneyField($UpdateModel, $amount);
             }
         }
     }
@@ -468,5 +481,25 @@ trait ChangeInBoxTrait
             ->sum('MontoDolar');
 
         return $total;
+    }
+    public function getTotalChangeBoxInDolar($customer_id)
+    {
+        $total = Excedente::where('persona_id', $customer_id)
+            ->select('excedente')
+            ->first();
+            // dd(isset($total));
+        if(isset($total)){
+            return $total->excedente;
+        }else{
+            return 0;
+        }
+    }
+
+    public function updateLeftoverMoneyField(object $object, float $amount)
+    {
+        if ($object) {
+            $object->dinero_dejado += $amount;
+            $object->update();
+        }
     }
 }
