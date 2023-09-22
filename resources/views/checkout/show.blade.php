@@ -993,6 +993,15 @@ if(isset($servicio->id)){
                                                                             id="VueltosdispExcedente"
                                                                             name="VueltosdispExcedente">
                                                                     </div>
+                                                                    <div
+                                                                        class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black">
+                                                                        @if ($vueltos_oficina)
+                                                                            <h5 class='text-bold  text-primary'>Vueltos en oficina: <b class='text-black'>{{ $vueltos_oficina ?? 0 }}</b></h5>
+                                                                        @endif
+                                                                        @if ($vueltos_caja)
+                                                                            <h5 class='text-bold text-primary'>Vueltos en caja: <b class='text-black'>{{ $vueltos_caja ?? 0 }}</b></h5>
+                                                                        @endif
+                                                                    </div>
                                                                                 <div id="nocredito"
                                                                                     class="panel-group col-lg-6 col-sm-6 col-md-6 col-xs-12 text-black hidden">
                                                                                     {{-- <label for="pagoConCredito"><h2 class="text-blue">Crédito disponible: <b id="dispCreditoShow">$.0.00</b></h2></label> --}}
@@ -1885,7 +1894,7 @@ if(isset($servicio->id)){
                                                                                             type="hidden">
                                                                                         <input id="VueltosvtosPendientes"
                                                                                             name="VueltosvtosPendientes"
-                                                                                            value="{{ $cajas->TotalSumaVueltosPendientesClienteDolar ?? '' }}"
+                                                                                            value="{{ $excedente_cliente ?? '' }}"
                                                                                             type="hidden">
 
                                                                                     </div>
@@ -2722,12 +2731,23 @@ if(isset($servicio->id)){
             $("#precredito").hide();
             $("#credito").hide();
 
+
+
+            $("#banderaHorasExtras").on("change", function() {
+                alert('si');
+            });
+
             $("#cargarExcedente").on('click', function() {
                 let band = $("#banderaHorasExtras").val();
                 let VueltosdispExcedente = $("#VueltosdispExcedente").val();
                 let PagoTtotal = document.getElementById('PagoTtotal');
 
                 if(band == 'pagarVueltosPendientes'){
+                    // Obtenemos el input
+                    const input = $("#VueltospagoConExcedente");
+
+                    // Quitamos la propiedad readonly
+                    input.prop("readonly", false);
                      if (vcarexcdt == 0) {
                         // alert(PagoTtotalinnerHTML);
                         if (parseFloat(VueltosdispExcedente) >= parseFloat(PagoTtotal.innerHTML)) {

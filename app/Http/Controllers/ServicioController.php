@@ -65,7 +65,7 @@ class ServicioController extends Controller
     {
 
 
-        // return $request;
+        return $request;
 
         // TODO Validamos si el registro ya ha sido registrado en caso contrario lo guarda
 
@@ -2200,8 +2200,6 @@ class ServicioController extends Controller
 
                         $VueltosdispExcedente = $request->get('VueltosdispExcedente');
                         $monto_dejadoResta = $request->get('monto_dejadoResta');
-
-
                         $base_vuelto_monto_dejado = $request->get('base_vuelto_monto_dejado');
                         $monto_dejado = $request->get('monto_dejado');
                         $modo_pago = $request->get('modo_pago');
@@ -2209,45 +2207,28 @@ class ServicioController extends Controller
                         $resta = $monto_dejadoResta - $base_vuelto_monto_dejado;
                         // return $resta;
 
-                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
                         // TODO creamos metodo para realizar el pago cuando se paga con dinero contable viene en la variable base_vuelto_monto_dejado
                         // primero validamos si exciste un pago hecho.
 
-                        $montoBase = $request->get('base_vuelto_monto_dejado');
-                        $montoResta = $request->get('monto_dejadoResta');
-                        $montoPendiente = $request->get('VueltospagoConExcedente');
-                        // $total_venta = $request->get('total_venta');
+                        $montoBase = $base_vuelto_monto_dejado;
+                        $montoResta = $monto_dejadoResta;
+                        $montoPendiente = $VueltospagoConExcedente;
 
 
                         $montoBase = floatval($montoBase);
                         $montoPendiente = floatval($montoPendiente);
                         $montoResta = floatval($montoResta);
-                        // $total_venta = floatval($total_venta);
 
                         $opS = $montoBase + $montoPendiente;
 
-                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                        ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-                        //                         if($base_vuelto_monto_dejado > 0){
-                        // return 'es mayor';
-                        //                         }else{
-                        //                             return 'es menor';
-                        //                         }
-
-
 
                         if ($opS > 0 && $modo_pago == 'contado') {
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            // Aquí llenamos la tabla Excedente_Recibidos_Caja_Acatual con la divisa que deja el cliente para acompletar el vuelto
 
-                            // $isVuelos = $request->get('isVueltos');
+                            //* Aquí llenamos la tabla Excedente_Recibidos_Caja_Acatual con la divisa que deja el cliente para acompletar el vuelto
 
                             if ($base_vuelto_monto_dejado > 0) {
-                                return 'mayor a 0 ' . $resta;
+                                // return 'mayor a 0 ' . $resta;
                                 $MontoDivisa = $request->get('MontoDivisa');
                                 $divisa = $request->get('divisa');
                                 $TasaTiket = $request->get('TasaTike');
@@ -2258,8 +2239,6 @@ class ServicioController extends Controller
                                 // return $MontoDivisa;
                                 if (count($MontoDivisa)) {
                                     foreach ($MontoDivisa as $key => $val) {
-
-
                                         $Vdivisa[] = $divisa[$key];
                                         $VMontoDivisa[] = $MontoDivisa[$key];
                                         $VTasaTiket[] = $TasaTiket[$key];
@@ -2270,8 +2249,6 @@ class ServicioController extends Controller
                                     // return 'mayor a 0 ' . $resta;
 
                                     while ($cont < count($VMontoDolar)) {
-
-
                                         $excdtsRecibidosCaja = new Excedentes_Recibidos_Caja_Actual();
                                         $excdtsRecibidosCaja->Tipo = 'Servicio';
                                         $excdtsRecibidosCaja->Estado = 'Pendiente';
@@ -2285,7 +2262,7 @@ class ServicioController extends Controller
                                         $excdtsRecibidosCaja->save();
 
 
-                                        echo  'Agregamos tabla excedente divisa: ' . $Vdivisa[$cont] . ' montoDivisa: ' . $VMontoDivisa[$cont] . ' tasaTiket: ' . $VTasaTiket[$cont] . ' montoDolar: ' . floatval($VMontoDolar[$cont]) . ' montoDolarConsumo: ' . floatval($VMontoDolar[$cont]) . '  excedente:  ' . 0 . ' vueltos: ' . 0 . '<br> ';
+                                        // echo  'Agregamos tabla excedente divisa: ' . $Vdivisa[$cont] . ' montoDivisa: ' . $VMontoDivisa[$cont] . ' tasaTiket: ' . $VTasaTiket[$cont] . ' montoDolar: ' . floatval($VMontoDolar[$cont]) . ' montoDolarConsumo: ' . floatval($VMontoDolar[$cont]) . '  excedente:  ' . 0 . ' vueltos: ' . 0 . '<br> ';
 
                                         $Pago_Servicio = new Pago_Servicio();
                                         $Pago_Servicio->Divisa = $Vdivisa[$cont];
@@ -2298,8 +2275,8 @@ class ServicioController extends Controller
                                         $Pago_Servicio->servicio_id = $id;
                                         $Pago_Servicio->caja_id = $request->get('caja_id');
                                         $Pago_Servicio->save();
-                                        echo  'Agregamos pagos servicios divisa: ' . $Vdivisa[$cont] . ' montoDivisa: ' . $VMontoDivisa[$cont] . ' tasaTiket: ' . $VTasaTiket[$cont] . ' montoDolar: ' . floatval($VMontoDolar[$cont]) . ' montoDolarConsumo: ' . floatval($VMontoDolar[$cont]) . '  excedente:  ' . 0 . ' vueltos: ' . 0 . '<br> ';
 
+                                        // echo  'Agregamos pagos servicios divisa: ' . $Vdivisa[$cont] . ' montoDivisa: ' . $VMontoDivisa[$cont] . ' tasaTiket: ' . $VTasaTiket[$cont] . ' montoDolar: ' . floatval($VMontoDolar[$cont]) . ' montoDolarConsumo: ' . floatval($VMontoDolar[$cont]) . '  excedente:  ' . 0 . ' vueltos: ' . 0 . '<br> ';
 
 
                                         if ($Pago_Servicio->id) {
@@ -2316,46 +2293,29 @@ class ServicioController extends Controller
                             }
 
 
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
                             $isVuelos = $request->get('isVueltos');
 
                             if ($isVuelos > 0 || $isVuelos != null) {
-
-                                return 'vueltos ' . $isVuelos;
-                                return 'no entro';
-
 
                                 $MontoDivisaVueltos = $request->get('MontoDivisaV');
                                 $divisaVueltos = $request->get('divisaV');
                                 $TasaTikeVueltos = $request->get('TasaTikeV');
                                 $MontoDolarVueltos = $request->get('MontoDolarV');
 
-
                                 $MontoDivisaVueltos = array_filter($MontoDivisaVueltos);
 
-
                                 foreach ($MontoDivisaVueltos as $key => $val) {
-
-
                                     $Vdivisav[] = $divisaVueltos[$key];
                                     $VMontoDivisav[] = $MontoDivisaVueltos[$key];
                                     $VTasaTiketv[] = $TasaTikeVueltos[$key];
                                     $VMontoDolarv[] = $MontoDolarVueltos[$key];
                                 }
 
-
-
-
                                 // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
                                 //creamos un contador
                                 $cont = 0;
 
-
                                 while ($cont < count($VMontoDolarv)) {
-
-
                                     $Pago_Consumo_Vueltos = new Temp_Pago_Vuelto();
                                     $Pago_Consumo_Vueltos->Tipo = 'Pendiente';
                                     $Pago_Consumo_Vueltos->Divisa = $Vdivisav[$cont];
@@ -2368,22 +2328,15 @@ class ServicioController extends Controller
 
                                     $cont = $cont + 1;
                                 }
-
-
                                 // return $RestarVtossPtesToVtosPtes;
 
                             }
-                            return 'no entro a isVuelos';
-                            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-                            ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+                            // return 'no entro a isVuelos';
 
                             $totalResta = $montoResta;
-
                             // return 'totalResta '.$totalResta;
                             $pg = 0;
                             while ($totalResta > 0) {
-
                                 $TotalExcedenteData = Excedentes_Recibidos_Caja_Actual::where('servicio_id', $id)
                                     ->where('caja_id', $request->get('caja_id'))
                                     ->where('Estado', 'Pendiente')
@@ -2401,7 +2354,6 @@ class ServicioController extends Controller
                                     ->orderBy('MontoDolar', 'ASC')
                                     ->get();
 
-
                                 $TotalVueltoTempSumados = Temp_Pago_Vuelto::where('servicio_id', $id)
                                     ->where('caja_id', $request->get('caja_id'))
                                     ->where('Tipo', 'Pendiente')
@@ -2418,7 +2370,6 @@ class ServicioController extends Controller
                                 if ($totalResta <= $TotalExcedenteSumado) {
 
                                     foreach ($RestarVtossPtesToVtosPtes as $RestarExcedentesPtes) {
-
                                         $TotalVueltoTemps = Temp_Pago_Vuelto::where('servicio_id', $id)
                                             ->where('caja_id', $request->get('caja_id'))
                                             ->where('Tipo', 'Pendiente')
@@ -2428,37 +2379,28 @@ class ServicioController extends Controller
                                         $D = $RestarExcedentesPtes->MontoDolar;
                                         foreach ($TotalVueltoTemps as $TotalVueltoTemp) {
                                             if ($totalResta > 0) {
-                                                //     if($pg > 0){
-                                                //         $pv = $pg;
-                                                //     }else{
-                                                //         $pv = $TotalVueltoTemp->MontoDolar;
-                                                //     }
-
-                                                // return ' pv'.$pv.' '.$D;
 
                                                 $pv = $TotalVueltoTemp->MontoDolar;
 
                                                 if ($pv == $D && $totalResta > 0 && $D > 0) {
-                                                    echo "<br><br><br>pago $pv deuda $D resta $totalResta<br><br><br>";
+                                                    // echo "<br><br><br>pago $pv deuda $D resta $totalResta<br><br><br>";
                                                     $deuda = $D;
                                                     $pg = $pv;
                                                     $op = $pv - $deuda;
                                                     $D = $op;
                                                     $totalResta = $totalResta - $pv;
 
-                                                    echo "resta $totalResta<br><br><br>";
+                                                    // echo "resta $totalResta<br><br><br>";
 
                                                     //ingresamos en la tabla vueltos
-                                                    echo  'Guardamos vueltos Tipo: ' . $RestarExcedentesPtes->Tipo . ' tipo_vuelto: Vueltos_Excedentes divisa: ' . $TotalVueltoTemp->Divisa . ' montoDivisa: ' . $TotalVueltoTemp->MontoDivisa . ' tasaTiket: ' . $TotalVueltoTemp->TasaTiket . ' montoDolar: ' . floatval($pg) . ' servicio_id : ' . $id . '  venta_id:  ' . $RestarExcedentesPtes->venta_id . ' horas_extra_id: ' . $RestarExcedentesPtes->horas_extra_id . ' caja_id: ' . $RestarExcedentesPtes->caja_id . ' <br> ';
-
-
+                                                    // echo  'Guardamos vueltos Tipo: ' . $RestarExcedentesPtes->Tipo . ' tipo_vuelto: Vueltos_Excedentes divisa: ' . $TotalVueltoTemp->Divisa . ' montoDivisa: ' . $TotalVueltoTemp->MontoDivisa . ' tasaTiket: ' . $TotalVueltoTemp->TasaTiket . ' montoDolar: ' . floatval($pg) . ' servicio_id : ' . $id . '  venta_id:  ' . $RestarExcedentesPtes->venta_id . ' horas_extra_id: ' . $RestarExcedentesPtes->horas_extra_id . ' caja_id: ' . $RestarExcedentesPtes->caja_id . ' <br> ';
 
                                                     //eliminamos el retistro de la tabla temp_pagos_vueltos
-                                                    echo "$totalResta eliminamos el id: $TotalVueltoTemp->id dela tabla temp_pagos_vueltos <br>";
+                                                    // echo "$totalResta eliminamos el id: $TotalVueltoTemp->id dela tabla temp_pagos_vueltos <br>";
 
                                                     //Actualizamos la tabla excedentes_actuals con estado devuelto
 
-                                                    echo "actualizamos el estado a devuelto <br>";
+                                                    // echo "actualizamos el estado a devuelto <br>";
 
                                                     $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
 
@@ -2466,11 +2408,10 @@ class ServicioController extends Controller
                                                         $RestarVtossPtes->Estado = 'Devueltos';
                                                         $RestarVtossPtes->update();
                                                     }
-                                                    echo 'igual <br> ';
-                                                    echo  'Actualizar registro  en la tabla Excedente_Recibidos => Tipo: ' . $RestarVtossPtes->Tipo . ' Estado: Devueltos divisa: ' . $RestarVtossPtes->Divisa . ' montoDivisa: ' . floatval($TotalVueltoTemp->MontoDivisa) . ' tasaTiket: ' . $TotalVueltoTemp->TasaTiket . ' montoDolar: ' . floatval($TotalVueltoTemp->MontoDdolar) . '<br> ';
+                                                    // echo 'igual <br> ';
+                                                    // echo  'Actualizar registro  en la tabla Excedente_Recibidos => Tipo: ' . $RestarVtossPtes->Tipo . ' Estado: Devueltos divisa: ' . $RestarVtossPtes->Divisa . ' montoDivisa: ' . floatval($TotalVueltoTemp->MontoDivisa) . ' tasaTiket: ' . $TotalVueltoTemp->TasaTiket . ' montoDolar: ' . floatval($TotalVueltoTemp->MontoDdolar) . '<br> ';
                                                     $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
                                                     $D = 0;
-
 
                                                     $Pago_Vueltos = new Pago_Vuelto();
                                                     $Pago_Vueltos->Tipo = $RestarVtossPtes->Tipo;
@@ -2488,14 +2429,14 @@ class ServicioController extends Controller
 
                                                     Temp_Pago_Vuelto::destroy($TotalVueltoTemp->id);
                                                 } else if (round($pv, 6) < round($D, 6) && $totalResta > 0 && $D > 0) {
-                                                    echo "<br><br><br>pago $pv deuda $D resta $totalResta<br><br><br>";
+                                                    // echo "<br><br><br>pago $pv deuda $D resta $totalResta<br><br><br>";
                                                     $totalResta = $totalResta - $pv;
                                                     $op = $D - $pv;
 
-                                                    echo "menor pago $pv  debia $D cantPago 0";
+                                                    // echo "menor pago $pv  debia $D cantPago 0";
                                                     $D = $op;
-                                                    echo "cantDeuda $D resta $totalResta <br>";
-                                                    echo "resta $totalResta<br><br><br>";
+                                                    // echo "cantDeuda $D resta $totalResta <br>";
+                                                    // echo "resta $totalResta<br><br><br>";
 
                                                     $RestarVtossTemp = Temp_Pago_Vuelto::findOrFail($TotalVueltoTemp->id);
 
@@ -2509,11 +2450,7 @@ class ServicioController extends Controller
                                                         Temp_Pago_Vuelto::destroy($TotalVueltoTemp->id);
                                                     }
 
-
-
-
-
-                                                    echo "actualizamos el estado a devuelto <br>";
+                                                    // echo "actualizamos el estado a devuelto <br>";
 
                                                     $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
 
@@ -2542,8 +2479,8 @@ class ServicioController extends Controller
                                                             Excedentes_Recibidos_Caja_Actual::destroy($RestarVtossPtes->id);
                                                         }
                                                     }
-                                                    echo 'menor <br> ';
-                                                    echo  'Actualizar registro  en la tabla Excedente_Recibidos => Tipo: ' . $RestarVtossPtes->Tipo . ' Estado: Devueltos divisa: ' . $RestarVtossPtes->Divisa . ' montoDivisa: ' . floatval($TotalVueltoTemp->MontoDivisa) . ' tasaTiket: ' . $TotalVueltoTemp->TasaTiket . ' montoDolar: ' . floatval($TotalVueltoTemp->MontoDdolar) . '<br> ';
+                                                    // echo 'menor <br> ';
+                                                    // echo  'Actualizar registro  en la tabla Excedente_Recibidos => Tipo: ' . $RestarVtossPtes->Tipo . ' Estado: Devueltos divisa: ' . $RestarVtossPtes->Divisa . ' montoDivisa: ' . floatval($TotalVueltoTemp->MontoDivisa) . ' tasaTiket: ' . $TotalVueltoTemp->TasaTiket . ' montoDolar: ' . floatval($TotalVueltoTemp->MontoDdolar) . '<br> ';
 
                                                     $Pago_Vueltos = new Pago_Vuelto();
                                                     $Pago_Vueltos->Tipo = $RestarVtossPtes->Tipo;
@@ -2563,12 +2500,12 @@ class ServicioController extends Controller
                                                     $RestarVtossPtess = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarVtossPtes->id);
                                                     $D = $RestarVtossPtess->MontoDolar;
                                                 } else if (round($pv, 6) > round($D, 6) && $totalResta > 0 && $D > 0) {
-                                                    echo "<br><br><br>pago $pv deuda $D resta $totalResta<br><br><br>";
+                                                    // echo "<br><br><br>pago $pv deuda $D resta $totalResta<br><br><br>";
                                                     $op = $pv - $D;
                                                     $pg = $op;
                                                     $totalResta = $totalResta - $D;
-                                                    echo "pago $D mayor a la deuda $D quedo $pg resta $totalResta <br>";
-                                                    echo "resta $totalResta<br><br><br>";
+                                                    // echo "pago $D mayor a la deuda $D quedo $pg resta $totalResta <br>";
+                                                    // echo "resta $totalResta<br><br><br>";
 
                                                     $RestarVtossTemp = Temp_Pago_Vuelto::findOrFail($TotalVueltoTemp->id);
 
@@ -2598,15 +2535,15 @@ class ServicioController extends Controller
                                                     $Pago_Vueltos->detalle__creditos__pagado_id = 0;
                                                     $Pago_Vueltos->caja_id = $request->get('caja_id');
                                                     $Pago_Vueltos->save();
-                                                    echo 'igual <br> ';
-                                                    echo  'Actualizar registro  en la tabla Excedente_Recibidos => Tipo: ' . $RestarVtossPtes->Tipo . ' Estado: Devueltos divisa: ' . $RestarVtossPtes->Divisa . ' montoDivisa: ' . floatval($TotalVueltoTemp->MontoDivisa) . ' tasaTiket: ' . $TotalVueltoTemp->TasaTiket . ' montoDolar: ' . floatval($TotalVueltoTemp->MontoDdolar) . '<br> ';
+                                                    // echo 'igual <br> ';
+                                                    // echo  'Actualizar registro  en la tabla Excedente_Recibidos => Tipo: ' . $RestarVtossPtes->Tipo . ' Estado: Devueltos divisa: ' . $RestarVtossPtes->Divisa . ' montoDivisa: ' . floatval($TotalVueltoTemp->MontoDivisa) . ' tasaTiket: ' . $TotalVueltoTemp->TasaTiket . ' montoDolar: ' . floatval($TotalVueltoTemp->MontoDdolar) . '<br> ';
                                                     $RestarVtossPtes = Excedentes_Recibidos_Caja_Actual::findOrFail($RestarExcedentesPtes->id);
                                                     $D = 0;
                                                 }
                                             }
-                                            echo "<br><br> Iteracion...<br><br>";
+                                            // echo "<br><br> Iteracion...<br><br>";
                                         }
-                                        echo "<br><br> Iteracion excedente...<br><br>";
+                                        // echo "<br><br> Iteracion excedente...<br><br>";
                                     }
                                 }
 
@@ -2615,7 +2552,7 @@ class ServicioController extends Controller
                             // return 'Finalizado...salio del while';
                         }
                     }
-return 'finalizo';
+// return 'finalizo';
                     DB::commit();
                 } catch (\Exception $e) {
 
