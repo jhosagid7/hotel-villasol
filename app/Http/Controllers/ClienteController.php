@@ -106,4 +106,40 @@ class ClienteController extends Controller
 
         return Redirect::to('ventas/cliente');
     }
+
+    public function registrarCliente(Request $request)
+    {
+
+        if($request->ajax()){
+            if ($request->documento == '') {
+                return response()->json(['msg' => 'El campo numero documento es obligatorio', 'type' => 'error', 'target' => 'error_documento']);
+            }
+
+            $is_num_documento = Persona::where('num_documento', $request->documento)->first();
+
+            if ($is_num_documento) {
+                return response()->json(['msg' => "El cliente ya se encuentra registrado con el nombre $is_num_documento->nombre...", 'type' => 'error', 'target' => 'error_documento']);
+            }
+
+            if ($request->nombre == '') {
+                return response()->json(['msg' => 'El campo nombre es obligatorio', 'type' => 'error', 'target' => 'error_nombre']);
+            }
+
+            $persona = new Persona;
+            $persona->tipo_persona = 'Cliente';
+            $persona->nombre = $request->nombre;
+            $persona->tipo_documento = 'CI.V';
+            $persona->num_documento = $request->documento;
+            $persona->direccion = $request->direccion ? $request->direccion : null;
+            $persona->save();
+
+
+
+
+
+
+            return response()->json(['msg' => 'Cliente agregdo correctamente', 'type' => 'success']);
+        }
+
+    }
 }

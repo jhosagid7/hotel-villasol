@@ -244,21 +244,21 @@
                                                                                     value="{{ $cliente->id }}_{{ $cliente->nombre }}_{{ $cliente->num_documento }}_{{ $cliente->direccion }}_{{ $cliente->isCortesia }}_{{ $cliente->isCredito }}_{{ $cliente->telefono }}_{{ $cliente->limite_fecha }}_{{ $cliente->limite_monto }}_<?php $deuda_cliente = ('App\Credito')
                                                                                                 ::where('persona_id', $cliente->id)
                                                                                                 ->select('total_deuda')
-                                                                                                ->first(); ?>{{ $deuda_cliente['total_deuda'] }}_<?php $deuda_cliente = ('App\Credito')
+                                                                                                ->first(); ?>{{ $deuda_cliente['total_deuda'] ?? 0 }}_<?php $deuda_cliente = ('App\Credito')
                                                                                                 ::where('persona_id', $cliente->id)
                                                                                                 ->select('estado_credito')
-                                                                                                ->first(); ?>{{ $deuda_cliente['estado_credito'] }}_<?php $excedente_cliente = ('App\Excedente')
+                                                                                                ->first(); ?>{{ $deuda_cliente['estado_credito'] ?? 0 }}_<?php $excedente_cliente = ('App\Excedente')
                                                                                                 ::where('persona_id', $cliente->id)
                                                                                                 ->select('excedente', 'persona_id', 'id')
-                                                                                                ->first(); ?>{{ $excedente_cliente['excedente'] }}">
+                                                                                                ->first(); ?>{{ $excedente_cliente['excedente'] ?? 0 }}">
                                                                                     {{ $cliente->nombre }} -
-                                                                                    {{ $excedente_cliente['excedente']
+                                                                                    {{ $excedente_cliente['excedente'] ?? 0
                                                                                     }}
                                                                                     -
-                                                                                    {{ $excedente_cliente['persona_id']
+                                                                                    {{ $excedente_cliente['persona_id'] ?? 0
                                                                                     }}
                                                                                     -
-                                                                                    {{ $excedente_cliente['id'] }}
+                                                                                    {{ $excedente_cliente['id'] ?? 0 }}
                                                                                 </option>
                                                                                 @php
                                                                                 $i++;
@@ -266,7 +266,7 @@
                                                                                 @endforeach
                                                                             </select>
                                                                             <div class="input-group-addon">
-                                                                                <i class="fa fa-search-plus"></i>
+                                                                                <a id="crearClientBtn" href="javascript:void(0)"><i class='glyphicon glyphicon-plus'></i></a>
                                                                             </div>
                                                                         </div>
                                                                         <!-- /.input group -->
@@ -726,6 +726,7 @@
 <div id="minuto">
 
 </div>
+
 <div id="segundo">
 
 </div>
@@ -1374,10 +1375,78 @@
         <!-- /.modal-dialog -->
     </div>
     <!-- /.modal -->
+
 </div>
+
+@include('servicios.procesos.crear_cliente_modal')
 <!-- /.content -->
 <div class="clearfix"></div>
 @push('sciptsMain')
+<script>
+    $(document).ready(function() {
+        function resetForm(){
+            $('#clienteform').trigger('reset')
+            $('#error_nombre').html('');
+            $('#error_documento').html('');
+        }
+
+        $('#crearClientBtn').click(function(){
+            resetForm()
+            $('#modalHeading').html('CREAR NUEVO CLIENTE');
+            $('#crear_cliente').modal('show');
+        });
+
+        $("#guardarClienteBtn").click(function(e){
+            e.preventDefault();
+
+            $(this).html("Guardar");
+            $.ajax({
+                data: {
+                    documento: $("#documento_cliente").val(),
+                    nombre: $("#nombre_cliente").val(),
+                    direccion: $("#direccion_cliente").val(),
+                    _token: "{{ csrf_token() }}",
+                },
+                url: "{{ route('registrar') }}",
+                type: "POST",
+                dataType: "json",
+                success: function(data){
+                    console.log('ok',data.target);
+                    if(data.type == 'error'){
+                        if(data.target == 'error_documento'){
+
+                            $('#error_documento').html(data.msg);
+                            $('#error_nombre').html('');
+                        }
+                        if(data.target == 'error_nombre'){
+                            $('#error_documento').html('');
+                            $('#error_nombre').html(data.msg);
+                        }
+
+                    }else{
+                        resetForm()
+                        $('#crear_cliente').modal('hide');
+                        toastr.success(data.msg, 'Nuevo Cliente', {timeOut:3000})
+
+                        $('#crear_cliente').modal('hide');
+                    }
+                },
+                error: function(data){
+                    resetForm()
+                    console.log('error',data);
+                    toastr.error('Ups! Ocurrio un error', 'Error!', {timeOut:3000})
+                    $(this).html("Guardar");
+                }
+            });
+        });
+    })
+
+
+
+
+
+</script>
+
 <script src="{{ asset('dist/js/moment.min.js') }}"></script>
 <script src="{{ asset('dist/js/onscan.js') }}"></script>
 <script>

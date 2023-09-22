@@ -28,20 +28,22 @@ trait CashTrait
 
     public function payWithCash2($amount = 0, $service_id,$request, $tipo, $sale_id = 0, $horas_extra_id = 0)
     {
-
-        $array = $this->convertirArrays(
-            $request->get('divisa'),
-            $request->get('MontoDivisa'),
-            $request->get('TasaTike'),
-            $request->get('MontoDolar'),
-            $request->get('Veltos')
-        );
-        // dd($array);
-        $this->subtractCachPaymment($array, $this->getTotalAmount(), $request, $tipo, $service_id, $sale_id, $horas_extra_id);
+        if($amount > 0){
+            $array = $this->convertirArrays(
+                $request->get('divisa'),
+                $request->get('MontoDivisa'),
+                $request->get('TasaTike'),
+                $request->get('MontoDolar'),
+                $request->get('Veltos')
+            );
+            // dd($array);
+            $this->subtractCachPaymment($array, $this->getTotalAmount(), $request, $tipo, $service_id, $sale_id, $horas_extra_id);
 
 
         //* This function pays with a change (Esta función paga con un vuelto)
         // $this->setTotalAmount($amount - $cash);
+        }
+
     }
 
     public function convertirArrays($divisa, $montoDivisa, $tasaTike, $montoDolar, $vueltos): array

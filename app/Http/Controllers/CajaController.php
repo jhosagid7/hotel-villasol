@@ -1760,8 +1760,9 @@ class CajaController extends Controller
         foreach ($cajas->pago_extras as $pagoVeX) {
 
             // return $cajas->pago_extras;
-            $validarPagosHorasExtras = Horas_extra::where('id', $pagoVeX->horas_extra_id)->first();
-            $cajas->SumaTotalHorasExtrasPagadosConExcedente = $cajas->SumaTotalHorasExtrasPagadosConExcedente + $validarPagosHorasExtras->pago_con_excedente;
+            $validarPagosHorasExtras = Horas_extra::where('servicio_id', $pagoVeX->servicio_id)->first();
+            // $cajas->SumaTotalHorasExtrasPagadosConExcedente = $cajas->SumaTotalHorasExtrasPagadosConExcedente + $validarPagosHorasExtras->pago_con_excedente;
+
             // return $validarPagosHorasExtras;
             // if ($validarPagosHorasExtras) {
 
@@ -1849,7 +1850,7 @@ class CajaController extends Controller
                 $cajas->TotalSumaTotalHorasExtrasFinal = $cajas->TotalSumaTotalHorasExtrasFinal + ($pagoVeX->MontoDolar);
             }
         }
-        // return $cajas->pago_extras;
+        // return $cajas->TotalSumaTotalHorasExtrasFinal;
         foreach ($cajas->horas_extras as $creditosHorasExtras) {
             if ($creditosHorasExtras->modo_pago == 'Contado' || $creditosHorasExtras->modo_pago == 'Contado-Excedente' && $creditosHorasExtras->status == 'Pagado') {
                 $cajas->SumaTotalExtra = $cajas->SumaTotalExtra + $creditosHorasExtras->total_horas_extras_otros_montos - $creditosHorasExtras->pago_con_excedente;
@@ -2001,7 +2002,7 @@ class CajaController extends Controller
                 }
             }
         }
-        // return  $cajas->SumaTotalServiciosPagadosConExcedente;
+        // return  $cajas->SumaTotalHorasExtrasPagadosConExcedente;
 
         $tasaDolarHabitacion = Tasa::where('nombre', '=', 'DolarHabitacion')->first();
         $tasaPesoHabitacion = Tasa::where('nombre', '=', 'PesoHabitacion')->first();
@@ -2056,6 +2057,11 @@ class CajaController extends Controller
 
         //         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        $sumaPagosHorasExtras = Horas_extra::where('caja_id', $cajas->id)->sum('pago_con_excedente');
+        $cajas->SumaTotalHorasExtrasPagadosConExcedente = floatval(number_format($sumaPagosHorasExtras, 2));
+
+        // return $cajas->SumaTotalHorasExtrasPagadosConExcedente;
         $appDate = Empresa::get();
         $bancos = Banco::get();
         //  return $cajas;
