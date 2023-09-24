@@ -43,6 +43,7 @@ class SearchController extends Controller
         $querys = Persona::query()
             ->when($term ?? false, function ($query, $term) {
                 $query
+                ->with('creditos', 'excedentes')
                     ->whereFullText(['nombre'], $term)
                     ->orWhereFullText(['num_documento'], $term)
                     ->orderBy('nombre', 'Asc');
@@ -51,9 +52,23 @@ class SearchController extends Controller
         $data = [];
 
         foreach ($querys as $query) {
+            $creditos = $query->creditos; // Obtener la colección de objetos de crédito relacionados con la persona
+            $excedentes = $query->excedentes; // Obtener la colección de objetos de crédito relacionados con la persona
+            $total_deuda = 0; // Variable para almacenar la suma de las deudas de los créditos
+            $estado_credito = ''; // Variable para almacenar la suma de las deudas de los créditos
+            $dispExcedente = 0; // Variable para almacenar la suma de las deudas de los créditos
+
+            foreach ($creditos as $credito) {
+                $total_deuda += $credito->total_deuda; // Sumar la deuda de cada crédito
+                $estado_credito = $credito->estado_credito; // Sumar la deuda de cada crédito
+            }
+            foreach ($excedentes as $excedente) {
+                $dispExcedente = $excedente->excedente; // Sumar la deuda de cada crédito
+            }
+
             $data[] = [
                 // 'label' => $query->nombre . ' - ' . $query->num_documento,
-                'label' => $query->nombre,
+                'label' => $query->nombre. ' - ' . $total_deuda. ' - ' . $estado_credito. ' - ' . $dispExcedente,
                 'id' => $query->id,
                 'tipo_persona' => $query->tipo_persona,
                 'nombre' => $query->nombre,
@@ -64,7 +79,10 @@ class SearchController extends Controller
                 'isCortesia' => $query->isCortesia,
                 'isCredito' => $query->isCredito,
                 'limite_fecha' => $query->limite_fecha,
-                'limite_monto' => $query->limite_monto
+                'limite_monto' => $query->limite_monto,
+                'total_deuda' => $total_deuda,
+                'estado_credito' => $estado_credito,
+                'dispExcedente' => $dispExcedente
             ];
         };
 
