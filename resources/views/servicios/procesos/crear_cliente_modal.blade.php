@@ -9,7 +9,8 @@
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title"><span class="fa fa-spinner"></span>
-                            <b id="modalHeading"></b></h4>
+                            <b id="modalHeading"></b>
+                        </h4>
                     </div>
                     <div class="modal-body" style="background-color:#fff !important;">
 
@@ -20,20 +21,24 @@
                                     <div class="input-group">
                                         <span class="input-group-addon"> N° DOCUMENTO
                                         </span>
-                                        <input type="number" class="form-control col-md-8" id="documento_cliente" name="documento_cliente"
-                                            value="" placeholder="Ej: 13021811">
+                                        <input type="number" class="form-control col-md-8" id="documento_cliente"
+                                            name="documento_cliente" value="" placeholder="Ej: 13021811">
 
                                     </div>
 
-                                        <span id="error_documento" class="text-danger er"></span>
+                                    <span id="error_documento" class="text-danger er"></span>
 
                                 </div>
+
+
+
+
 
                                 <div class="form-group">
                                     <div class="input-group">
                                         <span class="input-group-addon"> NOMBRES </span>
-                                        <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente"
-                                            value="" placeholder="Ej: Jhonny Pirela">
+                                        <input type="text" class="form-control" id="nombre_cliente"
+                                            name="nombre_cliente" value="" placeholder="Ej: Jhonny Pirela">
 
                                     </div>
                                     <span id="error_nombre" class="text-danger er"></span>
@@ -43,8 +48,9 @@
                                     <div class="input-group">
                                         <span class="input-group-addon"> DIRECCION
                                         </span>
-                                        <input type="text" class="form-control col-md-8" id="direccion_cliente" name="nombre_cliente"
-                                            value="" placeholder="Ingrese direccion (Opcional)">
+                                        <input type="text" class="form-control col-md-8" id="direccion_cliente"
+                                            name="nombre_cliente" value=""
+                                            placeholder="Ingrese direccion (Opcional)">
                                     </div>
                                 </div>
 
@@ -59,11 +65,9 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline pull-left"
-                            data-dismiss="modal">Cancelar</button>
-                        <button id="guardarClienteBtn"
-                            class="btn btn-outline ocular submit-prevent-button" type="submit"><i
-                                class='glyphicon glyphicon-plus'></i>
+                        <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Cancelar</button>
+                        <button id="guardarClienteBtn" class="btn btn-outline ocular submit-prevent-button"
+                            type="submit"><i class='glyphicon glyphicon-plus'></i>
                             Guardar</button>
 
                     </div>
@@ -75,3 +79,7 @@
     </div>
     <!-- /.modal -->
 </div>
+
+@push('sciptsMain')
+
+@endpush

@@ -54,7 +54,22 @@
 
     <link rel="stylesheet" href="{{ asset('jquery-ui-1.12.1/jquery-ui.css') }}">
     <link rel="stylesheet" href="{{asset('bower_components/toastr/css/toastr.min.css')}}">
+<style>
+        .ui-autocomplete {
+            max-height: 300px;
+            z-index: 1100;
+            overflow-y: auto;
+            /* prevent horizontal scrollbar */
+            overflow-x: hidden;
+        }
 
+        /* IE 6 doesn't support max-height
+                 * we use height instead, but this forces the menu to always be this tall
+                 */
+        * html .ui-autocomplete {
+            height: 300px;
+        }
+    </style>
 
     @yield('styles')
 
@@ -330,6 +345,14 @@
                             <i class="fa fa-th"></i> <span>Recepcion</span>
                             <span class="pull-right-container">
                                 <small class="label pull-right bg-green">new</small>
+                            </span>
+                        </a>
+                    </li>
+                    <li class="{{ request()->is('reservations') ? 'active' : '' }}">
+                        <a href="{{ asset('reservations') }}">
+                            <i class="fa fa-th"></i> <span>Reservacion</span>
+                            <span id="containerCountReservations" class="pull-right-container">
+                                <small id="countReservations" class="label pull-right bg-red"></small>
                             </span>
                         </a>
                     </li>
@@ -912,6 +935,35 @@
 
     {{-- Funtion Main --}}
     @stack('sciptsMain')
+
+    <script>
+        $(document).ready(function() {
+  // Realiza la solicitud AJAX para obtener los datos de la base de datos
+  $.ajax({
+    url: '{{ url("/search/eventos") }}', // Reemplaza 'ruta_de_tu_api' con la URL de tu API que consulta la base de datos
+    method: 'GET',
+    dataType: 'json',
+    success: function(data) {
+
+      const registrosCoincidentes = data
+
+      // Muestra el número de registros coincidentes en el elemento HTML
+      $('#contador').text(registrosCoincidentes.length);
+
+      if(registrosCoincidentes.length > 0){
+          $('#containerCountReservations').prop('hidden', false)
+          $('#countReservations').html(registrosCoincidentes.length)
+      }else{
+        $('#containerCountReservations').prop('hidden', true)
+      }
+    },
+    error: function() {
+      console.log('Error al obtener los datos de la base de datos.');
+    }
+  });
+});
+    </script>
+
     <script>
         $(document).ready(function() {
 

@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\DB;
 use App\Historial_Vueltos_Pendiente;
 use Illuminate\Support\Facades\Auth;
 use App\Excedentes_Recibidos_Caja_Actual;
+use App\Reservation;
 
 class CajaController extends Controller
 {
@@ -2059,6 +2060,7 @@ class CajaController extends Controller
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         $sumaPagosHorasExtras = Horas_extra::where('caja_id', $cajas->id)->sum('pago_con_excedente');
+        $getReservaciones = Reservation::where('caja_id', $cajas->id)->where('status', '<>', 'Cancelado')->sum('montoPago');
         $cajas->SumaTotalHorasExtrasPagadosConExcedente = floatval(number_format($sumaPagosHorasExtras, 2));
 
         // return $cajas->SumaTotalHorasExtrasPagadosConExcedente;
@@ -2067,7 +2069,7 @@ class CajaController extends Controller
         //  return $cajas;
         $verificarHorasExtras = Horas_extra::where('caja_id', $cajas->id)->get();
         // return $verificarHorasExtras;
-        return view('cajas.caja.show', compact('bancos', 'clientes_vueltos', 'appDate', 'verificarHorasExtras', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'title', 'cajas', 'caja', 'denominacion_dolar', 'denominacion_peso', 'denominacion_bolivar'))->with($mensaje);
+        return view('cajas.caja.show', compact('getReservaciones', 'bancos', 'clientes_vueltos', 'appDate', 'verificarHorasExtras', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'title', 'cajas', 'caja', 'denominacion_dolar', 'denominacion_peso', 'denominacion_bolivar'))->with($mensaje);
     }
 
     /**

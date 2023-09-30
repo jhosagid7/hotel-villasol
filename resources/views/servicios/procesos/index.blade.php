@@ -224,53 +224,28 @@
                                                                 <td colspan="2">
 
                                                                     <!-- Date dd/mm/yyyy -->
-                                                                    <div class="form-group">
-                                                                        <label>Seleccione Cliente:</label>
+
+
+                                                        <div class="form-group">
+                                                                        <label>Buscar Cliente:</label>
                                                                         <div class="input-group">
                                                                             <div class="input-group-addon">
                                                                                 <i class="fa fa-globe"></i>
                                                                             </div>
-                                                                            <select name="buscarCliente"
-                                                                                id="buscarCliente"
-                                                                                class="form-control selectpicker"
-                                                                                data-live-search="true">
-                                                                                <option value="0">Ingrese
-                                                                                    cliente para buscar</option>
-                                                                                @php
-                                                                                $i = 0;
-                                                                                @endphp
-                                                                                @foreach ($clientes as $cliente)
-                                                                                <option
-                                                                                    value="{{ $cliente->id }}_{{ $cliente->nombre }}_{{ $cliente->num_documento }}_{{ $cliente->direccion }}_{{ $cliente->isCortesia }}_{{ $cliente->isCredito }}_{{ $cliente->telefono }}_{{ $cliente->limite_fecha }}_{{ $cliente->limite_monto }}_<?php $deuda_cliente = ('App\Credito')
-                                                                                                ::where('persona_id', $cliente->id)
-                                                                                                ->select('total_deuda')
-                                                                                                ->first(); ?>{{ $deuda_cliente['total_deuda'] ?? 0 }}_<?php $deuda_cliente = ('App\Credito')
-                                                                                                ::where('persona_id', $cliente->id)
-                                                                                                ->select('estado_credito')
-                                                                                                ->first(); ?>{{ $deuda_cliente['estado_credito'] ?? 0 }}_<?php $excedente_cliente = ('App\Excedente')
-                                                                                                ::where('persona_id', $cliente->id)
-                                                                                                ->select('excedente', 'persona_id', 'id')
-                                                                                                ->first(); ?>{{ $excedente_cliente['excedente'] ?? 0 }}">
-                                                                                    {{ $cliente->nombre }} -
-                                                                                    {{ $excedente_cliente['excedente'] ?? 0
-                                                                                    }}
-                                                                                    -
-                                                                                    {{ $excedente_cliente['persona_id'] ?? 0
-                                                                                    }}
-                                                                                    -
-                                                                                    {{ $excedente_cliente['id'] ?? 0 }}
-                                                                                </option>
-                                                                                @php
-                                                                                $i++;
-                                                                                @endphp
-                                                                                @endforeach
-                                                                            </select>
+                                                            <input autofocus type="text" name="nombrea"
+                                                                id="nombrea" class="form-control"
+                                                                placeholder="Buscar cliente por nombre o C.I./RIF...">
                                                                             <div class="input-group-addon">
                                                                                 <a id="crearClientBtn" href="javascript:void(0)"><i class='glyphicon glyphicon-plus'></i></a>
+                                                                                <a id="crearClientBtnDesabled" href="javascript:void(0)"><i class='glyphicon glyphicon glyphicon-search disabled'></i></a>
                                                                             </div>
                                                                         </div>
                                                                         <!-- /.input group -->
+                                                                        <span id="nombreamesagge" class="text-red"></span>
                                                                     </div>
+
+
+
 
                                                                     {{-- <div class="form-group">
                                                                         <label>Tipo de Documento:</label>
@@ -317,6 +292,7 @@
                                                                         </div>
                                                                         <!-- /.input group -->
                                                                     </div>
+
 
                                                                     <div class="form-group">
                                                                         <label>Nombres:</label>
@@ -580,15 +556,10 @@
 
                                                                     <div class="box-footer">
                                                                         <a href="index.php?view=recepcion"
-                                                                            class="btn btn-danger">Cancelar</a>
+                                                                            class="btn btn-danger hidden">Cancelar</a>
                                                                         <input type="hidden" name="id_habitacion"
                                                                             value="<?php echo $habitacion->id; ?>">
-                                                                        <button type="submit"
-                                                                            class="btn btn-success pull-right hidden">Registrar
-                                                                            ingreso</button>
-                                                                        <button type="button" id="procesoH"
-                                                                            class="btn btn-success pull-right hidden">Registrar
-                                                                            ingreso</button>
+
                                                                     </div>
 
                                                                 </td>
@@ -1383,6 +1354,249 @@
 <div class="clearfix"></div>
 @push('sciptsMain')
 <script>
+        //# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+        // Se encarga de traer los clentes de la base de datos del archivo searchController y manejar las validaciones del apartado efectivo
+        // #####################################################################################################
+        $(document).ready(function() {
+            $('#nombrea').autocomplete({
+                source: function(request, response) {
+                    $.ajax({
+                        url: "{{ route('search.personas') }}",
+                        dataType: 'json',
+                        data: {
+                            term: request.term
+                        },
+                        success: function(data) {
+                            response(data)
+                            console.log('respuesta ', data.item);
+
+                        }
+
+                    });
+
+                },
+                response: function(event, ui) {
+                    if (!ui.content.length) {
+                        $("#cliente_id").val('');
+                        $("#nombre").val('');
+                        $("#num_documento").val('');
+                        $("#direccion").val('');
+                        $("#telefono").val('');
+                        $("#email").val('');
+                        $("#limite_fecha").val('');
+                        $("#limite_monto").val('');
+                        $("#is_cortesia").val('');
+                        $("#is_credito").val('');
+                        $("#total_credito_pendiente").val('');
+                        $("#estado_credito").val('');
+                        $("#nombreamesagge").removeClass("text-green");
+                        $("#nombreamesagge").addClass("text-red");
+                        $("#nombreamesagge").text('!Cliente no encontrado...');
+                        $("#guardarFormaPago").addClass("hidden");
+
+                        $("#nombre").removeAttr("readonly");
+                        // $("#nombre").addClass("readonly");
+                        $("#nombre").blur();
+                        $("#nombre").keyup();
+
+                        $('#crearClientBtn').show();
+                        $('#crearClientBtnDesabled').hide();
+                    }else{
+                        $('#crearClientBtn').hide();
+                        $('#crearClientBtnDesabled').show();
+                    }
+                },
+                minLength: 3,
+                select: function(event, ui) {
+                    // alert(ui.item.label);
+                    // $("#nombrea").val(ui.item.label);
+
+                    let isCortesia = ui.item.isCortesia;
+                    let isCredito = ui.item.isCredito;
+
+                    $("#cliente_id").val(ui.item.id);
+                    $("#nombre").val(ui.item.nombre);
+                    $("#num_documento").val(ui.item.num_documento);
+                    $("#direccion").val(ui.item.direccion);
+                    $("#telefono").val(ui.item.telefono);
+                    $("#email").val(ui.item.email);
+                    $("#limite_fecha").val(ui.item.limite_fecha);
+                    $("#limite_monto").val(ui.item.limite_monto);
+                    $("#is_cortesia").val(ui.item.isCortesia);
+                    $("#is_credito").val(ui.item.isCredito);
+                    $("#total_credito_pendiente").val(ui.item.total_deuda);
+                    $("#estado_credito").val(ui.item.estado_credito);
+                    $("#nombrea").val('');
+                    // $('#codigo').val(ui.item.codigo)
+                    $("#nombreamesagge").removeClass("text-red");
+                    $("#nombreamesagge").addClass("text-green");
+                    $("#nombreamesagge").text('¡Cliente encontrado!');
+
+                    // $("#nombre").removeClass("text-red");
+                    $("#nombre").attr("readonly", "readonly");
+                    // $("#nombre").addClass("readonly");
+                    $("#nombre").blur();
+                    $("#nombre").keyup();
+
+                    let deuda_credito_pendiente = $("#total_credito_pendiente").val();
+                    // alert(deuda_credito_pendiente);
+                    let limite_fecha_credito = $("#limite_fecha").val();
+                    let limite_monto_credito = $("#limite_monto").val();
+                    let credito_disponible = 0;
+
+                    if (deuda_credito_pendiente) {
+                        credito_disponible = limite_monto_credito - deuda_credito_pendiente;
+                    } else {
+                        credito_disponible = limite_monto_credito;
+                    }
+
+                    $("#dispCredito").val(credito_disponible);
+
+                    $("#dispExcedente").val(ui.item.dispExcedente);
+                    var verCajaExcedente = ui.item.dispExcedente;
+                    console.log(verCajaExcedente)
+                    if (verCajaExcedente > 0) {
+                        $("#excedente").show();
+                        $("#ex").show();
+                        $("#excdt").show();
+
+                    } else {
+                        $("#excedente").hide();
+                        $("#ex").hide();
+                        $("#excdt").hide();
+                    }
+
+
+                    let dispCredito = credito_disponible;
+                    let dispExcedente = ui.item.dispExcedente;
+
+                    $("#dispCreditoShow").html('$' + dispCredito);
+                    $("#dispExcedenteShow").html('$' + dispExcedente);
+
+
+                    if (isCortesia) {
+                        let precio = $("#precioDolarHabitacio").val();
+                        $("#precio_costo").val(precio);
+                        $('#cortesia').show(); //Boton Procesar Cortesia QR
+                        $('#precortesia').show();
+                        // console.log('Este cliente puede tener credito');
+                    } else {
+                        $('#cortesia').hide();
+                        $('#precortesia').hide();
+                    }
+                    if (isCredito) {
+                        let precio = $("#precioDolarHabitacio").val();
+                        $("#precio_costo").val(precio);
+                        // console.log('Este cliente puede tener credito');
+                        $('#credito').show(); //Boton Procesar Creditos QR
+                        $('#precredito').show();
+
+                    } else {
+
+                        $('#credito').hide();
+                        $('#precredito').hide();
+                    }
+
+
+                    return false;
+                },
+                // focus: function( event, ui ) {
+                //     $("#num_documento_oficina").val(ui.item.num_documento);
+                //     $("#nombre").val(ui.item.nombre);
+                //     $("#nombre").attr("readonly","readonly");
+                //     $("#nombre").keyup();
+                //     // $("#nombre").blur();
+                // },
+            });
+
+            $("#num_documento").click(function() {
+
+                let leng = $(this).val().length;
+
+                if (leng < 7) {
+                    $("#num_documento_oficina_mesagge").removeClass("text-green");
+                    $("#num_documento_oficina_mesagge").addClass("text-red");
+                    $("#num_documento_oficina_mesagge").text('!Tiene que ingrasar mas de 7 numeros...');
+                    $("#guardarFormaPago").addClass("hidden");
+                    return false;
+                }
+
+                $("#num_documento_oficina_mesagge").removeClass("text-red");
+                $("#num_documento_oficina_mesagge").addClass("text-green");
+                $("#num_documento_oficina_mesagge").text('¡Se ve bien!');
+
+            });
+
+            $("#nombre").keyup(function() {
+                $("#num_documento").click();
+
+                let leng = $(this).val().length;
+
+                if (leng < 4) {
+                    $("#nombre_mesagge").removeClass("text-green");
+                    $("#nombre_mesagge").addClass("text-red");
+                    $("#nombre_mesagge").text('!Tiene que ingrasar mas de 4 caracteres...');
+                    $("#guardarFormaPago").addClass("hidden");
+                    return false;
+                }
+
+                $("#nombre_mesagge").removeClass("text-red");
+                $("#nombre_mesagge").addClass("text-green");
+                $("#nombre_mesagge").text('¡Cliente encontrado!');
+                $("#guardarFormaPago").removeClass("hidden");
+
+
+            });
+
+            $("#nombre").blur(function() {
+                let is_num_documento = $("#num_documento").val();
+                let is_nombre = $("#nombre").val();
+                let leng = $(this).val().length;
+
+                if (is_num_documento == '' || is_nombre == '' || leng < 4) {
+                    $("#guardarFormaPago").addClass("hidden");
+                    $("#nombre").keyup();
+                } else {
+                    $("#nombre").keyup();
+                    $("#guardarFormaPago").removeClass("hidden");
+                }
+            });
+
+            $("#nombrea").blur(function() {
+                let is_num_documento = $("#num_documento").val();
+                let is_nombre = $("#nombre").val();
+                let is_nombrea = $("#nombrea").val();
+                let is_dcliente_id = $("#cliente_id").val();
+                if (is_dcliente_id === '' && !is_nombrea == '') {
+                    document.getElementById("nombre").focus();
+                    $("#num_documento").removeAttr("readonly");
+                    $("#nombre").removeAttr("readonly");
+                    $("#nombre").blur();
+                    $("#nombre").keyup();
+
+                } else if (is_dcliente_id) {
+                    $("#nombre").attr("readonly", "readonly");
+                    document.getElementById("nombre").focus();
+                    $("#nombre").blur();
+                    $("#nombre").keyup();
+                    $("#guardarFormaPago").removeClass("hidden");
+                } else {
+                    $("#nombre").blur();
+                    $("#nombre").keyup();
+
+                }
+
+            });
+
+
+            // #####################################################################################################
+            //
+            // #####################################################################################################
+
+            // #####################################################################################################
+        });
+    </script>
+<script>
     $(document).ready(function() {
         function resetForm(){
             $('#clienteform').trigger('reset')
@@ -1390,6 +1604,7 @@
             $('#error_documento').html('');
         }
 
+        $('#crearClientBtn').hide();
         $('#crearClientBtn').click(function(){
             resetForm()
             $('#modalHeading').html('CREAR NUEVO CLIENTE');
@@ -4721,7 +4936,7 @@
                 onScan.attachTo(document, {
                     //configuración del sufijo/ tecla esperada al finalizar la lectura del scan, esto indica a onScan la finalización del evento
                     suffixKeyCodes: [13],
-                    minLength: 2,
+                    avgTimeByChar: 100,
                     onScan: function(barcode) { //función callback que se dispara después de una lectura
                         console.log(barcode)
                         // alert(barcode);

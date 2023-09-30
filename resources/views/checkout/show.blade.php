@@ -999,6 +999,9 @@ if(isset($servicio->id)){
                                                                             <h5 class='text-bold  text-primary'>Vueltos en oficina: <b class='text-black'>{{ $vueltos_oficina ?? 0 }}</b></h5>
                                                                         @endif
                                                                         @if ($vueltos_caja)
+                                                                        <input class="form-control" type="text"
+                                                                            id="vueltos_caja"
+                                                                            name="vueltos_caja" value="{{ $vueltos_caja ?? 0 }}">
                                                                             <h5 class='text-bold text-primary'>Vueltos en caja: <b class='text-black'>{{ $vueltos_caja ?? 0 }}</b></h5>
                                                                         @endif
                                                                     </div>
@@ -2401,6 +2404,7 @@ if(isset($servicio->id)){
 
             $("#dualbtn").click(function() {
                 let valorDeuda = $('#total').val();
+                let vueltos_caja = $('#vueltos_caja').val()
 
                 // return false;
                 if (valorDeuda > 0) {
@@ -2409,18 +2413,20 @@ if(isset($servicio->id)){
                     $("#pagoPendienteBtn").click();
                     // console.log('tienes deuda pendiente'+$valorDeuda);
                     return false;
-                }
-
-                if (VueltosvtosPendientes > 0) {
+                }else{
+                    if (vueltos_caja > 0) {
                     // alert(VueltosvtosPendientes);
                     $("#modalPagoPendienteOpcionesBtn").click();
-                    $("#countVueltosPendientes").html('$' + VueltosvtosPendientes);
+                    $("#countVueltosPendientes").html('$' + vueltos_caja);
 
 
 
 
                     return false;
                 }
+                }
+
+
                 alert('No posee deuda ni hay vueltos pendientes por entregar...');
                 return false;
 
@@ -2431,6 +2437,7 @@ if(isset($servicio->id)){
             $(document).ready(function() {
                 $("#imprimirBoleta").click(function() {
                     let valorDeuda = $('#total').val();
+                    let vueltos_caja = $('#vueltos_caja').val()
 
                     // return false;
                     if (valorDeuda > 0) {
@@ -2439,7 +2446,18 @@ if(isset($servicio->id)){
                         $("#pagoPendienteBtn").click();
                         // console.log('tienes deuda pendiente'+$valorDeuda);
                         return false;
-                    }
+                    }else{
+                    if (vueltos_caja > 0) {
+                    // alert(VueltosvtosPendientes);
+                    $("#modalPagoPendienteOpcionesBtn").click();
+                    $("#countVueltosPendientes").html('$' + vueltos_caja);
+
+
+
+
+                    return false;
+                }
+                }
 
                     if (VueltosvtosPendientes > 0) {
                         // alert(VueltosvtosPendientes);
@@ -2475,8 +2493,9 @@ if(isset($servicio->id)){
 
                 // console.log('todo bien');
                 if (VueltosvtosPendientes > 0) {
+                    let vueltos_caja = $("#vueltos_caja").val()
 
-                    pagoVueltosPendiente(VueltosvtosPendientes);
+                    pagoVueltosPendiente(vueltos_caja);
                     // alert('VueltosvtosPendientes '+VueltosvtosPendientes);
                     return false;
                 }
@@ -2740,6 +2759,7 @@ if(isset($servicio->id)){
             $("#cargarExcedente").on('click', function() {
                 let band = $("#banderaHorasExtras").val();
                 let VueltosdispExcedente = $("#VueltosdispExcedente").val();
+                let vueltos_caja = $('#vueltos_caja').val()
                 let PagoTtotal = document.getElementById('PagoTtotal');
 
                 if(band == 'pagarVueltosPendientes'){
@@ -2750,9 +2770,9 @@ if(isset($servicio->id)){
                     input.prop("readonly", false);
                      if (vcarexcdt == 0) {
                         // alert(PagoTtotalinnerHTML);
-                        if (parseFloat(VueltosdispExcedente) >= parseFloat(PagoTtotal.innerHTML)) {
+                        if (parseFloat(vueltos_caja) >= parseFloat(PagoTtotal.innerHTML)) {
                             // alert('mayor');
-                            $('#VueltospagoConExcedente').val(parseFloat(VueltosdispExcedente));
+                            $('#VueltospagoConExcedente').val(parseFloat(vueltos_caja));
                             DMontoDolar();
                             vcarexcdt = 1;
                         }
@@ -2824,7 +2844,7 @@ if(isset($servicio->id)){
                     }
                     if (band == 'pagarVueltosPendientes') {
                         // alert(band);
-                        // let cantVueltos = $('VueltosdispExcedenteShow').text();
+                        // let cantVueltos = $('VueltosdispExcedenteShow').text();{{ $vueltos_caja ?? 0 }}
                         let cantVueltos = document.getElementById('VueltosdispExcedenteShow');
                         let cantVueltosUsados = document.getElementById('Vueltosexcdt');
                         let restaTotalV = document.getElementById('RestaTtotalV');
@@ -4504,7 +4524,7 @@ if(isset($servicio->id)){
                         $("#dispExcedenteShow").html('$' + dispExced.toFixed(2));
                     }
                     if (validarDispExced) {
-                        alert('El montoddd disponible no supera el monto a pagar... Credito disponible es de: $' +
+                        alert('El monto disponible no supera el monto a pagar... Credito disponible es de: $' +
                             dispExcedente + ' y el monto que decea pagar es de: $' + dispExced.toFixed(2));
                         pagoExc = 0;
                         excedenteDispSet = $("#dispExcedente").val();
@@ -4531,29 +4551,49 @@ if(isset($servicio->id)){
                     VueltospagoExced = VueltosExc;
 
                     if (VueltospagoExced > 0) {
+                        let band = $('#banderaHorasExtras').val()
 
-                        var VueltosdispExcedente = $("#VueltosdispExcedente").val();
+                        if(band == 'pagarVueltosPendientes'){
+                            var VueltosdispExcedente = $("#vueltos_caja").val();
 
-                        var VueltosdispExced = VueltosdispExcedente - VueltospagoExced;
+                            var VueltosdispExced = VueltosdispExcedente - VueltospagoExced;
 
-                        // 0.1 <= (0.3 - 0.2)                              // false
-                        VueltosdispExced = new Decimal(VueltosdispExced);
-                        // dispExced.lessThanOrEqualTo(Decimal(0.3).minus(0.2))    // true
-                        // new Decimal(-1).lte(x)
-                        var VueltosvalidarDispExced = VueltosdispExced.isNeg();
-                        // alert(validarDispExced);
+                            // 0.1 <= (0.3 - 0.2)                              // false
+                            VueltosdispExced = new Decimal(VueltosdispExced);
+                            // dispExced.lessThanOrEqualTo(Decimal(0.3).minus(0.2))    // true
+                            // new Decimal(-1).lte(x)
+                            var VueltosvalidarDispExced = VueltosdispExced.isNeg();
+                            // alert(validarDispExced);
 
-                        $("#VueltosdispExcedenteShow").html(parseFloat(VueltosdispExced.toFixed(6)));
+                            $("#VueltosdispExcedenteShow").html(parseFloat(VueltosdispExced.toFixed(6)));
+                        }else{
+                            var VueltosdispExcedente = $("#VueltosdispExcedente").val();
+
+                            var VueltosdispExced = VueltosdispExcedente - VueltospagoExced;
+
+                            // 0.1 <= (0.3 - 0.2)                              // false
+                            VueltosdispExced = new Decimal(VueltosdispExced);
+                            // dispExced.lessThanOrEqualTo(Decimal(0.3).minus(0.2))    // true
+                            // new Decimal(-1).lte(x)
+                            var VueltosvalidarDispExced = VueltosdispExced.isNeg();
+                            // alert(validarDispExced);
+
+                            $("#VueltosdispExcedenteShow").html(parseFloat(VueltosdispExced.toFixed(6)));
+                        }
+
+
                     }
 
 
                     if (VueltosvalidarDispExced) {
-                        alert('El monto disponible no supera el monto a pagar... Deuda disponible es de: $' +
-                            VueltosdispExcedente + ' y el monto que decea pagar es de: $' + VueltosdispExced.toFixed(2));
-                        VueltospagoExc = 0;
-                        VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
-                        $('#VueltospagoConExcedente').val('');
-                        $("#VueltosdispExcedenteShow").html(parseFloat(VueltosexcedenteDispSet));
+                        if(band == 'pagarVueltosPendientes'){
+                            alert('El monto disponible no supera el monto a pagar... Deuda disponible es de: $' +
+                                VueltosdispExcedente + ' y el monto que decea pagar es de: $' + VueltosdispExced.toFixed(2));
+                            VueltospagoExc = 0;
+                            VueltosexcedenteDispSet = $("#VueltosdispExcedente").val();
+                            $('#VueltospagoConExcedente').val('');
+                            $("#VueltosdispExcedenteShow").html(parseFloat(VueltosexcedenteDispSet));
+                        }
                     }
 
                 } else {

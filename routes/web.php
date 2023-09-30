@@ -204,3 +204,8 @@ Route::get('search/articulos/cargos', 'SearchController@articulosCargos')->name(
 Route::get('search/personas', 'SearchController@personas')->name('search.personas');
 
 Route::POST('registrar', 'ClienteController@registrarCliente')->name('registrar');
+
+Route::resource('reservations', 'ReservationController');
+
+Route::get('search/eventos', 'SearchController@showFiltered')->name('search.eventos');
+Route::get('search/service', 'SearchController@saveNumberService')->name('search.service');
