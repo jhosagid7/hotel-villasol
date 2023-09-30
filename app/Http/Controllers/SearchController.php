@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Tasa;
 use App\Persona;
 use App\Articulo;
+use Carbon\Carbon;
+use App\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -43,6 +45,7 @@ class SearchController extends Controller
         $querys = Persona::query()
             ->when($term ?? false, function ($query, $term) {
                 $query
+                ->with('creditos', 'excedentes')
                     ->whereFullText(['nombre'], $term)
                     ->orWhereFullText(['num_documento'], $term)
                     ->orderBy('nombre', 'Asc');
@@ -51,9 +54,23 @@ class SearchController extends Controller
         $data = [];
 
         foreach ($querys as $query) {
+            $creditos = $query->creditos; // Obtener la colección de objetos de crédito relacionados con la persona
+            $excedentes = $query->excedentes; // Obtener la colección de objetos de crédito relacionados con la persona
+            $total_deuda = 0; // Variable para almacenar la suma de las deudas de los créditos
+            $estado_credito = ''; // Variable para almacenar la suma de las deudas de los créditos
+            $dispExcedente = 0; // Variable para almacenar la suma de las deudas de los créditos
+
+            foreach ($creditos as $credito) {
+                $total_deuda += $credito->total_deuda; // Sumar la deuda de cada crédito
+                $estado_credito = $credito->estado_credito; // Sumar la deuda de cada crédito
+            }
+            foreach ($excedentes as $excedente) {
+                $dispExcedente = $excedente->excedente; // Sumar la deuda de cada crédito
+            }
+
             $data[] = [
                 // 'label' => $query->nombre . ' - ' . $query->num_documento,
-                'label' => $query->nombre,
+                'label' => $query->nombre. ' - ' . $total_deuda. ' - ' . $estado_credito. ' - ' . $dispExcedente,
                 'id' => $query->id,
                 'tipo_persona' => $query->tipo_persona,
                 'nombre' => $query->nombre,
@@ -64,7 +81,10 @@ class SearchController extends Controller
                 'isCortesia' => $query->isCortesia,
                 'isCredito' => $query->isCredito,
                 'limite_fecha' => $query->limite_fecha,
-                'limite_monto' => $query->limite_monto
+                'limite_monto' => $query->limite_monto,
+                'total_deuda' => $total_deuda,
+                'estado_credito' => $estado_credito,
+                'dispExcedente' => $dispExcedente
             ];
         };
 
@@ -205,4 +225,44 @@ class SearchController extends Controller
         $factor = pow(10, $decimales);
         return (round($numero * $factor) / $factor);
     }
+
+    public function showFiltered()
+    {
+        // Obtén la fecha actual
+        $fechaActual = Carbon::now()->toDateString();
+        // return  $fechaActual;
+
+        // Realiza el filtrado de los registros según los criterios
+        $registrosFiltrados = Reservation::whereDate('start', '=', $fechaActual)
+                      ->where('status', 'Pendiente')
+                      ->get();
+        // return  $registrosFiltrados;
+
+        // Devuelve los registros filtrados en formato JSON
+        return response()->json($registrosFiltrados);
+    }
+
+    public function saveNumberService(Request $request)
+    {
+        // Obtener el número de servicio del request
+        $numServicio = $request->input('numServicio');
+        $reservationId = $request->input('reservationId');
+
+        // Guardar el número de servicio en la tabla "Reservations"
+
+        $upReservation = Reservation::findOrFail($reservationId);
+        if ($upReservation) {
+            $upReservation->numServicio = $numServicio;
+            $upReservation->status = 'Procesado';
+            $upReservation->color = '#118F00';
+            $upReservation->update();
+        }
+
+
+        // Retornar una respuesta de éxito
+
+        return response()->json(['msg' => 'Numero de servicio guardado con exito...', 'type' => 'success']);
+        // return response()->json(['message' => 'Número de servicio guardado satisfactoriamente']);
+    }
+
 }

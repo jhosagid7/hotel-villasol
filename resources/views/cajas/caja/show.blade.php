@@ -668,8 +668,13 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
-                                                        <th></th>
-                                                        <td></td>
+                                                        <th>
+                                                            <h4><strong class="text-aqua">Reservaciones:</h4></strong>
+                                                        </th>
+                                                        <td>
+                                                            <h4><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h4></strong>
+                                                        </td>
                                                         <td></td>
                                                         {{-- - $cajas->SumaTotalServiciosExcedenteNuevo --}}
                                                         <th>
