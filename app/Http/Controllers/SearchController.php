@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Tasa;
 use App\Persona;
 use App\Articulo;
+use Carbon\Carbon;
+use App\Reservation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -223,4 +225,44 @@ class SearchController extends Controller
         $factor = pow(10, $decimales);
         return (round($numero * $factor) / $factor);
     }
+
+    public function showFiltered()
+    {
+        // Obtén la fecha actual
+        $fechaActual = Carbon::now()->toDateString();
+        // return  $fechaActual;
+
+        // Realiza el filtrado de los registros según los criterios
+        $registrosFiltrados = Reservation::whereDate('start', '=', $fechaActual)
+                      ->where('status', 'Pendiente')
+                      ->get();
+        // return  $registrosFiltrados;
+
+        // Devuelve los registros filtrados en formato JSON
+        return response()->json($registrosFiltrados);
+    }
+
+    public function saveNumberService(Request $request)
+    {
+        // Obtener el número de servicio del request
+        $numServicio = $request->input('numServicio');
+        $reservationId = $request->input('reservationId');
+
+        // Guardar el número de servicio en la tabla "Reservations"
+
+        $upReservation = Reservation::findOrFail($reservationId);
+        if ($upReservation) {
+            $upReservation->numServicio = $numServicio;
+            $upReservation->status = 'Procesado';
+            $upReservation->color = '#118F00';
+            $upReservation->update();
+        }
+
+
+        // Retornar una respuesta de éxito
+
+        return response()->json(['msg' => 'Numero de servicio guardado con exito...', 'type' => 'success']);
+        // return response()->json(['message' => 'Número de servicio guardado satisfactoriamente']);
+    }
+
 }
