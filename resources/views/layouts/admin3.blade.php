@@ -632,6 +632,12 @@
                 @endcan -->
                             </ul>
                         </li>
+                        <li class="{{ request()->is('/log-viewer') ? 'active' : '' }}">
+                        <a href="{{ asset('/log-viewer') }}">
+                            <i class="fa fa-history"></i> <span>Visor de logs</span>
+
+                        </a>
+                    </li>
                     </ul>
                 @endcan
             </section>
