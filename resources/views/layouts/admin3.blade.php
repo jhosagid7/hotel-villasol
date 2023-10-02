@@ -632,9 +632,15 @@
                 @endcan -->
                             </ul>
                         </li>
-                        <li class="{{ request()->is('/log-viewer') ? 'active' : '' }}">
+                        {{--  <li class="{{ request()->is('/log-viewer') ? 'active' : '' }}">
                         <a href="{{ asset('/log-viewer') }}">
                             <i class="fa fa-history"></i> <span>Visor de logs</span>
+
+                        </a>
+                    </li>  --}}
+                        <li class="{{ request()->is('/backup') ? 'active' : '' }}">
+                        <a href="{{ asset('/backup') }}">
+                            <i class="fa fa-database"></i> <span>Backups</span>
 
                         </a>
                     </li>

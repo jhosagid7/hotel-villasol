@@ -21,6 +21,7 @@
         "laravel/ui": "^3.0",
         "mike42/escpos-php": "^3.0",
         "milon/barcode": "^8.0",
+        "pavel-mironchik/laravel-backup-panel": "^2.2",
         "simplesoftwareio/simple-qrcode": "^4.2",
         "spatie/laravel-backup": "^6.11"
     },

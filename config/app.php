@@ -174,6 +174,10 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Spatie\Backup\BackupServiceProvider::class,
+        App\Providers\LaravelBackupPanelServiceProvider::class,
+
+
 
         //Propios
         Milon\Barcode\BarcodeServiceProvider::class,
