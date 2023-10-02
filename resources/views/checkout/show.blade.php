@@ -536,13 +536,7 @@ if(isset($servicio->id)){
                                                 name="sumar">
                                                 @csrf
                                                 @method('PUT')
-                                                {{-- <input type="hidden" name="quetal" value="{{$servicio->habitacion_id ?? ''}}"> --}}
-                                                <input type="hidden" name="id_habitacion"
-                                                    value="{{ $servicio->habitacion_id ?? '' }}">
-                                                <button type="botton" name="boleta" id="imprimirBoleta"
-                                                    class="btn btn-success pull-right"><i class='fa fa-print'></i>
-                                                    Imprimir Boleta</button>
-                                                {{-- <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button> --}}
+
                                             </form>
 
                                         </div>
@@ -2459,10 +2453,10 @@ if(isset($servicio->id)){
                 }
                 }
 
-                    if (VueltosvtosPendientes > 0) {
+                    if (vueltos_caja > 0) {
                         // alert(VueltosvtosPendientes);
                         $("#modalPagoPendienteOpcionesBtn").click();
-                        $("#countVueltosPendientes").html('$' + VueltosvtosPendientes);
+                        $("#countVueltosPendientes").html('$' + vueltos_caja);
 
 
 
