@@ -1871,6 +1871,7 @@ class CajaController extends Controller
         // return $cajas->SumaTotalHorasExtrasCortesia;
         // return $cajas->horas_extras;
         // return $cajas;
+
         foreach ($cajas->servicios as $serv) {
             if ($serv->estado == 'Aceptada') {
                 if ($serv->status == 'Pagado') {
@@ -1927,6 +1928,9 @@ class CajaController extends Controller
                     // return $serv;
                     //////////////////////////////////////////////////////////////////////////////////////////
                     //contavilizamos cuanto hay pagado con excedente
+                    // return $cajas->SumaTotalConsumoPagadosConExcedente;
+                    // return $serv;
+                    // return $cajas->SumaTotalServiciosPagadosConExcedente;
                     $cajas->SumaTotalServiciosPagadosConExcedente = $cajas->SumaTotalServiciosPagadosConExcedente + $serv->pago_con_excedente;
 
                     if ($serv->tipo_pago == 'Dolar') {
