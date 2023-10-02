@@ -91,8 +91,10 @@ trait ChangeSavedTrait
                 }
 
                 if($tipo == "Servicio"){
+                    // dd('$tipo == "Servicio"', $servicio_id);
                     // Update Ventas table
-                    $UpdateModel = Servicio::findOrFail($servicio_id);
+                    $servicio_id = Servicio::latest('created_at')->first();
+                    $UpdateModel = Servicio::findOrFail($servicio_id->id);
                 }
 
                 if($tipo == "Horas_Extras"){
@@ -176,7 +178,9 @@ trait ChangeSavedTrait
 
                 if ($tipo == "Servicio") {
                     // Update Ventas table
-                    $UpdateModel = Servicio::findOrFail($servicio_id);
+                    $servicio_id = Servicio::latest('created_at')->first();
+                    // dd('$tipo == "Servicio"', $servicio_id);
+                    $UpdateModel = Servicio::findOrFail($servicio_id->id);
                 }
 
                 if ($tipo == "Horas_Extras") {
@@ -202,6 +206,7 @@ trait ChangeSavedTrait
 
     public function UpdatePagoConExcedente(object $object, float $amount)
     {
+        // dd('UpdatePagoConExcedente()', $amount);
         if ($object) {
             $object->pago_con_excedente = $amount;
             $object->update();

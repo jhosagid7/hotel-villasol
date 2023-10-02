@@ -999,7 +999,7 @@ if(isset($servicio->id)){
                                                                             <h5 class='text-bold  text-primary'>Vueltos en oficina: <b class='text-black'>{{ $vueltos_oficina ?? 0 }}</b></h5>
                                                                         @endif
                                                                         @if ($vueltos_caja)
-                                                                        <input class="form-control" type="text"
+                                                                        <input class="form-control hidden" type="text"
                                                                             id="vueltos_caja"
                                                                             name="vueltos_caja" value="{{ $vueltos_caja ?? 0 }}">
                                                                             <h5 class='text-bold text-primary'>Vueltos en caja: <b class='text-black'>{{ $vueltos_caja ?? 0 }}</b></h5>
@@ -1310,7 +1310,7 @@ if(isset($servicio->id)){
                                                                                                     name="isVueltos"
                                                                                                     type="hidden"
                                                                                                     value="0">
-                                                                                                <input
+                                                                                                <input class="hidden"
                                                                                                     id="banderaHorasExtras"
                                                                                                     name="banderaHorasExtras"
                                                                                                     type="text"
