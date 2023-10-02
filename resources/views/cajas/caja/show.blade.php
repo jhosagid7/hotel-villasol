@@ -840,7 +840,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         <span class="description-percentage text-green"><i
                                                                 class="fa fa-caret-up"></i>
                                                             Dolar $</span>
-                                                        <h5 class="description-header">______________{{ number_format($cajas->TotalSumaVueltosPagarOficinaDolarToDolar - $cajas->SumaTotalReintegrosPagadosoEnCaja, 2, ',', '.') ?? '0.000' }} -</h5>
+                                                        <h5 class="description-header">______________</h5>
                                                         <h5 class="box-title text-bold text-blue">$.
                                                             {{ number_format($cajas->SumaTotalCreditosPagadosConsumoPorCaja + $cajas->SumaTotalVentas + ($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios + $cajas->SumaTotalExtra + $cajas->SumaTotalCreditosPagadosHorasExtrasPorCaja + $cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente), 2, ',', '.') ?? '0.000' }}
                                                         </h5>

@@ -3634,17 +3634,17 @@ class ServicioController extends Controller
                                 $request->get('num_servicio'),
                                 'Servicio',
                                 $request->get('caja_id'),
-                                $servicio_id,
+                                $servicio->id,
                                 $cliente_id
                             );
 
                             // Todo: Verificar si hay vueltos en caja, para realizar el pago.
-                            $this->payWithChangeInBox($servicio_id, $this->getTotalAmount(), $request->get('caja_id'), 'Servicio');
+                            $this->payWithChangeInBox($servicio->id, $this->getTotalAmount(), $request->get('caja_id'), 'Servicio');
                         }
 
                         // Todo: Verificar si pago con Transferencia, Punto, Dolar, Peso, Bolivar, para realizar el pago.
 
-                        $this->payWithCash2($this->getTotalAmount(), $servicio_id, $request, 'Servicio');
+                        $this->payWithCash2($this->getTotalAmount(), $servicio->id, $request, 'Servicio');
                     }
 
 
