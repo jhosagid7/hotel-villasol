@@ -23,7 +23,6 @@
     $(document).ready(function() {
     $('#txtStatus').change(function() {
         // Obtener el valor seleccionado del select
-        alert('aja')
         var selectedValue = $(this).val();
 
         // Verificar si el valor seleccionado es "Procesado"
