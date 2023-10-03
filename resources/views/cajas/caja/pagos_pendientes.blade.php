@@ -101,7 +101,7 @@
                                                     name="pdif_moneda_peso_to_dolar_input"></td>
                                             <input type="hidden" id="ppeso_sistema" name="ppeso_sistema">
                                         </tr>
-                                        {{-- <tr>
+                                        {{--  <tr>
                                             <td>Punto</td>
                                             <td><input type="text" id="pcantidad_punto_rep"
                                                     name="pcantidad_punto_rep"><input type="hidden" id="pTasaPunto"
@@ -113,7 +113,7 @@
                                                     class="pmonto" type="hidden" id="pdif_moneda_punto_to_dolar_input"
                                                     name="pdif_moneda_punto_to_dolar_input"></td>
                                             <input type="hidden" id="ppunto_sistema" name="ppunto_sistema">
-                                        </tr>
+                                        </tr>  --}}
                                         <tr>
                                             <td>Trans</td>
                                             <td><input type="text" id="pcantidad_trans_rep"
@@ -126,7 +126,7 @@
                                                     class="pmonto" type="hidden" id="pdif_moneda_trans_to_dolar_input"
                                                     name="pdif_moneda_trans_to_dolar_input"></td>
                                             <input type="hidden" id="ptrans_sistema" name="ptrans_sistema">
-                                        </tr> --}}
+                                        </tr>
                                         <tr>
                                             <td>Efectivo</td>
                                             <td><input type="text" id="pcantidad_efectivo_rep"

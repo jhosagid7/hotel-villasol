@@ -42,7 +42,6 @@ function abrirModal() {
         // Obtener el valor del campo de número de servicio
         var numServicio = $('#numServicio').val();
         var reservationId = $('#txtID').val();
-        alert('sun ', numServicio)
 
         // Realizar la consulta por AJAX y guardar el dato
         $.ajax({
@@ -55,6 +54,8 @@ function abrirModal() {
 
                 // Cambiar el valor del select a "Procesado"
                 $('#txtStatus').val('Procesado');
+
+                $('#btnModificar').click()
             },
             error: function() {
                 // Manejar el error si la consulta AJAX falla
