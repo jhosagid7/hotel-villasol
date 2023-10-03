@@ -1779,7 +1779,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                     <td>Precio</td>
                                                                     <td>M/Dejado</td>
                                                                     <td>D/Pago</td>
-                                                                    <td>D/Vueltos</td>
+                                                                    <td>Vtos Entregados</td>
                                                                     <td>ID Ventas</td>
                                                                 @endcan
 
@@ -1890,8 +1890,8 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                     <td colspan="2">Nombre</td>
                                                                     <td>Cédula</td>
                                                                     <td colspan="3">Observacion</td>
-                                                                    <td>Nvo/Excedete</td>
-                                                                    <td>D/Vtos/Pendtes</td>
+                                                                    <td>Pagado con Excedente</td>
+                                                                    <td>Vtos Pendtes</td>
                                                                     <td>Pagar/Oficina</td>
                                                                     </tr>
                                                                     @if ($serv->modo_pago == 'Cortesía')
