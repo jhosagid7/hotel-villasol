@@ -149,6 +149,10 @@ class Caja extends Model
     {
         return $this->hasMany(Reintegro::class);
     }
+    public function reservaciones()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 
     public function historialExcedentes()
     {
