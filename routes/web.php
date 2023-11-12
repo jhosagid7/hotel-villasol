@@ -208,4 +208,6 @@ Route::POST('registrar', 'ClienteController@registrarCliente')->name('registrar'
 Route::resource('reservations', 'ReservationController');
 
 Route::get('search/eventos', 'SearchController@showFiltered')->name('search.eventos');
-Route::get('search/service', 'SearchController@saveNumberService')->name('search.service');
+Route::get('search/habitaciones', 'SearchController@obtenerHabitaciones')->name('search.habitaciones');
+Route::get('search/precio', 'SearchController@obtenerPrecio')->name('search.precio');
+Route::get('eliminar/pago', 'SearchController@eliminarDetallePago')->name('eliminar.pago');

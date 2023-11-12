@@ -11,6 +11,7 @@ use App\Excedente;
 use Carbon\Carbon;
 use App\Reservation;
 use Illuminate\Http\Request;
+use App\DetallePagoReservation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -29,6 +30,8 @@ class ReservationController extends Controller
      */
     public function index(Request $request)
     {
+        $caja = Caja::where("estado", "=", 'Abierta')->first();
+        $caja_id = $caja->id;
         $user = User::with('roles')->where('id', Auth::id())->first();
         $userRole = $user->roles[0]->name;
         // return $user->roles[0]->name;
@@ -36,7 +39,7 @@ class ReservationController extends Controller
         $horarios = Horario::select('id', 'tipo')->where('tipo', '<>', 'DIURNO')->get();
 
         // return $tipoServicio;
-        return view('reservations.index', compact('tipoServicios', 'horarios', 'userRole'));
+        return view('reservations.index', compact('tipoServicios', 'horarios', 'userRole', 'caja_id'));
     }
 
     /**
@@ -58,16 +61,18 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $caja = Caja::where("estado", "=", 'Abierta')->first();
+        $datosReservasion = request()->except(['_token', '_method', 'formaPago']);
+        $formaPago = request()->input('formaPago');
 
-        $datosReservasion = request()->except(['_token', '_method']);
         $datosReservasion['caja_id'] = $caja->id;
         $datosReservasion['created_at'] = now();
         $datosReservasion['updated_at'] = now();
-        try {
 
+
+        try {
             DB::beginTransaction();
 
-            if(!$datosReservasion['persona_id']){
+            if (!$datosReservasion['persona_id']) {
                 $persona = new Persona;
                 $persona->tipo_persona = 'Cliente';
                 $persona->nombre = $datosReservasion['nombreCliente'];
@@ -77,11 +82,11 @@ class ReservationController extends Controller
                 $persona->save();
             }
 
-            $persona_id = $datosReservasion['persona_id'] ? $datosReservasion['persona_id'] :  $persona->id;
+            $persona_id = $datosReservasion['persona_id'] ? $datosReservasion['persona_id'] : $persona->id;
 
             $ifCliente = Excedente::where('persona_id', $persona_id)
-            ->where('tipo', 'Pagar_por_oficina')
-            ->first();
+                ->where('tipo', 'Pagar_por_oficina')
+                ->first();
 
             if ($ifCliente) {
                 $upExcedente = Excedente::findOrFail($ifCliente->id);
@@ -98,19 +103,35 @@ class ReservationController extends Controller
                 $dexcedente->save();
             }
 
-            Reservation::insert($datosReservasion);
+            $reservationId = Reservation::insertGetId($datosReservasion);
+
+            // Guardar los datos en la tabla detalle_pago_reservation
+            foreach ($formaPago as $pago) {
+                $detallePago = new DetallePagoReservation();
+                $detallePago->tipoPago = $pago['tipoPago'];
+                $detallePago->montoPagado = $pago['montoPagado'] ? $pago['montoPagado'] : 0;
+                $detallePago->montoPagadoDolar = $pago['montoPagadoDolar'] ? $pago['montoPagadoDolar'] : 0;
+                $detallePago->vueltos = $pago['vueltos'] ? $pago['vueltos'] : 0;
+                $detallePago->vueltosDolar = $pago['vueltosDolar'] ? $pago['vueltosDolar'] : 0;
+                $detallePago->nombreBanco = $pago['nombreBanco'];
+                $detallePago->referencia = $pago['referencia'];
+                $detallePago->fechaPago = $pago['fechaPago'];
+                $detallePago->tasaDolar = $pago['tasaDolar'];
+                $detallePago->tasaPeso = $pago['tasaPeso'];
+                $detallePago->tasaBolivar = $pago['tasaBolivar'];
+                $detallePago->operadorNombre = $pago['operadorNombre'];
+                $detallePago->reservation_id = $reservationId;
+                $detallePago->caja_id = $caja->id;
+                $detallePago->save();
+            }
 
             DB::commit();
-
+            // print_r($datosReservasion);
             return response()->json(['msg' => 'Reservacion agregada', 'type' => 'success']);
-            print_r($datosReservasion);
-
         } catch (\Throwable $th) {
             DB::rollback();
             dd($th);
         }
-
-
     }
 
     /**
@@ -121,7 +142,7 @@ class ReservationController extends Controller
      */
     public function show()
     {
-        $data['reservasiones'] = Reservation::all();
+        $data['reservasiones'] = Reservation::with('detalle_pago_reservaciones')->get();
 
         return response()->json($data['reservasiones']);
     }
@@ -146,8 +167,39 @@ class ReservationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $datosReservasion = request()->except(['_token', '_method', 'operadorNombre','user_id','caja_id', 'nombreCliente', 'cedulaCliente', 'montoPago', 'numServicio']);
+        $caja = Caja::where("estado", "=", 'Abierta')->first();
+
+
+        $datosReservasion = request()->except(['_token', '_method','user_id','caja_id', 'nombreCliente', 'cedulaCliente', 'montoPago', 'numServicio', 'formaPago']);
+
+        $formaPago = request()->input('formaPago');
+
+        // dd($formaPago);
         $result = Reservation::where('id', $id)->update($datosReservasion);
+
+        if($formaPago){
+            // Guardar los datos en la tabla detalle_pago_reservation
+            foreach ($formaPago as $pago) {
+                DetallePagoReservation::updateOrCreate([
+                    'id' => $pago['id']
+                ], [
+                    'tipoPago' => $pago['tipoPago'],
+                    'montoPagado' => $pago['montoPagado'] ? $pago['montoPagado'] : 0,
+                    'montoPagadoDolar' => $pago['montoPagadoDolar'] ? $pago['montoPagadoDolar'] : 0,
+                    'vueltos' => $pago['vueltos'] ? $pago['vueltos'] : 0,
+                    'vueltosDolar' => $pago['vueltosDolar'] ? $pago['vueltosDolar'] : 0,
+                    'nombreBanco' => $pago['nombreBanco'],
+                    'referencia' => $pago['referencia'],
+                    'fechaPago' => $pago['fechaPago'],
+                    'tasaDolar' => $pago['tasaDolar'],
+                    'tasaPeso' => $pago['tasaPeso'],
+                    'tasaBolivar' => $pago['tasaBolivar'],
+                    'operadorNombre' => auth()->user()->name,
+                    'reservation_id' => $id,
+                    'caja_id' => $caja->id
+                ]);
+            }
+        }
 
         return response()->json([$result,'msg' => 'Reservacion Actualizada', 'type' => 'success']);
     }

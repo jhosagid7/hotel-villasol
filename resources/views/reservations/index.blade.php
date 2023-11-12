@@ -84,7 +84,7 @@
                         },
 
                         dateClick: function(info) {
-
+console.log('dateClick')
                             limpiarFormulario()
 
 
@@ -94,6 +94,7 @@
                             $('#btnAgregar').prop("disabled", false)
                             $('#btnModificar').prop("disabled", true)
                             $('#btnEliminar').prop("disabled", true)
+                            $('#btnProcesar').prop("disabled", true)
 
                             $('#txtColor').val('#C67110')
 
@@ -103,6 +104,8 @@
 
                             $('#exampleModal').modal()
                             console.log(info);
+
+
                             //calendar.addEvent({
                             //title:"Reservacion nueva",
                             //date:info.dateStr
@@ -110,12 +113,16 @@
                         },
 
                         eventClick: function(info) {
+                            limpiarFormulario()
+
+console.log('eventClick')
 
                             var optionProcesado = document.getElementById("optionProcesado");
 
                             $('#btnAgregar').prop("disabled", true)
                             $('#btnModificar').prop("disabled", false)
                             $('#btnEliminar').prop("disabled", false)
+                            $('#btnProcesar').prop("disabled", true)
 
                             whenIsProceded(info.event.extendedProps.status, info.event.extendedProps.numServicio)
 
@@ -157,6 +164,8 @@
                             dia = (dia < 10) ? "0" + dia : dia
 
 
+
+
                             $('#txtID').val(info.event.id)
                             $('#txtTitle').val(info.event.title)
                             $('#txtFechaEntrada').val(anio + "-" + mes + "-" + dia)
@@ -169,12 +178,11 @@
                             $('#txtCedulaCliente').val(info.event.extendedProps.cedulaCliente)
                             $('#txtTelefonoContacto').val(info.event.extendedProps.telefonoContacto)
                             $('#txtNumAcompanantes').val(info.event.extendedProps.numAcompanantes)
-                            $('#txtHabitacion').val(info.event.extendedProps.tipoHabitacion)
-                            $('#txtServicio').val(info.event.extendedProps.tipoServicio)
-                            $('#txtBancoPago').val(info.event.extendedProps.bancoPago)
-                            $('#txtFechaPago').val(info.event.extendedProps.fechaPago)
-                            $('#txtReferenciaPago').val(info.event.extendedProps.referenciaPago)
+                            $('#txtHabitacion').val(info.event.extendedProps.cat_id)
+                            $('#txtServicio').val(info.event.extendedProps.horario_id)
+                            $('#txtNumHabitacion').val(info.event.extendedProps.numHabitacion)
                             $('#txtMontoPago').val(info.event.extendedProps.montoPago)
+                            $('#txtVueltoPago').val(info.event.extendedProps.vueltoPago)
                             $('#txtTelefonoPago').val(info.event.extendedProps.telefonoPago)
                             $('#txtCedulaPago').val(info.event.extendedProps.cedulaPago)
                             $('#txtNombreOperador').val('{{ Auth::user()->name }}')
@@ -182,15 +190,51 @@
                             $('#txtOboservation').val(info.event.extendedProps.observation)
                             $('#txtNumServicio').val(info.event.extendedProps.numServicio)
                             $('#txtColor').val(info.event.backgroundColor)
+                            $('#servicio_id').val(info.event.extendedProps.servicio_id)
                             $('#persona_id').val(info.event.extendedProps.persona_id)
                             $('#user_id').val({{ Auth::user()->id }})
 
-                            $('#txtHabitacion option[value="' + info.event.extendedProps.tipoHabitacion + '"]')
-                                .attr('selected', true);
-                            $('#txtServicio option[value="' + info.event.extendedProps.tipoServicio + '"]')
-                                .attr('selected', true);
+
+                            $('#txtServicio option[value="' + info.event.extendedProps.tipoServicio + '"]').attr(
+                                'selected', true);
+                            $('#txtHabitacion option[value="' + info.event.extendedProps.tipoHabitacion + '"]').attr(
+                                'selected', true);
                             $('#txtStatus option[value="' + info.event.extendedProps.status + '"]').attr(
                                 'selected', true);
+console.log(info.event.extendedProps.montoPago)
+                            var detallePagoReservaciones = info.event.extendedProps.detalle_pago_reservaciones;
+                            console.log(detallePagoReservaciones)
+                            if (detallePagoReservaciones) {
+                                // Llenar la tabla con los datos obtenidos
+                                detallePagoReservaciones.forEach(function(pago) {
+                                    console.log(pago.caja_id, " - ", {{ $caja_id }})
+                                    if({{ $caja_id }} != pago.caja_id){
+                                        // Agregar una fila a la tabla con los datos de cada pago
+                                        agregarPagoFromDataBase(pago.id, pago.tipoPago, pago.nombreBanco, pago.referencia, pago.fechaPago, pago.montoPagado, pago.vueltos);
+
+                                    }else{
+                                        agregarPagoEnTabla(pago.id, pago.tipoPago, pago.nombreBanco, pago.referencia, pago.fechaPago, pago.montoPagado, pago.vueltos, pago.caja_id);
+                                    }
+
+
+                                    // Actualizar el último tipo de pago y monto pagado en la misma moneda
+                                    ultimoTipoPago = pago.tipoPago;
+                                    ultimoMontoPagado = pago.montoPagado;
+
+                                });
+                                // Mostrar tabla de pagos si tiene datos
+                                    var tablaPagosContainer = document.getElementById("tablaPagosContainer");
+                                    tablaPagosContainer.style.display = "block";
+                                    // Actualizar total de abonos en dólares
+                                    actualizarTotalAbonos();
+                                    // Reiniciar campos de pago
+                                    document.getElementById("camposPago").innerHTML = "";
+                                    document.getElementById("tipoPago").value = "";
+
+                            }
+                            console.log('entre ', info.event.extendedProps.numHabitacion)
+                            obtenerNumHabitacion(info.event.extendedProps.numHabitacion)
+                            obtenerPrecio()
 
 
                             $('#exampleModal').modal()
@@ -204,24 +248,53 @@
                     calendar.render();
 
                     $('#btnAgregar').click(function() {
-                        objReservacion = recolectarDatosGUI("POST")
 
-                        EnviarInformaicon('', objReservacion)
+                        objReservacion = recolectarDatosGUI("POST")
+                        console.log(objReservacion)
+                        EnviarInformacion('', objReservacion)
 
                     })
 
                     $('#btnModificar').click(function() {
-                        objReservacion = recolectarDatosGUI("PATCH")
 
-                        EnviarInformaicon('/' + $('#txtID').val(), objReservacion)
+                        objReservacion = recolectarDatosGUI("PATCH")
+                        console.log(objReservacion)
+
+                        EnviarInformacion('/' + $('#txtID').val(), objReservacion)
 
                     })
                     $('#btnEliminar').click(function() {
                         objReservacion = recolectarDatosGUI("DELETE")
 
-                        EnviarInformaicon('/' + $('#txtID').val(), objReservacion)
+                        EnviarInformacion('/' + $('#txtID').val(), objReservacion)
 
                     })
+
+                    $('#btnProcesar').click(function() {
+                        let activeBtn = activeBtnProcessService()
+                        if(activeBtn){
+                            console.log('Enviando...')
+                        }else{
+                            console.log('Monto insuficiente...')
+                        }
+
+
+                        //objReservacion = recolectarDatosGUI("DELETE")
+
+                        //EnviarInformacion('/' + $('#txtID').val(), objReservacion)
+
+                    })
+
+                    function activeBtnProcessService(){
+                        let precioShow = $('#precioShow').html()
+                        let txtMontoPago = $('#txtMontoPago').val()
+
+                        precioShow = parseFloat(precioShow)
+                        txtMontoPago = parseFloat(txtMontoPago)
+
+                        return result = txtMontoPago >= precioShow ? true : false
+
+                    }
 
                     function recolectarDatosGUI(method) {
 
@@ -235,11 +308,12 @@
                             cedulaCliente: $('#txtCedulaCliente').val(),
                             telefonoContacto: $('#txtTelefonoContacto').val(),
                             numAcompanantes: $('#txtNumAcompanantes').val(),
+                            cat_id: $('#txtHabitacion').find("option:selected").val(),
+                            horario_id: $('#txtServicio').find("option:selected").val(),
+                            habitacione_id: $('#txtNumHabitacion').find("option:selected").val(),
                             tipoHabitacion: $('#txtHabitacion').find("option:selected").text(),
                             tipoServicio: $('#txtServicio').find("option:selected").text(),
-                            bancoPago: $('#txtBancoPago').val(),
-                            fechaPago: $('#txtFechaPago').val(),
-                            referenciaPago: $('#txtReferenciaPago').val(),
+                            numHabitacion: $('#txtNumHabitacion').find("option:selected").text(),
                             montoPago: $('#txtMontoPago').val(),
                             telefonoPago: $('#txtTelefonoPago').val(),
                             cedulaPago: $('#txtCedulaPago').val(),
@@ -251,6 +325,7 @@
                             persona_id: $('#persona_id').val(),
                             user_id: {{ Auth::user()->id }},
 
+                            formaPago: obtenerDatosReserva(),
                             '_token': $("meta[name='csrf-token']").attr("content"),
                             '_method': method
                         }
@@ -258,7 +333,7 @@
                         return (nuevaReserva)
                     }
 
-                    function EnviarInformaicon(accion, objReservacion) {
+                    function EnviarInformacion(accion, objReservacion) {
 
                         $.ajax({
                             type: "POST",
@@ -294,9 +369,7 @@
                         $('#txtNumAcompanantes').val('')
                         $('#txtHabitacion').val('')
                         $('#txtServicio').val('')
-                        $('#txtBancoPago').val('')
-                        $('#txtFechaPago').val('')
-                        $('#txtReferenciaPago').val('')
+                        $('#txtNumHabitacion').val('')
                         $('#txtMontoPago').val('')
                         $('#txtTelefonoPago').val('')
                         $('#txtCedulaPago').val('')
@@ -310,8 +383,20 @@
 
                         whenIsProceded()
 
+                        $('#tablaPagosBody').empty();
+                        $('#payDataBase').empty();
+                        $('#txtNumHabitacion').empty()
+
+                        $('#precioShow').html('0.00');
+                        $('#precioShowServicio').html('0.00');
+                        var tablaPagosContainer = document.getElementById("tablaPagosContainer");
+                        tablaPagosContainer.style.display = "none";
+                        document.getElementById("totalAbonosDolar").innerText = "";
+
                         var optionProcesado = document.getElementById("optionProcesado");
                         optionProcesado.style.display = "none";
+
+
 
 
                     }
@@ -331,9 +416,7 @@
                         $('#txtNumAcompanantes').prop("disabled", true)
                         $('#txtHabitacion').prop("disabled", true)
                         $('#txtServicio').prop("disabled", true)
-                        $('#txtBancoPago').prop("disabled", true)
-                        $('#txtFechaPago').prop("disabled", true)
-                        $('#txtReferenciaPago').prop("disabled", true)
+                        $('#numHabitacion').prop("disabled", true)
                         $('#txtMontoPago').prop("disabled", true)
                         $('#txtTelefonoPago').prop("disabled", true)
                         $('#txtCedulaPago').prop("disabled", true)
@@ -346,6 +429,7 @@
                         $('#user_id').val({{ Auth::user()->id }})
                         $('#btnModificar').prop("disabled", true)
                         $('#btnEliminar').prop("disabled", true)
+                        $('#btnProcesar').prop("disabled", true)
                     }else{
                         $('#buscarClienteInput').prop("hidden", false)
                         $('#txtFechaEntrada').prop("disabled", false)
@@ -359,9 +443,7 @@
                         $('#txtNumAcompanantes').prop("disabled", false)
                         $('#txtHabitacion').prop("disabled", false)
                         $('#txtServicio').prop("disabled", false)
-                        $('#txtBancoPago').prop("disabled", false)
-                        $('#txtFechaPago').prop("disabled", false)
-                        $('#txtReferenciaPago').prop("disabled", false)
+                        $('#numHabitacion').prop("disabled", false)
                         $('#txtMontoPago').prop("disabled", false)
                         $('#txtTelefonoPago').prop("disabled", false)
                         $('#txtCedulaPago').prop("disabled", false)
@@ -373,6 +455,7 @@
                         $('#user_id').val({{ Auth::user()->id }})
                         $('#btnModificar').prop("disabled", false)
                         $('#btnEliminar').prop("disabled", false)
+                        $('#btnProcesar').prop("disabled", true)
 
 
                     }
@@ -389,6 +472,9 @@
                         $('#user_id').val({{ Auth::user()->id }})
                         $('#btnModificar').prop("disabled", false)
                         $('#btnEliminar').prop("disabled", false)
+
+
+                        $('#btnProcesar').prop("disabled", false)
                     }
 
 
@@ -425,16 +511,16 @@ select.addEventListener('change', function() {
                     let fechaSalida = new Date(fechaEntrada);
 
                     switch (valorServicio) {
-                        case "DIURNO":
+                        case "1":
                             horaInicio = "05:00";
                             horaFinal = "21:00";
                             break;
-                        case "COMERCIAL":
+                        case "2":
                             horaInicio = "17:00";
                             horaFinal = "00:01";
                             fechaSalida.setDate(fechaSalida.getDate() + 1);
                             break;
-                        case "24 HORAS":
+                        case "3":
                             const now = new Date();
                             horaInicio = now.toLocaleTimeString([], {
                                 hour: '2-digit',
@@ -461,6 +547,52 @@ select.addEventListener('change', function() {
                     const txtServicio = document.getElementById("txtServicio");
                     txtServicio.addEventListener("change", actualizarHorasFechas);
                 });
+            </script>
+
+            <script>
+                function obtenerDatosReserva() {
+                    var tablaPagosBody = document.getElementById("tablaPagosBody").getElementsByTagName("tr");
+                    var formaPagoArray = [];
+
+                    for (var i = 0; i < tablaPagosBody.length; i++) {
+                        var tipoPago = tablaPagosBody[i].getElementsByTagName("td")[0].innerText;
+                        var nombreBanco = "";
+                        var referencia = "";
+                        var fechaPago = "";
+
+                        if (tipoPago === "transferencia" || tipoPago === "punto") {
+                        nombreBanco = tablaPagosBody[i].getElementsByTagName("td")[1].innerText;
+                        referencia = tablaPagosBody[i].getElementsByTagName("td")[2].innerText;
+                        fechaPago = tablaPagosBody[i].getElementsByTagName("td")[3].innerText;
+                        }
+
+                        var montoPagado = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[4].innerText) || 0;
+                        var vueltos = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[5].innerText) || 0;
+                        var vueltosDolar = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[6].innerText) || 0;
+                        var id = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[7].innerText) || null;
+                        var montoEnDolares = calcularMontoEnDolares(montoPagado, tipoPago);
+
+                        var formaPago = {
+                        id: id,
+                        tipoPago: tipoPago,
+                        montoPagado: montoPagado,
+                        montoPagadoDolar: montoEnDolares,
+                        vueltos: vueltos,
+                        vueltosDolar: vueltosDolar,
+                        nombreBanco: nombreBanco,
+                        referencia: referencia,
+                        fechaPago: fechaPago,
+                        tasaDolar: tasaDolar,
+                        tasaPeso: tasaPeso,
+                        tasaBolivar: tasaBolivar,
+                        operadorNombre: $('#txtNombreOperador').val()
+                        };
+
+                        formaPagoArray.push(formaPago);
+                    }
+
+                    return formaPagoArray;
+                }
             </script>
 
         @endpush
