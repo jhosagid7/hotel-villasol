@@ -64,6 +64,11 @@ class Persona extends Model
         return $this->hasMany(DetallePagoOficina::class);
     }
 
+    public function reservaciones()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
 
 
 

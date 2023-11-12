@@ -25,18 +25,30 @@ class CreateReservationsTable extends Migration
             $table->integer('numAcompanantes')->nullable();
             $table->string('tipoHabitacion', 15);
             $table->string('tipoServicio', 15);
-            $table->string('bancoPago', 255)->nullable();
-            $table->date('fechaPago')->nullable();
-            $table->string('referenciaPago', 255)->nullable();
+            $table->integer('numHabitacion')->nullable();
             $table->decimal('montoPago', 25, 3)->nullable();
+            $table->decimal('vueltoPago', 25, 3)->nullable();
             $table->string('telefonoPago', 255)->nullable();
             $table->string('cedulaPago', 255)->nullable();
-            $table->string('operadorNombre', 255);
+            $table->string('operadorNombre', 255)->nullable();
             $table->enum('status', ['Pendiente', 'Procesado','Cancelado'])->default('Pendiente');
             $table->text('observation')->nullable();
             $table->string('numServicio', 50)->nullable();
             $table->string('color', 20);
-            $table->integer('persona_id')->nullable();
+
+            $table->unsignedBigInteger('cat_id')->nullable();
+            $table->foreign('cat_id')->references('id')->on('cats');
+
+            $table->unsignedBigInteger('horario_id')->nullable();
+            $table->foreign('horario_id')->references('id')->on('horarios');
+
+            $table->unsignedBigInteger('habitacione_id')->nullable();
+            $table->foreign('habitacione_id')->references('id')->on('habitaciones');
+
+            $table->unsignedBigInteger('servicio_id')->nullable();
+
+            $table->foreign('servicio_id')->references('id')->on('servicios');
+            $table->foreignId('persona_id')->references('id')->on('personas');
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('caja_id')->references('id')->on('cajas');
             $table->timestamps();

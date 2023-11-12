@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Tasa;
+use App\Precio;
 use App\Persona;
 use App\Articulo;
 use Carbon\Carbon;
+use App\Habitacione;
 use App\Reservation;
 use Illuminate\Http\Request;
+use App\DetallePagoReservation;
 use Illuminate\Support\Facades\DB;
 
 class SearchController extends Controller
@@ -263,6 +266,62 @@ class SearchController extends Controller
 
         return response()->json(['msg' => 'Numero de servicio guardado con exito...', 'type' => 'success']);
         // return response()->json(['message' => 'Número de servicio guardado satisfactoriamente']);
+    }
+    public function getNumberHabitacion(Request $request)
+    {
+        // Obtener el número de servicio del request
+        $numServicio = $request->input('numServicio');
+        $reservationId = $request->input('reservationId');
+
+        // Guardar el número de servicio en la tabla "Reservations"
+
+        $upReservation = Reservation::findOrFail($reservationId);
+        if ($upReservation) {
+            $upReservation->numServicio = $numServicio;
+            $upReservation->status = 'Procesado';
+            $upReservation->color = '#118F00';
+            $upReservation->update();
+        }
+
+
+        // Retornar una respuesta de éxito
+
+        return response()->json(['msg' => 'Numero de servicio guardado con exito...', 'type' => 'success']);
+        // return response()->json(['message' => 'Número de servicio guardado satisfactoriamente']);
+    }
+
+
+    public function obtenerHabitaciones(Request $request)
+    {
+        $cat_id = $request->input('cat_id');
+
+        // Obtener las habitaciones correspondientes a la categoría seleccionada
+        $habitaciones = Habitacione::where('cat_id', $cat_id)->get();
+
+        // Devolver las habitaciones en formato JSON
+        return response()->json($habitaciones);
+    }
+    public function obtenerPrecio(Request $request)
+    {
+        $cat_id = $request->input('cat_id');
+        $horario_id = $request->input('horario_id');
+
+        // Obtener las habitaciones correspondientes a la categoría seleccionada
+        $habitaciones = Precio::where('horario_id', $horario_id)->where('cat_id', $cat_id)->first();
+
+        // Devolver las habitaciones en formato JSON
+        return response()->json($habitaciones);
+    }
+
+    public function eliminarDetallePago(Request $request)
+    {
+        $id = $request->input('id');
+
+        // Obtener las habitaciones correspondientes a la categoría seleccionada
+        $deletePago = DetallePagoReservation::destroy($id);
+
+        // Devolver las habitaciones en formato JSON
+        return response()->json($deletePago);
     }
 
 }

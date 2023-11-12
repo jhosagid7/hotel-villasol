@@ -104,4 +104,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Reintegro::class);
     }
+
+    public function reservaciones()
+    {
+        return $this->hasMany(Reservation::class);
+    }
 }
