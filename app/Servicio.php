@@ -95,6 +95,11 @@ class Servicio extends Model
         return $this->hasMany(Excedentes_Recibidos_Caja_Actual::class);
     }
 
+    public function reservaciones()
+    {
+        return $this->hasMany(Reservation::class);
+    }
+
 
 
     // public function habitacion()

@@ -19,6 +19,7 @@
                         @include('reservations.horario')
                         @include('reservations.datosCliente')
                         @include('reservations.datosPago')
+                        @include('reservations.formaPago')
                         @include('reservations.datosControl')
 
 

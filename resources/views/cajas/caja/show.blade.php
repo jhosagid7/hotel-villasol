@@ -1801,7 +1801,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                         {{ $count ?? '' }}</td>
                                                                     <td>Ini ->
                                                                         {{ $serv->fecha_entrada . ' ' . $serv->hora_entrada ?? '' }}
-                                                                        <br>Fin -> {{ $serv->updated_at ?? '' }}</td>
+                                                                        <br>Fin -> {{ ($serv->status_servicio == 'Finalizado' ? $serv->updated_at : 'En uso!') ?? '' }}</td>
                                                                     <td>{{ $serv->num_servicio ?? '' }}</td>
                                                                     <td>{{ $serv->tasaTransPunto ?? '' }}</td>
                                                                     <td>{{ $serv->modo_pago ?? '' }}</td>
