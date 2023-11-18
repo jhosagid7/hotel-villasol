@@ -26,6 +26,7 @@ class CreateReservationsTable extends Migration
             $table->string('tipoHabitacion', 15);
             $table->string('tipoServicio', 15);
             $table->integer('numHabitacion')->nullable();
+            $table->decimal('precio', 25, 3)->nullable();
             $table->decimal('montoPago', 25, 3)->nullable();
             $table->decimal('vueltoPago', 25, 3)->nullable();
             $table->string('telefonoPago', 255)->nullable();

@@ -314,7 +314,9 @@ console.log(info.event.extendedProps.montoPago)
                             tipoHabitacion: $('#txtHabitacion').find("option:selected").text(),
                             tipoServicio: $('#txtServicio').find("option:selected").text(),
                             numHabitacion: $('#txtNumHabitacion').find("option:selected").text(),
+                            precio: $('#precioShowServicio').html(),
                             montoPago: $('#txtMontoPago').val(),
+                            vueltoPago: $('#txtVueltoPago').val(),
                             telefonoPago: $('#txtTelefonoPago').val(),
                             cedulaPago: $('#txtCedulaPago').val(),
                             operadorNombre: $('#txtNombreOperador').val(),
@@ -521,15 +523,19 @@ select.addEventListener('change', function() {
                             fechaSalida.setDate(fechaSalida.getDate() + 1);
                             break;
                         case "3":
-                            const now = new Date();
-                            horaInicio = now.toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            });
-                            horaFinal = now.toLocaleTimeString([], {
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            });
+                            //const now = new Date();
+                            //horaInicio = now.toLocaleTimeString([], {
+                            //    hour: '2-digit',
+                            //    minute: '2-digit'
+                            //});
+                            //horaFinal = now.toLocaleTimeString([], {
+                            //    hour: '2-digit',
+                            //    minute: '2-digit'
+                            //});
+                            //fechaSalida.setDate(fechaSalida.getDate() + 1);
+
+                            horaInicio = "14:00";
+                            horaFinal = "14:00";
                             fechaSalida.setDate(fechaSalida.getDate() + 1);
                             break;
                     }
@@ -554,6 +560,7 @@ select.addEventListener('change', function() {
                     var tablaPagosBody = document.getElementById("tablaPagosBody").getElementsByTagName("tr");
                     var formaPagoArray = [];
 
+
                     for (var i = 0; i < tablaPagosBody.length; i++) {
                         var tipoPago = tablaPagosBody[i].getElementsByTagName("td")[0].innerText;
                         var nombreBanco = "";
@@ -571,7 +578,8 @@ select.addEventListener('change', function() {
                         var vueltosDolar = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[6].innerText) || 0;
                         var id = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[7].innerText) || null;
                         var montoEnDolares = calcularMontoEnDolares(montoPagado, tipoPago);
-
+                        console.log('vueltos desde: ', vueltos)
+                        console.log('vueltos desde2: ', vueltosDolar)
                         var formaPago = {
                         id: id,
                         tipoPago: tipoPago,
