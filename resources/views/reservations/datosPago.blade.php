@@ -29,6 +29,8 @@
                             class="text-warning">$<b id=precioShow>0.00</b></b></h3></label>
                 <input required class="form-control" type="hidden" name="txtPrecioPago" id="txtPrecioPago"
                     placeholder="txtPrecioPago">
+                <input required class="form-control" type="hidden" name="txtVueltoPago" id="txtVueltoPago"
+                    placeholder="txtVueltoPago">
 
             </div>
             <div class="form-group col-md-12">
@@ -124,7 +126,7 @@
     // Variables para las tasas de conversión
     var tasaDolar = 1;
     var tasaPeso = 4500;
-    var tasaBolivar = 32000;
+    var tasaBolivar = 32;
     // Variables para almacenar el último tipo de pago y monto pagado en la misma moneda
     var ultimoTipoPago = "";
     var ultimoMontoPagado = 0;
@@ -179,8 +181,8 @@
             <td>${fechaPago || ''}</td>
             <td>${montoPagado || ''}</td>
             <td>${vueltos || ''}</td>
-            <td class="text">${calcularMontoEnDolares(vueltos, tipoPago)}</td>
-            <td class="text">${id || null}</td>
+            <td class="text hidden">${calcularMontoEnDolares(vueltos, tipoPago)}</td>
+            <td class="text hidden">${id || null}</td>
             <td><button class="btn btn-danger btn-xs" onclick="eliminarPago(this)" data-idregistro="" data-idcaja="">X</button></td>
         `;
         var tablaPagosBody = document.getElementById("tablaPagosBody");
@@ -240,6 +242,7 @@
     // Función para actualizar el total de abonos en dólares
     function actualizarTotalAbonos() {
         var totalAbonos = 0.00;
+        var vueltosPago = 0.00;
         var tablaPagosBody = document.getElementById("tablaPagosBody").getElementsByTagName("tr");
         var payDataBase = document.getElementById("payDataBase").getElementsByTagName("tr");
         for (var i = 0; i < tablaPagosBody.length; i++) {
@@ -249,7 +252,9 @@
             var montoEnDolares = calcularMontoEnDolares(montoPagado, tipoPago);
             var vueltosEnDolares = calcularMontoEnDolares(vueltos, tipoPago);
             totalAbonos += montoEnDolares - vueltosEnDolares;
+            vueltosPago += parseFloat(vueltosEnDolares);
             console.log("vueltos ", vueltos)
+            console.log("vueltosPago ", vueltosPago)
         }
         for (var i = 0; i < payDataBase.length; i++) {
             var montoPagado = parseFloat(payDataBase[i].getElementsByTagName("td")[4].innerText) || 0;
@@ -258,10 +263,13 @@
             var montoEnDolares = calcularMontoEnDolares(montoPagado, tipoPago);
             var vueltosEnDolares = calcularMontoEnDolares(vueltos, tipoPago);
             totalAbonos += montoEnDolares - vueltosEnDolares;
+            vueltosPago += parseFloat(vueltosEnDolares);
             console.log("vueltos ", vueltos)
+            console.log("vueltosPago ", vueltosPago)
         }
         document.getElementById("totalAbonosDolar").innerText = totalAbonos.toFixed(2);
         document.getElementById("txtMontoPago").value = totalAbonos.toFixed(2);
+        document.getElementById("txtVueltoPago").value = vueltosPago.toFixed(2);
     }
 
 

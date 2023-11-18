@@ -29,7 +29,7 @@ Route::get('/', function () {
 });
 
 Auth::routes([
-    'register' => true
+    'register' => false
 ]);
 
 Route::get('/home', 'VentaController@index')->name('home');

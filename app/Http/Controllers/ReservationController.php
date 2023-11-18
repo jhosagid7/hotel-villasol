@@ -31,7 +31,12 @@ class ReservationController extends Controller
     public function index(Request $request)
     {
         $caja = Caja::where("estado", "=", 'Abierta')->first();
-        $caja_id = $caja->id;
+        if($caja){
+            $caja_id = $caja->id;
+        }else{
+            $caja_id = '';
+        }
+
         $user = User::with('roles')->where('id', Auth::id())->first();
         $userRole = $user->roles[0]->name;
         // return $user->roles[0]->name;
@@ -170,11 +175,11 @@ class ReservationController extends Controller
         $caja = Caja::where("estado", "=", 'Abierta')->first();
 
 
-        $datosReservasion = request()->except(['_token', '_method','user_id','caja_id', 'nombreCliente', 'cedulaCliente', 'montoPago', 'numServicio', 'formaPago']);
+        $datosReservasion = request()->except(['_token', '_method','user_id','caja_id', 'nombreCliente', 'cedulaCliente', 'numServicio', 'formaPago']);
+        // dd($datosReservasion['precio']);
 
         $formaPago = request()->input('formaPago');
 
-        // dd($formaPago);
         $result = Reservation::where('id', $id)->update($datosReservasion);
 
         if($formaPago){

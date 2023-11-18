@@ -127,6 +127,8 @@ trait ChangeSavedTrait
                     ->where('tipo_registro', 'Pago_por_oficina')
                     ->where('status', 'Pendiente')
                     ->get();
+
+                    // dd($historialExcedentes);
                 if ($historialExcedentes) {
                     $saldo_disponible = 0;
                     $motivo = '';
