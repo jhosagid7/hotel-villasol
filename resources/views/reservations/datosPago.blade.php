@@ -25,10 +25,10 @@
             </div>
 
             <div class="form-group col-md-3">
-                <label class="text-black" for="txtPrecioPago">Total a pagar:<h3 class="box-title"><b
-                            class="text-warning">$<b id=precioShow>0.00</b></b></h3></label>
-                <input required class="form-control" type="hidden" name="txtPrecioPago" id="txtPrecioPago"
-                    placeholder="txtPrecioPago">
+                <label class="text-black" for="txtPrecio">Total a pagar:<h3 class="box-title"><b
+                            class="text-warning">$<b id="precioShow">0.00</b></b></h3></label>
+                <input required class="form-control" type="hidden" name="txtPrecio" id="txtPrecio"
+                    placeholder="txtPrecio">
                 <input required class="form-control" type="hidden" name="txtVueltoPago" id="txtVueltoPago"
                     placeholder="txtVueltoPago">
 
@@ -239,12 +239,31 @@
         var payDataBase = document.getElementById("payDataBase");
         payDataBase.appendChild(filaPago);
     }
+
+    function activeBtnProcessService(){
+                        let precioShow = $('#txtPrecio').val()
+                        let txtMontoPago = $('#txtMontoPago').val()
+
+                        precioShow = parseFloat(precioShow)
+                        txtMontoPago = parseFloat(txtMontoPago)
+                        console.log('precioShow: ', precioShow);
+                        console.log('txtMontoPago: ', txtMontoPago);
+                        if(txtMontoPago === precioShow) {
+                            $('#btnProcesar').prop("disabled", false)
+                        }else {
+                            $('#btnProcesar').prop("disabled", true)
+                        }
+
+                        return result = txtMontoPago == precioShow ? true : false
+
+                    }
     // Función para actualizar el total de abonos en dólares
     function actualizarTotalAbonos() {
         var totalAbonos = 0.00;
         var vueltosPago = 0.00;
         var tablaPagosBody = document.getElementById("tablaPagosBody").getElementsByTagName("tr");
         var payDataBase = document.getElementById("payDataBase").getElementsByTagName("tr");
+
         for (var i = 0; i < tablaPagosBody.length; i++) {
             var montoPagado = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[4].innerText) || 0;
             var vueltos = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[5].innerText) || 0;
@@ -253,6 +272,8 @@
             var vueltosEnDolares = calcularMontoEnDolares(vueltos, tipoPago);
             totalAbonos += montoEnDolares - vueltosEnDolares;
             vueltosPago += parseFloat(vueltosEnDolares);
+
+
             console.log("vueltos ", vueltos)
             console.log("vueltosPago ", vueltosPago)
         }
@@ -270,6 +291,7 @@
         document.getElementById("totalAbonosDolar").innerText = totalAbonos.toFixed(2);
         document.getElementById("txtMontoPago").value = totalAbonos.toFixed(2);
         document.getElementById("txtVueltoPago").value = vueltosPago.toFixed(2);
+        activeBtnProcessService();
     }
 
 

@@ -283,7 +283,7 @@ class ProcesoVentaController extends Controller
                         $detalleCredito->monto = $total_costo;
                         $detalleCredito->estado_pago = 'Pendiente';
                         $detalleCredito->estado_credito = 'Vigente';
-                        $detalleCredito->tipo_pago = 'Crédito';
+                        $detalleCredito->tipo_pago = 'Credito';
                         $detalleCredito->fecha_emision = $myTime->toDateString();
                         $detalleCredito->fecha_vencimiento = $fecha_vencimiento;
                         $detalleCredito->fecha_pago = null;
@@ -311,7 +311,7 @@ class ProcesoVentaController extends Controller
                         $detalleCredito->monto = $total_costo;
                         $detalleCredito->estado_pago = 'Pendiente';
                         $detalleCredito->estado_credito = 'Vigente';
-                        $detalleCredito->tipo_pago = 'Crédito';
+                        $detalleCredito->tipo_pago = 'Credito';
                         $detalleCredito->fecha_emision = $myTime->toDateString();
                         $detalleCredito->fecha_vencimiento = $fecha_vencimiento;
                         $detalleCredito->fecha_pago = null;

@@ -115,6 +115,7 @@ console.log('dateClick')
                         eventClick: function(info) {
                             limpiarFormulario()
 
+
 console.log('eventClick')
 
                             var optionProcesado = document.getElementById("optionProcesado");
@@ -181,6 +182,7 @@ console.log('eventClick')
                             $('#txtHabitacion').val(info.event.extendedProps.cat_id)
                             $('#txtServicio').val(info.event.extendedProps.horario_id)
                             $('#txtNumHabitacion').val(info.event.extendedProps.numHabitacion)
+                            $('#txtPrecio').val(info.event.extendedProps.precio)
                             $('#txtMontoPago').val(info.event.extendedProps.montoPago)
                             $('#txtVueltoPago').val(info.event.extendedProps.vueltoPago)
                             $('#txtTelefonoPago').val(info.event.extendedProps.telefonoPago)
@@ -225,8 +227,7 @@ console.log(info.event.extendedProps.montoPago)
                                 // Mostrar tabla de pagos si tiene datos
                                     var tablaPagosContainer = document.getElementById("tablaPagosContainer");
                                     tablaPagosContainer.style.display = "block";
-                                    // Actualizar total de abonos en dólares
-                                    actualizarTotalAbonos();
+
                                     // Reiniciar campos de pago
                                     document.getElementById("camposPago").innerHTML = "";
                                     document.getElementById("tipoPago").value = "";
@@ -235,6 +236,10 @@ console.log(info.event.extendedProps.montoPago)
                             console.log('entre ', info.event.extendedProps.numHabitacion)
                             obtenerNumHabitacion(info.event.extendedProps.numHabitacion)
                             obtenerPrecio()
+
+                            // Actualizar total de abonos en dólares
+                                    actualizarTotalAbonos();
+
 
 
                             $('#exampleModal').modal()
@@ -271,9 +276,18 @@ console.log(info.event.extendedProps.montoPago)
                     })
 
                     $('#btnProcesar').click(function() {
+
+                        objReservacion = recolectarDatosGUI("PATCH", true)
+
+                        console.log(objReservacion)
+
+
+
                         let activeBtn = activeBtnProcessService()
                         if(activeBtn){
+
                             console.log('Enviando...')
+                            EnviarInformacion('/' + $('#txtID').val(), objReservacion)
                         }else{
                             console.log('Monto insuficiente...')
                         }
@@ -285,18 +299,9 @@ console.log(info.event.extendedProps.montoPago)
 
                     })
 
-                    function activeBtnProcessService(){
-                        let precioShow = $('#precioShow').html()
-                        let txtMontoPago = $('#txtMontoPago').val()
 
-                        precioShow = parseFloat(precioShow)
-                        txtMontoPago = parseFloat(txtMontoPago)
 
-                        return result = txtMontoPago >= precioShow ? true : false
-
-                    }
-
-                    function recolectarDatosGUI(method) {
+                    function recolectarDatosGUI(method, processService = false) {
 
                         nuevaReserva = {
                             id: $('#txtID').val(),
@@ -329,7 +334,9 @@ console.log(info.event.extendedProps.montoPago)
 
                             formaPago: obtenerDatosReserva(),
                             '_token': $("meta[name='csrf-token']").attr("content"),
-                            '_method': method
+                            '_method': method,
+                            '_processService': processService
+
                         }
 
                         return (nuevaReserva)

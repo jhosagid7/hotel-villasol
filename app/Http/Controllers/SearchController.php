@@ -57,18 +57,18 @@ class SearchController extends Controller
         $data = [];
 
         foreach ($querys as $query) {
-            $creditos = $query->creditos; // Obtener la colección de objetos de crédito relacionados con la persona
-            $excedentes = $query->excedentes; // Obtener la colección de objetos de crédito relacionados con la persona
-            $total_deuda = 0; // Variable para almacenar la suma de las deudas de los créditos
-            $estado_credito = ''; // Variable para almacenar la suma de las deudas de los créditos
-            $dispExcedente = 0; // Variable para almacenar la suma de las deudas de los créditos
+            $creditos = $query->creditos; // Obtener la colección de objetos de Credito relacionados con la persona
+            $excedentes = $query->excedentes; // Obtener la colección de objetos de Credito relacionados con la persona
+            $total_deuda = 0; // Variable para almacenar la suma de las deudas de los Creditos
+            $estado_credito = ''; // Variable para almacenar la suma de las deudas de los Creditos
+            $dispExcedente = 0; // Variable para almacenar la suma de las deudas de los Creditos
 
             foreach ($creditos as $credito) {
-                $total_deuda += $credito->total_deuda; // Sumar la deuda de cada crédito
-                $estado_credito = $credito->estado_credito; // Sumar la deuda de cada crédito
+                $total_deuda += $credito->total_deuda; // Sumar la deuda de cada Credito
+                $estado_credito = $credito->estado_credito; // Sumar la deuda de cada Credito
             }
             foreach ($excedentes as $excedente) {
-                $dispExcedente = $excedente->excedente; // Sumar la deuda de cada crédito
+                $dispExcedente = $excedente->excedente; // Sumar la deuda de cada Credito
             }
 
             $data[] = [

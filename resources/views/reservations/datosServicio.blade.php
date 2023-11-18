@@ -39,7 +39,7 @@
             </div>
             <div class="form-group col-md-3">
                 <label class="text-black">Precio:<h3 class="box-title"><b
-                            class="text-warning">$<b id=precioShowServicio>0.00</b></b></h3></label>
+                            class="text-warning">$<b id="precioShowServicio">0.00</b></b></h3></label>
 
 
             </div>
@@ -85,9 +85,12 @@ $('#txtServicio').on('change', function() {
             // Limpiar el segundo select
             $('#precioShow').html('0.00');
             $('#precioShowServicio').html('0.00');
+            $('#txtPrecio').html('0.00');
 
             $('#precioShow').html(precio.precio);
             $('#precioShowServicio').html(precio.precio);
+            $('#txtPrecio').val(precio.precio);
+            actualizarTotalAbonos()
         }
     });
 }

@@ -60,7 +60,7 @@
                                 $color = 'bg-orange';
                                 }
 
-                                if ($servicio->modo_pago == 'Crédito') {
+                                if ($servicio->modo_pago == 'Credito') {
                                 $color = 'bg-green';
                                 }
                                 @endphp

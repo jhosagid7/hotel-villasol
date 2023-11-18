@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Cat;
 use App\Caja;
+use App\Tasa;
 use App\User;
 use App\Horario;
 use App\Persona;
+use App\Servicio;
 use App\Excedente;
 use Carbon\Carbon;
 use App\Reservation;
+use App\Sessioncaja;
 use Illuminate\Http\Request;
 use App\DetallePagoReservation;
 use Illuminate\Support\Facades\DB;
@@ -174,13 +177,13 @@ class ReservationController extends Controller
     {
         $caja = Caja::where("estado", "=", 'Abierta')->first();
 
-
-        $datosReservasion = request()->except(['_token', '_method','user_id','caja_id', 'nombreCliente', 'cedulaCliente', 'numServicio', 'formaPago']);
+        $procesed = request()->input('_processService');
+        $datosReservasion = request()->except(['_token', '_method', '_processService','user_id','caja_id', 'nombreCliente', 'cedulaCliente', 'numServicio', 'formaPago']);
         // dd($datosReservasion['precio']);
 
         $formaPago = request()->input('formaPago');
 
-        $result = Reservation::where('id', $id)->update($datosReservasion);
+
 
         if($formaPago){
             // Guardar los datos en la tabla detalle_pago_reservation
@@ -205,6 +208,14 @@ class ReservationController extends Controller
                 ]);
             }
         }
+
+        //Todo creamos el servicio
+        if($procesed) {
+            $datosReservasion['status'] = 'Procesado';
+            $this->processServicesReservations($datosReservasion);
+        }
+
+        $result = Reservation::where('id', $id)->update($datosReservasion);
 
         return response()->json([$result,'msg' => 'Reservacion Actualizada', 'type' => 'success']);
     }
@@ -245,6 +256,68 @@ class ReservationController extends Controller
 
 
 
+    }
+
+    public function processServicesReservations($datosReservasion) {
+
+        //obtenemos el id del servicio
+        $lastServicio = Servicio::latest()->first();
+        $num_servicio = Sessioncaja::numCodigo('CS', auth()->user()->id, $lastServicio->id + 1);
+        $caja = Caja::latest()->first();
+
+        $tasas = Tasa::orderBy('id')->get();
+
+
+        $servicio = new Servicio;
+        $servicio->num_servicio = $num_servicio;
+        $servicio->operador = auth()->user()->name;
+        $servicio->status_servicio = 'Iniciado';
+        $servicio->habitacion_id = $datosReservasion['habitacione_id'];
+        $servicio->nombre_habitacion = $datosReservasion['numHabitacion'];
+        $servicio->detalle_habitacion = $datosReservasion['tipoHabitacion'];
+        $servicio->tipo_habitacion = $datosReservasion['tipoServicio'];
+        $servicio->horario = $datosReservasion['tipoServicio'];
+        $servicio->fecha_entrada = date("Y-m-d", strtotime($datosReservasion['start']));
+        $servicio->hora_entrada = date("H:i", strtotime($datosReservasion['start']));
+        $servicio->fecha_salida = date("Y-m-d", strtotime($datosReservasion['end']));
+        $servicio->hora_salida = date("H:i", strtotime($datosReservasion['end']));
+        $servicio->tasaDolar = $tasas[0]['tasa'];
+        $servicio->porDolar = $tasas[0]['porcentaje_ganancia'];
+        $servicio->tasaPeso = $tasas[1]['tasa'];
+        $servicio->porPeso = $tasas[1]['porcentaje_ganancia'];
+        $servicio->tasaTransPunto = $tasas[2]['tasa'];
+        $servicio->porTransPunto = $tasas[2]['porcentaje_ganancia'];
+        $servicio->tasaMixto = $tasas[3]['tasa'];
+        $servicio->porMixto = $tasas[3]['porcentaje_ganancia'];
+        $servicio->tasaEfectivo = $tasas[4]['tasa'];
+        $servicio->porEfectivo = $tasas[4]['porcentaje_ganancia'];
+        $servicio->tasaDolarHabitacion = $tasas[5]['tasa'];
+        $servicio->porDolarHabitacion = $tasas[5]['porcentaje_ganancia'];
+        $servicio->tasaPesoHabitacion = $tasas[6]['tasa'];
+        $servicio->porPesoHabitacion = $tasas[6]['porcentaje_ganancia'];
+        $servicio->num_Punto = null;
+        $servicio->num_Trans = null;
+        $servicio->modo_pago = 'Contado';
+        $servicio->tipo_pago = 'Dolar';
+        $servicio->is_cambio = 'No';
+        $servicio->status = 'Pagado';
+        $servicio->precio_costo = $datosReservasion['precio'];
+        $servicio->cantidad = $datosReservasion['cantidad'];
+        $servicio->dinero_dejado = $datosReservasion['montoPago'];
+        $servicio->excedente_nuevo = 0.00;
+        $servicio->pago_con_excedente = null;
+        $servicio->total_venta = $datosReservasion['montoPago'];
+        $servicio->estado = 'Aceptada';
+        $servicio->nombre_cliente = $datosReservasion['nombreCliente'];
+        $servicio->cedula_cliente = $datosReservasion['cedulaCliente'];
+        $servicio->direccion_cliente = 'S/D';
+        $servicio->telefono_cliente = $datosReservasion['0424-7665227'];
+        $servicio->limite_fecha = null;
+        $servicio->limite_monto = null;
+        $servicio->persona_id = $datosReservasion['persona_id'];
+        $servicio->user_id = auth()->user()->id;
+        $servicio->caja_id = $caja->id;
+        $servicio->save();
     }
 
 
