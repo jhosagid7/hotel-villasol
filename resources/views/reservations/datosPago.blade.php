@@ -212,7 +212,7 @@
                 <td>${vueltos || 0}</td>
                 <td class="text">${calcularMontoEnDolares(vueltos, tipoPago)}</td>
                 <td class="text">${id || null}</td>
-                <td><button class="btn btn-danger btn-xs" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}">X</button></td>
+                <td><button id='btnEliminar' class="btn btn-danger btn-xs" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}">X</button></td>
             `;
             tablaPagosBody.appendChild(filaPago);
         }
@@ -243,6 +243,8 @@
     function activeBtnProcessService(){
                         let precioShow = $('#txtPrecio').val()
                         let txtMontoPago = $('#txtMontoPago').val()
+                        let txtStatus = $('#txtStatus').val()
+
 
                         precioShow = parseFloat(precioShow)
                         txtMontoPago = parseFloat(txtMontoPago)
@@ -252,6 +254,16 @@
                             $('#btnProcesar').prop("disabled", false)
                         }else {
                             $('#btnProcesar').prop("disabled", true)
+                        }
+
+                        if(txtStatus == 'Procesado'){
+                            $('#btnProcesar').prop("disabled", true)
+                            $('#btnEliminar').prop("disabled", true)
+                            $('#tipoPago').prop("disabled", true)
+                        }else {
+                            $('#btnProcesar').prop("disabled", false)
+                            $('#btnEliminar').prop("disabled", false)
+                            $('#tipoPago').prop("disabled", false)
                         }
 
                         return result = txtMontoPago == precioShow ? true : false

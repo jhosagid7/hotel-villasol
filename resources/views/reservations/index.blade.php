@@ -411,7 +411,8 @@ console.log(info.event.extendedProps.montoPago)
                     }
                 });
 
-                function whenIsProceded(value = false, numservice = false){
+                function whenIsProceded(value = false, numservice = true){
+                    console.log('estoy en whenIsProceded')
                     if(value == 'Procesado' || value == 'Cancelado'){
                         $('#buscarClienteInput').prop("hidden", true)
                         $('#txtFechaEntrada').prop("disabled", true)
@@ -464,7 +465,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#user_id').val({{ Auth::user()->id }})
                         $('#btnModificar').prop("disabled", false)
                         $('#btnEliminar').prop("disabled", false)
-                        $('#btnProcesar').prop("disabled", true)
+                        $('#btnProcesar').prop("disabled", false)
 
 
                     }
@@ -481,8 +482,6 @@ console.log(info.event.extendedProps.montoPago)
                         $('#user_id').val({{ Auth::user()->id }})
                         $('#btnModificar').prop("disabled", false)
                         $('#btnEliminar').prop("disabled", false)
-
-
                         $('#btnProcesar').prop("disabled", false)
                     }
 

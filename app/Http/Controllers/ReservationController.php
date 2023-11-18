@@ -13,6 +13,7 @@ use App\Excedente;
 use Carbon\Carbon;
 use App\Reservation;
 use App\Sessioncaja;
+use App\Pago_Servicio;
 use Illuminate\Http\Request;
 use App\DetallePagoReservation;
 use Illuminate\Support\Facades\DB;
@@ -177,7 +178,10 @@ class ReservationController extends Controller
     {
         $caja = Caja::where("estado", "=", 'Abierta')->first();
 
+        $nombreCliente = request()->input('nombreCliente');
+        $cedulaCliente = request()->input('cedulaCliente');
         $procesed = request()->input('_processService');
+
         $datosReservasion = request()->except(['_token', '_method', '_processService','user_id','caja_id', 'nombreCliente', 'cedulaCliente', 'numServicio', 'formaPago']);
         // dd($datosReservasion['precio']);
 
@@ -212,6 +216,8 @@ class ReservationController extends Controller
         //Todo creamos el servicio
         if($procesed) {
             $datosReservasion['status'] = 'Procesado';
+            $datosReservasion['nombreCliente'] = $nombreCliente;
+            $datosReservasion['cedulaCliente'] = $cedulaCliente;
             $this->processServicesReservations($datosReservasion);
         }
 
@@ -266,6 +272,13 @@ class ReservationController extends Controller
         $caja = Caja::latest()->first();
 
         $tasas = Tasa::orderBy('id')->get();
+        $tasaDolar = $tasas[0]['tasa'];
+        $tasaPeso = $tasas[1]['tasa'];
+        $tasaTransPunto = $tasas[2]['tasa'];
+        $tasaMixto = $tasas[3]['tasa'];
+        $tasaEfectivo = $tasas[4]['tasa'];
+        $tasaDolarHabitacion = $tasas[5]['tasa'];
+        $tasaPesoHabitacion = $tasas[6]['tasa'];
 
 
         $servicio = new Servicio;
@@ -281,19 +294,19 @@ class ReservationController extends Controller
         $servicio->hora_entrada = date("H:i", strtotime($datosReservasion['start']));
         $servicio->fecha_salida = date("Y-m-d", strtotime($datosReservasion['end']));
         $servicio->hora_salida = date("H:i", strtotime($datosReservasion['end']));
-        $servicio->tasaDolar = $tasas[0]['tasa'];
+        $servicio->tasaDolar = $tasaDolar;
         $servicio->porDolar = $tasas[0]['porcentaje_ganancia'];
-        $servicio->tasaPeso = $tasas[1]['tasa'];
+        $servicio->tasaPeso = $tasaPeso;
         $servicio->porPeso = $tasas[1]['porcentaje_ganancia'];
-        $servicio->tasaTransPunto = $tasas[2]['tasa'];
+        $servicio->tasaTransPunto = $tasaTransPunto;
         $servicio->porTransPunto = $tasas[2]['porcentaje_ganancia'];
-        $servicio->tasaMixto = $tasas[3]['tasa'];
+        $servicio->tasaMixto = $tasaMixto;
         $servicio->porMixto = $tasas[3]['porcentaje_ganancia'];
-        $servicio->tasaEfectivo = $tasas[4]['tasa'];
+        $servicio->tasaEfectivo = $tasaEfectivo;
         $servicio->porEfectivo = $tasas[4]['porcentaje_ganancia'];
-        $servicio->tasaDolarHabitacion = $tasas[5]['tasa'];
+        $servicio->tasaDolarHabitacion = $tasaDolarHabitacion;
         $servicio->porDolarHabitacion = $tasas[5]['porcentaje_ganancia'];
-        $servicio->tasaPesoHabitacion = $tasas[6]['tasa'];
+        $servicio->tasaPesoHabitacion = $tasaPesoHabitacion;
         $servicio->porPesoHabitacion = $tasas[6]['porcentaje_ganancia'];
         $servicio->num_Punto = null;
         $servicio->num_Trans = null;
@@ -302,7 +315,7 @@ class ReservationController extends Controller
         $servicio->is_cambio = 'No';
         $servicio->status = 'Pagado';
         $servicio->precio_costo = $datosReservasion['precio'];
-        $servicio->cantidad = $datosReservasion['cantidad'];
+        $servicio->cantidad = 1;
         $servicio->dinero_dejado = $datosReservasion['montoPago'];
         $servicio->excedente_nuevo = 0.00;
         $servicio->pago_con_excedente = null;
@@ -311,13 +324,49 @@ class ReservationController extends Controller
         $servicio->nombre_cliente = $datosReservasion['nombreCliente'];
         $servicio->cedula_cliente = $datosReservasion['cedulaCliente'];
         $servicio->direccion_cliente = 'S/D';
-        $servicio->telefono_cliente = $datosReservasion['0424-7665227'];
+        $servicio->telefono_cliente = $datosReservasion['telefonoPago'];
         $servicio->limite_fecha = null;
         $servicio->limite_monto = null;
         $servicio->persona_id = $datosReservasion['persona_id'];
         $servicio->user_id = auth()->user()->id;
         $servicio->caja_id = $caja->id;
         $servicio->save();
+
+        $pago_reservacione = DetallePagoReservation::where('reservation_id', $datosReservasion['id'])->get();
+
+        if($pago_reservacione->count() > 0) {
+            $tasaPago = '';
+            foreach ($pago_reservacione as $pago) {
+
+                if ($pago->tipoPago == 'Dolar') {
+                    $tasaPago = $pago->tasaDolar;
+                }
+                if ($pago->tipoPago == 'Peso') {
+                    $tasaPago = $pago->tasaPeso;
+                }
+                if ($pago->tipoPago == 'Efectivo') {
+                    $tasaPago = $pago->tasaBolivar;
+                }
+
+                $Pago_Servicio = new Pago_Servicio();
+                $Pago_Servicio->Divisa = $pago->tipoPago;
+                $Pago_Servicio->MontoDivisa = $pago->montoPagado;
+                $Pago_Servicio->TasaTiket = $tasaPago;
+                $Pago_Servicio->MontoDolar = floatval($pago->montoPagadoDolar);
+                $Pago_Servicio->MontoDolarServicio = (floatval($pago->montoPagadoDolar) - floatval($pago->vueltosDolar));
+                $Pago_Servicio->Excedente = 0;
+                $Pago_Servicio->Vueltos = floatval($pago->vueltosDolar);
+                $Pago_Servicio->servicio_id = $servicio->id;
+                $Pago_Servicio->caja_id = $caja->id;
+                $Pago_Servicio->save();
+            }
+        }
+        $upExcedente = Reservation::findOrFail($datosReservasion['id']);
+        $upExcedente->numServicio = $servicio->num_servicio;
+        $upExcedente->servicio_id = $servicio->id;
+        $upExcedente->update();
+
+
     }
 
 
