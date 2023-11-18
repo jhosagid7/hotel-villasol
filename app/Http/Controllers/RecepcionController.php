@@ -45,7 +45,7 @@ class RecepcionController extends Controller
         $users = User::with('roles')->orderBy('id', 'Desc')->get();
         // return $users->roles[0]->name;
 
-        // return $horarios;
+        // return $habitaciones;
 
         // return $horarios;
 
