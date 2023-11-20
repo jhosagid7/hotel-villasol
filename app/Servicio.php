@@ -97,7 +97,7 @@ class Servicio extends Model
 
     public function reservaciones()
     {
-        return $this->hasMany(Reservation::class);
+        return $this->hasOne(Reservation::class);
     }
 
 

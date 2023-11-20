@@ -286,7 +286,7 @@ console.log(info.event.extendedProps.montoPago)
                         let activeBtn = activeBtnProcessService()
                         if(activeBtn){
 
-                            console.log('Enviando...')
+                            console.log('Enviando...', $('#txtID').val())
                             EnviarInformacion('/' + $('#txtID').val(), objReservacion)
                         }else{
                             console.log('Monto insuficiente...')

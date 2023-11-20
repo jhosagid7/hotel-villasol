@@ -1762,10 +1762,15 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                     @elseif($serv->modo_pago == 'Credito')
                                                                     <tr style="background-color: rgb(36, 238, 10);"
                                                                         class="text-black tituloVerde">
+                                                                    @elseif($serv->reservaciones)
+                                                                    <tr style="background-color: rgb(245, 172, 35);"
+                                                                        class="text-black tituloAzul">
                                                                     @else
                                                                     <tr style="background-color: rgb(35, 192, 245);"
                                                                         class="text-black tituloAzul">
                                                                 @endif
+
+
 
 
                                                                 <td>ID</td>
@@ -1791,6 +1796,9 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                             class="text-black detalleRojo">
                                                                         @elseif($serv->modo_pago == 'Credito')
                                                                         <tr style="background-color: rgba(198, 250, 191, 0.692);"
+                                                                            class="text-black detalleVerde">
+                                                                        @elseif($serv->reservaciones)
+                                                                        <tr style="background-color: rgb(238, 212, 164);"
                                                                             class="text-black detalleVerde">
                                                                         @else
                                                                         <tr style="background-color: rgba(174, 221, 236, 0.555);"
@@ -1880,6 +1888,9 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                         @elseif($serv->modo_pago == 'Credito')
                                                                         <tr style="background-color: rgba(154, 247, 141, 0.692);"
                                                                             class="text-black subTituloVerde">
+                                                                        @elseif($serv->reservaciones)
+                                                                        <tr style="background-color: rgb(238, 212, 164);"
+                                                                            class="text-black detalleVerde">
                                                                         @else
                                                                         <tr style="background-color: rgba(126, 211, 240, 0.555);"
                                                                             class="text-black subTituloAzul">
@@ -1899,6 +1910,9 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                         class="text-black detalleRojo">
                                                                     @elseif($serv->modo_pago == 'Credito')
                                                                         <tr style="background-color: rgba(198, 250, 191, 0.692);"
+                                                                            class="text-black detalleVerde">
+                                                                    @elseif($serv->reservaciones)
+                                                                        <tr style="background-color: rgb(238, 212, 164);"
                                                                             class="text-black detalleVerde">
                                                                     @else
                                                                         <tr style="background-color: rgba(174, 221, 236, 0.555);"

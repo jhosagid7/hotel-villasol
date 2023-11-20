@@ -212,7 +212,7 @@
                 <td>${vueltos || 0}</td>
                 <td class="text">${calcularMontoEnDolares(vueltos, tipoPago)}</td>
                 <td class="text">${id || null}</td>
-                <td><button id='btnEliminar' class="btn btn-danger btn-xs" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}">X</button></td>
+                <td><button class="btn btn-danger btn-xs btnEliminarProcesado" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}">X</button></td>
             `;
             tablaPagosBody.appendChild(filaPago);
         }
@@ -231,7 +231,7 @@
             <td>${vueltos || 0}</td>
             <td class="text">${calcularMontoEnDolares(vueltos, tipoPago)}</td>
             <td class="text">${id || null}</td>
-            <td><button class="btn btn-warning btn-xs" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}" disabled>X</button></td>
+            <td><button class="btn btn-warning btn-xs btnEliminarProcesado" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}" disabled>X</button></td>
         `;
 
         let ver = caja_id == {{ $caja_id }} ? 'Son iguales' : 'No son iguales'
@@ -258,12 +258,12 @@
 
                         if(txtStatus == 'Procesado'){
                             $('#btnProcesar').prop("disabled", true)
-                            $('#btnEliminar').prop("disabled", true)
                             $('#tipoPago').prop("disabled", true)
+                            $('.btnEliminarProcesado').prop("disabled", true)
                         }else {
                             $('#btnProcesar').prop("disabled", false)
-                            $('#btnEliminar').prop("disabled", false)
                             $('#tipoPago').prop("disabled", false)
+                            $('.btnEliminarProcesado').prop("disabled", false)
                         }
 
                         return result = txtMontoPago == precioShow ? true : false

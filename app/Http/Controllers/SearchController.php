@@ -269,6 +269,7 @@ class SearchController extends Controller
     }
     public function getNumberHabitacion(Request $request)
     {
+        dd($request);
         // Obtener el número de servicio del request
         $numServicio = $request->input('numServicio');
         $reservationId = $request->input('reservationId');
@@ -293,13 +294,68 @@ class SearchController extends Controller
 
     public function obtenerHabitaciones(Request $request)
     {
+// return $request;
         $cat_id = $request->input('cat_id');
 
-        // Obtener las habitaciones correspondientes a la categoría seleccionada
-        $habitaciones = Habitacione::where('cat_id', $cat_id)->get();
+
+
+
+        $fecha_entrada = $request->input('fechaEntrada');
+        $hora_entrada = $request->input('horaEntrada');
+        $fecha_salida = $request->input('fechaSalida');
+        $hora_salida = $request->input('horaSalida');
+
+        $reservation_id = $request->input('reservation_id');
+
+        $start = $fecha_entrada . ' ' . $hora_entrada;
+        $end = $fecha_salida . ' ' . $hora_salida;
+        // return $request;
+        // return $start;
+        // $reservation_id = $request->input('horaSalida');
+
+        $habitacionesDisponibles = Habitacione::whereNotIn('id', function ($query) use ($start, $end, $cat_id) {
+            $query->select('habitacione_id')
+            ->from('reservations')
+            ->where('status', 'Pendiente')
+            ->where(function ($query) use ($start, $end) {
+                $query->whereBetween('start', [$start, $end])
+                    ->orWhereBetween('end', [$start, $end]);
+            })
+            ->where('cat_id', $cat_id);
+        })
+        ->whereNotIn('id', function ($query) use ($fecha_entrada, $hora_entrada, $fecha_salida, $hora_salida, $cat_id) {
+            $query->select('habitacion_id')
+            ->from('servicios')
+            ->where('status_servicio', 'Iniciado')
+            ->where(function ($query) use ($fecha_entrada, $hora_entrada, $fecha_salida, $hora_salida) {
+                $query->whereBetween('fecha_entrada', [$fecha_entrada, $fecha_salida])
+                    ->whereBetween('hora_entrada', [$hora_entrada, $hora_salida])
+                    ->orWhereBetween('fecha_salida', [$fecha_entrada, $fecha_salida])
+                    ->whereBetween('hora_salida', [$hora_entrada, $hora_salida]);
+            });
+        })
+        ->where('cat_id', $cat_id)
+        ->get();
+
+        if($reservation_id){
+            $habitaiconActual = Reservation::findOrFail($reservation_id);
+
+            $habitacion = Habitacione::where('id', $habitaiconActual->habitacione_id)
+            ->first();
+
+            $habitacionesDisponibles->push($habitacion);
+        }
+
+
+        // return $habitacionesDisponibles;
+
+        // $reservationBlocked = Reservation::where('status', 'Pendiente')->get();
+
+        // // Obtener las habitaciones correspondientes a la categoría seleccionada
+        // $habitaciones = Habitacione::where('cat_id', $cat_id)->get();
 
         // Devolver las habitaciones en formato JSON
-        return response()->json($habitaciones);
+        return response()->json($habitacionesDisponibles);
     }
     public function obtenerPrecio(Request $request)
     {

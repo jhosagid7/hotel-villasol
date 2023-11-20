@@ -11,6 +11,7 @@ use App\Persona;
 use App\Servicio;
 use App\Excedente;
 use Carbon\Carbon;
+use App\Habitacione;
 use App\Reservation;
 use App\Sessioncaja;
 use App\Pago_Servicio;
@@ -70,7 +71,7 @@ class ReservationController extends Controller
     public function store(Request $request)
     {
         $caja = Caja::where("estado", "=", 'Abierta')->first();
-        $datosReservasion = request()->except(['_token', '_method', 'formaPago']);
+        $datosReservasion = request()->except(['_token', '_method', '_processService', 'formaPago']);
         $formaPago = request()->input('formaPago');
 
         $datosReservasion['caja_id'] = $caja->id;
@@ -331,6 +332,10 @@ class ReservationController extends Controller
         $servicio->user_id = auth()->user()->id;
         $servicio->caja_id = $caja->id;
         $servicio->save();
+
+        $habitacion = Habitacione::findOrFail($datosReservasion['habitacione_id']);
+        $habitacion->status = 'Ocupada';
+        $habitacion->update();
 
         $pago_reservacione = DetallePagoReservation::where('reservation_id', $datosReservasion['id'])->get();
 
