@@ -46,7 +46,7 @@ class ReservationController extends Controller
         $userRole = $user->roles[0]->name;
         // return $user->roles[0]->name;
         $tipoServicios = Cat::where('estado', 'Activa')->select('id', 'nombre')->get();
-        $horarios = Horario::select('id', 'tipo')->where('tipo', '<>', 'DIURNO')->get();
+        $horarios = Horario::select('id', 'tipo')->where('tipo', '24 HORAS')->get();
 
         // return $tipoServicio;
         return view('reservations.index', compact('tipoServicios', 'horarios', 'userRole', 'caja_id'));

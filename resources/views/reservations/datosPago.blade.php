@@ -169,6 +169,8 @@
         // Actualizar el último tipo de pago y monto pagado en la misma moneda
         ultimoTipoPago = tipoPago;
         ultimoMontoPagado = montoPagado;
+
+
     }
     // Función para agregar un pago por separado (Transferencia y Punto)
     function agregarPagoPorSeparado(id, tipoPago, nombreBanco, referencia, fechaPago, montoPagado, vueltos) {
@@ -244,17 +246,13 @@
                         let precioShow = $('#txtPrecio').val()
                         let txtMontoPago = $('#txtMontoPago').val()
                         let txtStatus = $('#txtStatus').val()
+                        let txtID = $('#txtID').val()
 
 
                         precioShow = parseFloat(precioShow)
                         txtMontoPago = parseFloat(txtMontoPago)
                         console.log('precioShow: ', precioShow);
                         console.log('txtMontoPago: ', txtMontoPago);
-                        if(txtMontoPago === precioShow) {
-                            $('#btnProcesar').prop("disabled", false)
-                        }else {
-                            $('#btnProcesar').prop("disabled", true)
-                        }
 
                         if(txtStatus == 'Procesado'){
                             $('#btnProcesar').prop("disabled", true)
@@ -264,6 +262,25 @@
                             $('#btnProcesar').prop("disabled", false)
                             $('#tipoPago').prop("disabled", false)
                             $('.btnEliminarProcesado').prop("disabled", false)
+                            $('#txtStatus').prop("disabled", true)
+                        }
+                        if(txtMontoPago === precioShow && txtStatus != 'Procesado' && txtID > 0) {
+                            console.log('enret')
+                            $('#btnProcesar').prop("disabled", false)
+                        }else {
+                            console.log('3else enret')
+                            $('#btnProcesar').prop("disabled", true)
+                        }
+
+                        if(txtMontoPago > 0 && txtMontoPago === precioShow && txtStatus == 'Pendiente' && txtID <= 0){
+                            $('#btnAgregar').prop("disabled", false)
+                        }else{
+                            $('#btnAgregar').prop("disabled", true)
+                        }
+                        if(txtStatus == 'Pendiente' && txtID <= 0){
+                            $('#txtServicio').prop("disabled", false)
+                        }else{
+                            $('#txtServicio').prop("disabled", true)
                         }
 
                         return result = txtMontoPago == precioShow ? true : false

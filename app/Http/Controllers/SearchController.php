@@ -294,11 +294,7 @@ class SearchController extends Controller
 
     public function obtenerHabitaciones(Request $request)
     {
-// return $request;
         $cat_id = $request->input('cat_id');
-
-
-
 
         $fecha_entrada = $request->input('fechaEntrada');
         $hora_entrada = $request->input('horaEntrada');
@@ -309,9 +305,6 @@ class SearchController extends Controller
 
         $start = $fecha_entrada . ' ' . $hora_entrada;
         $end = $fecha_salida . ' ' . $hora_salida;
-        // return $request;
-        // return $start;
-        // $reservation_id = $request->input('horaSalida');
 
         $habitacionesDisponibles = Habitacione::whereNotIn('id', function ($query) use ($start, $end, $cat_id) {
             $query->select('habitacione_id')
@@ -345,14 +338,6 @@ class SearchController extends Controller
 
             $habitacionesDisponibles->push($habitacion);
         }
-
-
-        // return $habitacionesDisponibles;
-
-        // $reservationBlocked = Reservation::where('status', 'Pendiente')->get();
-
-        // // Obtener las habitaciones correspondientes a la categoría seleccionada
-        // $habitaciones = Habitacione::where('cat_id', $cat_id)->get();
 
         // Devolver las habitaciones en formato JSON
         return response()->json($habitacionesDisponibles);
