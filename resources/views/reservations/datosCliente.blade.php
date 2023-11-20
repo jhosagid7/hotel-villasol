@@ -20,8 +20,7 @@
             </div>
             <div class="form-group col-md-2">
                 <label class="text-black" for="txtNumAcompanantes">N°/Pers:</label>
-                <input class="form-control" type="number" name="txtNumAcompanantes" id="txtNumAcompanantes"
-                    placeholder="txtNombre">
+                <input class="form-control" type="number" name="txtNumAcompanantes" id="txtNumAcompanantes" value="1" min="1">
             </div>
             <input hidden class="text-black " type="text" id="persona_id" name="persona_id">
 

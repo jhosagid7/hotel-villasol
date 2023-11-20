@@ -86,12 +86,12 @@
                         dateClick: function(info) {
 console.log('dateClick')
                             limpiarFormulario()
-
+                            activeBtnProcessService()
 
                             $('#txtFechaEntrada').val(info.dateStr)
                             $('#txtFechaSalida').val(info.dateStr)
 
-                            $('#btnAgregar').prop("disabled", false)
+                            $('#txtServicio').prop("disabled", false)
                             $('#btnModificar').prop("disabled", true)
                             $('#btnEliminar').prop("disabled", true)
                             $('#btnProcesar').prop("disabled", true)
@@ -181,6 +181,7 @@ console.log('eventClick')
                             $('#txtNumAcompanantes').val(info.event.extendedProps.numAcompanantes)
                             $('#txtHabitacion').val(info.event.extendedProps.cat_id)
                             $('#txtServicio').val(info.event.extendedProps.horario_id)
+                            $('#txtNumDias').val(info.event.extendedProps.cantidad)
                             $('#txtNumHabitacion').val(info.event.extendedProps.numHabitacion)
                             $('#txtPrecio').val(info.event.extendedProps.precio)
                             $('#txtMontoPago').val(info.event.extendedProps.montoPago)
@@ -318,6 +319,7 @@ console.log(info.event.extendedProps.montoPago)
                             habitacione_id: $('#txtNumHabitacion').find("option:selected").val(),
                             tipoHabitacion: $('#txtHabitacion').find("option:selected").text(),
                             tipoServicio: $('#txtServicio').find("option:selected").text(),
+                            cantidad: $('#txtNumDias').val(),
                             numHabitacion: $('#txtNumHabitacion').find("option:selected").text(),
                             precio: $('#precioShowServicio').html(),
                             montoPago: $('#txtMontoPago').val(),
@@ -375,9 +377,10 @@ console.log(info.event.extendedProps.montoPago)
                         $('#txtNombreCliente').val('')
                         $('#txtCedulaCliente').val('')
                         $('#txtTelefonoContacto').val('')
-                        $('#txtNumAcompanantes').val('')
+                        $('#txtNumAcompanantes').val(1)
                         $('#txtHabitacion').val('')
                         $('#txtServicio').val('')
+                        $('#txtNumDias').val(1)
                         $('#txtNumHabitacion').val('')
                         $('#txtMontoPago').val('')
                         $('#txtTelefonoPago').val('')
@@ -414,6 +417,7 @@ console.log(info.event.extendedProps.montoPago)
                 function whenIsProceded(value = false, numservice = true){
                     console.log('estoy en whenIsProceded')
                     if(value == 'Procesado' || value == 'Cancelado'){
+                        $('#txtMontoPago').prop("disabled", true)
                         $('#buscarClienteInput').prop("hidden", true)
                         $('#txtFechaEntrada').prop("disabled", true)
                         $('#txtHoraEntrada').prop("disabled", true)
@@ -426,6 +430,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#txtNumAcompanantes').prop("disabled", true)
                         $('#txtHabitacion').prop("disabled", true)
                         $('#txtServicio').prop("disabled", true)
+                        $('#txtNumDias').prop("disabled", true)
                         $('#numHabitacion').prop("disabled", true)
                         $('#txtMontoPago').prop("disabled", true)
                         $('#txtTelefonoPago').prop("disabled", true)
@@ -441,6 +446,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#btnEliminar').prop("disabled", true)
                         $('#btnProcesar').prop("disabled", true)
                     }else{
+                        $('#txtMontoPago').prop("disabled", true)
                         $('#buscarClienteInput').prop("hidden", false)
                         $('#txtFechaEntrada').prop("disabled", false)
                         $('#txtHoraEntrada').prop("disabled", false)
@@ -453,6 +459,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#txtNumAcompanantes').prop("disabled", false)
                         $('#txtHabitacion').prop("disabled", false)
                         $('#txtServicio').prop("disabled", false)
+                        $('#txtNumDias').prop("disabled", false)
                         $('#numHabitacion').prop("disabled", false)
                         $('#txtMontoPago').prop("disabled", false)
                         $('#txtTelefonoPago').prop("disabled", false)
@@ -474,7 +481,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#buscarClienteInput').prop("hidden", true)
                         $('#txtNombreCliente').prop("disabled", true)
                         $('#txtCedulaCliente').prop("disabled", true)
-                        $('#txtNumAcompanantes').prop("disabled", true)
+                        $('#txtServicio').prop("disabled", true)
                         $('#txtMontoPago').prop("disabled", true)
                         $('#txtNombreOperador').val('{{ Auth::user()->name }}')
                         $('#txtNumServicio').prop("disabled", true)
@@ -490,28 +497,29 @@ console.log(info.event.extendedProps.montoPago)
             </script>
             <script>
                 // Obtén los elementos select y txtColor
-const select = document.getElementById('txtStatus');
-const txtColor = document.getElementById('txtColor');
+                const select = document.getElementById('txtStatus');
+                const txtColor = document.getElementById('txtColor');
 
-// Agrega un evento de cambio al select
-select.addEventListener('change', function() {
-  // Obtén el valor seleccionado del select
-  const selectedValue = select.value;
+                // Agrega un evento de cambio al select
+                select.addEventListener('change', function() {
+                // Obtén el valor seleccionado del select
+                const selectedValue = select.value;
 
-  // Asigna el color correspondiente al campo txtColor según el valor seleccionado
-  if (selectedValue === 'Pendiente') {
-    txtColor.value = '#C67110';
-  } else if (selectedValue === 'Procesado') {
-    txtColor.value = '#118F00';
-  } else if (selectedValue === 'Cancelado') {
-    txtColor.value = '#FE0606';
-  }
-});
+                // Asigna el color correspondiente al campo txtColor según el valor seleccionado
+                if (selectedValue === 'Pendiente') {
+                    txtColor.value = '#C67110';
+                } else if (selectedValue === 'Procesado') {
+                    txtColor.value = '#118F00';
+                } else if (selectedValue === 'Cancelado') {
+                    txtColor.value = '#FE0606';
+                }
+                });
             </script>
 
             <script>
                 function actualizarHorasFechas() {
                     const txtServicio = document.getElementById("txtServicio");
+                    const cantidad = document.getElementById("txtNumDias").value;
                     const valorServicio = txtServicio.value;
                     let horaInicio = "";
                     let horaFinal = "";
@@ -519,30 +527,11 @@ select.addEventListener('change', function() {
                     let fechaSalida = new Date(fechaEntrada);
 
                     switch (valorServicio) {
-                        case "1":
-                            horaInicio = "05:00";
-                            horaFinal = "21:00";
-                            break;
-                        case "2":
-                            horaInicio = "17:00";
-                            horaFinal = "00:01";
-                            fechaSalida.setDate(fechaSalida.getDate() + 1);
-                            break;
-                        case "3":
-                            //const now = new Date();
-                            //horaInicio = now.toLocaleTimeString([], {
-                            //    hour: '2-digit',
-                            //    minute: '2-digit'
-                            //});
-                            //horaFinal = now.toLocaleTimeString([], {
-                            //    hour: '2-digit',
-                            //    minute: '2-digit'
-                            //});
-                            //fechaSalida.setDate(fechaSalida.getDate() + 1);
 
+                        case "3":
                             horaInicio = "14:00";
                             horaFinal = "14:00";
-                            fechaSalida.setDate(fechaSalida.getDate() + 1);
+                            fechaSalida.setDate(fechaSalida.getDate() + parseFloat(cantidad));
                             break;
                     }
 
