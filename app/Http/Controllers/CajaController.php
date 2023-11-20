@@ -1032,7 +1032,7 @@ class CajaController extends Controller
 
             }
 
-            if ($vent->modo_pago == 'Crédito') {
+            if ($vent->modo_pago == 'Credito') {
                 $cajas->SumaTotalCantidadVentasCredito = $cajas->SumaTotalCantidadVentasCredito + 1;
                 $cajas->SumaTotalVentasCredito = $cajas->SumaTotalVentasCredito + $vent->total_venta;
             }

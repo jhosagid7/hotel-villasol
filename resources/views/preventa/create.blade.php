@@ -278,7 +278,7 @@
                                                                             @if ($venta->modo_pago === 'Cortesía')
                                                                             <span class="label label-danger">{{
                                                                                 $venta->modo_pago }}</span>
-                                                                            @elseif($venta->modo_pago === 'Crédito')
+                                                                            @elseif($venta->modo_pago === 'Credito')
                                                                             <span class="label label-success">{{
                                                                                 $venta->modo_pago }}</span>
                                                                             @else

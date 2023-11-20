@@ -25,10 +25,10 @@
             </div>
 
             <div class="form-group col-md-3">
-                <label class="text-black" for="txtPrecioPago">Total a pagar:<h3 class="box-title"><b
-                            class="text-warning">$<b id=precioShow>0.00</b></b></h3></label>
-                <input required class="form-control" type="hidden" name="txtPrecioPago" id="txtPrecioPago"
-                    placeholder="txtPrecioPago">
+                <label class="text-black" for="txtPrecio">Total a pagar:<h3 class="box-title"><b
+                            class="text-warning">$<b id="precioShow">0.00</b></b></h3></label>
+                <input required class="form-control" type="hidden" name="txtPrecio" id="txtPrecio"
+                    placeholder="txtPrecio">
                 <input required class="form-control" type="hidden" name="txtVueltoPago" id="txtVueltoPago"
                     placeholder="txtVueltoPago">
 
@@ -212,7 +212,7 @@
                 <td>${vueltos || 0}</td>
                 <td class="text">${calcularMontoEnDolares(vueltos, tipoPago)}</td>
                 <td class="text">${id || null}</td>
-                <td><button class="btn btn-danger btn-xs" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}">X</button></td>
+                <td><button class="btn btn-danger btn-xs btnEliminarProcesado" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}">X</button></td>
             `;
             tablaPagosBody.appendChild(filaPago);
         }
@@ -231,7 +231,7 @@
             <td>${vueltos || 0}</td>
             <td class="text">${calcularMontoEnDolares(vueltos, tipoPago)}</td>
             <td class="text">${id || null}</td>
-            <td><button class="btn btn-warning btn-xs" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}" disabled>X</button></td>
+            <td><button class="btn btn-warning btn-xs btnEliminarProcesado" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}" disabled>X</button></td>
         `;
 
         let ver = caja_id == {{ $caja_id }} ? 'Son iguales' : 'No son iguales'
@@ -239,12 +239,43 @@
         var payDataBase = document.getElementById("payDataBase");
         payDataBase.appendChild(filaPago);
     }
+
+    function activeBtnProcessService(){
+                        let precioShow = $('#txtPrecio').val()
+                        let txtMontoPago = $('#txtMontoPago').val()
+                        let txtStatus = $('#txtStatus').val()
+
+
+                        precioShow = parseFloat(precioShow)
+                        txtMontoPago = parseFloat(txtMontoPago)
+                        console.log('precioShow: ', precioShow);
+                        console.log('txtMontoPago: ', txtMontoPago);
+                        if(txtMontoPago === precioShow) {
+                            $('#btnProcesar').prop("disabled", false)
+                        }else {
+                            $('#btnProcesar').prop("disabled", true)
+                        }
+
+                        if(txtStatus == 'Procesado'){
+                            $('#btnProcesar').prop("disabled", true)
+                            $('#tipoPago').prop("disabled", true)
+                            $('.btnEliminarProcesado').prop("disabled", true)
+                        }else {
+                            $('#btnProcesar').prop("disabled", false)
+                            $('#tipoPago').prop("disabled", false)
+                            $('.btnEliminarProcesado').prop("disabled", false)
+                        }
+
+                        return result = txtMontoPago == precioShow ? true : false
+
+                    }
     // Función para actualizar el total de abonos en dólares
     function actualizarTotalAbonos() {
         var totalAbonos = 0.00;
         var vueltosPago = 0.00;
         var tablaPagosBody = document.getElementById("tablaPagosBody").getElementsByTagName("tr");
         var payDataBase = document.getElementById("payDataBase").getElementsByTagName("tr");
+
         for (var i = 0; i < tablaPagosBody.length; i++) {
             var montoPagado = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[4].innerText) || 0;
             var vueltos = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[5].innerText) || 0;
@@ -253,6 +284,8 @@
             var vueltosEnDolares = calcularMontoEnDolares(vueltos, tipoPago);
             totalAbonos += montoEnDolares - vueltosEnDolares;
             vueltosPago += parseFloat(vueltosEnDolares);
+
+
             console.log("vueltos ", vueltos)
             console.log("vueltosPago ", vueltosPago)
         }
@@ -270,6 +303,7 @@
         document.getElementById("totalAbonosDolar").innerText = totalAbonos.toFixed(2);
         document.getElementById("txtMontoPago").value = totalAbonos.toFixed(2);
         document.getElementById("txtVueltoPago").value = vueltosPago.toFixed(2);
+        activeBtnProcessService();
     }
 
 
