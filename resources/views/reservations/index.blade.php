@@ -55,7 +55,6 @@
 
         @push('sciptsMain')
             <script src="{{ asset('fullcalendar/dist/index.global.min.js') }}"></script>
-
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     var calendarEl = document.getElementById('calendar');
@@ -86,6 +85,7 @@
                         dateClick: function(info) {
 console.log('dateClick')
                             limpiarFormulario()
+                            handlerColor()
                             activeBtnProcessService()
 
                             $('#txtFechaEntrada').val(info.dateStr)
@@ -114,6 +114,7 @@ console.log('dateClick')
 
                         eventClick: function(info) {
                             limpiarFormulario()
+
 
 
 console.log('eventClick')
@@ -496,13 +497,12 @@ console.log(info.event.extendedProps.montoPago)
                 }
             </script>
             <script>
-                // Obtén los elementos select y txtColor
-                const select = document.getElementById('txtStatus');
-                const txtColor = document.getElementById('txtColor');
 
-                // Agrega un evento de cambio al select
-                select.addEventListener('change', function() {
-                // Obtén el valor seleccionado del select
+                function handlerColor(){
+                    // Obtén los elementos select y txtColor
+                    const select = document.getElementById('txtStatus');
+                    const txtColor = document.getElementById('txtColor');
+                    // Obtén el valor seleccionado del select
                 const selectedValue = select.value;
 
                 // Asigna el color correspondiente al campo txtColor según el valor seleccionado
@@ -513,7 +513,10 @@ console.log(info.event.extendedProps.montoPago)
                 } else if (selectedValue === 'Cancelado') {
                     txtColor.value = '#FE0606';
                 }
-                });
+                }
+
+
+
             </script>
 
             <script>

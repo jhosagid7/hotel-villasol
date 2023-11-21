@@ -236,23 +236,6 @@ class ReservationController extends Controller
     public function destroy($id)
     {
         $reservation = Reservation::findOrFail($id);
-
-
-        $ifCliente = Excedente::where('persona_id', $reservation->persona_id)->first();
-
-        if ($ifCliente) {
-
-            $upExcedente = Excedente::findOrFail($ifCliente->id);
-            $upExcedente->excedente -= $reservation->montoPago;
-            $upExcedente->update();
-
-            $is_money = Excedente::where('persona_id', $reservation->persona_id)->first();
-            if ($is_money->excedente <= 0) {
-                Excedente::destroy($is_money->id);
-            }
-        }
-
-        $reservation = Reservation::findOrFail($id);
         if ($reservation) {
             $reservation->status = 'Cancelado';
             $reservation->color = '#FE0606';
@@ -369,6 +352,7 @@ class ReservationController extends Controller
         $upExcedente = Reservation::findOrFail($datosReservasion['id']);
         $upExcedente->numServicio = $servicio->num_servicio;
         $upExcedente->servicio_id = $servicio->id;
+        $upExcedente->color = '#118F00';
         $upExcedente->update();
 
 
