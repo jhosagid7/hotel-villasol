@@ -658,15 +658,13 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
-                                                            <h5><strong class="text-aqua">Reservas/Reintegro:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
-                                                            </h5></strong>
+
                                                         </td>
                                                         <td></td>
                                                         <th>
-                                                            <h5><strong class="text-aqua">Reservas/Reintegro:</h5></strong>
+                                                            <h5><strong class="text-danger">Reservas/Reintegro/Oficina:</h5></strong>
                                                         </th>
                                                         <td>
                                                             <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
@@ -686,36 +684,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajautilidad.show')
-                                                    <tr>
-                                                        <th>
-                                                            <h5><strong class="text-aqua">Reservas/Reintegro:</h5></strong>
-                                                        </th>
-                                                        <td>
-                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
-                                                            </h5></strong>
-                                                        </td><td></td>
-                                                        <th>
-                                                            <h5><strong class="text-aqua">Reservas/Reintegro:</h5></strong>
-                                                        </th>
-                                                        <td>
-                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
-                                                            </h5></strong>
-                                                        </td>
 
-                                                        <td></td>
-
-                                                        <th>
-                                                            <h5><strong class="text-danger">Total/Reintegro/oficina:</h5></strong>
-                                                        </th>
-                                                        <td>
-                                                            <h5><strong
-                                                                    class="text-danger">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente, 2, ',', '.') ?? '0.000' }}
-                                                            </h5></strong>
-                                                        </td>
-
-                                                    </tr>
-                                                @endcan
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
@@ -745,6 +714,103 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         </td>
                                                         <td></td>
                                                         <td></td>
+                                                    </tr>
+                                                @endcan
+                                                @can('haveaccess', 'cajautilidad.show')
+                                                    <tr>
+                                                        <th colspan="6">
+                                                            <h4 class="box-title text-bold text-Back">Resumen de Reservaciones: </h4>
+                                                        </th>
+
+
+                                                    </tr>
+                                                @endcan
+                                                @can('haveaccess', 'cajautilidad.show')
+                                                    <tr>
+                                                        <th>
+                                                            <h5><strong class="text-Back">Reservas/Caja:</h5></strong>
+                                                        </th>
+                                                        <td>
+                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
+                                                        </td><td></td>
+                                                        <th>
+                                                            <h5><strong class="text-Back">Reservas/Oficina:</h5></strong>
+                                                        </th>
+                                                        <td>
+                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
+                                                        </td>
+
+                                                        <td></td>
+
+                                                        <th>
+                                                            <h5><strong class="text-Back">Total/Reservas:</h5></strong>
+                                                        </th>
+                                                        <td>
+                                                            <h5><strong
+                                                                    class="text-Back">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
+                                                        </td>
+
+                                                    </tr>
+                                                @endcan
+                                                @can('haveaccess', 'cajautilidad.show')
+                                                    <tr>
+                                                        <th>
+                                                            <h5><strong class="text-Back">Reservas/Pagadas/Caja:</h5></strong>
+                                                        </th>
+                                                        <td>
+                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
+                                                        </td><td></td>
+                                                        <th>
+                                                            <h5><strong class="text-Back">Reservas/Pagar/Oficina:</h5></strong>
+                                                        </th>
+                                                        <td>
+                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
+                                                        </td>
+
+                                                        <td></td>
+
+                                                        <th>
+                                                            <h5><strong class="text-Back">Total/Reservas/Pagadas:</h5></strong>
+                                                        </th>
+                                                        <td>
+                                                            <h5><strong
+                                                                    class="text-Back">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
+                                                        </td>
+
+                                                    </tr>
+                                                @endcan
+                                                @can('haveaccess', 'cajautilidad.show')
+                                                    <tr>
+                                                        <th>
+                                                            <h4><strong class="text-Back">Totales:</h4></strong>
+                                                        </th>
+                                                        <td>
+                                                            <h4><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h4></strong>
+                                                        </td><td></td>
+                                                        <th>
+                                                        </th>
+                                                        <td>
+                                                            <h4><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h4></strong>
+                                                        </td>
+
+                                                        <td></td>
+
+                                                        <th>
+                                                        </th>
+                                                        <td>
+                                                            <h4><strong
+                                                                    class="text-Back">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente, 2, ',', '.') ?? '0.000' }}
+                                                            </h4></strong>
+                                                        </td>
+
                                                     </tr>
                                                 @endcan
 
@@ -1500,7 +1566,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                             <!-- Table row -->
                                             <div class="row">
                                                 <div class="panel panel-primary">
-                                                    <div class="col-xs-12 table-responsive">
+                                                    <div class="col-xs-12 table-responsive table-sm sm">
 
 
                                                         <h4><strong>Datos de Servicios</strong></h4>
@@ -1734,7 +1800,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                         </div>
 
-                                                        <table class="table table-striped table-bordered table-condensed table-hover">
+                                                        <table class="table table-striped table-bordered table-condensed table-hover table-sm sm">
 
                                                             @php
                                                                 //creamos esta variable para ir contando los valores donde el tipo de pago sea cambio
@@ -1996,7 +2062,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 <div class="margin"></div>
                                                 <div class="margin"></div>
                                                 <div class="panel panel-primary">
-                                                    <div class="col-xs-12 table-responsive">
+                                                    <div class="col-xs-12 table-responsive table-sm sm">
 
                                                         <h4><strong>Datos de Ventas</strong></h4>
                                                         <div class="box-header with-border bg-danger">
@@ -2246,7 +2312,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                         </div>
                                                         <table
-                                                            class="table table-striped table-bordered table-condensed table-hover">
+                                                            class="table table-striped table-bordered table-condensed table-hover table-sm sm">
                                                             <thead style="background-color: rgb(35, 192, 245);"
                                                                 class="tituloAzul">
                                                                 <th>ID</th>
@@ -2400,11 +2466,11 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 <div class="margin"></div>
                                                 <div class="margin"></div>
                                                 <div class="panel panel-primary">
-                                                    <div class="col-xs-12 table-responsive">
+                                                    <div class="col-xs-12 table-responsive table-sm sm">
 
                                                         <h4><strong>Datos de Articulos</strong></h4>
                                                         <table
-                                                            class="table table-striped table-bordered table-condensed table-hover">
+                                                            class="table table-striped table-bordered table-condensed table-hover table-sm sm">
 
                                                             <tbody>
                                                                 @php
@@ -2605,7 +2671,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 <div class="margin"></div>
                                                 <div class="margin"></div>
                                                 <div class="panel panel-primary">
-                                                    <div class="col-xs-12 table-responsive">
+                                                    <div class="col-xs-12 table-responsive table-sm sm">
 
                                                         <h4><strong>Creditos Pagados</strong></h4>
                                                         <div class="box-header with-border bg-danger">
@@ -2816,7 +2882,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                         </div>
                                                         <table
-                                                            class="table table-striped table-bordered table-condensed table-hover">
+                                                            class="table table-striped table-bordered table-condensed table-hover table-sm sm">
                                                             <thead style="background-color: #A9D0F5;" class="tituloAzul">
                                                                 <th>ID</th>
                                                                 <th>Cliente</th>
@@ -2923,7 +2989,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                             <!-- Table row -->
                                             <div class="row">
                                                 <div class="panel panel-primary">
-                                                    <div class="col-xs-12 table-responsive">
+                                                    <div class="col-xs-12 table-responsive table-sm sm">
 
 
                                                         <h4><strong>Datos de Pagos Extras</strong></h4>
@@ -3175,7 +3241,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         </div>
 
                                                         <table
-                                                            class="table table-striped table-bordered table-condensed table-hover">
+                                                            class="table table-striped table-bordered table-condensed table-hover table-sm sm">
 
                                                             @php
                                                                 //creamos esta variable para ir contando los valores donde el tipo de pago sea cambio
