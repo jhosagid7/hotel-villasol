@@ -391,8 +391,8 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @endcan
 
                                                 @can('haveaccess', 'cajatotalventa.show')
-                                                    <tr>
-                                                        <th>
+                                                    <tr class="table-sm">
+                                                        <th class="col-sm-2">
                                                             <h4><strong class="text-blue">Consumo Bruto:</strong></h4>
                                                         </th>
                                                         <td>
@@ -407,8 +407,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                             <h4><strong>${{ number_format($cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalServicios + $cajas->SumaTotalExtra, 2, '.', ',') ?? '0.000' }}
                                                             </h4></strong>
                                                         </td>
-                                                        <td class="text-blue"></td>
-                                                        <th class="text-blue"></th>
+
                                                         <td></td>
                                                         <th>
                                                             <h4><strong class="text-blue">Total Bruto:</h4></strong>
@@ -437,32 +436,31 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @can('haveaccess', 'cajatotalventa.show')
                                                     <tr>
                                                         <th>
-                                                            <h4><strong class="text-danger">Cons/Cortesía:</strong></h4>
+                                                            <h5><strong class="text-danger">Cons/Cortesía:</strong></h5>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalVentasCortesia, 2, '.', ',') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
                                                         <th class="text-blue"></th>
                                                         <th>
-                                                            <h4><strong class="text-danger">Serv/Cortesía:</strong></h4>
+                                                            <h5><strong class="text-danger">Serv/Cortesía:</strong></h5>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalServiciosCortesia, 2, '.', ',') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
-                                                        <td class="text-blue"></td>
-                                                        <th class="text-blue"></th>
+
                                                         <td></td>
                                                         <th>
-                                                            <h4><strong class="text-danger">Total/Cortesía:</h4></strong>
+                                                            <h5><strong class="text-danger">Total/Cortesía:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalVentasCortesia + $cajas->SumaTotalServiciosCortesia, 2, '.', ',') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
                                                     </tr>
                                                 @endcan
@@ -470,32 +468,31 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @can('haveaccess', 'cajatotalventa.show')
                                                     <tr>
                                                         <th>
-                                                            <h4><strong class="text-danger">Cons/Créd/Nuevos:</strong></h4>
+                                                            <h5><strong class="text-danger">Cons/Créd/Nuevos:</strong></h5>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalVentasCredito, 2, '.', ',') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
                                                         <th class="text-blue"></th>
                                                         <th>
-                                                            <h4><strong class="text-danger">Serv/Créd/Nuevos:</strong></h4>
+                                                            <h5><strong class="text-danger">Serv/Créd/Nuevos:</strong></h5>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar, 2, '.', ',') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
-                                                        <td class="text-blue"></td>
-                                                        <th class="text-blue"></th>
+
                                                         <td></td>
                                                         <th>
-                                                            <h4><strong class="text-danger">Total/Créd/Nuevos:</h4></strong>
+                                                            <h5><strong class="text-danger">Total/Créd/Nuevos:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalServiciosPorPagar + $cajas->SumaTotalHorasExtrasPorPagar + $cajas->SumaTotalVentasCredito, 2, '.', ',') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
                                                     </tr>
                                                 @endcan
@@ -503,68 +500,64 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
-                                                            <h4><strong class="text-danger">Cons/Créd/Pagados/Oficina:</h4></strong>
+                                                            <h5><strong class="text-danger">Cons/Créd/Pagados/Oficina:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalCreditosPagadosConsumoPorOficina, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
                                                         <td></td>
                                                         <th>
-                                                            <h4><strong class="text-danger">Serv/Créd/Pagados/Oficina:</h4></strong>
+                                                            <h5><strong class="text-danger">Serv/Créd/Pagados/Oficina:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalCreditosPagadosServicioPorOficina, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
                                                         <td></td>
                                                         <th>
-                                                            <h4><strong class="text-danger">Total/Créd/Pagados/Oficina:</h4>
+                                                            <h5><strong class="text-danger">Total/Créd/Pagados/Oficina:</h5>
                                                             </strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalCreditosPagadosTotalesPorOficina, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
                                                     </tr>
                                                 @endcan
 
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
-                                                            <h4><strong class="text-aqua">Cons/Créd/Pagados/Caja:</h4></strong>
+                                                            <h5><strong class="text-aqua">Cons/Créd/Pagados/Caja:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($cajas->SumaTotalCreditosPagadosConsumoPorCaja, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($cajas->SumaTotalCreditosPagadosConsumoPorCaja, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
                                                         <td></td>
                                                         <th>
-                                                            <h4><strong class="text-aqua">Serv/Créd/Pagados/Caja:</h4></strong>
+                                                            <h5><strong class="text-aqua">Serv/Créd/Pagados/Caja:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($cajas->SumaTotalCreditosPagadosServicioPorCaja, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($cajas->SumaTotalCreditosPagadosServicioPorCaja, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
                                                         <td></td>
                                                         <th>
-                                                            <h4><strong class="text-aqua">Total/Créd/Pagados/Caja:</h4></strong>
+                                                            <h5><strong class="text-aqua">Total/Créd/Pagados/Caja:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($cajas->SumaTotalCreditosPagadosTotalesPorCaja, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($cajas->SumaTotalCreditosPagadosTotalesPorCaja, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
                                                     </tr>
                                                 @endcan
                                                 {{-- @can('haveaccess', 'cajatotalventa.show')
@@ -585,33 +578,31 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
-                                                            <h4><strong class="text-aqua">Cons/Contado:</h4></strong>
+                                                            <h5><strong class="text-aqua">Cons/Contado:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($cajas->SumaTotalVentas, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($cajas->SumaTotalVentas, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
                                                         <td></td>
                                                         {{-- - $cajas->SumaTotalServiciosExcedenteNuevo --}}
                                                         <th>
-                                                            <h4><strong class="text-aqua">Serv/Contado:</h4></strong>
+                                                            <h5><strong class="text-aqua">Serv/Contado:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($cajas->SumaTotalServicios, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($cajas->SumaTotalServicios, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
                                                         <td></td>
                                                         <th>
-                                                            <h4><strong class="text-aqua">Total/Contado:</h4></strong>
+                                                            <h5><strong class="text-aqua">Total/Contado:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($cajas->SumaTotalVentas + $cajas->SumaTotalServicios, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($cajas->SumaTotalVentas + $cajas->SumaTotalServicios, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
                                                     </tr>
                                                 @endcan
 
@@ -637,96 +628,92 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
-                                                            <h4><strong class="text-aqua">Reservaciones:</h4></strong>
+                                                            <h5><strong class="text-aqua">Reservaciones:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
                                                         <td></td>
                                                         {{-- - $cajas->SumaTotalServiciosExcedenteNuevo --}}
                                                         <th>
-                                                            <h4><strong class="text-aqua">Pagos/Extras:</h4></strong>
+                                                            <h5><strong class="text-aqua">Pagos/Extras:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($cajas->SumaTotalExtra, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($cajas->SumaTotalExtra, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
                                                         <td></td>
                                                         <th>
-                                                            <h4><strong class="text-aqua">Total/Pagos/Extras:</h4></strong>
+                                                            <h5><strong class="text-aqua">Total/Pagos/Extras:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($cajas->SumaTotalExtra, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($cajas->SumaTotalExtra, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
                                                     </tr>
                                                 @endcan
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
-                                                            <h4><strong class="text-aqua">Reservas/Reintegro:</h4></strong>
+                                                            <h5><strong class="text-aqua">Reservas/Reintegro:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
-                                                        </td>
-                                                        <th>
-                                                            <h4><strong class="text-aqua">Reservas/Reintegro:</h4></strong>
-                                                        </th>
-                                                        <td>
-                                                            <h4><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
                                                         <td></td>
-                                                        <td></td>
-                                                        <td></td>
-                                                        <td></td>
                                                         <th>
-                                                            <h4><strong class="text-danger">Total/Reintegro/oficina:</h4></strong>
+                                                            <h5><strong class="text-aqua">Reservas/Reintegro:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
+                                                        </td>
+
+
+                                                        <td></td>
+                                                        <th>
+                                                            <h5><strong class="text-danger">Total/Reintegro/oficina:</h5></strong>
+                                                        </th>
+                                                        <td>
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
                                                     </tr>
                                                 @endcan
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
-                                                            <h4><strong class="text-aqua">Reservas/Reintegro:</h4></strong>
+                                                            <h5><strong class="text-aqua">Reservas/Reintegro:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
-                                                        </td>
+                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
+                                                        </td><td></td>
                                                         <th>
-                                                            <h4><strong class="text-aqua">Reservas/Reintegro:</h4></strong>
+                                                            <h5><strong class="text-aqua">Reservas/Reintegro:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
+
                                                         <td></td>
 
                                                         <th>
-                                                            <h4><strong class="text-danger">Total/Reintegro/oficina:</h4></strong>
+                                                            <h5><strong class="text-danger">Total/Reintegro/oficina:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong
+                                                            <h5><strong
                                                                     class="text-danger">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente, 2, ',', '.') ?? '0.000' }}
-                                                            </h4></strong>
+                                                            </h5></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
                                                     </tr>
                                                 @endcan
                                                 @can('haveaccess', 'cajautilidad.show')
@@ -746,8 +733,8 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                             <h4><strong>${{ number_format($cajas->SumaTotalCreditosPagadosServicioPorCaja + $cajas->SumaTotalServicios + $cajas->SumaTotalExtra, 2, ',', '.') ?? '0.000' }}
                                                             </h4></strong>
                                                         </td>
-                                                        <td></td>
-                                                        <td></td>
+
+
                                                         <td></td>
                                                         <th>
                                                             <h4><strong class="text-blue">Total/Contable:</h4></strong>
