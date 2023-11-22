@@ -718,7 +718,9 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @endcan
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
-                                                        <th colspan="6">
+                                                        <th colspan="8">
+                                                            <h4 class="box-title text-bold text-Back"><hr> </h4>
+
                                                             <h4 class="box-title text-bold text-Back">Resumen de Reservaciones: </h4>
                                                         </th>
 
@@ -810,6 +812,19 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                     class="text-Back">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente, 2, ',', '.') ?? '0.000' }}
                                                             </h4></strong>
                                                         </td>
+
+                                                    </tr>
+                                                @endcan
+
+                                                @can('haveaccess', 'cajautilidad.show')
+                                                    <tr>
+                                                        <th colspan="8">
+                                                            <h4 class="box-title text-bold text-Back"><hr> </h4>
+                                                            <h4 class="box-title text-bold text-Back">Creditos pendientes por pagar:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <h3 class="box-title text-bold text-Back">${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}</h3></h4>
+
+                                                            <h4 class="box-title text-bold text-Back"><hr> </h4>
+                                                        </th>
+
 
                                                     </tr>
                                                 @endcan
