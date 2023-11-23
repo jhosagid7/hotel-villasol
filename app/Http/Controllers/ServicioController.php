@@ -73,7 +73,7 @@ class ServicioController extends Controller
         $validarServicio = Servicio::where('nombre_habitacion', $request->get('nombreHabitacion'))->where('status_servicio', 'Iniciado')->get();
         // return count($validarServicio);
 
-        if (count($validarServicio)) {
+        if (count($validarServicio) > 0) {
             // return 'si';
             return Redirect::to('checkout')->with('success', 'El servicio fué registrado previamente exitosamente');
         } else {

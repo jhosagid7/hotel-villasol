@@ -47,9 +47,12 @@ class ReservationController extends Controller
         // return $user->roles[0]->name;
         $tipoServicios = Cat::where('estado', 'Activa')->select('id', 'nombre')->get();
         $horarios = Horario::select('id', 'tipo')->where('tipo', '24 HORAS')->get();
+        $tasaDolar = Tasa::where('Nombre', 'Dolar')->first();
+        $tasaPeso = Tasa::where('Nombre', 'Peso')->first();
+        $tasaEfectivo = Tasa::where('Nombre', 'Efectivo')->first();
 
         // return $tipoServicio;
-        return view('reservations.index', compact('tipoServicios', 'horarios', 'userRole', 'caja_id'));
+        return view('reservations.index', compact('tasaDolar', 'tasaPeso' , 'tasaEfectivo', 'tipoServicios', 'horarios', 'userRole', 'caja_id'));
     }
 
     /**
@@ -101,7 +104,7 @@ class ReservationController extends Controller
             if ($ifCliente) {
                 $upExcedente = Excedente::findOrFail($ifCliente->id);
                 $upExcedente->excedente += $datosReservasion['montoPago'];
-                $upExcedente->update();
+                // $upExcedente->update();
             } else {
                 $dexcedente = new Excedente();
                 $dexcedente->tipo = 'Pagar_por_oficina';
@@ -110,7 +113,7 @@ class ReservationController extends Controller
                 $dexcedente->excedente = $datosReservasion['montoPago'];
                 $dexcedente->isEfectivo = 1;
                 $dexcedente->persona_id = $persona_id;
-                $dexcedente->save();
+                // $dexcedente->save();
             }
 
             $reservationId = Reservation::insertGetId($datosReservasion);
@@ -334,7 +337,13 @@ class ReservationController extends Controller
                 if ($pago->tipoPago == 'Peso') {
                     $tasaPago = $pago->tasaPeso;
                 }
-                if ($pago->tipoPago == 'Efectivo') {
+                if ($pago->tipoPago == 'Bolivar') {
+                    $tasaPago = $pago->tasaBolivar;
+                }
+                if ($pago->tipoPago == 'Transferencia') {
+                    $tasaPago = $pago->tasaBolivar;
+                }
+                if ($pago->tipoPago == 'Punto') {
                     $tasaPago = $pago->tasaBolivar;
                 }
 
