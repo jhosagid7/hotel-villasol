@@ -40,6 +40,7 @@ class PrinterController extends Controller
         */
         // $this->print_name = "AnyDesk-Printer";
         $this->print_name = "POS5890";
+        $this->print_name = "POS-58-Series";
         $this->machine_user = "Administrador";
         $this->machine_pass = "pass";
         $this->machine_name = "INTEL";

@@ -113,7 +113,9 @@
                 placeholder="txtReferenciaPago">
         </div>
 
-
+<input type="hidden" name="tasaDolar" id="tasaDolar" value="{{ $tasaDolar->tasa }}">
+<input type="hidden" name="tasaPeso" id="tasaPeso" value="{{ $tasaPeso->tasa }}">
+<input type="hidden" name="tasaBolivar" id="tasaBolivar" value="{{ $tasaEfectivo->tasa }}">
 
 
 
@@ -123,10 +125,16 @@
 
 @push('sciptsMain')
     <script>
+
     // Variables para las tasas de conversión
-    var tasaDolar = 1;
-    var tasaPeso = 4500;
-    var tasaBolivar = 32;
+    var tasaDolar = document.getElementById("tasaDolar");
+    var tasaPeso = document.getElementById("tasaPeso");
+    var tasaBolivar = document.getElementById("tasaBolivar");
+    console.log('tasaPeso ', tasaPeso.value)
+
+    tasaDolar = parseFloat(tasaDolar.value);
+    tasaPeso = parseFloat(tasaPeso.value);
+    tasaBolivar = parseFloat(tasaBolivar.value);
     // Variables para almacenar el último tipo de pago y monto pagado en la misma moneda
     var ultimoTipoPago = "";
     var ultimoMontoPagado = 0;
