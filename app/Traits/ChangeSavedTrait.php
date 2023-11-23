@@ -128,8 +128,8 @@ trait ChangeSavedTrait
                     ->where('status', 'Pendiente')
                     ->get();
 
-                    // dd($historialExcedentes);
-                if ($historialExcedentes) {
+                    // dd($historialExcedentes->count());
+                if ($historialExcedentes->count()) {
                     $saldo_disponible = 0;
                     $motivo = '';
                     $banco_id = '';
@@ -144,31 +144,33 @@ trait ChangeSavedTrait
                         $HistorialExcedente->detalle_pago_oficina_id = $DetallePagoOficina->id;
                         $HistorialExcedente->update();
                     }
+
+                    if ($saldo_disponible > 0) {
+                        $saldo_anterior = $saldo_disponible;
+                        $saldo_disponible = $saldo_disponible - $amount;
+                    }
+                    // dd($saldo_disponible);
+                    $HistorialExcedente = new HistorialExcedente([
+                        'tipo_registro' => 'Pago_por_oficina',
+                        'status' => 'Pendiente',
+                        'tipo_operacion' => 'Egreso',
+                        'modo_pago' => 'Por caja',
+                        'num_servicio' => $servicio_id,
+                        'motivo' => $motivo,
+                        'saldo_anterior' => $saldo_anterior,
+                        'saldo_operacion' => $amount,
+                        'saldo_disponible' => $saldo_disponible,
+                        'operador' => auth()->user()->name,
+                        'banco_id' => $banco_id,
+                        'detalle_pago_oficina_id' => $DetallePagoOficina->id,
+                        'persona_id' => $costumer_id,
+                        'servicio_id' => $servicio_id,
+                        'caja_id' => $caja_id,
+                        'user_id' => auth()->id(),
+                    ]);
+                    $HistorialExcedente->save();
                 }
-                if ($saldo_disponible > 0) {
-                    $saldo_anterior = $saldo_disponible;
-                    $saldo_disponible = $saldo_disponible - $amount;
-                }
-                // dd($saldo_disponible);
-                $HistorialExcedente = new HistorialExcedente([
-                    'tipo_registro' => 'Pago_por_oficina',
-                    'status' => 'Pendiente',
-                    'tipo_operacion' => 'Egreso',
-                    'modo_pago' => 'Por caja',
-                    'num_servicio' => $servicio_id,
-                    'motivo' => $motivo,
-                    'saldo_anterior' => $saldo_anterior,
-                    'saldo_operacion' => $amount,
-                    'saldo_disponible' => $saldo_disponible,
-                    'operador' => auth()->user()->name,
-                    'banco_id' => $banco_id,
-                    'detalle_pago_oficina_id' => $DetallePagoOficina->id,
-                    'persona_id' => $costumer_id,
-                    'servicio_id' => $servicio_id,
-                    'caja_id' => $caja_id,
-                    'user_id' => auth()->id(),
-                ]);
-                $HistorialExcedente->save();
+
                 $UpdateExcedente = Excedente::where('persona_id', $costumer_id)->first();
                 $UpdateExcedente->excedente -= $amount;
                 $UpdateExcedente->update();

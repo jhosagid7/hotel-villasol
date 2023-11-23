@@ -628,11 +628,9 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
-                                                            <h5><strong class="text-aqua">Reservaciones:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
-                                                            </h5></strong>
+
                                                         </td>
                                                         <td></td>
                                                         {{-- - $cajas->SumaTotalServiciosExcedenteNuevo --}}
@@ -658,16 +656,18 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
+                                                            <h5 class="text-danger"><strong>Reservaciones/Pendientes:</h5></strong>
                                                         </th>
                                                         <td>
-
+                                                            <h5 class="text-danger"><strong>${{ number_format($getTotalRerservacionesPendientesOficinaCajaActual, 2, ',', '.') ?? '0.000' }}
+                                                            </h5></strong>
                                                         </td>
                                                         <td></td>
                                                         <th>
                                                             <h5><strong class="text-danger">Reservas/Reintegro/Oficina:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            <h5 class="text-danger"><strong>${{ number_format($getTotalReservasionesPagarOficina, 2, ',', '.') ?? '0.000' }}
                                                             </h5></strong>
                                                         </td>
 
@@ -730,17 +730,17 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
-                                                            <h5><strong class="text-Back">Reservas/Caja:</h5></strong>
+                                                            <h5><strong class="text-Back">Reservas/Recividas/Caja:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            <h5><strong>${{ number_format($getTotalReservacionesRecibidasCajaActual, 2, ',', '.') ?? '0.000' }}
                                                             </h5></strong>
                                                         </td><td></td>
                                                         <th>
                                                             <h5><strong class="text-Back">Reservas/Oficina:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            <h5><strong>${{ number_format($getTotalReservasOficinaInicioCaja, 2, ',', '.') ?? '0.000' }}
                                                             </h5></strong>
                                                         </td>
 
@@ -751,7 +751,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         </th>
                                                         <td>
                                                             <h5><strong
-                                                                    class="text-Back">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente, 2, ',', '.') ?? '0.000' }}
+                                                                    class="text-Back">${{ number_format($getTotalReservasOficinaCierreCaja, 2, ',', '.') ?? '0.000' }}
                                                             </h5></strong>
                                                         </td>
 
@@ -763,14 +763,14 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                             <h5><strong class="text-Back">Reservas/Pagadas/Caja:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            <h5><strong>${{ number_format($getTotalReservacionesProcesadasCajaActual, 2, ',', '.') ?? '0.000' }}
                                                             </h5></strong>
                                                         </td><td></td>
                                                         <th>
                                                             <h5><strong class="text-Back">Reservas/Pagar/Oficina:</h5></strong>
                                                         </th>
                                                         <td>
-                                                            <h5><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            <h5><strong>${{ number_format($getTotalReservasionesPagarOficina, 2, ',', '.') ?? '0.000' }}
                                                             </h5></strong>
                                                         </td>
 
@@ -781,7 +781,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         </th>
                                                         <td>
                                                             <h5><strong
-                                                                    class="text-Back">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente, 2, ',', '.') ?? '0.000' }}
+                                                                    class="text-Back">${{ number_format($getTotalRerservacionesPagadasOficinaCajaActual, 2, ',', '.') ?? '0.000' }}
                                                             </h5></strong>
                                                         </td>
 
@@ -790,16 +790,16 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th>
-                                                            <h4><strong class="text-Back">Totales:</h4></strong>
+                                                            <h4><strong class="text-Back">Totales Pendientes:</h4></strong>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            <h4><strong>${{ number_format($getTotalReservacionesPendientesCajaActual, 2, ',', '.') ?? '0.000' }}
                                                             </h4></strong>
                                                         </td><td></td>
                                                         <th>
                                                         </th>
                                                         <td>
-                                                            <h4><strong>${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}
+                                                            <h4><strong>${{ number_format($getTotalReservacionesPendientesOficina, 2, ',', '.') ?? '0.000' }}
                                                             </h4></strong>
                                                         </td>
 
@@ -809,22 +809,47 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         </th>
                                                         <td>
                                                             <h4><strong
-                                                                    class="text-Back">${{ number_format($cajas->SumaTotalServiciosPagadosConExcedente + $cajas->SumaTotalConsumoPagadosConExcedente + $cajas->SumaTotalHorasExtrasPagadosConExcedente, 2, ',', '.') ?? '0.000' }}
+                                                                    class="text-Back">${{ number_format($getTotalRerservacionesPendientesOficinaCajaActual, 2, ',', '.') ?? '0.000' }}
                                                             </h4></strong>
                                                         </td>
 
                                                     </tr>
                                                 @endcan
 
+
+
                                                 @can('haveaccess', 'cajautilidad.show')
                                                     <tr>
                                                         <th colspan="8">
                                                             <h4 class="box-title text-bold text-Back"><hr> </h4>
-                                                            <h4 class="box-title text-bold text-Back">Creditos pendientes por pagar:&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp <h3 class="box-title text-bold text-Back">${{ number_format($getReservaciones, 2, ',', '.') ?? '0.000' }}</h3></h4>
 
-                                                            <h4 class="box-title text-bold text-Back"><hr> </h4>
                                                         </th>
 
+
+                                                    </tr>
+                                                @endcan
+                                                @can('haveaccess', 'cajautilidad.show')
+                                                    <tr>
+                                                        <th colspan="2">
+                                                            <h4><strong class="text-Back">Creditos Pendientes:</h4></strong>
+                                                        </th>
+                                                        <td></td>
+                                                        <th><h5><strong class="text-Back">Inicio/Caja:</h5></strong></th>
+                                                        <td>
+                                                            <h4><strong>${{ number_format($getTotalCreditosPorCobrarInicioCaja, 2, ',', '.') ?? '0.000' }}
+                                                            </h4></strong>
+                                                        </td>
+
+                                                        <td></td>
+
+                                                        <th>
+                                                            <h5><strong class="text-Back">Cierre/Caja:</h5></strong>
+                                                        </th>
+                                                        <td>
+                                                            <h4><strong
+                                                                    class="text-Back">${{ number_format($getTotalCreditosPorCobrarCierreCaja, 2, ',', '.') ?? '0.000' }}
+                                                            </h4></strong>
+                                                        </td>
 
                                                     </tr>
                                                 @endcan
@@ -902,9 +927,9 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         <h5 class="box-title text-bold text-bold">Vtos/Reportado/enTurno:
                                                         </h5>
                                                         <h5 class="box-title text-bold text-red">Vtos/Pagado/enTuno:</h5>
-                                                        <h5 class="box-title text-bold">Pagar por oficina:</h5>
+                                                        <h5 class="box-title text-bold">Pagar/X/oficina:</h5>
                                                         <h5 class="description-header">______________</h5>
-                                                        <h5 class="box-title text-bold">Regist por Sistema:</h5>
+                                                        <h5 class="box-title text-bold">Regist/X/Sistema:</h5>
                                                         <h5 class="box-title text-bold text-red">- Report por Operador:
                                                         </h5>
                                                         <h5 class="box-title text-bold text-red">- Reintegro oficina:</h5>
