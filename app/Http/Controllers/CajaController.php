@@ -124,6 +124,8 @@ class CajaController extends Controller
                 }
             }
         }
+
+
         // echo $difference = $date->diff($date2)->days;
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,7 +173,10 @@ class CajaController extends Controller
             $estatus_caja      = 'Apertura';
 
             $tasaVentaEfectivo = Tasa::where('nombre', 'efectivoVenta')->first();
+            $totalReservasOficinaInicioCaja = Reservation::where('status', 'Pendiente')->sum('montoPago');
 
+            //Traemos total creditos por pagar
+            $creditosPorPagar = Credito::where('total_factura', '>', 0)->get();
 
             $Caja = new Caja;
             $Caja->codigo               = '';
@@ -186,6 +191,8 @@ class CajaController extends Controller
             $Caja->monto_dolar_cierre   = 0.00;
             $Caja->monto_peso_cierre    = 0.00;
             $Caja->monto_bolivar_cierre = 0.00;
+            $Caja->totalReservasOficinaInicioCaja = $totalReservasOficinaInicioCaja;
+            $Caja->TotalCreditosPorCobrarInicioCaja = $creditosPorPagar->sum('total_deuda');
             $Caja->estado               = 'Abierta';
             $Caja->caja                 = $request->get('caja');
             $Caja->tasaActualVenta      = $tasaVentaEfectivo->tasa;
@@ -201,7 +208,7 @@ class CajaController extends Controller
                 ->update(["codigo" => $codigo]);
 
 
-
+$Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
 
 
 
@@ -2064,16 +2071,102 @@ class CajaController extends Controller
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         $sumaPagosHorasExtras = Horas_extra::where('caja_id', $cajas->id)->sum('pago_con_excedente');
-        $getReservaciones = Reservation::where('caja_id', $cajas->id)->where('status', '<>', 'Cancelado')->sum('montoPago');
         $cajas->SumaTotalHorasExtrasPagadosConExcedente = floatval(number_format($sumaPagosHorasExtras, 2));
+        //Recuperamos el monto total de resevaciones
 
-        // return $cajas->SumaTotalHorasExtrasPagadosConExcedente;
+
+
+
+
+        //Fin de reservas caja actual
+
+
+
+        //Recuperamos los montos de las reservas en caja actual.
+
+        $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+        $isCajaOpen = Caja::where("estado", "=", 'Abierta')->where("sessioncaja_id", "=", $cajaSessionid->id)->first();
+        if($isCajaOpen->id == $id){
+            //Enviamos los montos de las reservas en caja actual.
+            $getTotalReservacionesRecibidasCajaActual = Reservation::where('caja_id', $id)->where('status', '<>', 'cancelado')->sum('montoPago');
+
+            $getTotalReservacionesProcesadasCajaActual = Reservation::where('caja_id', $id)->where('caja_pago_reservacion_id', $id)->where('status', 'Procesado')->sum('montoPago');
+
+            $getTotalReservacionesPendientesCajaActual = Reservation::where('caja_id', $id)->where('status', 'Pendiente')->sum('montoPago');
+
+            //Enviamos los monotos delas reservas que estan en Oficina.
+
+            $getTotalReservasOficinaInicioCaja = $isCajaOpen->totalReservasOficinaInicioCaja;
+
+            $getTotalReservasOficinaCierreCaja = $getTotalReservasOficinaInicioCaja + $getTotalReservacionesRecibidasCajaActual;
+
+            $getTotalReservasionesPagarOficina = Reservation::where('caja_pago_reservacion_id', $id)->where('caja_id', '<>' ,  $id)->where('status', 'Procesado')->sum('montoPago');
+
+            $getTotalReservacionesPendientesOficina = ($getTotalReservasOficinaInicioCaja - $getTotalReservasionesPagarOficina);
+
+            $getTotalRerservacionesPendientesOficinaCajaActual = $getTotalReservacionesPendientesCajaActual + $getTotalReservacionesPendientesOficina;
+
+            $getTotalRerservacionesPagadasOficinaCajaActual = $getTotalReservacionesProcesadasCajaActual + $getTotalReservasionesPagarOficina;
+
+
+            //Traemos total creditos por pagar
+            $getTotalCreditosPorCobrarInicioCaja = $isCajaOpen->TotalCreditosPorCobrarInicioCaja;
+            $getTotalCreditosPorCobrarCierreCaja = $isCajaOpen->TotalCreditosPorCobrarCierreCaja;
+
+
+
+
+
+
+        }else{
+
+            $isCajaClose = Caja::findOrFail($id);
+            //Enviamos el historial de los montos de las reservas en caja actual que se encuentra en la caja que se consulta.
+            $getTotalReservacionesRecibidasCajaActual = $isCajaClose->historialTotalReservacionesRecibidasCajaActual;
+
+            $getTotalReservacionesProcesadasCajaActual =
+            $isCajaClose->historialTotalReservacionesProcesadasCajaActual;
+
+            $getTotalReservacionesPendientesCajaActual =
+            $isCajaClose->historialTotalReservacionesPendientesCajaActual;
+
+            //Enviamos los monotos delas reservas que estan en Oficina.
+
+            $getTotalReservasOficinaInicioCaja = $isCajaClose->totalReservasOficinaInicioCaja;
+
+            $getTotalReservasOficinaCierreCaja = $getTotalReservasOficinaInicioCaja + $getTotalReservacionesRecibidasCajaActual;
+
+            $getTotalReservasionesPagarOficina = $isCajaClose->historialTotalReservasionesPagarOficina;
+
+
+
+            $getTotalReservacionesPendientesOficina = ($isCajaClose->totalReservasOficinaInicioCaja - $getTotalReservasionesPagarOficina);
+
+            $getTotalRerservacionesPendientesOficinaCajaActual = $getTotalReservacionesPendientesCajaActual + $getTotalReservacionesPendientesOficina;
+
+            $getTotalRerservacionesPagadasOficinaCajaActual = $getTotalReservacionesProcesadasCajaActual + $getTotalReservasionesPagarOficina;
+
+            //Traemos total creditos por pagar
+            $getTotalCreditosPorCobrarInicioCaja = $isCajaClose->TotalCreditosPorCobrarInicioCaja;
+            $getTotalCreditosPorCobrarCierreCaja = $isCajaClose->TotalCreditosPorCobrarCierreCaja;
+
+
+        }
+
+
+        //Fin de reservas caja actual
+
+        //Traemos total creditos por pagar
+        $creditosPorPagar = Credito::where('total_factura', '>', 0)->get();
+        // return $creditosPorPagar->sum('total_deuda');
+
+
         $appDate = Empresa::get();
         $bancos = Banco::get();
         //  return $cajas;
         $verificarHorasExtras = Horas_extra::where('caja_id', $cajas->id)->get();
         // return $verificarHorasExtras;
-        return view('cajas.caja.show', compact('getReservaciones', 'bancos', 'clientes_vueltos', 'appDate', 'verificarHorasExtras', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'title', 'cajas', 'caja', 'denominacion_dolar', 'denominacion_peso', 'denominacion_bolivar'))->with($mensaje);
+        return view('cajas.caja.show', compact('getTotalCreditosPorCobrarCierreCaja', 'getTotalCreditosPorCobrarInicioCaja', 'creditosPorPagar', 'getTotalRerservacionesPagadasOficinaCajaActual', 'getTotalRerservacionesPendientesOficinaCajaActual', 'getTotalReservacionesPendientesOficina', 'getTotalReservasionesPagarOficina', 'getTotalReservasOficinaCierreCaja', 'getTotalReservacionesRecibidasCajaActual', 'getTotalReservasOficinaInicioCaja', 'getTotalReservacionesPendientesCajaActual', 'getTotalReservacionesProcesadasCajaActual', 'bancos', 'clientes_vueltos', 'appDate', 'verificarHorasExtras', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'title', 'cajas', 'caja', 'denominacion_dolar', 'denominacion_peso', 'denominacion_bolivar'))->with($mensaje);
     }
 
     /**
@@ -2109,6 +2202,25 @@ class CajaController extends Controller
             $session_id = $request->get('session_id');
             $caja_id = $request->get('caja_id');
 
+            $totalReservasOficinaCierreCaja = Reservation::where('status', 'Pendiente')->sum('montoPago');
+
+            $getTotalReservacionesRecibidasCajaActual = Reservation::where('caja_id', $id)->where('status', '<>', 'cancelado')->sum('montoPago');
+
+            $getTotalReservacionesProcesadasCajaActual = Reservation::where('caja_id', $id)->where('caja_pago_reservacion_id', $id)->where('status', 'Procesado')->sum('montoPago');
+
+            $getTotalReservacionesPendientesCajaActual = Reservation::where('caja_id', $id)->where('status', 'Pendiente')->sum('montoPago');
+
+            //Enviamos los monotos delas reservas que estan en Oficina.
+            $getTotalReservasionesPagarOficina = Reservation::where('caja_pago_reservacion_id', $id)->where('caja_id', '<>',  $id)->where('status', 'Procesado')->sum('montoPago');
+            // return $getTotalReservasionesPagarOficina;
+
+            $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+            $isCajaOpen = Caja::where("estado", "=", 'Abierta')->where("sessioncaja_id", "=", $cajaSessionid->id)->first();
+
+            $getTotalReservacionesPendientesOficina = ($isCajaOpen->totalReservasOficinaInicioCaja - $getTotalReservasionesPagarOficina);
+
+            //Traemos total creditos por pagar
+            $creditosPorPagar = Credito::where('total_factura', '>', 0)->get();
 
 
             //TODO INSERTAR REGISTROS EN LA TABLA CAJA
@@ -2138,9 +2250,19 @@ class CajaController extends Controller
             $Caja->total_sistema_reg        = $request->get('total_sistema_reg_input');
             $Caja->total_operador_reg       = $request->get('total_operador_reg_input');
             $Caja->total_diferencia         = $request->get('total_dif_input');
+            $Caja->totalReservasOficinaCierreCaja = $totalReservasOficinaCierreCaja;
+            $Caja->historialTotalReservacionesRecibidasCajaActual = $getTotalReservacionesRecibidasCajaActual;
+            $Caja->historialTotalReservacionesProcesadasCajaActual = $getTotalReservacionesProcesadasCajaActual;
+            $Caja->historialTotalReservacionesPendientesCajaActual = $getTotalReservacionesPendientesCajaActual;
+            $Caja->historialTotalReservasionesPagarOficina = $getTotalReservasionesPagarOficina;
+            $Caja->historialTotalReservacionesPendientesOficina = $getTotalReservacionesPendientesOficina;
+            $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar->sum('total_deuda');
             $Caja->Observaciones            = $request->get('Observaciones');
             $Caja->estado                   = 'Cerrada';
             $Caja->update();
+
+
+
 
             $session_id = Sessioncaja::findOrFail($session_id);
             $session_id->estado = 'Cerrada';

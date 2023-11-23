@@ -53,6 +53,8 @@ class CreateReservationsTable extends Migration
             $table->foreignId('persona_id')->references('id')->on('personas');
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('caja_id')->references('id')->on('cajas');
+            $table->unsignedBigInteger('caja_pago_reservacion_id')->nullable();
+            $table->foreign('caja_pago_reservacion_id')->references('id')->on('cajas');
             $table->timestamps();
         });
     }

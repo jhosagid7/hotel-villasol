@@ -213,12 +213,14 @@ class ReservationController extends Controller
                 ]);
             }
         }
-
+        // return $procesed;
         //Todo creamos el servicio
-        if($procesed) {
+        if($procesed === 'true') {
             $datosReservasion['status'] = 'Procesado';
             $datosReservasion['nombreCliente'] = $nombreCliente;
             $datosReservasion['cedulaCliente'] = $cedulaCliente;
+            $datosReservasion['color'] = '#118F00';
+            $datosReservasion['caja_pago_reservacion_id'] = $caja->id;
             $this->processServicesReservations($datosReservasion);
         }
 

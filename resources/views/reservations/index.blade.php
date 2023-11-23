@@ -254,52 +254,108 @@ console.log(info.event.extendedProps.montoPago)
                     calendar.setOption('locale', 'Es')
                     calendar.render();
 
+                    let isSending = false;
                     $('#btnAgregar').click(function() {
 
-                        objReservacion = recolectarDatosGUI("POST")
-                        console.log(objReservacion)
-                        EnviarInformacion('', objReservacion)
+                        if (isSending) {
+                            return;
+                        }
 
-                    })
+                        isSending = true;
+
+                        objReservacion = recolectarDatosGUI("POST");
+                        console.log(objReservacion);
+                        EnviarInformacion('', objReservacion);
+
+                        setTimeout(() => {
+                            isSending = false;
+                        }, 1000);
+                    });
+
+                    //$('#btnAgregar').click(function() {
+//
+                    //    objReservacion = recolectarDatosGUI("POST")
+                    //    console.log(objReservacion)
+                    //    EnviarInformacion('', objReservacion)
+//
+                    //})
 
                     $('#btnModificar').click(function() {
+
+                        if (isSending) {
+                            return;
+                        }
+
+                        isSending = true;
 
                         objReservacion = recolectarDatosGUI("PATCH")
                         console.log(objReservacion)
 
                         EnviarInformacion('/' + $('#txtID').val(), objReservacion)
 
-                    })
+                        setTimeout(() => {
+                                isSending = false;
+                            }, 1000);
+                    });
+
                     $('#btnEliminar').click(function() {
+
+                        if (isSending) {
+                            return;
+                        }
+
+                        isSending = true;
                         objReservacion = recolectarDatosGUI("DELETE")
 
                         EnviarInformacion('/' + $('#txtID').val(), objReservacion)
 
-                    })
+                        setTimeout(() => {
+                                isSending = false;
+                            }, 1000);
+                    });
 
                     $('#btnProcesar').click(function() {
 
-                        objReservacion = recolectarDatosGUI("PATCH", true)
-
-                        console.log(objReservacion)
-
-
-
-                        let activeBtn = activeBtnProcessService()
-                        if(activeBtn){
-
-                            console.log('Enviando...', $('#txtID').val())
-                            EnviarInformacion('/' + $('#txtID').val(), objReservacion)
-                        }else{
-                            console.log('Monto insuficiente...')
+                        if (isSending) {
+                            return;
                         }
 
+                        isSending = true;
 
-                        //objReservacion = recolectarDatosGUI("DELETE")
+                        objReservacion = recolectarDatosGUI("PATCH", true);
+                        console.log(objReservacion);
 
-                        //EnviarInformacion('/' + $('#txtID').val(), objReservacion)
+                        let activeBtn = activeBtnProcessService();
+                        if (activeBtn) {
 
-                    })
+                            console.log('Enviando...', $('#txtID').val());
+                            EnviarInformacion('/' + $('#txtID').val(), objReservacion);
+                        } else {
+                            console.log('Monto insuficiente...');
+                        }
+
+                        setTimeout(() => {
+                            isSending = false;
+                        }, 1000);
+                    });
+
+
+                    //$('#btnProcesar').click(function() {
+//
+                    //    objReservacion = recolectarDatosGUI("PATCH", true)
+//
+                    //    console.log(objReservacion)
+//
+                    //    let activeBtn = activeBtnProcessService()
+                    //    if(activeBtn){
+//
+                    //        console.log('Enviando...', $('#txtID').val())
+                    //        EnviarInformacion('/' + $('#txtID').val(), objReservacion)
+                    //    }else{
+                    //        console.log('Monto insuficiente...')
+                    //    }
+//
+                    //})
 
 
 
@@ -600,6 +656,8 @@ console.log(info.event.extendedProps.montoPago)
                     return formaPagoArray;
                 }
             </script>
+
+
 
         @endpush
     @endsection
