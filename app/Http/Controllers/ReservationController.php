@@ -20,6 +20,7 @@ use App\DetallePagoReservation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
 
 class ReservationController extends Controller
 {
@@ -224,10 +225,13 @@ class ReservationController extends Controller
             $datosReservasion['cedulaCliente'] = $cedulaCliente;
             $datosReservasion['color'] = '#118F00';
             $datosReservasion['caja_pago_reservacion_id'] = $caja->id;
-            $this->processServicesReservations($datosReservasion);
+
+            $this->processServicesReservations($datosReservasion, $id);
         }
 
         $result = Reservation::where('id', $id)->update($datosReservasion);
+
+
 
         return response()->json([$result,'msg' => 'Reservacion Actualizada', 'type' => 'success']);
     }
@@ -367,9 +371,34 @@ class ReservationController extends Controller
         $upExcedente->update();
 
 
+
+        //Primiminos el ticket
+        $this->printTiketServicio($datosReservasion, $num_servicio);
+
+
+
+
+
     }
 
+ public function printTiketServicio($datosReservasion, $num_servicio)
+ {
 
+    $printer = new PrinterController;
+
+    $printer->ticketServicio(
+        'Servicio', $num_servicio,
+        $datosReservasion['numHabitacion'],
+        $datosReservasion['tipoHabitacion'],
+        'Contado',
+        'Dolar',
+        $datosReservasion['precio'],
+        auth()->user()->name,
+        $datosReservasion['tipoServicio']
+    );
+
+
+ }
 
 
 

@@ -408,7 +408,7 @@ console.log(info.event.extendedProps.montoPago)
                             url: "{{ url('reservations') }}" + accion,
                             data: objReservacion,
                             success: function(msg) {
-                                console.log(msg)
+                                console.log('ok ', msg)
 
                                 toastr.success(msg.msg, 'Notice', {
                                     timeOut: 3000
@@ -416,8 +416,18 @@ console.log(info.event.extendedProps.montoPago)
                                 $('#exampleModal').modal('toggle')
                                 calendar.refetchEvents()
                             },
-                            error: function() {
+                            error: function(e) {
+                                if(e.status == 200){
+                                    toastr.success('Exito', 'Notice', {
+                                    timeOut: 3000
+                                })
+                                $('#exampleModal').modal('toggle')
+                                calendar.refetchEvents()
+                                }else{
+                                    console.log('error ', e.status)
                                 alert('Hay un error al enviar los datos...')
+                                }
+                                return false
                             }
                         })
                     }
