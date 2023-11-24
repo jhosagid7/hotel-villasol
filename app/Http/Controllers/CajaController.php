@@ -2192,27 +2192,26 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
     {
 
         //Primiminos el ticket
-        $ides = 813;
 
-        $printer = new PrinterController;
+        // $printer = new PrinterController;
 
-        $printer->ticketResumenCaja($ides);
+        // $printer->ticketResumenCaja($id);
 
-        if ($printer->print_error === 1) {
+        // if ($printer->print_error === 1) {
 
-            $mensaje = 'La caja fue cerrada Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
-            return redirect()
-                ->route('caja.index')
-                ->with('status_success'  . ' ' . $mensaje);
-        } else {
+        //     $mensaje = 'La caja fue cerrada Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
+        //     return redirect()
+        //         ->route('caja.index')
+        //         ->with('status_success'  . ' ' . $mensaje);
+        // } else {
 
-            $mensaje = 'La caja fue cerrada Correctamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name . ' Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
-            return redirect()
-                ->route('caja.index')
-                ->with('status_danger' . ' ' . $mensaje);
-        }
+        //     $mensaje = 'La caja fue cerrada Correctamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name . ' Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
+        //     return redirect()
+        //         ->route('caja.index')
+        //         ->with('status_danger' . ' ' . $mensaje);
+        // }
 
-        return 1;
+        // return 1;
 
         try {
             DB::beginTransaction();

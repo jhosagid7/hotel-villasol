@@ -708,7 +708,12 @@ class PrinterController extends Controller
                 //Totales
                 $total_sistema_reg = $cajaCierre->total_sistema_reg;
                 $total_operador_reg = $cajaCierre->total_operador_reg;
-                $total_reintegro_reg = $cajaCierre->historialExcedentes->where('tipo_registro', 'Pago_por_oficina')->where('status', 'Pendiente')->where('status', 'Pendiente')->where('tipo_operacion', 'Egreso')->where('modo_pago', 'Por caja')->sum('saldo_operacion');
+
+                $total_servicios_pago_con_exedente = $cajaCierre->servicios->where('estado', 'Aceptada')->sum('pago_con_excedente');
+                $total_consumo_pago_con_exedente = $cajaCierre->ventas->where('estado', 'Aceptada')->sum('pago_con_excedente');
+                $total_horas_extras_pago_con_exedente = $cajaCierre->ventas->where('status', 'Pagado')->sum('pago_con_excedente');
+
+                $total_reintegro_reg = (number_format($total_servicios_pago_con_exedente, 2) + number_format($total_consumo_pago_con_exedente, 2) + number_format($total_horas_extras_pago_con_exedente, 2));
 
                 $observaciones = $cajaCierre->Observaciones;
                 $total_diferencia = $cajaCierre->total_diferencia;
