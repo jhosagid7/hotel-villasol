@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Caja;
+
+
 use App\Articulo;
-
-
 use App\Servicio;
+use Carbon\Carbon;
 use App\Detalle_credito;
 use Mike42\Escpos\Printer;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
+use Illuminate\Http\Request;
 use Mike42\Escpos\EscposImage;
+use Illuminate\Support\Facades\Auth;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 
@@ -39,7 +41,7 @@ class PrinterController extends Controller
             desde el panel de control
         */
         // $this->print_name = "AnyDesk-Printer";
-        $this->print_name = "POS5890";
+        // $this->print_name = "POS5890";
         $this->print_name = "POS-58-Series";
         $this->machine_user = "Administrador";
         $this->machine_pass = "pass";
@@ -159,7 +161,7 @@ class PrinterController extends Controller
     {
 
         // $this->print_name = "AnyDesk-Printer";
-        $this->print_name = "POS5890";
+        $this->print_name = "POS-58-Series";
         $this->machine_user = "Administrador";
         $this->machine_pass = "pass";
         $this->machine_name = "INTEL";
@@ -252,10 +254,11 @@ class PrinterController extends Controller
     {
 
         // $this->print_name = "AnyDesk-Printer";
-        $this->print_name = "POS5890";
+        $this->print_name = "POS-58-Series";
         $this->machine_user = "Administrador";
         $this->machine_pass = "pass";
         $this->machine_name = "INTEL";
+        $this->network = false;
         $this->network = false;
 
         try {
@@ -369,7 +372,7 @@ class PrinterController extends Controller
         */
 
         // $this->print_name = "AnyDesk-Printer";
-        $this->print_name = "POS5890";
+        $this->print_name = "POS-58-Series";
         $this->machine_user = "Administrador";
         $this->machine_pass = "pass";
         $this->machine_name = "INTEL";
@@ -499,7 +502,7 @@ class PrinterController extends Controller
         */
         $operador = Auth::user()->name;
         // $this->print_name = "AnyDesk-Printer";
-        $this->print_name = "POS5890";
+        $this->print_name = "POS-58-Series";
         $this->machine_user = "Administrador";
         $this->machine_pass = "pass";
         $this->machine_name = "INTEL";
@@ -621,4 +624,184 @@ class PrinterController extends Controller
             $this->print_error = 0;
         }
     }
+
+    public function ticketResumenCaja($id)
+    {
+        // return $id;
+
+
+
+
+        // $this->print_name = "AnyDesk-Printer";
+        $this->print_name = "POS-58-Series";
+        $this->machine_user = "Administrador";
+        $this->machine_pass = "pass";
+        $this->machine_name = "INTEL";
+        $this->network = false;
+
+        try {
+
+            if ($this->network) {
+                $this->print_route = "smb://$this->machine_user:$this->machine_pass@$this->machine_name/$this->print_name";
+            } else {
+                $this->print_route = $this->print_name;
+            }
+
+            // $nombre_impresora = "POS5890";
+
+
+            $connector = new WindowsPrintConnector($this->print_route);
+            $printer = new Printer($connector);
+
+            // echo 1;
+
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+
+
+            try {
+                $cajaCierre =  Caja::where('id', $id)->with('servicios', 'ventas', 'excedente_actual', 'horas_extras', 'historial_vueltos_pendientes', 'historialExcedentes')->first();
+                // return $cajaCierre;
+                date_default_timezone_set("America/Caracas");
+                // $date = strtotime($cajaCierre->created_at);
+                // $fechaInicioCaja = date_format($date, 'Y-m-d H:i:s');
+                // $date = strtotime($cajaCierre->updated_at);
+                // $fechaCierreCaja = date_format($date,'Y-m-d H:i:s');
+                $fechaInicioCaja = date('d-m-Y h:i:s', strtotime($cajaCierre->created_at));
+                $fechaCierreCaja = date('d-m-Y h:i:s',strtotime($cajaCierre->updated_at));
+                $numeroCaja = $cajaCierre->codigo;
+                $operadorCaja = $cajaCierre->user->name;
+
+
+                //Servicios
+                $numServiciosContadoCaja = $cajaCierre->servicios->where('estado', 'Aceptada')->where('modo_pago', 'Contado')->count();
+                // dd($numServiciosContadoCaja);
+                $numServiciosCreditoCaja = $cajaCierre->servicios->where('estado', 'Aceptada')->where('modo_pago', 'Credito')->count();
+                $numServiciosCortesiaCaja = $cajaCierre->servicios->where('estado', 'Aceptada')->where('modo_pago', 'Cortesía')->count();
+                $totalNumServiciosCortesiaCaja = $cajaCierre->servicios->where('estado', 'Aceptada')->count();
+                $ventaTotalServiciosCaja = $cajaCierre->servicios->where('estado', 'Aceptada')->where('modo_pago', 'Contado')->sum('total_venta');
+                $ventaTotalConsumosCaja = $cajaCierre->ventas->where('estado', 'Aceptada')->where('status', 'Pagado')->where('modo_pago', 'Contado')->sum('total_venta');
+                $totalPagosExtrasCaja = $cajaCierre->horas_extras->where('status', 'Pagado')->sum('total_horas_extras_otros_montos');
+
+                if ($cajaCierre->estado == 'Cerrada') {
+                    $totalVueltosPagarOficina = $cajaCierre->historial_vueltos_pendientes->where('Estado', 'PagarOficina')->sum('MontoDolar');
+                } else {
+                    $totalVueltosPagarOficina = $cajaCierre->excedente_actual->where('Estado', 'PagarOficina')->sum('MontoDolar');
+                }
+
+                //Reportado por sistema
+                $dolar_sistema = $cajaCierre->dolar_sistema;
+                // return $dolar_sistema;
+                $peso_sistema = $cajaCierre->peso_sistema;
+                $punto_sistema = $cajaCierre->punto_sistema;
+                $trans_sistema = $cajaCierre->trans_sistema;
+                $efectivo_sistema = $cajaCierre->efectivo_sistema;
+
+
+                //Reportado por operador
+                $dolar_dolar_operador = $cajaCierre->dolar_dolar_operador;
+                $peso_dolar_operador = $cajaCierre->peso_dolar_operador;
+                $efectivo_dolar_operador = $cajaCierre->efectivo_dolar_operador;
+                $punto_dolar_operador = $cajaCierre->punto_dolar_operador;
+                $trans_dolar_operador = $cajaCierre->trans_dolar_operador;
+
+
+                //Totales
+                $total_sistema_reg = $cajaCierre->total_sistema_reg;
+                $total_operador_reg = $cajaCierre->total_operador_reg;
+                $total_reintegro_reg = $cajaCierre->historialExcedentes->where('tipo_registro', 'Pago_por_oficina')->where('status', 'Pendiente')->where('status', 'Pendiente')->where('tipo_operacion', 'Egreso')->where('modo_pago', 'Por caja')->sum('saldo_operacion');
+
+                $observaciones = $cajaCierre->Observaciones;
+                $total_diferencia = $cajaCierre->total_diferencia;
+
+            } catch (\Exception $e) {/*No hacemos nada si hay error*/
+                dd($e);
+            }
+
+            $printer->text('RESUMEN DE CAJA' . "\n");
+            $printer->text($numeroCaja . "\n");
+            $printer->text("-----------------------------" . "\n");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            date_default_timezone_set("America/Caracas");
+            $printer->text("Apertura: " . $fechaInicioCaja. "\n");
+            $printer->text("Cierre: " . $fechaCierreCaja. "\n");
+            $printer->text("Operador:"                   ."\n");
+            $printer->text($operadorCaja. "\n");
+            $printer->feed(1);
+            $printer->text("-----------------------------" . "\n");
+            $printer->text("SERVICIOS   .\n");
+            $printer->text("-----------------------------" . "\n");
+            $printer->text("Contado:             " . $numServiciosContadoCaja . "\n");
+            $printer->text("Cresito:             " . $numServiciosCreditoCaja . "\n");
+            $printer->text("Cortesia:            " . $numServiciosCortesiaCaja . "\n");
+            $printer->text("           -------------------" . "\n");
+            $printer->text("Total Servicios:     " . $totalNumServiciosCortesiaCaja . "\n");
+            $printer->feed(1);
+            $printer->text("-----------------------------" . "\n");
+            $printer->text("VENTAS   .\n");
+            $printer->text("-----------------------------" . "\n");
+            $printer->text("Total Consumo:      $." . number_format($ventaTotalConsumosCaja, 2) . "\n");
+            $printer->text("Total Servicios:    $." . number_format($ventaTotalServiciosCaja, 2) . "\n");
+            $printer->text("Total P/Extras:     $." . number_format($totalPagosExtrasCaja, 2) . "\n");
+            $printer->text("           -------------------" . "\n");
+            $printer->text("Venta Total   :     $." . (number_format($ventaTotalConsumosCaja, 2) + number_format($ventaTotalServiciosCaja, 2) + number_format($totalPagosExtrasCaja, 2)) . "\n");
+            $printer->text("Vuel/P/Oficina:     $." . number_format($totalVueltosPagarOficina, 2) . "\n");
+            $printer->text("Reintegro/Oficina:  $." . number_format($total_reintegro_reg, 2) . "\n");
+            $printer->text("           -------------------" . "\n");
+            $printer->text("Total:              $." . number_format($total_sistema_reg, 2) . "\n");
+            $printer->feed(1);
+            $printer->text("-----------------------------" . "\n");
+            $printer->text("REPORTADO POR OPERADOR   .\n");
+            $printer->text("-----------------------------" . "\n");
+            $printer->text("Dolar:              $." . number_format($dolar_dolar_operador, 2) . "\n");
+            $printer->text("Peso:               $." . number_format($peso_dolar_operador, 2) . "\n");
+            $printer->text("Punto:              $." . number_format($punto_dolar_operador, 2) . "\n");
+            $printer->text("Transf:             $." . number_format($trans_dolar_operador, 2) . "\n");
+            $printer->text("Efectivo:           $." . number_format($efectivo_dolar_operador, 2) . "\n");
+            $printer->text("-----------------------------" . "\n");
+            $printer->text("Total:              $." . number_format($total_operador_reg, 2) . "\n");
+            $printer->text("-----------------------------" . "\n");
+            $printer->feed(1);
+            $printer->text("Totales   .\n");
+            $printer->text("-----------------------------" . "\n");
+            $printer->text("Total sistema:      $." . number_format($total_sistema_reg, 2) . "\n");
+            $printer->text("Total operador:     $." . number_format($total_operador_reg, 2) . "\n");
+            $printer->text("Total diferencia:   $." . number_format($total_diferencia, 2) . "\n");
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->feed(1);
+            $printer->text("-----------------------------" . "\n");
+            $printer->text("TOTALES CONTABLES   .\n");
+            $printer->text("-----------------------------" . "\n");
+            $printer->setJustification(Printer::JUSTIFY_LEFT);
+            $printer->text("Total Consumo:      $." . number_format($ventaTotalConsumosCaja, 2) . "\n");
+            $printer->text("Total Servicios:    $." . number_format($ventaTotalServiciosCaja, 2) . "\n");
+            $printer->text("Total P/Extras:     $." . number_format($totalPagosExtrasCaja, 2) . "\n");
+            $printer->text("Reintegro/Oficina:  $." . number_format($total_reintegro_reg, 2) . "\n");
+            $printer->text("           -------------------" . "\n");
+            $printer->text("Total   :           $." . (number_format($ventaTotalConsumosCaja, 2) + number_format($ventaTotalServiciosCaja, 2) + number_format($totalPagosExtrasCaja, 2) + number_format($total_reintegro_reg, 2)) . "\n");
+            $printer->feed(3);
+            $printer->text("-----------------------------" . "\n");
+            $printer->text("Firma   .\n");
+            $printer->feed(1);
+            $printer->text("Observaciones:                      ". "\n");
+            $printer->text($observaciones . "\n");
+            $printer->feed(1);
+            $printer->setJustification(Printer::JUSTIFY_CENTER);
+            $printer->text("Gracias por su dedicacion! \n");
+
+            $printer->feed(3);
+
+
+            $printer->cut();
+
+
+            $printer->pulse();
+
+
+            $printer->close();
+            $this->print_error = 1;
+        } catch (\Exception $e) {
+            $this->print_error = 0;
+        }
+    }
+
 }
