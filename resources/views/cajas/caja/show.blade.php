@@ -49,9 +49,7 @@
                                 <a class="btn btn-success" href="{{ route('venta.index') }}">{{ __('Ir a ventas') }}</a>
                             @endcan
                         @endif
-                        @can('haveaccess', 'user.index')
                             <a class="btn btn-warning" href="{{ route('caja.index') }}">{{ __('Ir a cajas') }}</a>
-                        @endcan
                         <a onClick="imprimir('imprimir')" target="_blank" class="btn btn-primary  hidden-print">
                             <i class="fa fa-print"></i>
                             Imprimir
@@ -285,7 +283,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                     </tr>
                                                 @endcan
 
-                                                @can('haveaccess', 'cajatotalventa.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th class="col-sm-2" colspan="3">
                                                             <h4><strong class="text-blue">Consumo:</strong></h4>
@@ -300,7 +298,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajatotalventa.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th class="col-sm-2">Cons/Contado:</th>
                                                         <td class="col-sm-2"><strong>{{ $cajas->SumaTotalCantidadVentasContado ?? '0' }}</strong>
@@ -316,7 +314,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         </td>
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>Cons/Credíto:</th>
                                                         <td><b>{{ $cajas->SumaTotalCantidadVentasCredito ?? '0' }}</b></td>
@@ -330,7 +328,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         </td>
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajatotalventa.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>Cons/Cortesía:</th>
                                                         <td><b>{{ $cajas->SumaTotalCantidadVentasCortesia ?? '0' }}</b></td>
@@ -343,7 +341,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         <td>{{ $cajas->SumaTotalCantidadCreditosPagadosTotales ?? '0' }}</td>
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajatotalventa.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>Total/Consumo:</th>
                                                         <td><b>{{ $cajas->SumaTotalCantidadVentasContado + $cajas->SumaTotalCantidadVentasCredito + $cajas->SumaTotalCantidadVentasCortesia ?? '0' }}</b>
@@ -367,7 +365,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         </td>
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajatotalventa.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>Cons/Créd/Pag:</th>
                                                         <td>{{ $cajas->SumaTotalCantidadCreditosPagadosConsumo ?? '0' }}</td>
@@ -390,7 +388,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                     </tr>
                                                 @endcan
 
-                                                @can('haveaccess', 'cajatotalventa.show')
+                                               @can('haveaccess', 'caja.index')
                                                     <tr class="table-sm">
                                                         <th class="col-sm-2">
                                                             <h4><strong class="text-blue">Consumo Bruto:</strong></h4>
@@ -433,7 +431,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                   </tr>
                   @endcan --}}
 
-                                                @can('haveaccess', 'cajatotalventa.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                             <h5><strong class="text-danger">Cons/Cortesía:</strong></h5>
@@ -465,7 +463,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                     </tr>
                                                 @endcan
 
-                                                @can('haveaccess', 'cajatotalventa.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                             <h5><strong class="text-danger">Cons/Créd/Nuevos:</strong></h5>
@@ -497,7 +495,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                     </tr>
                                                 @endcan
 
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                             <h5><strong class="text-danger">Cons/Créd/Pagados/Oficina:</h5></strong>
@@ -531,7 +529,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                     </tr>
                                                 @endcan
 
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                             <h5><strong class="text-aqua">Cons/Créd/Pagados/Caja:</h5></strong>
@@ -575,7 +573,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                   </tr>
                   @endcan --}}
 
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                             <h5><strong class="text-aqua">Cons/Contado:</h5></strong>
@@ -625,7 +623,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                   </tr>
                   @endcan --}}
 
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                         </th>
@@ -653,7 +651,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                             <h5 class="text-danger"><strong>Reservaciones/Pendientes:</h5></strong>
@@ -685,7 +683,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                     </tr>
                                                 @endcan
 
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                             <h4><strong class="text-blue">Cons/Total/Contable:</h4></strong>
@@ -716,7 +714,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                         <td></td>
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th colspan="8">
                                                             <h4 class="box-title text-bold text-Back"><hr> </h4>
@@ -727,7 +725,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                             <h5><strong class="text-Back">Reservas/Recividas/Caja:</h5></strong>
@@ -757,7 +755,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                             <h5><strong class="text-Back">Reservas/Pagadas/Caja:</h5></strong>
@@ -787,7 +785,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th>
                                                             <h4><strong class="text-Back">Totales Pendientes:</h4></strong>
@@ -818,7 +816,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
 
 
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th colspan="8">
                                                             <h4 class="box-title text-bold text-Back"><hr> </h4>
@@ -828,7 +826,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                     </tr>
                                                 @endcan
-                                                @can('haveaccess', 'cajautilidad.show')
+                                                @can('haveaccess', 'caja.index')
                                                     <tr>
                                                         <th colspan="2">
                                                             <h4><strong class="text-Back">Creditos Pendientes:</h4></strong>
@@ -914,6 +912,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
                                     {{-- ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// --}}
                                     <div class="content">
+                                        @can('haveaccess', 'caja.index')
                                         <div class="box-header with-border">
                                             <h3 class="box-title text-bold text-blue">Resumen de Caja </h3>
 
@@ -1250,6 +1249,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                 </div>
                                             </div>
                                         </div>
+                                        @endcan
                                     </div> {{-- imprimir --}}
                                 </div>
                             </div>

@@ -43,7 +43,7 @@
                         {{-- @include('cajas.caja.buscar') --}}
                     </div>
                 </div>
-
+                @can('haveaccess', 'caja.index')
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                         <div class="table-responsive">
@@ -103,7 +103,7 @@
                         {{-- {{$categorias->render()}} --}}
                     </div>
                 </div>
-
+                @endcan
                 {{-- fin de la cabecera de box --}}
             </div>
             <!-- /.box-body -->
