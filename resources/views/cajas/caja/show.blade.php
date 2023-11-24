@@ -1610,6 +1610,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
 
                                                         <h4><strong>Datos de Servicios</strong></h4>
+                                                        @can('haveaccess', 'caja.index')
                                                         <div class="box-header with-border bg-danger">
                                                             {{-- <h3 class="box-title text-bold text-blue">Montos Recibidos </h3> --}}
 
@@ -1827,19 +1828,8 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                     <!-- /.description-block -->
                                                                 </div>
                                                             </div>
-                                                            <!-- <div class="row">
-                                                                <div class="col-sm-6 col-xs-12">
-                                                                    <span class="description-text">OBSERVACIONES:</span>
-                                                                    <div>
-                                                                        {{ $cajas->Observaciones }}
-                                                                    </div>
-
-                                                                </div>
-                                                            </div> -->
-
-
                                                         </div>
-
+                                                        @endcan
                                                         <table class="table table-striped table-bordered table-condensed table-hover table-sm sm">
 
                                                             @php
@@ -2105,12 +2095,8 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                     <div class="col-xs-12 table-responsive table-sm sm">
 
                                                         <h4><strong>Datos de Ventas</strong></h4>
+                                                        @can('haveaccess', 'caja.index')
                                                         <div class="box-header with-border bg-danger">
-                                                            {{-- <h3 class="box-title text-bold text-blue">Montos Recibidos </h3> --}}
-
-                                                            <div class="box-header with-border bg-danger">
-                                                                {{-- <h3 class="box-title text-bold text-blue">Montos Recibidos </h3> --}}
-
                                                                 <div class="row">
                                                                     <div class="col-sm-2 col-xs-6">
                                                                         <div class="description-block border-right">
@@ -2327,16 +2313,8 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                         <!-- /.description-block -->
                                                                     </div>
                                                                 </div>
-                                                                <!-- <div class="row">
-                            <div class="col-sm-6 col-xs-12">
-                                <span class="description-text">OBSERVACIONES:</span>
-                                <div>
-                                    {{ $cajas->Observaciones }}
-                                </div>
 
-                            </div>
-                        </div> -->
-
+                                                            @endcan
 
                                                             </div>
                                                             <!-- <div class="row">
@@ -2714,6 +2692,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                     <div class="col-xs-12 table-responsive table-sm sm">
 
                                                         <h4><strong>Creditos Pagados</strong></h4>
+                                                        @can('haveaccess', 'caja.index')
                                                         <div class="box-header with-border bg-danger">
                                                             {{-- <h3 class="box-title text-bold text-blue">Montos Recibidos </h3> --}}
 
@@ -2897,6 +2876,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                         <!-- /.description-block -->
                                                                     </div>
                                                                 </div>
+                                                                @endcan
                                                                 <!-- <div class="row">
                             <div class="col-sm-6 col-xs-12">
                                 <span class="description-text">OBSERVACIONES:</span>
@@ -3033,6 +3013,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
 
                                                         <h4><strong>Datos de Pagos Extras</strong></h4>
+                                                        @can('haveaccess', 'caja.index')
                                                         <div class="box-header with-border bg-danger">
                                                             {{-- <h3 class="box-title text-bold text-blue">Montos Recibidos </h3> --}}
 
@@ -3255,6 +3236,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                         <!-- /.description-block -->
                                                                     </div>
                                                                 </div>
+                                                                @endcan
                                                                 <!-- <div class="row">
                             <div class="col-sm-6 col-xs-12">
                                 <span class="description-text">OBSERVACIONES:</span>
