@@ -891,8 +891,8 @@
                     let spTotal = $('#spTotal').html();
                     let PagoTtotal = $('#PagoTtotal').html();
                     let RestaTtotal = document.getElementById('RestaTtotal');
-                    RestaTtotalCuenta = new Decimal(RestaTtotal.innerHTML);
-                    restaTotalV = new Decimal(restaTotalV.innerHTML);
+                    RestaTtotalCuenta = RestaTtotal.innerHTML;
+                    restaTotalV = restaTotalV.innerHTML;
                     // spTotal = new Decimal(spTotal.innerHTML);
                     // PagoTtotal = new Decimal(PagoTtotal.innerHTML);
 
@@ -2651,7 +2651,7 @@
                 valor = parseFloat(valor);
                 valor_restar = parseFloat(valor_restar);
                 resta = parseFloat(resta);
-                resta = new Decimal(resta);
+                resta =resta;
                 // var valorV           = PagoTtotalV.innerHTML;
                 // var valor_restarV    = spTotalV.innerHTML;
                 // var restaV           = numDecimal(valorV -valor_restarV);
@@ -2677,7 +2677,7 @@
 
 
 
-                if (resta.lessThan(Decimal(0))) {
+                if (resta < 0) {
                     // alert('El monto pagado supera el monto a pagar');
                     // return false;
                     $("#monto_dejadoResta").val(0.00);
@@ -2778,7 +2778,7 @@
                     }
                 });
                 // alert(total_suma);
-                let result = new Decimal(total_suma);
+                let result = parseFloat(total_suma);
                 document.getElementById('spTotal').innerHTML = numDecimal(result.toFixed(6));
                 $('#monto_dejado').val(result.toFixed(6));
                 $('#base_vuelto_monto_dejado').val(result.toFixed(6));
@@ -3334,7 +3334,7 @@
                     // rmd =  md - tsV;
                     $('#isVueltos').val(tsV);
                     // let rmdresult = new Decimal(rmd);
-                    let rmdresult = new Decimal(tsV);
+                    let rmdresult = parseFloat(tsV);
                     // $('#monto_dejado').val(rmdresult.toFixed(2));
                     $('#monto_dejadoResta').val(rmdresult.toFixed(6));
 
@@ -3344,8 +3344,8 @@
 
                 // console.log(montoBase);
                 // console.log(restaMontoDejadoBase);
-                x = new Decimal(montoBase)
-                y = new Decimal(restaMontoDejadoBase)
+                x = parseFloat(montoBase)
+                y = parseFloat(restaMontoDejadoBase)
                 let r = x.sub(y) // '0.2'
                 // console.log(r.toFixed(2));
 
@@ -3353,8 +3353,8 @@
 
 
                 // $('#monto_dejado').val(rmdresult.toFixed(2));
-                let result = new Decimal(total_sumaV);
-                document.getElementById('spTotalV').innerHTML = numDecimal(result.toFixed(6));
+                let result = parseFloat(total_sumaV);
+                document.getElementById('spTotalV').innerHTML = numparseFloat(result.toFixed(6));
 
 
             }
