@@ -55,7 +55,6 @@
 
         @push('sciptsMain')
             <script src="{{ asset('fullcalendar/dist/index.global.min.js') }}"></script>
-
             <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     var calendarEl = document.getElementById('calendar');
@@ -86,12 +85,13 @@
                         dateClick: function(info) {
 console.log('dateClick')
                             limpiarFormulario()
-
+                            handlerColor()
+                            activeBtnProcessService()
 
                             $('#txtFechaEntrada').val(info.dateStr)
                             $('#txtFechaSalida').val(info.dateStr)
 
-                            $('#btnAgregar').prop("disabled", false)
+                            $('#txtServicio').prop("disabled", false)
                             $('#btnModificar').prop("disabled", true)
                             $('#btnEliminar').prop("disabled", true)
                             $('#btnProcesar').prop("disabled", true)
@@ -114,6 +114,8 @@ console.log('dateClick')
 
                         eventClick: function(info) {
                             limpiarFormulario()
+
+
 
 console.log('eventClick')
 
@@ -180,7 +182,9 @@ console.log('eventClick')
                             $('#txtNumAcompanantes').val(info.event.extendedProps.numAcompanantes)
                             $('#txtHabitacion').val(info.event.extendedProps.cat_id)
                             $('#txtServicio').val(info.event.extendedProps.horario_id)
+                            $('#txtNumDias').val(info.event.extendedProps.cantidad)
                             $('#txtNumHabitacion').val(info.event.extendedProps.numHabitacion)
+                            $('#txtPrecio').val(info.event.extendedProps.precio)
                             $('#txtMontoPago').val(info.event.extendedProps.montoPago)
                             $('#txtVueltoPago').val(info.event.extendedProps.vueltoPago)
                             $('#txtTelefonoPago').val(info.event.extendedProps.telefonoPago)
@@ -225,8 +229,7 @@ console.log(info.event.extendedProps.montoPago)
                                 // Mostrar tabla de pagos si tiene datos
                                     var tablaPagosContainer = document.getElementById("tablaPagosContainer");
                                     tablaPagosContainer.style.display = "block";
-                                    // Actualizar total de abonos en dólares
-                                    actualizarTotalAbonos();
+
                                     // Reiniciar campos de pago
                                     document.getElementById("camposPago").innerHTML = "";
                                     document.getElementById("tipoPago").value = "";
@@ -235,6 +238,10 @@ console.log(info.event.extendedProps.montoPago)
                             console.log('entre ', info.event.extendedProps.numHabitacion)
                             obtenerNumHabitacion(info.event.extendedProps.numHabitacion)
                             obtenerPrecio()
+
+                            // Actualizar total de abonos en dólares
+                                    actualizarTotalAbonos();
+
 
 
                             $('#exampleModal').modal()
@@ -247,56 +254,112 @@ console.log(info.event.extendedProps.montoPago)
                     calendar.setOption('locale', 'Es')
                     calendar.render();
 
+                    let isSending = false;
                     $('#btnAgregar').click(function() {
 
-                        objReservacion = recolectarDatosGUI("POST")
-                        console.log(objReservacion)
-                        EnviarInformacion('', objReservacion)
+                        if (isSending) {
+                            return;
+                        }
 
-                    })
+                        isSending = true;
+
+                        objReservacion = recolectarDatosGUI("POST");
+                        console.log(objReservacion);
+                        EnviarInformacion('', objReservacion);
+
+                        setTimeout(() => {
+                            isSending = false;
+                        }, 1000);
+                    });
+
+                    //$('#btnAgregar').click(function() {
+//
+                    //    objReservacion = recolectarDatosGUI("POST")
+                    //    console.log(objReservacion)
+                    //    EnviarInformacion('', objReservacion)
+//
+                    //})
 
                     $('#btnModificar').click(function() {
+
+                        if (isSending) {
+                            return;
+                        }
+
+                        isSending = true;
 
                         objReservacion = recolectarDatosGUI("PATCH")
                         console.log(objReservacion)
 
                         EnviarInformacion('/' + $('#txtID').val(), objReservacion)
 
-                    })
+                        setTimeout(() => {
+                                isSending = false;
+                            }, 1000);
+                    });
+
                     $('#btnEliminar').click(function() {
+
+                        if (isSending) {
+                            return;
+                        }
+
+                        isSending = true;
                         objReservacion = recolectarDatosGUI("DELETE")
 
                         EnviarInformacion('/' + $('#txtID').val(), objReservacion)
 
-                    })
+                        setTimeout(() => {
+                                isSending = false;
+                            }, 1000);
+                    });
 
                     $('#btnProcesar').click(function() {
-                        let activeBtn = activeBtnProcessService()
-                        if(activeBtn){
-                            console.log('Enviando...')
-                        }else{
-                            console.log('Monto insuficiente...')
+
+                        if (isSending) {
+                            return;
                         }
 
+                        isSending = true;
 
-                        //objReservacion = recolectarDatosGUI("DELETE")
+                        objReservacion = recolectarDatosGUI("PATCH", true);
+                        console.log(objReservacion);
 
-                        //EnviarInformacion('/' + $('#txtID').val(), objReservacion)
+                        let activeBtn = activeBtnProcessService();
+                        if (activeBtn) {
 
-                    })
+                            console.log('Enviando...', $('#txtID').val());
+                            EnviarInformacion('/' + $('#txtID').val(), objReservacion);
+                        } else {
+                            console.log('Monto insuficiente...');
+                        }
 
-                    function activeBtnProcessService(){
-                        let precioShow = $('#precioShow').html()
-                        let txtMontoPago = $('#txtMontoPago').val()
+                        setTimeout(() => {
+                            isSending = false;
+                        }, 1000);
+                    });
 
-                        precioShow = parseFloat(precioShow)
-                        txtMontoPago = parseFloat(txtMontoPago)
 
-                        return result = txtMontoPago >= precioShow ? true : false
+                    //$('#btnProcesar').click(function() {
+//
+                    //    objReservacion = recolectarDatosGUI("PATCH", true)
+//
+                    //    console.log(objReservacion)
+//
+                    //    let activeBtn = activeBtnProcessService()
+                    //    if(activeBtn){
+//
+                    //        console.log('Enviando...', $('#txtID').val())
+                    //        EnviarInformacion('/' + $('#txtID').val(), objReservacion)
+                    //    }else{
+                    //        console.log('Monto insuficiente...')
+                    //    }
+//
+                    //})
 
-                    }
 
-                    function recolectarDatosGUI(method) {
+
+                    function recolectarDatosGUI(method, processService = false) {
 
                         nuevaReserva = {
                             id: $('#txtID').val(),
@@ -313,6 +376,7 @@ console.log(info.event.extendedProps.montoPago)
                             habitacione_id: $('#txtNumHabitacion').find("option:selected").val(),
                             tipoHabitacion: $('#txtHabitacion').find("option:selected").text(),
                             tipoServicio: $('#txtServicio').find("option:selected").text(),
+                            cantidad: $('#txtNumDias').val(),
                             numHabitacion: $('#txtNumHabitacion').find("option:selected").text(),
                             precio: $('#precioShowServicio').html(),
                             montoPago: $('#txtMontoPago').val(),
@@ -329,7 +393,9 @@ console.log(info.event.extendedProps.montoPago)
 
                             formaPago: obtenerDatosReserva(),
                             '_token': $("meta[name='csrf-token']").attr("content"),
-                            '_method': method
+                            '_method': method,
+                            '_processService': processService
+
                         }
 
                         return (nuevaReserva)
@@ -342,7 +408,7 @@ console.log(info.event.extendedProps.montoPago)
                             url: "{{ url('reservations') }}" + accion,
                             data: objReservacion,
                             success: function(msg) {
-                                console.log(msg)
+                                console.log('ok ', msg)
 
                                 toastr.success(msg.msg, 'Notice', {
                                     timeOut: 3000
@@ -350,8 +416,18 @@ console.log(info.event.extendedProps.montoPago)
                                 $('#exampleModal').modal('toggle')
                                 calendar.refetchEvents()
                             },
-                            error: function() {
+                            error: function(e) {
+                                if(e.status == 200){
+                                    toastr.success('Exito', 'Notice', {
+                                    timeOut: 3000
+                                })
+                                $('#exampleModal').modal('toggle')
+                                calendar.refetchEvents()
+                                }else{
+                                    console.log('error ', e.status)
                                 alert('Hay un error al enviar los datos...')
+                                }
+                                return false
                             }
                         })
                     }
@@ -368,9 +444,10 @@ console.log(info.event.extendedProps.montoPago)
                         $('#txtNombreCliente').val('')
                         $('#txtCedulaCliente').val('')
                         $('#txtTelefonoContacto').val('')
-                        $('#txtNumAcompanantes').val('')
+                        $('#txtNumAcompanantes').val(1)
                         $('#txtHabitacion').val('')
                         $('#txtServicio').val('')
+                        $('#txtNumDias').val(1)
                         $('#txtNumHabitacion').val('')
                         $('#txtMontoPago').val('')
                         $('#txtTelefonoPago').val('')
@@ -404,8 +481,10 @@ console.log(info.event.extendedProps.montoPago)
                     }
                 });
 
-                function whenIsProceded(value = false, numservice = false){
+                function whenIsProceded(value = false, numservice = true){
+                    console.log('estoy en whenIsProceded')
                     if(value == 'Procesado' || value == 'Cancelado'){
+                        $('#txtMontoPago').prop("disabled", true)
                         $('#buscarClienteInput').prop("hidden", true)
                         $('#txtFechaEntrada').prop("disabled", true)
                         $('#txtHoraEntrada').prop("disabled", true)
@@ -418,6 +497,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#txtNumAcompanantes').prop("disabled", true)
                         $('#txtHabitacion').prop("disabled", true)
                         $('#txtServicio').prop("disabled", true)
+                        $('#txtNumDias').prop("disabled", true)
                         $('#numHabitacion').prop("disabled", true)
                         $('#txtMontoPago').prop("disabled", true)
                         $('#txtTelefonoPago').prop("disabled", true)
@@ -433,6 +513,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#btnEliminar').prop("disabled", true)
                         $('#btnProcesar').prop("disabled", true)
                     }else{
+                        $('#txtMontoPago').prop("disabled", true)
                         $('#buscarClienteInput').prop("hidden", false)
                         $('#txtFechaEntrada').prop("disabled", false)
                         $('#txtHoraEntrada').prop("disabled", false)
@@ -445,6 +526,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#txtNumAcompanantes').prop("disabled", false)
                         $('#txtHabitacion').prop("disabled", false)
                         $('#txtServicio').prop("disabled", false)
+                        $('#txtNumDias').prop("disabled", false)
                         $('#numHabitacion').prop("disabled", false)
                         $('#txtMontoPago').prop("disabled", false)
                         $('#txtTelefonoPago').prop("disabled", false)
@@ -457,7 +539,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#user_id').val({{ Auth::user()->id }})
                         $('#btnModificar').prop("disabled", false)
                         $('#btnEliminar').prop("disabled", false)
-                        $('#btnProcesar').prop("disabled", true)
+                        $('#btnProcesar').prop("disabled", false)
 
 
                     }
@@ -466,7 +548,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#buscarClienteInput').prop("hidden", true)
                         $('#txtNombreCliente').prop("disabled", true)
                         $('#txtCedulaCliente').prop("disabled", true)
-                        $('#txtNumAcompanantes').prop("disabled", true)
+                        $('#txtServicio').prop("disabled", true)
                         $('#txtMontoPago').prop("disabled", true)
                         $('#txtNombreOperador').val('{{ Auth::user()->name }}')
                         $('#txtNumServicio').prop("disabled", true)
@@ -474,8 +556,6 @@ console.log(info.event.extendedProps.montoPago)
                         $('#user_id').val({{ Auth::user()->id }})
                         $('#btnModificar').prop("disabled", false)
                         $('#btnEliminar').prop("disabled", false)
-
-
                         $('#btnProcesar').prop("disabled", false)
                     }
 
@@ -483,29 +563,32 @@ console.log(info.event.extendedProps.montoPago)
                 }
             </script>
             <script>
-                // Obtén los elementos select y txtColor
-const select = document.getElementById('txtStatus');
-const txtColor = document.getElementById('txtColor');
 
-// Agrega un evento de cambio al select
-select.addEventListener('change', function() {
-  // Obtén el valor seleccionado del select
-  const selectedValue = select.value;
+                function handlerColor(){
+                    // Obtén los elementos select y txtColor
+                    const select = document.getElementById('txtStatus');
+                    const txtColor = document.getElementById('txtColor');
+                    // Obtén el valor seleccionado del select
+                const selectedValue = select.value;
 
-  // Asigna el color correspondiente al campo txtColor según el valor seleccionado
-  if (selectedValue === 'Pendiente') {
-    txtColor.value = '#C67110';
-  } else if (selectedValue === 'Procesado') {
-    txtColor.value = '#118F00';
-  } else if (selectedValue === 'Cancelado') {
-    txtColor.value = '#FE0606';
-  }
-});
+                // Asigna el color correspondiente al campo txtColor según el valor seleccionado
+                if (selectedValue === 'Pendiente') {
+                    txtColor.value = '#C67110';
+                } else if (selectedValue === 'Procesado') {
+                    txtColor.value = '#118F00';
+                } else if (selectedValue === 'Cancelado') {
+                    txtColor.value = '#FE0606';
+                }
+                }
+
+
+
             </script>
 
             <script>
                 function actualizarHorasFechas() {
                     const txtServicio = document.getElementById("txtServicio");
+                    const cantidad = document.getElementById("txtNumDias").value;
                     const valorServicio = txtServicio.value;
                     let horaInicio = "";
                     let horaFinal = "";
@@ -513,30 +596,11 @@ select.addEventListener('change', function() {
                     let fechaSalida = new Date(fechaEntrada);
 
                     switch (valorServicio) {
-                        case "1":
-                            horaInicio = "05:00";
-                            horaFinal = "21:00";
-                            break;
-                        case "2":
-                            horaInicio = "17:00";
-                            horaFinal = "00:01";
-                            fechaSalida.setDate(fechaSalida.getDate() + 1);
-                            break;
-                        case "3":
-                            //const now = new Date();
-                            //horaInicio = now.toLocaleTimeString([], {
-                            //    hour: '2-digit',
-                            //    minute: '2-digit'
-                            //});
-                            //horaFinal = now.toLocaleTimeString([], {
-                            //    hour: '2-digit',
-                            //    minute: '2-digit'
-                            //});
-                            //fechaSalida.setDate(fechaSalida.getDate() + 1);
 
+                        case "3":
                             horaInicio = "14:00";
                             horaFinal = "14:00";
-                            fechaSalida.setDate(fechaSalida.getDate() + 1);
+                            fechaSalida.setDate(fechaSalida.getDate() + parseFloat(cantidad));
                             break;
                     }
 
@@ -602,6 +666,8 @@ select.addEventListener('change', function() {
                     return formaPagoArray;
                 }
             </script>
+
+
 
         @endpush
     @endsection

@@ -10,6 +10,7 @@ use App\Credito;
 use App\Empresa;
 use App\Articulo;
 use App\Horas_extra;
+use App\Reservation;
 use App\Sessioncaja;
 use App\Contabilidad;
 use App\ControlStock;
@@ -24,8 +25,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Historial_Vueltos_Pendiente;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 use App\Excedentes_Recibidos_Caja_Actual;
-use App\Reservation;
 
 class CajaController extends Controller
 {
@@ -124,6 +125,8 @@ class CajaController extends Controller
                 }
             }
         }
+
+
         // echo $difference = $date->diff($date2)->days;
 
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -171,7 +174,10 @@ class CajaController extends Controller
             $estatus_caja      = 'Apertura';
 
             $tasaVentaEfectivo = Tasa::where('nombre', 'efectivoVenta')->first();
+            $totalReservasOficinaInicioCaja = Reservation::where('status', 'Pendiente')->sum('montoPago');
 
+            //Traemos total creditos por pagar
+            $creditosPorPagar = Credito::where('total_factura', '>', 0)->get();
 
             $Caja = new Caja;
             $Caja->codigo               = '';
@@ -186,6 +192,8 @@ class CajaController extends Controller
             $Caja->monto_dolar_cierre   = 0.00;
             $Caja->monto_peso_cierre    = 0.00;
             $Caja->monto_bolivar_cierre = 0.00;
+            $Caja->totalReservasOficinaInicioCaja = $totalReservasOficinaInicioCaja;
+            $Caja->TotalCreditosPorCobrarInicioCaja = $creditosPorPagar->sum('total_deuda');
             $Caja->estado               = 'Abierta';
             $Caja->caja                 = $request->get('caja');
             $Caja->tasaActualVenta      = $tasaVentaEfectivo->tasa;
@@ -201,7 +209,7 @@ class CajaController extends Controller
                 ->update(["codigo" => $codigo]);
 
 
-
+$Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
 
 
 
@@ -1032,7 +1040,7 @@ class CajaController extends Controller
 
             }
 
-            if ($vent->modo_pago == 'Crédito') {
+            if ($vent->modo_pago == 'Credito') {
                 $cajas->SumaTotalCantidadVentasCredito = $cajas->SumaTotalCantidadVentasCredito + 1;
                 $cajas->SumaTotalVentasCredito = $cajas->SumaTotalVentasCredito + $vent->total_venta;
             }
@@ -2064,16 +2072,102 @@ class CajaController extends Controller
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         $sumaPagosHorasExtras = Horas_extra::where('caja_id', $cajas->id)->sum('pago_con_excedente');
-        $getReservaciones = Reservation::where('caja_id', $cajas->id)->where('status', '<>', 'Cancelado')->sum('montoPago');
         $cajas->SumaTotalHorasExtrasPagadosConExcedente = floatval(number_format($sumaPagosHorasExtras, 2));
+        //Recuperamos el monto total de resevaciones
 
-        // return $cajas->SumaTotalHorasExtrasPagadosConExcedente;
+
+
+
+
+        //Fin de reservas caja actual
+
+
+
+        //Recuperamos los montos de las reservas en caja actual.
+
+        $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+        $isCajaOpen = Caja::where("estado", "=", 'Abierta')->where("sessioncaja_id", "=", $cajaSessionid->id)->first();
+        if($isCajaOpen->id == $id){
+            //Enviamos los montos de las reservas en caja actual.
+            $getTotalReservacionesRecibidasCajaActual = Reservation::where('caja_id', $id)->where('status', '<>', 'cancelado')->sum('montoPago');
+
+            $getTotalReservacionesProcesadasCajaActual = Reservation::where('caja_id', $id)->where('caja_pago_reservacion_id', $id)->where('status', 'Procesado')->sum('montoPago');
+
+            $getTotalReservacionesPendientesCajaActual = Reservation::where('caja_id', $id)->where('status', 'Pendiente')->sum('montoPago');
+
+            //Enviamos los monotos delas reservas que estan en Oficina.
+
+            $getTotalReservasOficinaInicioCaja = $isCajaOpen->totalReservasOficinaInicioCaja;
+
+            $getTotalReservasOficinaCierreCaja = $getTotalReservasOficinaInicioCaja + $getTotalReservacionesRecibidasCajaActual;
+
+            $getTotalReservasionesPagarOficina = Reservation::where('caja_pago_reservacion_id', $id)->where('caja_id', '<>' ,  $id)->where('status', 'Procesado')->sum('montoPago');
+
+            $getTotalReservacionesPendientesOficina = ($getTotalReservasOficinaInicioCaja - $getTotalReservasionesPagarOficina);
+
+            $getTotalRerservacionesPendientesOficinaCajaActual = $getTotalReservacionesPendientesCajaActual + $getTotalReservacionesPendientesOficina;
+
+            $getTotalRerservacionesPagadasOficinaCajaActual = $getTotalReservacionesProcesadasCajaActual + $getTotalReservasionesPagarOficina;
+
+
+            //Traemos total creditos por pagar
+            $getTotalCreditosPorCobrarInicioCaja = $isCajaOpen->TotalCreditosPorCobrarInicioCaja;
+            $getTotalCreditosPorCobrarCierreCaja = $isCajaOpen->TotalCreditosPorCobrarCierreCaja;
+
+
+
+
+
+
+        }else{
+
+            $isCajaClose = Caja::findOrFail($id);
+            //Enviamos el historial de los montos de las reservas en caja actual que se encuentra en la caja que se consulta.
+            $getTotalReservacionesRecibidasCajaActual = $isCajaClose->historialTotalReservacionesRecibidasCajaActual;
+
+            $getTotalReservacionesProcesadasCajaActual =
+            $isCajaClose->historialTotalReservacionesProcesadasCajaActual;
+
+            $getTotalReservacionesPendientesCajaActual =
+            $isCajaClose->historialTotalReservacionesPendientesCajaActual;
+
+            //Enviamos los monotos delas reservas que estan en Oficina.
+
+            $getTotalReservasOficinaInicioCaja = $isCajaClose->totalReservasOficinaInicioCaja;
+
+            $getTotalReservasOficinaCierreCaja = $getTotalReservasOficinaInicioCaja + $getTotalReservacionesRecibidasCajaActual;
+
+            $getTotalReservasionesPagarOficina = $isCajaClose->historialTotalReservasionesPagarOficina;
+
+
+
+            $getTotalReservacionesPendientesOficina = ($isCajaClose->totalReservasOficinaInicioCaja - $getTotalReservasionesPagarOficina);
+
+            $getTotalRerservacionesPendientesOficinaCajaActual = $getTotalReservacionesPendientesCajaActual + $getTotalReservacionesPendientesOficina;
+
+            $getTotalRerservacionesPagadasOficinaCajaActual = $getTotalReservacionesProcesadasCajaActual + $getTotalReservasionesPagarOficina;
+
+            //Traemos total creditos por pagar
+            $getTotalCreditosPorCobrarInicioCaja = $isCajaClose->TotalCreditosPorCobrarInicioCaja;
+            $getTotalCreditosPorCobrarCierreCaja = $isCajaClose->TotalCreditosPorCobrarCierreCaja;
+
+
+        }
+
+
+        //Fin de reservas caja actual
+
+        //Traemos total creditos por pagar
+        $creditosPorPagar = Credito::where('total_factura', '>', 0)->get();
+        // return $creditosPorPagar->sum('total_deuda');
+
+
         $appDate = Empresa::get();
         $bancos = Banco::get();
         //  return $cajas;
         $verificarHorasExtras = Horas_extra::where('caja_id', $cajas->id)->get();
         // return $verificarHorasExtras;
-        return view('cajas.caja.show', compact('getReservaciones', 'bancos', 'clientes_vueltos', 'appDate', 'verificarHorasExtras', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'title', 'cajas', 'caja', 'denominacion_dolar', 'denominacion_peso', 'denominacion_bolivar'))->with($mensaje);
+        return view('cajas.caja.show', compact('getTotalCreditosPorCobrarCierreCaja', 'getTotalCreditosPorCobrarInicioCaja', 'creditosPorPagar', 'getTotalRerservacionesPagadasOficinaCajaActual', 'getTotalRerservacionesPendientesOficinaCajaActual', 'getTotalReservacionesPendientesOficina', 'getTotalReservasionesPagarOficina', 'getTotalReservasOficinaCierreCaja', 'getTotalReservacionesRecibidasCajaActual', 'getTotalReservasOficinaInicioCaja', 'getTotalReservacionesPendientesCajaActual', 'getTotalReservacionesProcesadasCajaActual', 'bancos', 'clientes_vueltos', 'appDate', 'verificarHorasExtras', 'tasaDolarHabitacion', 'tasaPesoHabitacion', 'tasaDolar', 'tasaPeso', 'tasaTransferenciaPunto', 'tasaMixto', 'tasaEfectivo', 'title', 'cajas', 'caja', 'denominacion_dolar', 'denominacion_peso', 'denominacion_bolivar'))->with($mensaje);
     }
 
     /**
@@ -2096,7 +2190,29 @@ class CajaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // return $request;
+
+        //Primiminos el ticket
+
+        // $printer = new PrinterController;
+
+        // $printer->ticketResumenCaja($id);
+
+        // if ($printer->print_error === 1) {
+
+        //     $mensaje = 'La caja fue cerrada Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
+        //     return redirect()
+        //         ->route('caja.index')
+        //         ->with('status_success'  . ' ' . $mensaje);
+        // } else {
+
+        //     $mensaje = 'La caja fue cerrada Correctamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name . ' Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
+        //     return redirect()
+        //         ->route('caja.index')
+        //         ->with('status_danger' . ' ' . $mensaje);
+        // }
+
+        // return 1;
+
         try {
             DB::beginTransaction();
             $date   = Carbon::now('America/Caracas');
@@ -2109,6 +2225,25 @@ class CajaController extends Controller
             $session_id = $request->get('session_id');
             $caja_id = $request->get('caja_id');
 
+            $totalReservasOficinaCierreCaja = Reservation::where('status', 'Pendiente')->sum('montoPago');
+
+            $getTotalReservacionesRecibidasCajaActual = Reservation::where('caja_id', $id)->where('status', '<>', 'cancelado')->sum('montoPago');
+
+            $getTotalReservacionesProcesadasCajaActual = Reservation::where('caja_id', $id)->where('caja_pago_reservacion_id', $id)->where('status', 'Procesado')->sum('montoPago');
+
+            $getTotalReservacionesPendientesCajaActual = Reservation::where('caja_id', $id)->where('status', 'Pendiente')->sum('montoPago');
+
+            //Enviamos los monotos delas reservas que estan en Oficina.
+            $getTotalReservasionesPagarOficina = Reservation::where('caja_pago_reservacion_id', $id)->where('caja_id', '<>',  $id)->where('status', 'Procesado')->sum('montoPago');
+            // return $getTotalReservasionesPagarOficina;
+
+            $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
+            $isCajaOpen = Caja::where("estado", "=", 'Abierta')->where("sessioncaja_id", "=", $cajaSessionid->id)->first();
+
+            $getTotalReservacionesPendientesOficina = ($isCajaOpen->totalReservasOficinaInicioCaja - $getTotalReservasionesPagarOficina);
+
+            //Traemos total creditos por pagar
+            $creditosPorPagar = Credito::where('total_factura', '>', 0)->get();
 
 
             //TODO INSERTAR REGISTROS EN LA TABLA CAJA
@@ -2138,9 +2273,19 @@ class CajaController extends Controller
             $Caja->total_sistema_reg        = $request->get('total_sistema_reg_input');
             $Caja->total_operador_reg       = $request->get('total_operador_reg_input');
             $Caja->total_diferencia         = $request->get('total_dif_input');
+            $Caja->totalReservasOficinaCierreCaja = $totalReservasOficinaCierreCaja;
+            $Caja->historialTotalReservacionesRecibidasCajaActual = $getTotalReservacionesRecibidasCajaActual;
+            $Caja->historialTotalReservacionesProcesadasCajaActual = $getTotalReservacionesProcesadasCajaActual;
+            $Caja->historialTotalReservacionesPendientesCajaActual = $getTotalReservacionesPendientesCajaActual;
+            $Caja->historialTotalReservasionesPagarOficina = $getTotalReservasionesPagarOficina;
+            $Caja->historialTotalReservacionesPendientesOficina = $getTotalReservacionesPendientesOficina;
+            $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar->sum('total_deuda');
             $Caja->Observaciones            = $request->get('Observaciones');
             $Caja->estado                   = 'Cerrada';
             $Caja->update();
+
+
+
 
             $session_id = Sessioncaja::findOrFail($session_id);
             $session_id->estado = 'Cerrada';
@@ -2225,176 +2370,45 @@ class CajaController extends Controller
             DB::statement("SET foreign_key_checks=1");
 
 
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-            // REVIEW ESTE METODO FUE MOVIDO AL METODO STOR CUANDO SE VA A CREAR LA CAJA PARA PODER CAMBIAR EL ID
-
-            // TODO Ahora que lla guardamos los datos en la tabla historial
-            //procedemos a borrar los registros donde el estado no sea pendiente
-            // y a su vez vamos a cambiar el id colocandole el nuevo ide  de la caja
-            //recien abierta.
-
-            // TODO Creamos consulta para buscar registros y filtrarlos
-            // $filtrarReg = Excedentes_Recibidos_Caja_Actual::get();
-            // // return $filtrarReg;
-
-            // if($filtrarReg){
-            //     foreach ($filtrarReg as $fReg) {
-            //         if($fReg->Estado == 'Pendiente'){
-            //             $upReg = Excedentes_Recibidos_Caja_Actual::findOrFail($caja_id);
-            //             $upReg->caja_id = $caja_id + 1;
-            //             $upReg->update();
-            //         }else{
-            //             Excedentes_Recibidos_Caja_Actual::destroy($filtrarReg->id);
-            //         }
-            //     }
-            // }
-
-
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-            //////////////////////////////////////////////////////////////////////////////////////////////////// BsubTotald
-            // $bcantidadR = $request->get('bcantidad');
-            // $BsubTotaldR = $request->get('BsubTotald');
-            // $bvalorR = $request->get('bvalor');
-            // $btipoR = $request->get('btipo');
-            // $bdenominacionR = $request->get('bdenominacion');
-
-            // $BsubTotaldR = array_filter($BsubTotaldR);
-
-
-            // if ($BsubTotaldR) {
-            //     foreach($BsubTotaldR as $key => $val) {
-
-            //         $bcantidad[]=$bcantidadR[$key];
-            //         $BsubTotald[]=$BsubTotaldR[$key];
-            //         $bvalor[]=$bvalorR[$key];
-            //         $btipo[]=$btipoR[$key];
-            //         $bdenominacion[]=$bdenominacionR[$key];
-            //     }
-
-            //     // dd($bcantidadR, $BsubTotaldR,$bvalorR,$btipoR,$bdenominacionR);
-            //     //creamos un contador
-            //     $cont = 0;
-
-            //     //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            //     while ($cont < count($BsubTotald)) {
-
-            //         $detalleBolso = new Contabilidad();
-            //         $detalleBolso->denominacion = $bdenominacion[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-            //         $detalleBolso->valor = $bvalor[$cont];
-            //         $detalleBolso->cantidad = $bcantidad[$cont];
-            //         $detalleBolso->subtotal = $BsubTotald[$cont];
-            //         $detalleBolso->tipo = $btipo[$cont];
-            //         $detalleBolso->modo = $estatus_caja;
-            //         $detalleBolso->caja_id = $Caja->id;
-            //         $detalleBolso->save();
-
-            //         $cont = $cont+1;
-            //     }
-            // }
-
-
-
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // $pcantidadR = $request->get('pcantidad');
-            // $PsubTotaldR = $request->get('PsubTotald');
-            // $pvalorR = $request->get('pvalor');
-            // $ptipoR = $request->get('ptipo');
-            // $pdenominacionR = $request->get('pdenominacion');
-
-            // $PsubTotaldR = array_filter($PsubTotaldR);
-
-            // if ($PsubTotaldR) {
-            //     foreach($PsubTotaldR as $key => $val) {
-
-            //         $pcantidad[]=$pcantidadR[$key];
-            //         $PsubTotald[]=$PsubTotaldR[$key];
-            //         $pvalor[]=$pvalorR[$key];
-            //         $ptipo[]=$ptipoR[$key];
-            //         $pdenominacion[]=$pdenominacionR[$key];
-            //     }
-            //     // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-            //     //creamos un contador
-            //     $cont = 0;
-
-            //     //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            //     while ($cont < count($PsubTotald)) {
-
-            //         $detalleBolsoP = new Contabilidad();
-            //         $detalleBolsoP->denominacion = $pdenominacion[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-            //         $detalleBolsoP->valor = $pvalor[$cont];
-            //         $detalleBolsoP->cantidad = $pcantidad[$cont];
-            //         $detalleBolsoP->subtotal = $PsubTotald[$cont];
-            //         $detalleBolsoP->tipo = $ptipo[$cont];
-            //         $detalleBolsoP->modo = $estatus_caja;
-            //         $detalleBolsoP->caja_id = $Caja->id;
-            //         $detalleBolsoP->save();
-
-            //         $cont = $cont+1;
-            //     }
-            // }
-
-
-
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            // $dcantidadR = $request->get('dcantidad');
-            // $DsubTotaldR = $request->get('DsubTotald');
-            // $dvalorR = $request->get('dvalor');
-            // $dtipoR = $request->get('dtipo');
-            // $ddenominacionR = $request->get('ddenominacion');
-
-            // $DsubTotaldR = array_filter($DsubTotaldR);
-
-            // if ($DsubTotaldR) {
-            //     foreach($DsubTotaldR as $key => $val) {
-
-            //         $dcantidad[]=$dcantidadR[$key];
-            //         $DsubTotald[]=$DsubTotaldR[$key];
-            //         $dvalor[]=$dvalorR[$key];
-            //         $dtipo[]=$dtipoR[$key];
-            //         $ddenominacion[]=$ddenominacionR[$key];
-            //     }
-            //     // dd($divisa, $MontoDivisa,$TasaTike,$MontoDolar,$Veltos);
-            //     //creamos un contador
-            //     $cont = 0;
-
-            //     //ahora creamos un bucle while para ir recorriendo los arrays que estamo enviando
-            //     while ($cont < count($DsubTotald)) {
-
-            //         $detalleBolsoD = new Contabilidad();
-            //         $detalleBolsoD->denominacion = $ddenominacion[$cont];//este idingreso se autogenera cuando se crea el objeto en la parte superior (*)
-            //         $detalleBolsoD->valor = $dvalor[$cont];
-            //         $detalleBolsoD->cantidad = $dcantidad[$cont];
-            //         $detalleBolsoD->subtotal = $DsubTotald[$cont];
-            //         $detalleBolsoD->tipo = $dtipo[$cont];
-            //         $detalleBolsoD->modo = $estatus_caja;
-            //         $detalleBolsoD->caja_id = $Caja->id;
-            //         $detalleBolsoD->save();
-
-            //         $cont = $cont+1;
-            //     }
-            // }
-            // Sessioncaja::crearsession();
 
             $UserName = $request->user();
 
             //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
             DB::commit();
+
+
         } catch (\Exception $e) {
 
             DB::rollback();
             dd($e);
         }
 
+        //Primiminos el ticket
+
+        $printer = new PrinterController;
+
+        $printer->ticketResumenCaja($id);
+
+        if ($printer->print_error === 1) {
+
+            $mensaje = 'La caja fue cerrada Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
+            return redirect()
+            ->route('caja.index')
+            ->with('status_success', $UserName->name . ' ' . $mensaje);
+        } else {
+
+            $mensaje = 'La caja fue cerrada Correctamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name . ' Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
+            return redirect()
+            ->route('caja.index')
+            ->with('status_danger', $UserName->name . ' ' . $mensaje);
+        }
+
+        $mensaje = 'La caja fue cerrada Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
         return redirect()
             ->route('caja.index')
-            ->with('status_success', $UserName->name . 'La caja fue cerrada Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!');
+            ->with('status_success', $UserName->name . ' ' . $mensaje);
     }
 
     /**

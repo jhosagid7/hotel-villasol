@@ -57,18 +57,18 @@ class SearchController extends Controller
         $data = [];
 
         foreach ($querys as $query) {
-            $creditos = $query->creditos; // Obtener la colección de objetos de crédito relacionados con la persona
-            $excedentes = $query->excedentes; // Obtener la colección de objetos de crédito relacionados con la persona
-            $total_deuda = 0; // Variable para almacenar la suma de las deudas de los créditos
-            $estado_credito = ''; // Variable para almacenar la suma de las deudas de los créditos
-            $dispExcedente = 0; // Variable para almacenar la suma de las deudas de los créditos
+            $creditos = $query->creditos; // Obtener la colección de objetos de Credito relacionados con la persona
+            $excedentes = $query->excedentes; // Obtener la colección de objetos de Credito relacionados con la persona
+            $total_deuda = 0; // Variable para almacenar la suma de las deudas de los Creditos
+            $estado_credito = ''; // Variable para almacenar la suma de las deudas de los Creditos
+            $dispExcedente = 0; // Variable para almacenar la suma de las deudas de los Creditos
 
             foreach ($creditos as $credito) {
-                $total_deuda += $credito->total_deuda; // Sumar la deuda de cada crédito
-                $estado_credito = $credito->estado_credito; // Sumar la deuda de cada crédito
+                $total_deuda += $credito->total_deuda; // Sumar la deuda de cada Credito
+                $estado_credito = $credito->estado_credito; // Sumar la deuda de cada Credito
             }
             foreach ($excedentes as $excedente) {
-                $dispExcedente = $excedente->excedente; // Sumar la deuda de cada crédito
+                $dispExcedente = $excedente->excedente; // Sumar la deuda de cada Credito
             }
 
             $data[] = [
@@ -269,6 +269,7 @@ class SearchController extends Controller
     }
     public function getNumberHabitacion(Request $request)
     {
+        dd($request);
         // Obtener el número de servicio del request
         $numServicio = $request->input('numServicio');
         $reservationId = $request->input('reservationId');
@@ -295,11 +296,51 @@ class SearchController extends Controller
     {
         $cat_id = $request->input('cat_id');
 
-        // Obtener las habitaciones correspondientes a la categoría seleccionada
-        $habitaciones = Habitacione::where('cat_id', $cat_id)->get();
+        $fecha_entrada = $request->input('fechaEntrada');
+        $hora_entrada = $request->input('horaEntrada');
+        $fecha_salida = $request->input('fechaSalida');
+        $hora_salida = $request->input('horaSalida');
+
+        $reservation_id = $request->input('reservation_id');
+
+        $start = $fecha_entrada . ' ' . $hora_entrada;
+        $end = $fecha_salida . ' ' . $hora_salida;
+
+        $habitacionesDisponibles = Habitacione::whereNotIn('id', function ($query) use ($start, $end, $cat_id) {
+            $query->select('habitacione_id')
+            ->from('reservations')
+            ->where('status', 'Pendiente')
+            ->where(function ($query) use ($start, $end) {
+                $query->whereBetween('start', [$start, $end])
+                    ->orWhereBetween('end', [$start, $end]);
+            })
+            ->where('cat_id', $cat_id);
+        })
+        ->whereNotIn('id', function ($query) use ($fecha_entrada, $hora_entrada, $fecha_salida, $hora_salida, $cat_id) {
+            $query->select('habitacion_id')
+            ->from('servicios')
+            ->where('status_servicio', 'Iniciado')
+            ->where(function ($query) use ($fecha_entrada, $hora_entrada, $fecha_salida, $hora_salida) {
+                $query->whereBetween('fecha_entrada', [$fecha_entrada, $fecha_salida])
+                    ->whereBetween('hora_entrada', [$hora_entrada, $hora_salida])
+                    ->orWhereBetween('fecha_salida', [$fecha_entrada, $fecha_salida])
+                    ->whereBetween('hora_salida', [$hora_entrada, $hora_salida]);
+            });
+        })
+        ->where('cat_id', $cat_id)
+        ->get();
+
+        if($reservation_id){
+            $habitaiconActual = Reservation::findOrFail($reservation_id);
+
+            $habitacion = Habitacione::where('id', $habitaiconActual->habitacione_id)
+            ->first();
+
+            $habitacionesDisponibles->push($habitacion);
+        }
 
         // Devolver las habitaciones en formato JSON
-        return response()->json($habitaciones);
+        return response()->json($habitacionesDisponibles);
     }
     public function obtenerPrecio(Request $request)
     {

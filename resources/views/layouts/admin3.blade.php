@@ -470,6 +470,12 @@
                                 @endcan
                             </ul>
                         </li>
+                        <li class="{{ request()->is('cajas/caja') ? 'active' : '' }}">
+                        <a href="{{ asset('cajas/caja') }}">
+                            <i class="fa fa-th"></i> <span>Cajas</span>
+
+                        </a>
+                    </li>
                     @endcan
 
                     @can('haveaccess', 'boton.compras')

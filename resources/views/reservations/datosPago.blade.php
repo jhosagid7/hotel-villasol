@@ -25,10 +25,10 @@
             </div>
 
             <div class="form-group col-md-3">
-                <label class="text-black" for="txtPrecioPago">Total a pagar:<h3 class="box-title"><b
-                            class="text-warning">$<b id=precioShow>0.00</b></b></h3></label>
-                <input required class="form-control" type="hidden" name="txtPrecioPago" id="txtPrecioPago"
-                    placeholder="txtPrecioPago">
+                <label class="text-black" for="txtPrecio">Total a pagar:<h3 class="box-title"><b
+                            class="text-warning">$<b id="precioShow">0.00</b></b></h3></label>
+                <input required class="form-control" type="hidden" name="txtPrecio" id="txtPrecio"
+                    placeholder="txtPrecio">
                 <input required class="form-control" type="hidden" name="txtVueltoPago" id="txtVueltoPago"
                     placeholder="txtVueltoPago">
 
@@ -113,7 +113,9 @@
                 placeholder="txtReferenciaPago">
         </div>
 
-
+<input type="hidden" name="tasaDolar" id="tasaDolar" value="{{ $tasaDolar->tasa }}">
+<input type="hidden" name="tasaPeso" id="tasaPeso" value="{{ $tasaPeso->tasa }}">
+<input type="hidden" name="tasaBolivar" id="tasaBolivar" value="{{ $tasaEfectivo->tasa }}">
 
 
 
@@ -123,10 +125,16 @@
 
 @push('sciptsMain')
     <script>
+
     // Variables para las tasas de conversión
-    var tasaDolar = 1;
-    var tasaPeso = 4500;
-    var tasaBolivar = 32;
+    var tasaDolar = document.getElementById("tasaDolar");
+    var tasaPeso = document.getElementById("tasaPeso");
+    var tasaBolivar = document.getElementById("tasaBolivar");
+    console.log('tasaPeso ', tasaPeso.value)
+
+    tasaDolar = parseFloat(tasaDolar.value);
+    tasaPeso = parseFloat(tasaPeso.value);
+    tasaBolivar = parseFloat(tasaBolivar.value);
     // Variables para almacenar el último tipo de pago y monto pagado en la misma moneda
     var ultimoTipoPago = "";
     var ultimoMontoPagado = 0;
@@ -169,6 +177,8 @@
         // Actualizar el último tipo de pago y monto pagado en la misma moneda
         ultimoTipoPago = tipoPago;
         ultimoMontoPagado = montoPagado;
+
+
     }
     // Función para agregar un pago por separado (Transferencia y Punto)
     function agregarPagoPorSeparado(id, tipoPago, nombreBanco, referencia, fechaPago, montoPagado, vueltos) {
@@ -212,7 +222,7 @@
                 <td>${vueltos || 0}</td>
                 <td class="text">${calcularMontoEnDolares(vueltos, tipoPago)}</td>
                 <td class="text">${id || null}</td>
-                <td><button class="btn btn-danger btn-xs" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}">X</button></td>
+                <td><button class="btn btn-danger btn-xs btnEliminarProcesado" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}">X</button></td>
             `;
             tablaPagosBody.appendChild(filaPago);
         }
@@ -231,7 +241,7 @@
             <td>${vueltos || 0}</td>
             <td class="text">${calcularMontoEnDolares(vueltos, tipoPago)}</td>
             <td class="text">${id || null}</td>
-            <td><button class="btn btn-warning btn-xs" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}" disabled>X</button></td>
+            <td><button class="btn btn-warning btn-xs btnEliminarProcesado" onclick="eliminarPago(this)" data-idregistro="${id}" data-idcaja="${caja_id}" disabled>X</button></td>
         `;
 
         let ver = caja_id == {{ $caja_id }} ? 'Son iguales' : 'No son iguales'
@@ -239,12 +249,58 @@
         var payDataBase = document.getElementById("payDataBase");
         payDataBase.appendChild(filaPago);
     }
+
+    function activeBtnProcessService(){
+                        let precioShow = $('#txtPrecio').val()
+                        let txtMontoPago = $('#txtMontoPago').val()
+                        let txtStatus = $('#txtStatus').val()
+                        let txtID = $('#txtID').val()
+
+
+                        precioShow = parseFloat(precioShow)
+                        txtMontoPago = parseFloat(txtMontoPago)
+                        console.log('precioShow: ', precioShow);
+                        console.log('txtMontoPago: ', txtMontoPago);
+
+                        if(txtStatus == 'Procesado'){
+                            $('#btnProcesar').prop("disabled", true)
+                            $('#tipoPago').prop("disabled", true)
+                            $('.btnEliminarProcesado').prop("disabled", true)
+                        }else {
+                            $('#btnProcesar').prop("disabled", false)
+                            $('#tipoPago').prop("disabled", false)
+                            $('.btnEliminarProcesado').prop("disabled", false)
+                            $('#txtStatus').prop("disabled", true)
+                        }
+                        if(txtMontoPago === precioShow && txtStatus != 'Procesado' && txtID > 0) {
+                            console.log('enret')
+                            $('#btnProcesar').prop("disabled", false)
+                        }else {
+                            console.log('3else enret')
+                            $('#btnProcesar').prop("disabled", true)
+                        }
+
+                        if(txtMontoPago > 0 && txtMontoPago === precioShow && txtStatus == 'Pendiente' && txtID <= 0){
+                            $('#btnAgregar').prop("disabled", false)
+                        }else{
+                            $('#btnAgregar').prop("disabled", true)
+                        }
+                        if(txtStatus == 'Pendiente' && txtID <= 0){
+                            $('#txtServicio').prop("disabled", false)
+                        }else{
+                            $('#txtServicio').prop("disabled", true)
+                        }
+
+                        return result = txtMontoPago == precioShow ? true : false
+
+                    }
     // Función para actualizar el total de abonos en dólares
     function actualizarTotalAbonos() {
         var totalAbonos = 0.00;
         var vueltosPago = 0.00;
         var tablaPagosBody = document.getElementById("tablaPagosBody").getElementsByTagName("tr");
         var payDataBase = document.getElementById("payDataBase").getElementsByTagName("tr");
+
         for (var i = 0; i < tablaPagosBody.length; i++) {
             var montoPagado = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[4].innerText) || 0;
             var vueltos = parseFloat(tablaPagosBody[i].getElementsByTagName("td")[5].innerText) || 0;
@@ -253,6 +309,8 @@
             var vueltosEnDolares = calcularMontoEnDolares(vueltos, tipoPago);
             totalAbonos += montoEnDolares - vueltosEnDolares;
             vueltosPago += parseFloat(vueltosEnDolares);
+
+
             console.log("vueltos ", vueltos)
             console.log("vueltosPago ", vueltosPago)
         }
@@ -270,6 +328,7 @@
         document.getElementById("totalAbonosDolar").innerText = totalAbonos.toFixed(2);
         document.getElementById("txtMontoPago").value = totalAbonos.toFixed(2);
         document.getElementById("txtVueltoPago").value = vueltosPago.toFixed(2);
+        activeBtnProcessService();
     }
 
 

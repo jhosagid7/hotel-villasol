@@ -5,28 +5,7 @@
     </div><!-- /.box-header -->
     <div class="box-body">
         <div class="row">
-
-            <div class="form-group col-md-6">
-                <label class="text-black" for="txtHabitacion">Tipo de habitacion<span class="text-danger">(*)</span>:</label>
-                <select required class="form-control" name="txtHabitacion" id="txtHabitacion" placeholder="txtHabitacion">
-                    <option value="0">Seleccione servicio</option>
-                    @foreach ($tipoServicios as $tipo)
-                        <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
-                    @endforeach
-
-                </select>
-                <span id="txtHabitacionMesagge" class="text-red"></span>
-            </div>
-            <div class="form-group col-md-6">
-                <label class="text-black" for="txtNumHabitacion">N° de habitacion<span class="text-danger">(*)</span>:</label>
-                <select required class="form-control" name="txtNumHabitacion" id="txtNumHabitacion" placeholder="txtNumHabitacion">
-                    <option value="0">Seleccione servicio</option>
-
-
-                </select>
-                <span id="txtHabitacionMesagge" class="text-red"></span>
-            </div>
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-5">
                 <label class="text-black" for="txtServicio">Tipo de servicio<span class="text-danger">(*)</span>:</label>
                 <select required class="form-control" name="txtServicio" id="txtServicio" placeholder="txtServicio">
                     <option value="0">Seleccione tipo</option>
@@ -37,9 +16,36 @@
                 </select>
                 <span id="txtServicioMesagge" class="text-red"></span>
             </div>
-            <div class="form-group col-md-3">
+
+            <div class="form-group col-md-2">
+                <label class="text-black" for="txtNumDias">N°/Días:</label>
+                <input class="form-control" type="number" name="txtNumDias" id="txtNumDias"
+                    placeholder="txtNumDias" value="1" min="1">
+            </div>
+            <div class="form-group col-md-5">
+                <label class="text-black" for="txtHabitacion">Tipo de habitacion<span class="text-danger">(*)</span>: <span id="roomSelected"></span></label>
+                <select required class="form-control" name="txtHabitacion" id="txtHabitacion" placeholder="txtHabitacion">
+                    <option value="0">Seleccione servicio</option>
+                    @foreach ($tipoServicios as $tipo)
+                        <option value="{{ $tipo->id }}">{{ $tipo->nombre }}</option>
+                    @endforeach
+
+                </select>
+                <span id="txtHabitacionMesagge" class="text-red"></span>
+            </div>
+            <div class="form-group col-md-8">
+                <label class="text-black" for="txtNumHabitacion">N° de habitacion<span class="text-danger">(*)</span>:</label>
+                <select required class="form-control" name="txtNumHabitacion" id="txtNumHabitacion" placeholder="txtNumHabitacion">
+                    <option value="0">Seleccione servicio</option>
+
+
+                </select>
+                <span id="txtHabitacionMesagge" class="text-red"></span>
+            </div>
+
+            <div class="form-group col-md-4">
                 <label class="text-black">Precio:<h3 class="box-title"><b
-                            class="text-warning">$<b id=precioShowServicio>0.00</b></b></h3></label>
+                            class="text-warning">$<b id="precioShowServicio">0.00</b></b></h3></label>
 
 
             </div>
@@ -53,7 +59,7 @@
 $('#txtHabitacion').on('change', function() {
     // Obtener el valor seleccionado en el primer select
     obtenerNumHabitacion()
-
+    actualizarHorasFechas()
     obtenerPrecio()
 });
     </script>
@@ -62,6 +68,16 @@ $('#txtHabitacion').on('change', function() {
         // Escuchar el evento de cambio en el primer select
 $('#txtServicio').on('change', function() {
     // Obtener el valor seleccionado en el primer select
+    obtenerPrecio()
+
+
+
+});
+$('#txtNumDias').on('change', function() {
+    // Obtener el valor seleccionado en el primer select
+    console.log('estoy en el input cuando cambia')
+    //obtenerNumHabitacion()
+    actualizarHorasFechas()
     obtenerPrecio()
 
 
@@ -85,9 +101,14 @@ $('#txtServicio').on('change', function() {
             // Limpiar el segundo select
             $('#precioShow').html('0.00');
             $('#precioShowServicio').html('0.00');
+            $('#txtPrecio').html('0.00');
+            let cantidad = $('#txtNumDias').val();
+            let precioCalculado = precio.precio * parseFloat(cantidad);
 
-            $('#precioShow').html(precio.precio);
-            $('#precioShowServicio').html(precio.precio);
+            $('#precioShow').html(precioCalculado);
+            $('#precioShowServicio').html(precioCalculado);
+            $('#txtPrecio').val(precioCalculado);
+            actualizarTotalAbonos()
         }
     });
 }
@@ -117,7 +138,19 @@ function obtenerNumHabitacions(){
 
 function obtenerNumHabitacion(numHabitacion = 0) {
     var cat_id = $("#txtHabitacion").val();
+
+    var fechaEntrada = $("#txtFechaEntrada").val();
+    var horaEntrada = $("#txtHoraEntrada").val();
+    var fechaSalida = $("#txtFechaSalida").val();
+    var horaSalida = $("#txtHoraSalida").val();
+
+    console.log('ver esto: ', fechaEntrada)
+    console.log('ver esto: ', horaEntrada)
+    console.log('ver esto: ', fechaSalida)
+    console.log('ver esto: ', horaSalida)
+
     var servicio_id = $("#txtServicio").val();
+    var reservation_id = $('#txtID').val();
     console.log(numHabitacion)
     console.log('cat_id',cat_id)
     console.log('servicio_id',servicio_id)
@@ -125,7 +158,14 @@ function obtenerNumHabitacion(numHabitacion = 0) {
     $.ajax({
         url: "{{ route('search.habitaciones') }}",
         type: 'GET',
-        data: { cat_id: cat_id },
+        data: {
+            cat_id: cat_id,
+            fechaEntrada: fechaEntrada,
+            horaEntrada: horaEntrada,
+            fechaSalida: fechaSalida,
+            horaSalida: horaSalida,
+            reservation_id: reservation_id
+        },
         success: function(habitaciones) {
             // Limpiar el segundo select
             $('#txtNumHabitacion').empty();

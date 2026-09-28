@@ -25,10 +25,10 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-success" id="btnAgregar">Agregar</button>
-                        <button class="btn btn-warning" id="btnModificar">Modificar</button>
-                        <button class="btn btn-danger" id="btnEliminar">Eliminar</button>
-                        <button class="btn btn-primary" data-dismiss="modal" id="btnCancelar">Cancelar</button>
+                        <button class="btn btn-success submit-prevent-buton" id="btnAgregar">Agregar</button>
+                        <button class="btn btn-warning submit-prevent-buton" id="btnModificar">Modificar</button>
+                        <button class="btn btn-danger submit-prevent-buton" id="btnEliminar">Eliminar</button>
+                        <button class="btn btn-primary submit-prevent-buton" data-dismiss="modal" id="btnCancelar">Cancelar</button>
                     </div>
 
             </div>
