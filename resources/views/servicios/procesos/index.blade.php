@@ -1358,7 +1358,7 @@
                             @endcan
 
                         </div>
-                        <!-- /.modal-content -->
+                        <!-- /.modal-content --> 
                     </div>
                     <!-- /.modal-dialog -->
                 </div>
@@ -2089,6 +2089,27 @@
 
         $(document).ready(function() {
             var validarPagoServicio = 0;
+            window.formEnviado = false;
+
+            // Prevenir que presionar ENTER en inputs de texto/número envíe el formulario por accidente
+            $('#form1').on('keydown', ':input:not(textarea)', function(event) {
+                if (event.keyCode == 13) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            // Control de envío único en form1
+            $('#form1').on('submit', function(e) {
+                if (window.formEnviado) {
+                    e.preventDefault();
+                    return false;
+                }
+                window.formEnviado = true;
+                $('.submit-prevent-button').attr('disabled', 'true');
+                $('.spinner').show();
+            });
+
             $("#enviar").on('click', function() {
                 // alert();
                 const RestaTotal = document.getElementById('RestaTtotal');
@@ -2149,10 +2170,14 @@
             });
 
             $("#procesarpago").on('click', function() {
-                // validarPagoServicio = 1;
+                if (window.formEnviado) {
+                    return false;
+                }
                 if (validarPagoServicio == 1) {
+                    window.formEnviado = true;
+                    $('.submit-prevent-button').attr('disabled', 'true');
+                    $('.spinner').show();
                     $("#form1").submit();
-                    // alert('enviando datos');
                 }
                 return false;
 
@@ -2182,6 +2207,12 @@
 
             });
             $("#cortesia").on('click', function() {
+                if (window.formEnviado) {
+                    return false;
+                }
+                window.formEnviado = true;
+                $('.submit-prevent-button').attr('disabled', 'true');
+                $('.spinner').show();
                 addHabitacion();
                 $("#monto_dejado").val(0);
                 $("#base_vuelto_monto_dejado").val(0);
@@ -4965,7 +4996,15 @@
                     //configuración del sufijo/ tecla esperada al finalizar la lectura del scan, esto indica a onScan la finalización del evento
                     suffixKeyCodes: [13],
                     minLength: 7,
+                    avgTimeByChar: 100,
+                    stopPropagation: true,
+                    preventDefault: true,
+                    captureEvents: true,
                     onScan: function(barcode) { //función callback que se dispara después de una lectura
+                        if (window.formEnviado) {
+                            console.warn('El formulario ya está siendo procesado.');
+                            return false;
+                        }
                         console.log(barcode)
                         // alert(barcode);
                         // window.livewire.emit('doCheckOut', barcode, 2) //emitimos el evento para consultar la info y cobrar el ticket
@@ -5017,6 +5056,9 @@
                                     return false;
                                 }
 
+                                window.formEnviado = true;
+                                $('.submit-prevent-button').attr('disabled', 'true');
+                                $('.spinner').show();
                                 $("#procesarpago").click();
 
                                 // if (validarPagoServicio == 1) {
@@ -5043,6 +5085,9 @@
                                     alert('No has seleccionado un cliente...!');
                                     return false;
                                 }
+                                window.formEnviado = true;
+                                $('.submit-prevent-button').attr('disabled', 'true');
+                                $('.spinner').show();
                                 $("#form1").submit();
                             } else if (modoPagoOn == 'credito') {
                                 let cliente_id = $("#cliente_id").val();
@@ -5082,6 +5127,9 @@
 
                                             if (credito_disponible_total_operacion >= 0) {
                                                 // alert('puede seguir');
+                                                window.formEnviado = true;
+                                                $('.submit-prevent-button').attr('disabled', 'true');
+                                                $('.spinner').show();
                                                 $("#form1").submit();
                                             } else {
                                                 alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $' +
@@ -5104,6 +5152,9 @@
 
                                             if (credito_disponible_total_operacion >= 0) {
                                                 // alert('puede seguir');
+                                                window.formEnviado = true;
+                                                $('.submit-prevent-button').attr('disabled', 'true');
+                                                $('.spinner').show();
                                                 $("#form1").submit();
                                             } else {
                                                 alert('El credito disponible no supera el monto a pagar... Credito disponible es de: $' +
