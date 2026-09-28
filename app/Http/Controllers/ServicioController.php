@@ -67,23 +67,48 @@ class ServicioController extends Controller
 
         // return $request;
 
-        // TODO Validamos si el registro ya ha sido registrado en caso contrario lo guarda
+        $id_habitaicon = $request->get('id_habitacion');
+        $nombreHabitacion = $request->get('nombreHabitacion');
 
+        // Candado atómico por habitación para evitar procesamientos duplicados/concurrentes
+        $lockKey = 'lock_servicio_hab_' . $id_habitaicon;
+        $lock = \Illuminate\Support\Facades\Cache::lock($lockKey, 15);
 
-        $validarServicio = Servicio::where('nombre_habitacion', $request->get('nombreHabitacion'))->where('status_servicio', 'Iniciado')->get();
-        // return count($validarServicio);
+        if (!$lock->get()) {
+            return Redirect::to('checkout')->with('status_danger', 'Esta habitación ya está siendo procesada en este momento. Por favor espere.');
+        }
 
-        if (count($validarServicio) > 0) {
-            // return 'si';
-            return Redirect::to('checkout')->with('success', 'El servicio fué registrado previamente exitosamente');
-        } else {
-            // return 'no';
+        try {
+            DB::beginTransaction();
 
-            // return $validarServicio;
+            // 1. Verificación pesimista en base de datos con bloqueo de fila
+            $habitacion = Habitacione::where('id', $id_habitaicon)->lockForUpdate()->first();
+            if (!$habitacion) {
+                DB::rollBack();
+                return Redirect::to('recepcion')->with('status_danger', 'Habitación no encontrada.');
+            }
 
-            try {
-                DB::beginTransaction();
-                $myTime = Carbon::now('America/Caracas');
+            if ($habitacion->status === 'Ocupada') {
+                DB::rollBack();
+                return Redirect::to('checkout')->with('status_danger', 'La habitación ' . $habitacion->nombre . ' ya se encuentra Ocupada.');
+            }
+
+            // 2. Verificación pesimista de servicio activo iniciado
+            $validarServicio = Servicio::where('habitacion_id', $id_habitaicon)
+                ->where('status_servicio', 'Iniciado')
+                ->lockForUpdate()
+                ->first();
+
+            if ($validarServicio) {
+                DB::rollBack();
+                return Redirect::to('checkout')->with('status_danger', 'La habitación ' . $habitacion->nombre . ' ya tiene el servicio #' . $validarServicio->num_servicio . ' iniciado previamente.');
+            }
+
+            // Marcamos como ocupada dentro de la transacción
+            $habitacion->status = 'Ocupada';
+            $habitacion->save();
+
+            $myTime = Carbon::now('America/Caracas');
                 // number_format($número, 2, '.', '');
 
                 $id_habitaicon = $request->get('id_habitacion');
@@ -1077,21 +1102,16 @@ class ServicioController extends Controller
                 }
                 // return $total_venta;
             } catch (\Exception $e) {
-
-                // dd($e);
                 DB::rollback();
-                if (isset($MontoDolarR)) {
-
-                    return redirect()
-                        ->route('recepcion')
-                        ->with('status_danger', '¡Error Pago incompleto! Debe ingresar un monto para pagar y procesar el servicio... ');
+                \Illuminate\Support\Facades\Log::error('Error al guardar servicio: ' . $e->getMessage() . "\n" . $e->getTraceAsString());
+                return redirect()
+                    ->route('recepcion')
+                    ->with('status_danger', '¡Error al procesar el servicio! ' . $e->getMessage());
+            } finally {
+                if (isset($lock) && $lock) {
+                    optional($lock)->release();
                 }
             }
-
-
-
-            // return Redirect::to('checkout')->with('success', 'El servicio fué registrado exitosamente');
-        }
     }
 
     /**
