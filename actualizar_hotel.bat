@@ -112,18 +112,31 @@ if defined datetime (
 )
 set "BACKUP_FILE=storage\app\backups\backup_previo_%TIMESTAMP%.sql"
 
-:: Obtener nombre de la base de datos directamente de .env
+:: Obtener credenciales de la base de datos directamente de .env
 set "TARGET_DB="
+set "TARGET_USER="
+set "TARGET_PASS="
 if exist ".env" (
     for /f "usebackq tokens=1,* delims==" %%A in (`findstr /i "^DB_DATABASE=" .env 2^>nul`) do set "TARGET_DB=%%B"
+    for /f "usebackq tokens=1,* delims==" %%A in (`findstr /i "^DB_USERNAME=" .env 2^>nul`) do set "TARGET_USER=%%B"
+    for /f "usebackq tokens=1,* delims==" %%A in (`findstr /i "^DB_PASSWORD=" .env 2^>nul`) do set "TARGET_PASS=%%B"
 )
 if not defined TARGET_DB set "TARGET_DB=hosteria-villasol"
+if not defined TARGET_USER set "TARGET_USER=root"
 set "TARGET_DB=!TARGET_DB:"=!"
 set "TARGET_DB=!TARGET_DB: =!"
+set "TARGET_USER=!TARGET_USER:"=!"
+set "TARGET_USER=!TARGET_USER: =!"
+set "TARGET_PASS=!TARGET_PASS:"=!"
+set "TARGET_PASS=!TARGET_PASS: =!"
 
 if defined MYSQLDUMP (
     echo       Exportando base de datos: !TARGET_DB!...
-    "%MYSQLDUMP%" -u root !TARGET_DB! > "%BACKUP_FILE%" 2>nul
+    if "!TARGET_PASS!"=="" (
+        "%MYSQLDUMP%" -u !TARGET_USER! !TARGET_DB! > "%BACKUP_FILE%" 2>nul
+    ) else (
+        "%MYSQLDUMP%" -u !TARGET_USER! -p!TARGET_PASS! !TARGET_DB! > "%BACKUP_FILE%" 2>nul
+    )
     if exist "%BACKUP_FILE%" (
         echo       Respaldo creado con exito en: %BACKUP_FILE%
     ) else (
