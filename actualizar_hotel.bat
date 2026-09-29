@@ -112,8 +112,18 @@ if defined datetime (
 )
 set "BACKUP_FILE=storage\app\backups\backup_previo_%TIMESTAMP%.sql"
 
+:: Obtener nombre de la base de datos directamente de .env
+set "TARGET_DB="
+if exist ".env" (
+    for /f "usebackq tokens=1,* delims==" %%A in (`findstr /i "^DB_DATABASE=" .env 2^>nul`) do set "TARGET_DB=%%B"
+)
+if not defined TARGET_DB set "TARGET_DB=hosteria-villasol"
+set "TARGET_DB=!TARGET_DB:"=!"
+set "TARGET_DB=!TARGET_DB: =!"
+
 if defined MYSQLDUMP (
-    "%MYSQLDUMP%" -u root hosteria-villasol > "%BACKUP_FILE%" 2>nul
+    echo       Exportando base de datos: !TARGET_DB!...
+    "%MYSQLDUMP%" -u root !TARGET_DB! > "%BACKUP_FILE%" 2>nul
     if exist "%BACKUP_FILE%" (
         echo       Respaldo creado con exito en: %BACKUP_FILE%
     ) else (
