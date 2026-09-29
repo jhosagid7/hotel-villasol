@@ -86,6 +86,9 @@
                                                 <a href="{{ URL::action('CajaController@show', $caja->id) }}"><button
                                                         class='btn btn-info btn-sm'><span
                                                             class='glyphicon glyphicon-edit'></span></button></a>
+                                                            <a href="{{ route('resumen', $caja->id) }}"><button
+                                                        class='btn btn-warning btn-sm'><span
+                                                            class='glyphicon glyphicon-print'></span></button></a>
                                                 {{-- @if ($caja->estado === 'Cerrada')
                         <button class='btn btn-danger btn-sm disabled'><i class='glyphicon glyphicon-trash'></i></button>
                         @else

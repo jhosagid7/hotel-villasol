@@ -12,8 +12,7 @@ class BancosSeeder extends Seeder
      */
     public function run()
     {
-        //hacemos truncate a las tablas que tienen modelos pero con eloquent
-        Banco::truncate();
+        // Banco::truncate();
 
 
         //creamos nuestro registro para la tasa Dolar

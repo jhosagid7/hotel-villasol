@@ -23,7 +23,7 @@ class CreatePagoServiciosTable extends Migration
             $table->decimal('Excedente', 25, 8)->default(0)->nullable();
             $table->decimal('Vueltos', 25, 8)->nullable();
             $table->foreignId('servicio_id')->references('id')->on('servicios');
-            $table->foreignId('caja_id')->references('id')->on('cajas');
+            $table->unsignedBigInteger('caja_id')->nullable();
             $table->timestamps();
         });
     }

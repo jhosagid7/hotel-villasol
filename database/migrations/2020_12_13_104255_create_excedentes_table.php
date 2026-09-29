@@ -24,9 +24,9 @@ class CreateExcedentesTable extends Migration
             $table->string('num_cuenta_cliente', 20)->nullable();
             $table->string('tipo_cuenta_cliente', 20)->nullable();
             $table->decimal('excedente', 25, 8)->nullable();
-            $table->integer('isTransferencia', 3)->nullable();
-            $table->integer('isPagoMobil', 3)->nullable();
-            $table->integer('isEfectivos', 3)->nullable();
+            $table->integer('isTransferencia')->nullable();
+            $table->integer('isPagoMobil')->nullable();
+            $table->integer('isEfectivo')->nullable();
             $table->foreignId('persona_id')->references('id')->on('personas');
             $table->timestamps();
         });

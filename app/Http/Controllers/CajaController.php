@@ -43,6 +43,7 @@ class CajaController extends Controller
     public function index()
     {
 
+       
         Sessioncaja::crearsession();
         $mesActual = Carbon::now();
         $restaMes = Carbon::now()->subWeek(10);
@@ -1045,7 +1046,7 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
                 $cajas->SumaTotalVentasCredito = $cajas->SumaTotalVentasCredito + $vent->total_venta;
             }
 
-            if ($vent->modo_pago == 'Cortesía') {
+            if ($vent->modo_pago == 'Cortesia') {
                 $cajas->SumaTotalCantidadVentasCortesia = $cajas->SumaTotalCantidadVentasCortesia + 1;
                 $cajas->SumaTotalVentasCortesia = $cajas->SumaTotalVentasCortesia + $vent->total_venta;
             }
@@ -1915,7 +1916,7 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
 
 
                     $cajas->SumaTotalServicios = $cajas->SumaTotalServicios + ($serv->total_venta - $serv->pago_con_excedente);
-                    if ($serv->is_cambio == 'No') {
+                    if ($serv->estado == 'Aceptada' && $serv->modo_pago == 'Contado' || $serv->estado == 'Aceptada' &&  $serv->modo_pago == 'Contado-Excedente') {
                         $cajas->SumaTotalCantidadServicios = $cajas->SumaTotalCantidadServicios + 1;
                     }
                     //////////////////////////////////////////////////////////////////////////////////////////
@@ -2008,13 +2009,14 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
                     $cajas->SumaTotalCantidadServiciosPorPagar = $cajas->SumaTotalCantidadServiciosPorPagar + 1;
                 }
 
-                if ($serv->modo_pago == 'Cortesía' && $serv->status == 'Exonerado') {
+                if ($serv->modo_pago == 'Cortesia' && $serv->status == 'Exonerado') {
                     $cajas->SumaTotalServiciosCortesia = $cajas->SumaTotalServiciosCortesia + $serv->total_venta;
 
                     $cajas->SumaTotalCantidadServiciosCortesia = $cajas->SumaTotalCantidadServiciosCortesia + 1;
                 }
             }
         }
+        //return $cajas->SumaTotalCantidadServicios;
         // return  $cajas->SumaTotalHorasExtrasPagadosConExcedente;
 
         $tasaDolarHabitacion = Tasa::where('nombre', '=', 'DolarHabitacion')->first();
@@ -2421,4 +2423,7 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
     {
         return 'Estoy en destroy';
     }
+    
+    
+   
 }

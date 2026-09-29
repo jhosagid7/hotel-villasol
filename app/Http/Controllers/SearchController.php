@@ -12,6 +12,7 @@ use App\Reservation;
 use Illuminate\Http\Request;
 use App\DetallePagoReservation;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class SearchController extends Controller
 {
@@ -269,7 +270,7 @@ class SearchController extends Controller
     }
     public function getNumberHabitacion(Request $request)
     {
-        dd($request);
+        //dd($request);
         // Obtener el número de servicio del request
         $numServicio = $request->input('numServicio');
         $reservationId = $request->input('reservationId');
@@ -295,51 +296,66 @@ class SearchController extends Controller
     public function obtenerHabitaciones(Request $request)
     {
         $cat_id = $request->input('cat_id');
+        if (!$cat_id || $cat_id == '0') {
+            return response()->json([]);
+        }
 
-        $fecha_entrada = $request->input('fechaEntrada');
-        $hora_entrada = $request->input('horaEntrada');
-        $fecha_salida = $request->input('fechaSalida');
-        $hora_salida = $request->input('horaSalida');
+        $fecha_entrada = $request->input('fechaEntrada') ?: now()->toDateString();
+        $hora_entrada = $request->input('horaEntrada') ?: '14:00';
+        $fecha_salida = $request->input('fechaSalida') ?: now()->addDay()->toDateString();
+        $hora_salida = $request->input('horaSalida') ?: '14:00';
 
         $reservation_id = $request->input('reservation_id');
 
-        $start = $fecha_entrada . ' ' . $hora_entrada;
-        $end = $fecha_salida . ' ' . $hora_salida;
+        $start = date('Y-m-d H:i:s', strtotime($fecha_entrada . ' ' . $hora_entrada));
+        $end = date('Y-m-d H:i:s', strtotime($fecha_salida . ' ' . $hora_salida));
 
-        $habitacionesDisponibles = Habitacione::whereNotIn('id', function ($query) use ($start, $end, $cat_id) {
-            $query->select('habitacione_id')
-            ->from('reservations')
-            ->where('status', 'Pendiente')
-            ->where(function ($query) use ($start, $end) {
-                $query->whereBetween('start', [$start, $end])
-                    ->orWhereBetween('end', [$start, $end]);
+        $habitacionesDisponibles = Habitacione::where('cat_id', $cat_id)
+            ->whereNotIn('id', function ($query) use ($start, $end, $reservation_id) {
+                $query->select('habitacione_id')
+                    ->from('reservations')
+                    ->whereIn('status', ['Pendiente', 'Procesado'])
+                    ->whereNotNull('habitacione_id')
+                    ->where(function ($q) use ($start, $end) {
+                        $q->where('start', '<', $end)
+                          ->where('end', '>', $start);
+                    });
+
+                if ($reservation_id) {
+                    $query->where('id', '!=', $reservation_id);
+                }
             })
-            ->where('cat_id', $cat_id);
-        })
-        ->whereNotIn('id', function ($query) use ($fecha_entrada, $hora_entrada, $fecha_salida, $hora_salida, $cat_id) {
-            $query->select('habitacion_id')
-            ->from('servicios')
-            ->where('status_servicio', 'Iniciado')
-            ->where(function ($query) use ($fecha_entrada, $hora_entrada, $fecha_salida, $hora_salida) {
-                $query->whereBetween('fecha_entrada', [$fecha_entrada, $fecha_salida])
-                    ->whereBetween('hora_entrada', [$hora_entrada, $hora_salida])
-                    ->orWhereBetween('fecha_salida', [$fecha_entrada, $fecha_salida])
-                    ->whereBetween('hora_salida', [$hora_entrada, $hora_salida]);
-            });
-        })
-        ->where('cat_id', $cat_id)
-        ->get();
+            ->whereNotIn('id', function ($query) use ($start, $fecha_entrada) {
+                $query->select('habitacion_id')
+                    ->from('servicios')
+                    ->where('status_servicio', 'Iniciado')
+                    ->where(function ($q) use ($start, $fecha_entrada) {
+                        $q->whereRaw("CONCAT(fecha_salida, ' ', hora_salida) > ?", [$start]);
+                        if ($fecha_entrada <= now()->toDateString()) {
+                            $q->orWhereRaw("1 = 1");
+                        }
+                    });
+            })
+            ->when($fecha_entrada <= now()->toDateString(), function ($query) {
+                $query->where('status', '!=', 'Ocupada');
+            })
+            ->get();
 
-        if($reservation_id){
-            $habitaiconActual = Reservation::findOrFail($reservation_id);
+        // Si se está editando una reservación, permitir mantener su habitación actual
+        // siempre y cuando pertenezca a la misma categoría seleccionada
+        if ($reservation_id) {
+            $res = Reservation::find($reservation_id);
+            if ($res && $res->habitacione_id && $res->cat_id == $cat_id) {
+                $currentRoom = Habitacione::where('id', $res->habitacione_id)
+                    ->where('cat_id', $cat_id)
+                    ->first();
 
-            $habitacion = Habitacione::where('id', $habitaiconActual->habitacione_id)
-            ->first();
-
-            $habitacionesDisponibles->push($habitacion);
+                if ($currentRoom && !$habitacionesDisponibles->contains('id', $currentRoom->id)) {
+                    $habitacionesDisponibles->prepend($currentRoom);
+                }
+            }
         }
 
-        // Devolver las habitaciones en formato JSON
         return response()->json($habitacionesDisponibles);
     }
     public function obtenerPrecio(Request $request)
@@ -363,6 +379,28 @@ class SearchController extends Controller
 
         // Devolver las habitaciones en formato JSON
         return response()->json($deletePago);
+    }
+
+    public function printResumenCajaCopy($id)
+    {
+        //return $id;
+        $printer = new PrinterController;
+
+        $printer->ticketResumenCaja($id);
+
+        if ($printer->print_error === 1) {
+
+            $mensaje = 'El ticket fue impreso Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
+            return redirect()
+            ->route('caja.index')
+            ->with('status_success',  $mensaje);
+        } else {
+
+            $mensaje = 'No se pudo emitir el ticket con la impresora: ' . $printer->print_name . ' Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
+            return redirect()
+            ->route('caja.index')
+            ->with('status_danger',  $mensaje);
+        }
     }
 
 }

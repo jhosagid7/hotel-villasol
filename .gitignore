@@ -11,3 +11,6 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+/app/Http/Controllers/PrinterController1.php
+/app/Http/Controllers/PrinterController2.php
+/graphify-out/

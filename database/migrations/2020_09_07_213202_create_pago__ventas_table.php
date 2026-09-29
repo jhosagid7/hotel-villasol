@@ -22,8 +22,8 @@ class CreatePagoVentasTable extends Migration
             $table->decimal('MontoDolarConsumo', 25, 8)->default(0)->nullable();
             $table->decimal('Excedente', 25, 8)->default(0)->nullable();
             $table->decimal('Vueltos', 25, 8)->nullable();
-            $table->foreignId('servicio_id')->references('id')->on('servicios');
-            $table->foreignId('caja_id')->references('id')->on('cajas');
+            $table->unsignedBigInteger('servicio_id')->nullable();
+            $table->unsignedBigInteger('caja_id')->nullable();
             $table->foreignId('venta_id')->references('id')->on('ventas');
             $table->timestamps();
         });

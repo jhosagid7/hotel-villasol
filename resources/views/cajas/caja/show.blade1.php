@@ -1353,7 +1353,7 @@
 
                 @endphp
                 @endif
-                @if ((isset($serv->modo_pago) && $serv->modo_pago == 'Cortesía')
+                @if ((isset($serv->modo_pago) && $serv->modo_pago == 'Cortesia')
                 <tr   style="background-color: #ff0000;" class="text-black tituloRojo">
                 @elseif($serv->modo_pago) && $serv->modo_pago == 'Credito')
                     <tr style="background-color: rgb(36, 238, 10);" class="text-black tituloVerde">
@@ -1382,7 +1382,7 @@
                     </tr>
                 <tbody>
                     @if (isset($serv) && isset($serv->modo_pago))
-                        @if (isset($serv->modo_pago) && $serv->modo_pago == 'Cortesía')
+                        @if (isset($serv->modo_pago) && $serv->modo_pago == 'Cortesia')
                             <tr style="background-color: rgb(247, 191, 191);" class="text-black detalleRojo">
                         @elseif(isset($serv->modo_pago) && $serv->modo_pago == 'Credito')
                             <tr style="background-color: rgba(198, 250, 191, 0.692);" class="text-black detalleVerde">
@@ -1465,7 +1465,7 @@
                 </tr>
 
 
-                @if ($serv->modo_pago == 'Cortesía')
+                @if ($serv->modo_pago == 'Cortesia')
                         <tr style="background-color: rgb(247, 139, 139);" class="text-black subTituloRojo">
                     @elseif($serv->modo_pago == 'Credito')
                         <tr style="background-color: rgba(154, 247, 141, 0.692);" class="text-black subTituloVerde">
@@ -1482,7 +1482,7 @@
                     <td>D/Vtos/Pendtes</td>
                     <td>Pagar/Oficina</td>
                 </tr>
-                @if ($serv->modo_pago == 'Cortesía')
+                @if ($serv->modo_pago == 'Cortesia')
                         <tr style="background-color: rgb(247, 191, 191);" class="text-black detalleRojo">
                     @elseif($serv->modo_pago == 'Credito')
                         <tr style="background-color: rgba(198, 250, 191, 0.692);" class="text-black detalleVerde">
@@ -1765,7 +1765,7 @@
                         <tr style="background-color: lightblue;" class="text-black subTituloAzul">
                     @endif --}}
 
-                    @if ($venta->estado == 'Cancelada' || $venta->modo_pago == 'Cortesía')
+                    @if ($venta->estado == 'Cancelada' || $venta->modo_pago == 'Cortesia')
                         <tr   style="background-color: #ff0000;" class="text-black tituloRojo">
                     @elseif($venta->modo_pago == 'Credito')
                         <tr style="background-color: rgb(36, 238, 10);" class="text-black tituloVerde">
@@ -1903,7 +1903,7 @@
                                 <tr style="background-color: lightblue;" class="text-black tituloAzul">
                             @endif
 
-                            @if ($art->venta->estado == 'Cancelada' || $art->venta->modo_pago == 'Cortesía')
+                            @if ($art->venta->estado == 'Cancelada' || $art->venta->modo_pago == 'Cortesia')
                                 <tr   style="background-color: #ff0000;" class="text-black tituloRojo">
                             @elseif($art->venta->modo_pago == 'Credito')
                                 <tr style="background-color: rgb(36, 238, 10);" class="text-black tituloVerde">

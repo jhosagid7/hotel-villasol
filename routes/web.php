@@ -29,7 +29,7 @@ Route::get('/', function () {
 });
 
 Auth::routes([
-    'register' => false
+    'register' => true
 ]);
 
 Route::get('/home', 'VentaController@index')->name('home');
@@ -211,3 +211,10 @@ Route::get('search/eventos', 'SearchController@showFiltered')->name('search.even
 Route::get('search/habitaciones', 'SearchController@obtenerHabitaciones')->name('search.habitaciones');
 Route::get('search/precio', 'SearchController@obtenerPrecio')->name('search.precio');
 Route::get('eliminar/pago', 'SearchController@eliminarDetallePago')->name('eliminar.pago');
+
+Route::get('resumen/{id}', 'SearchController@printResumenCajaCopy')->name('resumen');
+
+// Actualizador del Sistema
+Route::get('sistema/actualizaciones', 'SystemUpdateController@index')->name('sistema.update.index');
+Route::post('sistema/actualizaciones/check', 'SystemUpdateController@check')->name('sistema.update.check');
+Route::post('sistema/actualizaciones/apply', 'SystemUpdateController@apply')->name('sistema.update.apply');

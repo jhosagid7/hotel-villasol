@@ -22,9 +22,9 @@ class CreatePagoVueltosTable extends Migration
             $table->decimal('TasaTiket', 25, 2)->nullable();
             $table->decimal('MontoDolar', 25, 8)->nullable();
             $table->foreignId('servicio_id')->references('id')->on('servicios');
-            $table->foreignId('venta_id')->references('id')->on('ventas')->default(0)->nullable();
-            $table->foreignId('horas_extra_id ')->references('id')->on('horas_extras')->default(0)->nullable();
-            $table->foreignId('detalle__creditos__pagado_id')->references('id')->on('detalle__creditos__pagados')->default(0)->nullable();
+            $table->unsignedBigInteger('venta_id')->nullable()->default(null);
+            $table->unsignedBigInteger('horas_extra_id')->nullable()->default(null);
+            $table->unsignedBigInteger('detalle__creditos__pagado_id')->nullable()->default(null);
             $table->foreignId('caja_id')->references('id')->on('cajas');
             $table->timestamps();
         });

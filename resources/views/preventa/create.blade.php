@@ -275,7 +275,7 @@
                                                                         <td>{{ $venta->num_comprobante }}</td>
                                                                         <td>{{ $venta->nombre }}</td>
                                                                         <td>
-                                                                            @if ($venta->modo_pago === 'Cortesía')
+                                                                            @if ($venta->modo_pago === 'Cortesia')
                                                                             <span class="label label-danger">{{
                                                                                 $venta->modo_pago }}</span>
                                                                             @elseif($venta->modo_pago === 'Credito')

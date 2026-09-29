@@ -29,7 +29,7 @@ class CreateServiciosVentasTable extends Migration
             $table->enum('tipo_pago', ['Dolar', 'Peso','Bolivar','Punto','Transferencia','No pagado']);
             $table->foreignId('articulo_id')->references('id')->on('articulos');
             $table->foreignId('servicio_id')->references('id')->on('servicios');
-            $table->foreignId('venta_id')->references('id')->on('ventas');
+            $table->unsignedBigInteger('venta_id')->nullable();
             $table->timestamps();
         });
     }

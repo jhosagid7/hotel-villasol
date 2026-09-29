@@ -62,6 +62,10 @@ $('#txtHabitacion').on('change', function() {
     actualizarHorasFechas()
     obtenerPrecio()
 });
+
+$('#txtFechaEntrada, #txtFechaSalida, #txtHoraEntrada, #txtHoraSalida').on('change', function() {
+    obtenerNumHabitacion();
+});
     </script>
 
     <script>
@@ -69,19 +73,13 @@ $('#txtHabitacion').on('change', function() {
 $('#txtServicio').on('change', function() {
     // Obtener el valor seleccionado en el primer select
     obtenerPrecio()
-
-
-
 });
 $('#txtNumDias').on('change', function() {
     // Obtener el valor seleccionado en el primer select
     console.log('estoy en el input cuando cambia')
-    //obtenerNumHabitacion()
     actualizarHorasFechas()
     obtenerPrecio()
-
-
-
+    obtenerNumHabitacion()
 });
     </script>
 
@@ -144,16 +142,9 @@ function obtenerNumHabitacion(numHabitacion = 0) {
     var fechaSalida = $("#txtFechaSalida").val();
     var horaSalida = $("#txtHoraSalida").val();
 
-    console.log('ver esto: ', fechaEntrada)
-    console.log('ver esto: ', horaEntrada)
-    console.log('ver esto: ', fechaSalida)
-    console.log('ver esto: ', horaSalida)
-
     var servicio_id = $("#txtServicio").val();
     var reservation_id = $('#txtID').val();
-    console.log(numHabitacion)
-    console.log('cat_id',cat_id)
-    console.log('servicio_id',servicio_id)
+
     // Hacer una petición AJAX para obtener las habitaciones correspondientes a la categoría seleccionada
     $.ajax({
         url: "{{ route('search.habitaciones') }}",
@@ -181,15 +172,12 @@ function obtenerNumHabitacion(numHabitacion = 0) {
                 var habitacionSeleccionada = numHabitacion;
                 // Recorrer las opciones y seleccionar la habitación correspondiente
                 $('#txtNumHabitacion option').each(function() {
-                    console.log($(this).text())
                     if ($(this).text() === habitacionSeleccionada.toString()) {
-                        $(this).attr('selected', true);
+                        $(this).prop('selected', true);
                         return false; // Termina el bucle cuando se encuentra la opción correcta
                     }
                 });
             }
-
-
         }
     });
 }

@@ -19,7 +19,7 @@ class CreateVentasTable extends Migration
             $table->string('serie_comprobante', 20);
             $table->string('num_comprobante', 20);
             $table->datetime('fecha_hora');
-            $table->enum('modo_pago', ['Contado', 'Credito', 'Cortesía']);
+            $table->enum('modo_pago', ['Contado', 'Credito', 'Cortesia']);
             $table->string('tipo_pago', 20);
             $table->enum('status', ['Pagado', 'Falta pagar', 'Exonerado']);
             $table->decimal('tasaDolar', 25, 2)->nullable();
@@ -38,10 +38,11 @@ class CreateVentasTable extends Migration
             $table->decimal('margen_ganancia', 25, 2)->nullable();
             $table->decimal('total_venta', 25, 9)->nullable();
             $table->decimal('excedente_nuevo', 25, 9)->nullable();
+            $table->decimal('pago_con_excedente', 25, 8)->nullable()->default(0);
             $table->decimal('ganancia_neta', 25, 9)->nullable();
             $table->enum('estado', ['Aceptada', 'Cancelada', 'Procesando']);
             $table->foreignId('persona_id')->references('id')->on('personas');
-            $table->foreignId('servicio_id')->references('id')->on('servicios');
+            $table->unsignedBigInteger('servicio_id')->nullable();
             $table->foreignId('caja_id')->references('id')->on('cajas');
             $table->timestamps();
         });

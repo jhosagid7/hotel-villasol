@@ -1848,7 +1848,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                                     @endphp
                                                                 @endif
-                                                                @if ($serv->modo_pago == 'Cortesía')
+                                                                @if ($serv->modo_pago == 'Cortesia')
                                                                     <tr style="background-color: #ff0000;"
                                                                         class="text-black tituloRojo">
                                                                     @elseif($serv->modo_pago == 'Credito')
@@ -1883,7 +1883,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
 
                                                                 </tr>
                                                                 <tbody>
-                                                                    @if ($serv->modo_pago == 'Cortesía')
+                                                                    @if ($serv->modo_pago == 'Cortesia')
                                                                         <tr style="background-color: rgb(247, 191, 191);"
                                                                             class="text-black detalleRojo">
                                                                         @elseif($serv->modo_pago == 'Credito')
@@ -1974,7 +1974,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                     </tr>
 
 
-                                                                    @if ($serv->modo_pago == 'Cortesía')
+                                                                    @if ($serv->modo_pago == 'Cortesia')
                                                                         <tr style="background-color: rgb(247, 139, 139);"
                                                                             class="text-black subTituloRojo">
                                                                         @elseif($serv->modo_pago == 'Credito')
@@ -1997,7 +1997,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                     <td>Vtos Pendtes</td>
                                                                     <td>Pagar/Oficina</td>
                                                                     </tr>
-                                                                    @if ($serv->modo_pago == 'Cortesía')
+                                                                    @if ($serv->modo_pago == 'Cortesia')
                                                                     <tr style="background-color: rgb(247, 191, 191);"
                                                                         class="text-black detalleRojo">
                                                                     @elseif($serv->modo_pago == 'Credito')
@@ -2367,7 +2367,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                         <tr style="background-color: lightblue;" class="text-black subTituloAzul">
                     @endif --}}
 
-                                                                    @if ($venta->estado == 'Cancelada' || $venta->modo_pago == 'Cortesía')
+                                                                    @if ($venta->estado == 'Cancelada' || $venta->modo_pago == 'Cortesia')
                                                                         <tr style="background-color: #ff0000;"
                                                                             class="text-black tituloRojo">
                                                                         @elseif($venta->modo_pago == 'Credito')
@@ -2518,7 +2518,7 @@ $totalCreditosPagadosPorOficina = $totalCreditosPagadosPorOficina + $creditosPag
                                                                                 class="text-black tituloAzul">
                                                                         @endif
 
-                                                                        @if ($art->venta->estado == 'Cancelada' || $art->venta->modo_pago == 'Cortesía')
+                                                                        @if ($art->venta->estado == 'Cancelada' || $art->venta->modo_pago == 'Cortesia')
                                                                             <tr style="background-color: #ff0000;"
                                                                                 class="text-black tituloRojo">
                                                                             @elseif($art->venta->modo_pago == 'Credito')

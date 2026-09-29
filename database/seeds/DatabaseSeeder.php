@@ -11,13 +11,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // $this->call(UserSeeder::class);
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+
         $this->call(JhosagidPermissionInfoSeeder::class);
         $this->call(EmpresaSeeder::class);
         $this->call(SucursalSeeder::class);
+        $this->call(ConfigSucursalSeeder::class);
+        $this->call(LevelSeeder::class);
+        $this->call(CatSeeder::class);
+        $this->call(HorarioSeeder::class);
+        $this->call(PrecioSeeder::class);
+        $this->call(HabitacioneSeeder::class);
         $this->call(TasaSeeder::class);
         $this->call(DenominacionSeeder::class);
         $this->call(PersonaSeeder::class);
         $this->call(BancosSeeder::class);
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
     }
 }

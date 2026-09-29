@@ -56,6 +56,15 @@ class CreateCajasTable extends Migration
             $table->string('caja', 20);
             $table->decimal('tasaActualVenta', 25, 2)->nullable();
             $table->decimal('margenActualVenta', 25, 2)->nullable();
+            $table->decimal('totalReservasOficinaInicioCaja', 25, 9)->nullable()->default(0);
+            $table->decimal('totalReservasOficinaCierreCaja', 25, 9)->nullable()->default(0);
+            $table->decimal('historialTotalReservacionesRecibidasCajaActual', 25, 9)->nullable()->default(0);
+            $table->decimal('historialTotalReservacionesProcesadasCajaActual', 25, 9)->nullable()->default(0);
+            $table->decimal('historialTotalReservacionesPendientesCajaActual', 25, 9)->nullable()->default(0);
+            $table->decimal('historialTotalReservasionesPagarOficina', 25, 9)->nullable()->default(0);
+            $table->decimal('historialTotalReservacionesPendientesOficina', 25, 9)->nullable()->default(0);
+            $table->decimal('TotalCreditosPorCobrarInicioCaja', 25, 9)->nullable()->default(0);
+            $table->decimal('TotalCreditosPorCobrarCierreCaja', 25, 9)->nullable()->default(0);
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('sucursal_id')->references('id')->on('sucursals');
             $table->foreignId('sessioncaja_id')->references('id')->on('sessioncajas');

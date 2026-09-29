@@ -112,140 +112,176 @@ console.log('dateClick')
                             //})
                         },
 
-                        eventClick: function(info) {
-                            limpiarFormulario()
+                       eventClick: function(info) {
+
+                        console.log("Objeto del evento:", info.event);
+    console.log("Fecha de inicio del evento:", info.event.start);
+    console.log("Fecha de fin del evento:", info.event.end);
+
+    // Verifica si info.event.start es null antes de intentar usar getMonth()
+    if (info.event.start !== null) {
+        let month = info.event.start.getMonth();
+        // ... el resto de tu código
+    } else {
+        console.error("¡La fecha de inicio del evento es nula!");
+        // Maneja el caso en que la fecha sea nula (por ejemplo, muestra una alerta)
+    }
+    limpiarFormulario();
+    console.log('prueba');
+    console.log('eventClick');
+
+    var optionProcesado = document.getElementById("optionProcesado");
+
+    $('#btnAgregar').prop("disabled", true);
+    $('#btnModificar').prop("disabled", false);
+    $('#btnEliminar').prop("disabled", false);
+    $('#btnProcesar').prop("disabled", true);
+
+    whenIsProceded(info.event.extendedProps.status, info.event.extendedProps.numServicio);
+
+    if (info.event.extendedProps.numServicio) {
+        optionProcesado.style.display = "none";
+    } else {
+        optionProcesado.style.display = "block";
+    }
+
+    // --- CÓDIGO MODIFICADO AQUÍ ---
+
+    let mesEnd, diaEnd, anioEnd, minutosEnd, horaEnd, horarioEnd;
+    // Verificar si info.event.end existe antes de intentar acceder a sus propiedades
+    if (info.event.end) {
+        mesEnd = (info.event.end.getMonth() + 1);
+        diaEnd = (info.event.end.getDate());
+        anioEnd = (info.event.end.getFullYear());
+
+        minutosEnd = info.event.end.getMinutes();
+        horaEnd = info.event.end.getHours();
+
+        minutosEnd = (minutosEnd < 10) ? "0" + minutosEnd : minutosEnd;
+        horaEnd = (horaEnd < 10) ? "0" + horaEnd : horaEnd;
+
+        horarioEnd = (horaEnd + ":" + minutosEnd);
+
+        mesEnd = (mesEnd < 10) ? "0" + mesEnd : mesEnd;
+        diaEnd = (diaEnd < 10) ? "0" + diaEnd : diaEnd;
+    } else {
+        // Si no hay fecha de fin, puedes usar la fecha de inicio o un valor predeterminado
+        // Por ejemplo, usar la misma fecha y hora de inicio si el evento es de un solo día
+        console.warn("info.event.end es null para el evento:", info.event.id, info.event.title);
+        // Puedes asignar valores por defecto o copiar los de start si es un evento de un solo día
+        // Para evitar errores posteriores, es buena idea tener un valor
+        mesEnd = (info.event.start.getMonth() + 1);
+        diaEnd = (info.event.start.getDate());
+        anioEnd = (info.event.start.getFullYear());
+        minutosEnd = info.event.start.getMinutes();
+        horaEnd = info.event.start.getHours();
+        minutosEnd = (minutosEnd < 10) ? "0" + minutosEnd : minutosEnd;
+        horaEnd = (horaEnd < 10) ? "0" + horaEnd : horaEnd;
+        horarioEnd = (horaEnd + ":" + minutosEnd);
+        mesEnd = (mesEnd < 10) ? "0" + mesEnd : mesEnd;
+        diaEnd = (diaEnd < 10) ? "0" + diaEnd : diaEnd;
+    }
+
+    let mes, dia, anio, minutos, hora, horario;
+    // Verificar si info.event.start existe antes de intentar acceder a sus propiedades
+    if (info.event.start) {
+        mes = (info.event.start.getMonth() + 1);
+        dia = (info.event.start.getDate());
+        anio = (info.event.start.getFullYear());
+
+        minutos = info.event.start.getMinutes();
+        hora = info.event.start.getHours();
+
+        minutos = (minutos < 10) ? "0" + minutos : minutos;
+        hora = (hora < 10) ? "0" + hora : hora;
+
+        horario = (hora + ":" + minutos);
+
+        mes = (mes < 10) ? "0" + mes : mes;
+        dia = (dia < 10) ? "0" + dia : dia;
+    } else {
+        // Esto sería más raro si el evento se está mostrando, pero es una buena práctica
+        console.error("info.event.start es null para el evento:", info.event.id, info.event.title);
+        // Asigna valores por defecto o maneja el error
+        mes = '01'; dia = '01'; anio = '1970'; minutos = '00'; hora = '00'; horario = '00:00';
+    }
+
+    // --- FIN CÓDIGO MODIFICADO ---
+
+    $('#txtID').val(info.event.id);
+    $('#txtTitle').val(info.event.title);
+    $('#txtFechaEntrada').val(anio + "-" + mes + "-" + dia);
+    $('#txtHoraEntrada').val(horario);
+    $('#txtFechaSalida').val(anioEnd + "-" + mesEnd + "-" + diaEnd);
+    $('#txtHoraSalida').val(horarioEnd);
+
+    $('#txtPersonaContacto').val(info.event.extendedProps.personaContacto);
+    $('#txtNombreCliente').val(info.event.extendedProps.nombreCliente);
+    $('#txtCedulaCliente').val(info.event.extendedProps.cedulaCliente);
+    $('#txtTelefonoContacto').val(info.event.extendedProps.telefonoContacto);
+    $('#txtNumAcompanantes').val(info.event.extendedProps.numAcompanantes);
+    $('#txtHabitacion').val(info.event.extendedProps.cat_id);
+    $('#txtServicio').val(info.event.extendedProps.horario_id);
+    $('#txtNumDias').val(info.event.extendedProps.cantidad);
+    $('#txtNumHabitacion').val(info.event.extendedProps.numHabitacion);
+    $('#txtPrecio').val(info.event.extendedProps.precio);
+    $('#txtMontoPago').val(info.event.extendedProps.montoPago);
+    $('#txtVueltoPago').val(info.event.extendedProps.vueltoPago);
+    $('#txtTelefonoPago').val(info.event.extendedProps.telefonoPago);
+    $('#txtCedulaPago').val(info.event.extendedProps.cedulaPago);
+    $('#txtNombreOperador').val('{{ Auth::user()->name }}');
+    $('#txtStatus').val(info.event.extendedProps.status);
+    $('#txtOboservation').val(info.event.extendedProps.observation);
+    $('#txtNumServicio').val(info.event.extendedProps.numServicio);
+    $('#txtColor').val(info.event.backgroundColor);
+    $('#servicio_id').val(info.event.extendedProps.servicio_id);
+    $('#persona_id').val(info.event.extendedProps.persona_id);
+    $('#user_id').val({{ Auth::user()->id }});
 
 
+    $('#txtServicio option[value="' + info.event.extendedProps.tipoServicio + '"]').attr('selected', true);
+    $('#txtHabitacion option[value="' + info.event.extendedProps.tipoHabitacion + '"]').attr('selected', true);
+    $('#txtStatus option[value="' + info.event.extendedProps.status + '"]').attr('selected', true);
+    console.log(info.event.extendedProps.montoPago);
 
-console.log('eventClick')
+    var detallePagoReservaciones = info.event.extendedProps.detalle_pago_reservaciones;
+    console.log(detallePagoReservaciones);
 
-                            var optionProcesado = document.getElementById("optionProcesado");
+    if (detallePagoReservaciones) {
+        // Limpiar la tabla de pagos existente antes de llenarla
+        document.getElementById("tablaPagosBody").innerHTML = ""; // Asumiendo que tienes un <tbody> con id="tablaPagosBody"
 
-                            $('#btnAgregar').prop("disabled", true)
-                            $('#btnModificar').prop("disabled", false)
-                            $('#btnEliminar').prop("disabled", false)
-                            $('#btnProcesar').prop("disabled", true)
+        detallePagoReservaciones.forEach(function(pago) {
+            console.log(pago.caja_id, " - ", {{ $caja_id }});
+            if ({{ $caja_id }} != pago.caja_id) {
+                agregarPagoFromDataBase(pago.id, pago.tipoPago, pago.nombreBanco, pago.referencia, pago.fechaPago, pago.montoPagado, pago.vueltos);
+            } else {
+                agregarPagoEnTabla(pago.id, pago.tipoPago, pago.nombreBanco, pago.referencia, pago.fechaPago, pago.montoPagado, pago.vueltos, pago.caja_id);
+            }
+            ultimoTipoPago = pago.tipoPago;
+            ultimoMontoPagado = pago.montoPagado;
+        });
 
-                            whenIsProceded(info.event.extendedProps.status, info.event.extendedProps.numServicio)
+        var tablaPagosContainer = document.getElementById("tablaPagosContainer");
+        tablaPagosContainer.style.display = "block";
+        document.getElementById("camposPago").innerHTML = "";
+        document.getElementById("tipoPago").value = "";
+    } else {
+        // Si no hay detalle de pagos, asegúrate de ocultar la tabla
+        var tablaPagosContainer = document.getElementById("tablaPagosContainer");
+        tablaPagosContainer.style.display = "none";
+        // Y también limpiar la tabla si no hay datos
+        document.getElementById("tablaPagosBody").innerHTML = "";
+    }
 
-                            if(info.event.extendedProps.numServicio){
-                                optionProcesado.style.display = "none";
-                            }else{
-                                optionProcesado.style.display = "block";
-                            }
+    console.log('entre ', info.event.extendedProps.numHabitacion);
+    obtenerNumHabitacion(info.event.extendedProps.numHabitacion);
+    obtenerPrecio();
 
+    actualizarTotalAbonos();
 
-                            mesEnd = (info.event.end.getMonth() + 1)
-                            diaEnd = (info.event.end.getDate())
-                            anioEnd = (info.event.end.getFullYear())
-
-                            minutosEnd = info.event.end.getMinutes()
-                            horaEnd = info.event.end.getHours()
-
-                            minutosEnd = (minutosEnd < 10) ? "0" + minutosEnd : minutosEnd
-                            horaEnd = (horaEnd < 10) ? "0" + horaEnd : horaEnd
-
-                            horarioEnd = (horaEnd + ":" + minutosEnd)
-
-                            mesEnd = (mesEnd < 10) ? "0" + mesEnd : mesEnd
-                            diaEnd = (diaEnd < 10) ? "0" + diaEnd : diaEnd
-
-                            mes = (info.event.start.getMonth() + 1)
-                            dia = (info.event.start.getDate())
-                            anio = (info.event.start.getFullYear())
-
-                            minutos = info.event.start.getMinutes()
-                            hora = info.event.start.getHours()
-
-                            minutos = (minutos < 10) ? "0" + minutos : minutos
-                            hora = (hora < 10) ? "0" + hora : hora
-
-                            horario = (hora + ":" + minutos)
-
-                            mes = (mes < 10) ? "0" + mes : mes
-                            dia = (dia < 10) ? "0" + dia : dia
-
-
-
-
-                            $('#txtID').val(info.event.id)
-                            $('#txtTitle').val(info.event.title)
-                            $('#txtFechaEntrada').val(anio + "-" + mes + "-" + dia)
-                            $('#txtHoraEntrada').val(horario)
-                            $('#txtFechaSalida').val(anioEnd + "-" + mesEnd + "-" + diaEnd)
-                            $('#txtHoraSalida').val(horarioEnd)
-
-                            $('#txtPersonaContacto').val(info.event.extendedProps.personaContacto)
-                            $('#txtNombreCliente').val(info.event.extendedProps.nombreCliente)
-                            $('#txtCedulaCliente').val(info.event.extendedProps.cedulaCliente)
-                            $('#txtTelefonoContacto').val(info.event.extendedProps.telefonoContacto)
-                            $('#txtNumAcompanantes').val(info.event.extendedProps.numAcompanantes)
-                            $('#txtHabitacion').val(info.event.extendedProps.cat_id)
-                            $('#txtServicio').val(info.event.extendedProps.horario_id)
-                            $('#txtNumDias').val(info.event.extendedProps.cantidad)
-                            $('#txtNumHabitacion').val(info.event.extendedProps.numHabitacion)
-                            $('#txtPrecio').val(info.event.extendedProps.precio)
-                            $('#txtMontoPago').val(info.event.extendedProps.montoPago)
-                            $('#txtVueltoPago').val(info.event.extendedProps.vueltoPago)
-                            $('#txtTelefonoPago').val(info.event.extendedProps.telefonoPago)
-                            $('#txtCedulaPago').val(info.event.extendedProps.cedulaPago)
-                            $('#txtNombreOperador').val('{{ Auth::user()->name }}')
-                            $('#txtStatus').val(info.event.extendedProps.status)
-                            $('#txtOboservation').val(info.event.extendedProps.observation)
-                            $('#txtNumServicio').val(info.event.extendedProps.numServicio)
-                            $('#txtColor').val(info.event.backgroundColor)
-                            $('#servicio_id').val(info.event.extendedProps.servicio_id)
-                            $('#persona_id').val(info.event.extendedProps.persona_id)
-                            $('#user_id').val({{ Auth::user()->id }})
-
-
-                            $('#txtServicio option[value="' + info.event.extendedProps.tipoServicio + '"]').attr(
-                                'selected', true);
-                            $('#txtHabitacion option[value="' + info.event.extendedProps.tipoHabitacion + '"]').attr(
-                                'selected', true);
-                            $('#txtStatus option[value="' + info.event.extendedProps.status + '"]').attr(
-                                'selected', true);
-console.log(info.event.extendedProps.montoPago)
-                            var detallePagoReservaciones = info.event.extendedProps.detalle_pago_reservaciones;
-                            console.log(detallePagoReservaciones)
-                            if (detallePagoReservaciones) {
-                                // Llenar la tabla con los datos obtenidos
-                                detallePagoReservaciones.forEach(function(pago) {
-                                    console.log(pago.caja_id, " - ", {{ $caja_id }})
-                                    if({{ $caja_id }} != pago.caja_id){
-                                        // Agregar una fila a la tabla con los datos de cada pago
-                                        agregarPagoFromDataBase(pago.id, pago.tipoPago, pago.nombreBanco, pago.referencia, pago.fechaPago, pago.montoPagado, pago.vueltos);
-
-                                    }else{
-                                        agregarPagoEnTabla(pago.id, pago.tipoPago, pago.nombreBanco, pago.referencia, pago.fechaPago, pago.montoPagado, pago.vueltos, pago.caja_id);
-                                    }
-
-
-                                    // Actualizar el último tipo de pago y monto pagado en la misma moneda
-                                    ultimoTipoPago = pago.tipoPago;
-                                    ultimoMontoPagado = pago.montoPagado;
-
-                                });
-                                // Mostrar tabla de pagos si tiene datos
-                                    var tablaPagosContainer = document.getElementById("tablaPagosContainer");
-                                    tablaPagosContainer.style.display = "block";
-
-                                    // Reiniciar campos de pago
-                                    document.getElementById("camposPago").innerHTML = "";
-                                    document.getElementById("tipoPago").value = "";
-
-                            }
-                            console.log('entre ', info.event.extendedProps.numHabitacion)
-                            obtenerNumHabitacion(info.event.extendedProps.numHabitacion)
-                            obtenerPrecio()
-
-                            // Actualizar total de abonos en dólares
-                                    actualizarTotalAbonos();
-
-
-
-                            $('#exampleModal').modal()
-                        },
+    $('#exampleModal').modal();
+},
 
                         events: "{{ url('/reservations/show') }}"
 
@@ -408,28 +444,30 @@ console.log(info.event.extendedProps.montoPago)
                             url: "{{ url('reservations') }}" + accion,
                             data: objReservacion,
                             success: function(msg) {
-                                console.log('ok ', msg)
+                                if (msg.type === 'danger' || msg.success === false) {
+                                    toastr.error(msg.msg, 'Atención', { timeOut: 8000 });
+                                    alert(msg.msg);
+                                    return false;
+                                }
 
-                                toastr.success(msg.msg, 'Notice', {
+                                toastr.success(msg.msg || 'Operación realizada con éxito', 'Notice', {
                                     timeOut: 3000
-                                })
-                                $('#exampleModal').modal('toggle')
-                                calendar.refetchEvents()
+                                });
+                                $('#exampleModal').modal('hide');
+                                calendar.refetchEvents();
                             },
                             error: function(e) {
-                                if(e.status == 200){
-                                    toastr.success('Exito', 'Notice', {
-                                    timeOut: 3000
-                                })
-                                $('#exampleModal').modal('toggle')
-                                calendar.refetchEvents()
-                                }else{
-                                    console.log('error ', e.status)
-                                alert('Hay un error al enviar los datos...')
+                                var errorMsg = 'Hay un error al procesar los datos...';
+                                if (e.responseJSON && e.responseJSON.msg) {
+                                    errorMsg = e.responseJSON.msg;
+                                } else if (e.responseJSON && e.responseJSON.message) {
+                                    errorMsg = e.responseJSON.message;
                                 }
-                                return false
+                                toastr.error(errorMsg, 'Atención', { timeOut: 8000 });
+                                alert(errorMsg);
+                                return false;
                             }
-                        })
+                        });
                     }
 
                     function limpiarFormulario() {
@@ -441,6 +479,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#txtFechaSalida').val('')
                         $('#txtHoraSalida').val('')
                         $('#txtPersonaContacto').val('')
+                        $('#nombrea').val('')
                         $('#txtNombreCliente').val('')
                         $('#txtCedulaCliente').val('')
                         $('#txtTelefonoContacto').val('')
@@ -528,7 +567,7 @@ console.log(info.event.extendedProps.montoPago)
                         $('#txtServicio').prop("disabled", false)
                         $('#txtNumDias').prop("disabled", false)
                         $('#numHabitacion').prop("disabled", false)
-                        $('#txtMontoPago').prop("disabled", false)
+                        $('#txtMontoPago').prop("disabled", true)
                         $('#txtTelefonoPago').prop("disabled", false)
                         $('#txtCedulaPago').prop("disabled", false)
                         $('#txtNombreOperador').val('{{ Auth::user()->name }}')
@@ -545,20 +584,27 @@ console.log(info.event.extendedProps.montoPago)
                     }
 
                     if(value == 'Pendiente' && numservice == null){
-                        $('#buscarClienteInput').prop("hidden", true)
-                        $('#txtNombreCliente').prop("disabled", true)
-                        $('#txtCedulaCliente').prop("disabled", true)
-                        $('#txtServicio').prop("disabled", true)
-                        $('#txtMontoPago').prop("disabled", true)
+                        $('#buscarClienteInput').prop("hidden", false)
+                        $('#txtNombreCliente').prop("disabled", false)
+                        $('#txtCedulaCliente').prop("disabled", false)
+                        $('#txtTelefonoContacto').prop("disabled", false)
+                        $('#txtServicio').prop("disabled", false)
+                        $('#txtHabitacion').prop("disabled", false)
+                        $('#numHabitacion').prop("disabled", false)
+                        $('#txtNumHabitacion').prop("disabled", false)
+                        $('#txtNumDias').prop("disabled", false)
+                        $('#txtFechaEntrada').prop("disabled", false)
+                        $('#txtFechaSalida').prop("disabled", false)
+                        $('#txtMontoPago').prop("disabled", false)
                         $('#txtNombreOperador').val('{{ Auth::user()->name }}')
                         $('#txtNumServicio').prop("disabled", true)
-                        $('#txtColor').prop("disabled", true)
+                        $('#txtColor').prop("disabled", false)
                         $('#user_id').val({{ Auth::user()->id }})
                         $('#btnModificar').prop("disabled", false)
                         $('#btnEliminar').prop("disabled", false)
                         $('#btnProcesar').prop("disabled", false)
                     }
-
+console.log('estoy en whenIsProceded final')
 
                 }
             </script>
@@ -588,29 +634,34 @@ console.log(info.event.extendedProps.montoPago)
             <script>
                 function actualizarHorasFechas() {
                     const txtServicio = document.getElementById("txtServicio");
-                    const cantidad = document.getElementById("txtNumDias").value;
-                    const valorServicio = txtServicio.value;
-                    let horaInicio = "";
-                    let horaFinal = "";
-                    let fechaEntrada = new Date(document.getElementById("txtFechaEntrada").value);
-                    let fechaSalida = new Date(fechaEntrada);
+                    const cantidad = parseFloat(document.getElementById("txtNumDias").value) || 1;
+                    const fechaEntradaVal = document.getElementById("txtFechaEntrada").value;
+                    if (!fechaEntradaVal) return;
 
-                    switch (valorServicio) {
+                    // Parsear YYYY-MM-DD sin UTC para evitar desfase de zona horaria
+                    const partes = fechaEntradaVal.split('-');
+                    if (partes.length === 3) {
+                        const anio = parseInt(partes[0], 10);
+                        const mes = parseInt(partes[1], 10) - 1;
+                        const dia = parseInt(partes[2], 10);
 
-                        case "3":
-                            horaInicio = "14:00";
-                            horaFinal = "14:00";
-                            fechaSalida.setDate(fechaSalida.getDate() + parseFloat(cantidad));
-                            break;
+                        const fechaSalida = new Date(anio, mes, dia);
+                        fechaSalida.setDate(fechaSalida.getDate() + cantidad);
+
+                        const anioS = fechaSalida.getFullYear();
+                        const mesS = String(fechaSalida.getMonth() + 1).padStart(2, '0');
+                        const diaS = String(fechaSalida.getDate()).padStart(2, '0');
+
+                        document.getElementById("txtFechaSalida").value = anioS + '-' + mesS + '-' + diaS;
                     }
 
-                    // Mostrar las horas de inicio y final
-                    document.getElementById("txtHoraEntrada").value = horaInicio;
-                    document.getElementById("txtHoraSalida").value = horaFinal;
-
-                    // Mostrar las fechas de entrada y salida en el formato "yyyy-MM-dd"
-                    document.getElementById("txtFechaEntrada").value = fechaEntrada.toISOString().split('T')[0];
-                    document.getElementById("txtFechaSalida").value = fechaSalida.toISOString().split('T')[0];
+                    // Establecer horas de entrada y salida (14:00 por defecto para servicios de hotel)
+                    if (!document.getElementById("txtHoraEntrada").value) {
+                        document.getElementById("txtHoraEntrada").value = "14:00";
+                    }
+                    if (!document.getElementById("txtHoraSalida").value) {
+                        document.getElementById("txtHoraSalida").value = "14:00";
+                    }
                 }
 
                 $(document).ready(function() {

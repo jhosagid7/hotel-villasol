@@ -129,6 +129,8 @@ trait ChangeSavedTrait
                     ->get();
 
                     // dd($historialExcedentes->count());
+
+                    $saldo_anterior = 0;
                 if ($historialExcedentes->count()) {
                     $saldo_disponible = 0;
                     $motivo = '';

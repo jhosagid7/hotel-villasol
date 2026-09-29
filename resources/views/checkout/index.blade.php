@@ -56,7 +56,7 @@
                                 if ($servicio->modo_pago == 'Contado') {
                                 $color = '';
                                 }
-                                if ($servicio->modo_pago == 'Cortesía') {
+                                if ($servicio->modo_pago == 'Cortesia') {
                                 $color = 'bg-orange';
                                 }
 

@@ -515,9 +515,9 @@ if(isset($servicio->id)){
                                                 <input type="hidden" name="fecha_salida" value="<?php echo $hoy . ' ' . $hora; ?>">
                                                 <input type="hidden" name="id_habitacion"
                                                     value="{{ $servicio->habitacion_id ?? '' }}">
-                                                @can('haveaccess', 'boton.sistema')
+                                                
                                                 <button type="submit"  name="boleta"  id="imprimirBoleta" class="btn btn-success pull-right"><i class='fa fa-print'></i> Imprimir Boleta</button>
-                                                @endcan
+                                                
                             {{--  <button type="submit"  name="factura" id="imprimirFactura" class="btn btn-warning pull-right" style="margin-right: 10px;"><i class='fa fa-print'></i> Imprimir Factura</button>  --}}
                                                 <button id="dualbtn" class="btn btn-primary ">Procesar deuda/vuelto
                                                     pendiente</button>
@@ -6191,8 +6191,8 @@ if(isset($servicio->id)){
         <script>
             document.addEventListener('DOMContentLoaded', function() {
 
-                $('#imprimirFactura').show(); // Boton salida para procesar salida de habitaciones QR
-                $('#imprimirBoleta').show(); // Boton salida para procesar salida de habitaciones QR
+                $('#imprimirFactura').hide(); // Jhosagid Boton salida para procesar salida de habitaciones QR
+                $('#imprimirBoleta').hide(); // Jhosagid Boton salida para procesar salida de habitaciones QR
 
                 try {
 

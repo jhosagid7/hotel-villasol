@@ -59,11 +59,12 @@
                 <div class="modal-body">
                     <div class="col-md-12">
                         <div class="box box-info">
+                       
                             <div class="box-header with-border">
                                 <div class="box-header with-border">
 
 
-                                    <div class="row">
+                                    <div class="row oculatar-cierre">
                                         <div class="col-sm-2 col-xs-6">
                                             <div class="description-block border-right">
                                                 <h5 class="description-header">Caja Chica:</h5>
@@ -154,13 +155,15 @@
                                     </div>
                                 </div>
                             </div>
+                           
                         </div>
                         <div class="box box-info">
+                       
                             <div class="box-header with-border">
                                 <div class="box-header with-border">
 
 
-                                    <div class="row">
+                                    <div class="row oculatar-cierre">
                                         @php
                                             if ($cajas->SumaTotalServiciosPagadosConExcedente) {
                                             }
@@ -244,6 +247,7 @@
                                     </div>
                                 </div>
                             </div>
+                           
                             <!-- /.box-header -->
                             <div class="box-body">
                                 <div class="table-responsive">
@@ -252,8 +256,8 @@
                                             <tr>
                                                 <th>Modo</th>
                                                 <th>Cantidad</th>
-                                                <th>Dif/Moneda</th>
-                                                <th>Dif/Dolar</th>
+                                                <th class="oculatar-cierre">Dif/Moneda</th>
+                                                <th class="oculatar-cierre">Dif/Dolar</th>
 
                                             </tr>
                                         </thead>
@@ -264,10 +268,10 @@
                                                         name="cantidad_dolar_rep"><input type="hidden"
                                                         id="TasaDolar" name="TasaDolar"
                                                         value="{{ $tasaDolar->tasa }}"></td>
-                                                <td><b id="dif_moneda_dolar_to_tasa">0.00</b><input type="hidden"
+                                                <td class="oculatar-cierre"><b id="dif_moneda_dolar_to_tasa">0.00</b><input type="hidden"
                                                         id="dif_moneda_dolar_to_tasa_input"
                                                         name="dif_moneda_dolar_to_tasa_input"></td>
-                                                <td><b id="dif_moneda_dolar_to_dolar">0.00</b><input
+                                                <td class="oculatar-cierre"><b id="dif_moneda_dolar_to_dolar">0.00</b><input
                                                         onchange="sumar();" class="monto" type="hidden"
                                                         id="dif_moneda_dolar_to_dolar_input"
                                                         name="dif_moneda_dolar_to_dolar_input"></td>
@@ -278,10 +282,10 @@
                                                 <td><input type="text" id="cantidad_peso_rep"
                                                         name="cantidad_peso_rep"><input type="hidden" id="TasaPeso"
                                                         name="TasaPeso" value="{{ $tasaPeso->tasa }}"></td>
-                                                <td><b id="dif_moneda_peso_to_tasa">0.00</b><input type="hidden"
+                                                <td class="oculatar-cierre"><b id="dif_moneda_peso_to_tasa">0.00</b><input type="hidden"
                                                         id="dif_moneda_peso_to_tasa_input"
                                                         name="dif_moneda_peso_to_tasa_input"></td>
-                                                <td><b id="dif_moneda_peso_to_dolar">0.00</b><input
+                                                <td class="oculatar-cierre"><b id="dif_moneda_peso_to_dolar">0.00</b><input
                                                         onchange="sumar();" class="monto" type="hidden"
                                                         id="dif_moneda_peso_to_dolar_input"
                                                         name="dif_moneda_peso_to_dolar_input"></td>
@@ -293,10 +297,10 @@
                                                         name="cantidad_punto_rep"><input type="hidden"
                                                         id="TasaPunto" name="TasaPunto"
                                                         value="{{ $tasaTransferenciaPunto->tasa }}"></td>
-                                                <td><b id="dif_moneda_punto_to_tasa">0.00</b><input type="hidden"
+                                                <td class="oculatar-cierre"><b id="dif_moneda_punto_to_tasa">0.00</b><input type="hidden"
                                                         id="dif_moneda_punto_to_tasa_input"
                                                         name="dif_moneda_punto_to_tasa_input"></td>
-                                                <td><b id="dif_moneda_punto_to_dolar">0.00</b><input
+                                                <td class="oculatar-cierre"><b id="dif_moneda_punto_to_dolar">0.00</b><input
                                                         onchange="sumar();" class="monto" type="hidden"
                                                         id="dif_moneda_punto_to_dolar_input"
                                                         name="dif_moneda_punto_to_dolar_input"></td>
@@ -308,10 +312,10 @@
                                                         name="cantidad_trans_rep"><input type="hidden"
                                                         id="TasaTrans" name="TasaTrans"
                                                         value="{{ $tasaTransferenciaPunto->tasa }}"></td>
-                                                <td><b id="dif_moneda_trans_to_tasa">0.00</b><input type="hidden"
+                                                <td class="oculatar-cierre"><b id="dif_moneda_trans_to_tasa">0.00</b><input type="hidden"
                                                         id="dif_moneda_trans_to_tasa_input"
                                                         name="dif_moneda_trans_to_tasa_input"></td>
-                                                <td><b id="dif_moneda_trans_to_dolar">0.00</b><input
+                                                <td class="oculatar-cierre"><b id="dif_moneda_trans_to_dolar">0.00</b><input
                                                         onchange="sumar();" class="monto" type="hidden"
                                                         id="dif_moneda_trans_to_dolar_input"
                                                         name="dif_moneda_trans_to_dolar_input"></td>
@@ -323,16 +327,16 @@
                                                         name="cantidad_efectivo_rep"><input type="hidden"
                                                         id="TasaBolivar" name="TasaBolivar"
                                                         value="{{ $tasaEfectivo->tasa }}"></td>
-                                                <td><b id="dif_moneda_efectivo_to_tasa">0.00</b><input type="hidden"
+                                                <td class="oculatar-cierre"><b id="dif_moneda_efectivo_to_tasa">0.00</b><input type="hidden"
                                                         id="dif_moneda_efectivo_to_tasa_input"
                                                         name="dif_moneda_efectivo_to_tasa_input"></td>
-                                                <td><b id="dif_moneda_efectivo_to_dolar">0.00</b><input
+                                                <td class="oculatar-cierre"><b id="dif_moneda_efectivo_to_dolar">0.00</b><input
                                                         onchange="sumar();" class="monto" type="hidden"
                                                         id="dif_moneda_efectivo_to_dolar_input"
                                                         name="dif_moneda_efectivo_to_dolar_input"></td>
 
                                             </tr>
-                                            <tr>
+                                            <tr class="oculatar-cierre">
                                                 <td colspan="3">
                                                     <h4><strong class="text-blue">Registrado por Operador</strong></h4>
                                                 </td>
@@ -345,7 +349,7 @@
                                             {{-- @php
                                         dd(($cajas->SumaTotalVentas + $cajas->SumaTotalServicios));
                                     @endphp --}}
-                                            <tr>
+                                            <tr class="oculatar-cierre">
                                                 <td colspan="3">
                                                     <h4><strong class="text-blue">Registrado por Sistema </strong></h4>
                                                 </td>
@@ -357,7 +361,7 @@
 
 
                                             </tr>
-                                            <tr>
+                                            <tr class="oculatar-cierre">
                                                 <td colspan="3">
                                                     <h4><strong class="text-blue">Diferencia</strong></h4>
                                                 </td>
@@ -399,3 +403,9 @@
         </div>
     </form>
 </div>
+
+@push('sciptsMain')
+<script>
+    $(".oculatar-cierre").hide();
+</script>
+@endpush

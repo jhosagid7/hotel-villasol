@@ -585,6 +585,7 @@
                                 @can('haveaccess', 'user.index')
                                     <li><a href="{{ route('user.index') }}"><i class="fa fa-desktop"></i> User</a></li>
                                 @endcan
+                                <li><a href="{{ route('sistema.update.index') }}"><i class="fa fa-cloud-download"></i> Actualizar Sistema</a></li>
                             </ul>
                         </li>
 
@@ -1139,6 +1140,7 @@
         })
     </script>
     @yield('scriptOtro')
+    @yield('scripts')
 </body>
 
 </html>

@@ -44,6 +44,8 @@ class DetallePagoOficinaController extends Controller
         $num_transaccion = $request->get('num_operacion');
         $deuda = $request->get('deudaPendiente');
         $saldo_pagado = $request->get('deudaPendiente');
+        //$deuda = 220.1254;
+        //$saldo_pagado = $deuda;
         $fecha_pago = Carbon::now();
         $persona_id = $request->get('dcliente_id');
         $tipo_documento = $request->get('tipo_documento');
