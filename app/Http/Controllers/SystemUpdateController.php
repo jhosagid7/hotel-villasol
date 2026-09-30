@@ -240,12 +240,18 @@ class SystemUpdateController extends Controller
             $stash = $this->runProcess(['git', 'stash', 'push', '-u', '-m', 'Auto-stash pre update ' . date('Y-m-d H:i:s')]);
             $steps[] = ['step' => 'Resguardo de Cambios Locales (Git Stash)', 'status' => 'OK', 'detail' => $stash['output'] ?: 'Árbol limpio'];
 
-            // Paso 3: Descarga de código (git pull)
+            // Paso 3: Descarga de código (git fetch y pull / reset seguro)
+            $this->runProcess(['git', 'fetch', 'origin', $targetBranch], 120);
             $pull = $this->runProcess(['git', 'pull', 'origin', $targetBranch], 120);
             if ($pull['exitCode'] !== 0) {
-                throw new \Exception('Fallo al ejecutar git pull: ' . ($pull['error'] ?: $pull['output']));
+                // Si git pull tiene algún tropiezo con archivos locales, forzar sincronización limpia
+                $reset = $this->runProcess(['git', 'reset', '--hard', "origin/{$targetBranch}"], 60);
+                if ($reset['exitCode'] !== 0) {
+                    throw new \Exception('Fallo al ejecutar git pull: ' . ($pull['error'] ?: $pull['output']));
+                }
+                $pull['output'] = 'Sincronizado limpiamente con origin/' . $targetBranch;
             }
-            $steps[] = ['step' => "Descarga de Código (git pull origin {$targetBranch})", 'status' => 'OK', 'detail' => $pull['output']];
+            $steps[] = ['step' => "Descarga de Código (Git origin/{$targetBranch})", 'status' => 'OK', 'detail' => $pull['output']];
 
             // Paso 4: Migraciones de base de datos
             Artisan::call('migrate', ['--force' => true]);
