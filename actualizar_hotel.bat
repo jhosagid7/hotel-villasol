@@ -155,27 +155,30 @@ if not exist ".git" (
     git remote add origin https://github.com/jhosagid7/hotel-villasol.git
 )
 
-echo       Resguardando configuracion local (.env y cambios locales)...
-git stash
-
-echo       Descargando rama develop desde GitHub...
+echo       Sincronizando con rama develop desde GitHub...
 git remote set-url origin https://github.com/jhosagid7/hotel-villasol.git
 git fetch origin develop
-git checkout develop
-git pull origin develop
 
 if %ERRORLEVEL% NEQ 0 (
     color 0C
     echo.
-    echo [ERROR] No se pudo descargar desde Git. Verifica la conexion a Internet.
+    echo [ERROR] No se pudo conectar con GitHub. Verifica la conexion a Internet.
     echo.
     pause
     exit /b 1
 )
+
+echo       Aplicando actualizacion limpia y segura...
+git checkout -B develop origin/develop -f
+git reset --hard origin/develop
 echo.
 
 :: 6. Limpieza y renovacion de cache de Laravel
 echo [6/6] Limpiando y renovando cache del sistema...
+if exist "bootstrap\cache\config.php" del /f /q "bootstrap\cache\config.php"
+if exist "bootstrap\cache\routes.php" del /f /q "bootstrap\cache\routes.php"
+if exist "bootstrap\cache\packages.php" del /f /q "bootstrap\cache\packages.php"
+if exist "bootstrap\cache\services.php" del /f /q "bootstrap\cache\services.php"
 php artisan optimize:clear
 echo.
 
