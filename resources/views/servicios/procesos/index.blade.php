@@ -4997,9 +4997,7 @@
                     suffixKeyCodes: [13],
                     minLength: 7,
                     avgTimeByChar: 100,
-                    stopPropagation: true,
-                    preventDefault: true,
-                    captureEvents: true,
+                    ignoreIfFocusOn: ['input', 'textarea', 'select'],
                     onScan: function(barcode) { //función callback que se dispara después de una lectura
                         if (window.formEnviado) {
                             console.warn('El formulario ya está siendo procesado.');
