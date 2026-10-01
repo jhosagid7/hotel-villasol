@@ -2163,6 +2163,9 @@
                     $('#motoShow').html('$' + parseFloat(monto_dejadoR));
                     validarPagoServicio = 1;
                     $('#precontadomodal').modal('show');
+                    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                        document.activeElement.blur();
+                    }
 
                     // alert('contado');
                     // $("#form1").submit();
@@ -4998,43 +5001,44 @@
                     minLength: 7,
                     avgTimeByChar: 100,
                     ignoreIfFocusOn: ['input', 'textarea', 'select'],
+                    onKeyDetect: function(iKeyCode, oEvent) {
+                        // Si el modal de confirmación QR está abierto, desenfocar inputs para que el scan se procese
+                        if ($('#precontadomodal').is(':visible')) {
+                            if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA')) {
+                                document.activeElement.blur();
+                            }
+                        }
+                    },
                     onScan: function(barcode) { //función callback que se dispara después de una lectura
                         if (window.formEnviado) {
                             console.warn('El formulario ya está siendo procesado.');
                             return false;
                         }
-                        console.log(barcode)
-                        // alert(barcode);
-                        // window.livewire.emit('doCheckOut', barcode, 2) //emitimos el evento para consultar la info y cobrar el ticket
+                        console.log(barcode);
+
+                        let cliente_id = $("#cliente_id").val();
                         let nombreHabitacionBarcode = $("#nombreHabitacionBarcode").val();
-                        // alert(nombreHabitacionBarcode);
-                        var n = barcode;
-                        // alert(n);
-                        // return false;
-                        // $('#btnImprimir').focusout();
-                        // let cliente_id = $("#cliente_id").val();
+                        let cleanBarcode = String(barcode).trim();
+                        let expectedBarcode = String(nombreHabitacionBarcode).trim();
+                        let rawNombre = String("{{ $habitacion->nombre }}").trim();
 
-                        // if(cliente_id == 0 || cliente_id == null){
-                        //     alert('No has seleccionado un cliente...!');
-                        //     return false;
-                        // }
+                        let isMatch = (cleanBarcode === expectedBarcode) ||
+                                      (cleanBarcode === rawNombre) ||
+                                      (parseInt(cleanBarcode, 10) > 0 && parseInt(cleanBarcode, 10) === parseInt(rawNombre, 10));
 
-                        if (barcode == nombreHabitacionBarcode) {
-                            // alert('es igual barcode');
-                            // return false;
+                        if (isMatch) {
                             const RestaTotal = document.getElementById('RestaTtotal');
-                            modoPagoOn = $('#modo_pago').val();
-                            tipoPago = $('#tipo_pago').val();
-                            monto_dejadoR = $('#monto_dejado').val();
+                            let modoPagoOn = $('#modo_pago').val();
+                            let tipoPago = $('#tipo_pago').val();
+                            let monto_dejadoR = $('#monto_dejado').val();
                             let pagoConExcedente = $('#pagoConExcedente').val();
-                            // alert(monto_dejadoR);
 
                             if (modoPagoOn == 'contado') {
-                                if (cliente_id == 0 || cliente_id == null) {
+                                if (cliente_id == 0 || cliente_id == null || cliente_id === '') {
                                     alert('No has seleccionado un cliente...!');
                                     return false;
                                 }
-                                if (tipoPago == 0 || tipoPago == null) {
+                                if (tipoPago == 0 || tipoPago == null || tipoPago === '') {
                                     alert(
                                         'No has seleccionado el tipo de pago...! (Ej: Dolar, Peso, Trans, Punto, Mixto...)'
                                         );
@@ -5047,8 +5051,7 @@
                                     }
                                 }
 
-
-                                if (RestaTotal.innerHTML > 0) {
+                                if (RestaTotal && parseFloat(RestaTotal.innerHTML) > 0) {
                                     alert('El monto ingresado no supera la deuda a pagar...!');
                                     validarPagoServicio = 0;
                                     return false;
@@ -5057,7 +5060,7 @@
                                 window.formEnviado = true;
                                 $('.submit-prevent-button').attr('disabled', 'true');
                                 $('.spinner').show();
-                                $("#procesarpago").click();
+                                $("#form1").submit();
 
                                 // if (validarPagoServicio == 1) {
                                 //     // $("#form1").submit();
