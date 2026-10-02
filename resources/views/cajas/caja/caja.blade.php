@@ -342,7 +342,7 @@
                                                 </td>
                                                 <td>
                                                     <h4><b id="total_operador_reg">0.00</b></h4><input type="hidden"
-                                                        name="total_operador_reg_input" id="total_operador_reg_input">
+                                                        name="total_operador_reg_input" id="total_operador_reg_input" value="0.00">
                                                 </td>
 
                                             </tr>
@@ -367,7 +367,7 @@
                                                 </td>
                                                 <td>
                                                     <h4><b id="total_dif">0.00</b></h4><input type="hidden"
-                                                        name="total_dif_input" id="total_dif_input">
+                                                        name="total_dif_input" id="total_dif_input" value="0.00">
                                                 </td>
 
 
@@ -407,5 +407,20 @@
 @push('sciptsMain')
 <script>
     $(".oculatar-cierre").hide();
+    $(document).ready(function() {
+        $('#modal-delete-{{ $caja->id }} form').on('submit', function() {
+            if (typeof sumar === "function") {
+                sumar();
+            }
+            if (typeof resta === "function") {
+                resta();
+            }
+            $(this).find('input[type="hidden"]').each(function() {
+                if ($(this).val() === "" && $(this).attr('name') && $(this).attr('name').indexOf('input') !== -1) {
+                    $(this).val("0.00");
+                }
+            });
+        });
+    });
 </script>
 @endpush

@@ -750,8 +750,8 @@ class PrinterController extends Controller
 
                 $totalTotal = $ventaTotalConsumosCaja + $totalServ1 + $totalPagosExtrasCaja + $total_reintegro_reg;
                 $totalRegistroSistema = ($ventaTotalConsumosCaja + $totalServ1 + $totalPagosExtrasCaja) - ($historialTotalReservasionesPagarOficina);
-            } catch (\Exception $e) {/*No hacemos nada si hay error*/
-                dd($e);
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::warning('ticketResumenCaja data error: ' . $e->getMessage());
             }
 
             $fonts = array(Printer::FONT_A, Printer::FONT_B, Printer::FONT_C);
@@ -898,8 +898,8 @@ class PrinterController extends Controller
 
             $printer->close();
             $this->print_error = 1;
-        } catch (\Exception $e) {
-            dd($e);
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('ticketResumenCaja print error: ' . $e->getMessage());
             $this->print_error = 0;
         }
     }

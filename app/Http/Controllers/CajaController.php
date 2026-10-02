@@ -2192,28 +2192,34 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
      */
     public function update(Request $request, $id)
     {
+        $caja_id = $request->get('caja_id', $id);
+        $Caja = Caja::find($caja_id) ?: Caja::find($id);
 
-        //Primiminos el ticket
+        if (!$Caja) {
+            return redirect()
+                ->route('caja.index')
+                ->with('status_danger', 'No se encontró la caja especificada.');
+        }
 
-        // $printer = new PrinterController;
+        if ($Caja->estado === 'Cerrada') {
+            return redirect()
+                ->route('caja.index')
+                ->with('status_danger', 'Esta caja ya se encuentra cerrada.');
+        }
 
-        // $printer->ticketResumenCaja($id);
-
-        // if ($printer->print_error === 1) {
-
-        //     $mensaje = 'La caja fue cerrada Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
-        //     return redirect()
-        //         ->route('caja.index')
-        //         ->with('status_success'  . ' ' . $mensaje);
-        // } else {
-
-        //     $mensaje = 'La caja fue cerrada Correctamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name . ' Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
-        //     return redirect()
-        //         ->route('caja.index')
-        //         ->with('status_danger' . ' ' . $mensaje);
-        // }
-
-        // return 1;
+        $toDecimal = function ($val, $default = 0.00) {
+            if ($val === null || $val === '') {
+                return $default;
+            }
+            if (is_string($val)) {
+                $clean = str_replace([' ', ','], ['', '.'], trim($val));
+                if (is_numeric($clean)) {
+                    return (float) $clean;
+                }
+                return $default;
+            }
+            return is_numeric($val) ? (float) $val : $default;
+        };
 
         try {
             DB::beginTransaction();
@@ -2222,10 +2228,9 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
             $year   = $date->format('Y');
             $mes    = $date->format('m');
             $hora   = $date->format('h:i:s A');
-            $idUsuario = $request->get('idusuario');
+            $idUsuario = $request->get('idusuario') ?: ($Caja->user_id ?? Auth::id());
             $estatus_caja = 'Cierre';
-            $session_id = $request->get('session_id');
-            $caja_id = $request->get('caja_id');
+            $session_id = $request->get('session_id') ?: $Caja->sessioncaja_id;
 
             $totalReservasOficinaCierreCaja = Reservation::where('status', 'Pendiente')->sum('montoPago');
 
@@ -2235,46 +2240,55 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
 
             $getTotalReservacionesPendientesCajaActual = Reservation::where('caja_id', $id)->where('status', 'Pendiente')->sum('montoPago');
 
-            //Enviamos los monotos delas reservas que estan en Oficina.
+            //Enviamos los montos de las reservas que estan en Oficina.
             $getTotalReservasionesPagarOficina = Reservation::where('caja_pago_reservacion_id', $id)->where('caja_id', '<>',  $id)->where('status', 'Procesado')->sum('montoPago');
-            // return $getTotalReservasionesPagarOficina;
 
-            $cajaSessionid =  Sessioncaja::where('estado', 'Abierta')->orderBy('id', 'desc')->first();
-            $isCajaOpen = Caja::where("estado", "=", 'Abierta')->where("sessioncaja_id", "=", $cajaSessionid->id)->first();
-
-            $getTotalReservacionesPendientesOficina = ($isCajaOpen->totalReservasOficinaInicioCaja - $getTotalReservasionesPagarOficina);
+            $totalReservasInicio = $Caja->totalReservasOficinaInicioCaja ?? 0.00;
+            if ($session_id) {
+                $cajaSession = Sessioncaja::find($session_id);
+                if ($cajaSession) {
+                    $cajaAbierta = Caja::where("sessioncaja_id", $cajaSession->id)->first();
+                    if ($cajaAbierta && isset($cajaAbierta->totalReservasOficinaInicioCaja)) {
+                        $totalReservasInicio = $cajaAbierta->totalReservasOficinaInicioCaja;
+                    }
+                }
+            }
+            $getTotalReservacionesPendientesOficina = $totalReservasInicio - $getTotalReservasionesPagarOficina;
 
             //Traemos total creditos por pagar
             $creditosPorPagar = Credito::where('total_factura', '>', 0)->get();
 
+            // INSERTAR REGISTROS EN LA TABLA CAJA
+            $totalOperadorReg = $toDecimal($request->get('total_operador_reg_input'));
+            $totalSistemaReg = $toDecimal($request->get('total_sistema_reg_input'));
+            $totalDif = ($request->has('total_dif_input') && $request->get('total_dif_input') !== '' && $request->get('total_dif_input') !== null)
+                ? $toDecimal($request->get('total_dif_input'))
+                : ($totalOperadorReg - $totalSistemaReg);
 
-            //TODO INSERTAR REGISTROS EN LA TABLA CAJA
-
-            $Caja = Caja::findOrFail($caja_id);
             $Caja->hora_cierre              = $hora;
-            $Caja->monto_dolar_cierre       = $request->get('total_dolar');
-            $Caja->monto_peso_cierre        = $request->get('total_peso');
-            $Caja->monto_bolivar_cierre     = $request->get('total_bolivar');
-            $Caja->monto_punto_cierre       = $request->get('total_punto');
-            $Caja->monto_trans_cierre       = $request->get('total_trans');
-            $Caja->monto_dolar_cierre_dif   = $request->get('total_dolar_dif');
-            $Caja->monto_peso_cierre_dif    = $request->get('total_peso_dif');
-            $Caja->monto_bolivar_cierre_dif = $request->get('total_bolivar_dif');
-            $Caja->monto_punto_cierre_dif   = $request->get('total_punto_dif');
-            $Caja->monto_trans_cierre_dif   = $request->get('total_trans_dif');
-            $Caja->dolar_dolar_operador     = $request->get('dif_moneda_dolar_to_dolar_input');
-            $Caja->peso_dolar_operador      = $request->get('dif_moneda_peso_to_dolar_input');
-            $Caja->punto_dolar_operador     = $request->get('dif_moneda_punto_to_dolar_input');
-            $Caja->trans_dolar_operador     = $request->get('dif_moneda_trans_to_dolar_input');
-            $Caja->efectivo_dolar_operador  = $request->get('dif_moneda_efectivo_to_dolar_input');
-            $Caja->dolar_sistema            = $request->get('dolar_sistema');
-            $Caja->peso_sistema             = $request->get('peso_sistema');
-            $Caja->punto_sistema            = $request->get('punto_sistema');
-            $Caja->trans_sistema            = $request->get('trans_sistema');
-            $Caja->efectivo_sistema         = $request->get('efectivo_sistema');
-            $Caja->total_sistema_reg        = $request->get('total_sistema_reg_input');
-            $Caja->total_operador_reg       = $request->get('total_operador_reg_input');
-            $Caja->total_diferencia         = $request->get('total_dif_input');
+            $Caja->monto_dolar_cierre       = $toDecimal($request->get('total_dolar'));
+            $Caja->monto_peso_cierre        = $toDecimal($request->get('total_peso'));
+            $Caja->monto_bolivar_cierre     = $toDecimal($request->get('total_bolivar'));
+            $Caja->monto_punto_cierre       = $toDecimal($request->get('total_punto'));
+            $Caja->monto_trans_cierre       = $toDecimal($request->get('total_trans'));
+            $Caja->monto_dolar_cierre_dif   = $toDecimal($request->get('total_dolar_dif'));
+            $Caja->monto_peso_cierre_dif    = $toDecimal($request->get('total_peso_dif'));
+            $Caja->monto_bolivar_cierre_dif = $toDecimal($request->get('total_bolivar_dif'));
+            $Caja->monto_punto_cierre_dif   = $toDecimal($request->get('total_punto_dif'));
+            $Caja->monto_trans_cierre_dif   = $toDecimal($request->get('total_trans_dif'));
+            $Caja->dolar_dolar_operador     = $toDecimal($request->get('dif_moneda_dolar_to_dolar_input'));
+            $Caja->peso_dolar_operador      = $toDecimal($request->get('dif_moneda_peso_to_dolar_input'));
+            $Caja->punto_dolar_operador     = $toDecimal($request->get('dif_moneda_punto_to_dolar_input'));
+            $Caja->trans_dolar_operador     = $toDecimal($request->get('dif_moneda_trans_to_dolar_input'));
+            $Caja->efectivo_dolar_operador  = $toDecimal($request->get('dif_moneda_efectivo_to_dolar_input'));
+            $Caja->dolar_sistema            = $toDecimal($request->get('dolar_sistema'));
+            $Caja->peso_sistema             = $toDecimal($request->get('peso_sistema'));
+            $Caja->punto_sistema            = $toDecimal($request->get('punto_sistema'));
+            $Caja->trans_sistema            = $toDecimal($request->get('trans_sistema'));
+            $Caja->efectivo_sistema         = $toDecimal($request->get('efectivo_sistema'));
+            $Caja->total_sistema_reg        = $totalSistemaReg;
+            $Caja->total_operador_reg       = $totalOperadorReg;
+            $Caja->total_diferencia         = $totalDif;
             $Caja->totalReservasOficinaCierreCaja = $totalReservasOficinaCierreCaja;
             $Caja->historialTotalReservacionesRecibidasCajaActual = $getTotalReservacionesRecibidasCajaActual;
             $Caja->historialTotalReservacionesProcesadasCajaActual = $getTotalReservacionesProcesadasCajaActual;
@@ -2284,55 +2298,56 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
             $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar->sum('total_deuda');
             $Caja->Observaciones            = $request->get('Observaciones');
             $Caja->estado                   = 'Cerrada';
-            $Caja->update();
+            $Caja->save();
 
+            if ($session_id) {
+                $sessionModel = Sessioncaja::find($session_id);
+                if ($sessionModel) {
+                    $sessionModel->estado = 'Cerrada';
+                    $sessionModel->save();
+                }
+            }
 
-
-
-            $session_id = Sessioncaja::findOrFail($session_id);
-            $session_id->estado = 'Cerrada';
-            $session_id->update();
-
-
-
-
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //Guardamos registros en la tabla historialcreditoscaja
-
             $historialCreditosCaja = new HistorialCreditoCaja();
-            $historialCreditosCaja->hist_creditos_vigentes = $request->get('hist_creditos_vigentes');
-            $historialCreditosCaja->hist_creditos_vencidos = $request->get('hist_creditos_vencidos');
-            $historialCreditosCaja->hist_creditos_pagados = $request->get('hist_creditos_pagados');
-            $historialCreditosCaja->hist_creditos_nuevos = $request->get('hist_creditos_nuevos');
-            $historialCreditosCaja->hist_total_creditos = $request->get('hist_total_creditos');
-            $historialCreditosCaja->user_id = $request->get('idusuario');
+            $historialCreditosCaja->hist_creditos_vigentes = $toDecimal($request->get('hist_creditos_vigentes'));
+            $historialCreditosCaja->hist_creditos_vencidos = $toDecimal($request->get('hist_creditos_vencidos'));
+            $historialCreditosCaja->hist_creditos_pagados = $toDecimal($request->get('hist_creditos_pagados'));
+            $historialCreditosCaja->hist_creditos_nuevos = $toDecimal($request->get('hist_creditos_nuevos'));
+            $historialCreditosCaja->hist_total_creditos = $toDecimal($request->get('hist_total_creditos'));
+            $historialCreditosCaja->user_id = $idUsuario;
             $historialCreditosCaja->caja_id = $caja_id;
             $historialCreditosCaja->save();
 
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             //when we open the box we inital the stock
-
-
-
             $controlStock = ControlStock::where('caja_id', $caja_id)->get();
 
-            if ($controlStock) {
+            if ($controlStock && $controlStock->count() > 0) {
                 $stocks = self::get_product_stock(['id', 'stock', 'nombre']);
                 if ($stocks) {
                     foreach ($stocks as $value) {
                         $control_stock = ControlStock::where('articulo_id', $value->id)->where('caja_id', $caja_id)->first();
+                        $currentStock = (float) ($value->stock ?? 0);
+                        $operadorStock = ($request->has('stock_cierre_operador') && $request->get('stock_cierre_operador') !== '' && $request->get('stock_cierre_operador') !== null)
+                            ? $toDecimal($request->get('stock_cierre_operador'))
+                            : $currentStock;
+                        $obsStock = $request->get('observacionesStock') ?? '';
+
                         if ($control_stock) {
-                            $control_stock->stock_cierre = $value->stock;
-                            $control_stock->stock_dif  = $control_stock->stock_cierre - $value->stock;
-                            $control_stock->stock_cierre_operador  = $request->get('stock_cierre_operador');
-                            $control_stock->observaciones  = $request->get('observacionesStock');
-                            $control_stock->update();
+                            $control_stock->stock_cierre = $currentStock;
+                            $control_stock->stock_dif  = $currentStock - $operadorStock;
+                            $control_stock->stock_cierre_operador  = $operadorStock;
+                            $control_stock->observaciones  = $obsStock;
+                            $control_stock->save();
                         } else {
                             $control_stock = new ControlStock();
                             $control_stock->stock_inicio = 0;
-                            $control_stock->stock_cierre = $value->stock;
+                            $control_stock->stock_cierre = $currentStock;
+                            $control_stock->stock_dif = $currentStock - $operadorStock;
+                            $control_stock->stock_cierre_operador = $operadorStock;
+                            $control_stock->observaciones = $obsStock;
                             $control_stock->user_id  = $idUsuario;
                             $control_stock->articulo_id  = $value->id;
                             $control_stock->caja_id  = $Caja->id;
@@ -2342,18 +2357,12 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
                 }
             }
 
-
-
-
-            ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             // TODO Guardamos en la tabla historial vueltos pendientes para que luego pueda ser consultada si alteracion en el registro
-
             $vueltos_pendientes_Actuales = Excedentes_Recibidos_Caja_Actual::where('caja_id', $caja_id)->get();
 
             if ($vueltos_pendientes_Actuales) {
                 foreach ($vueltos_pendientes_Actuales as $vtosPtes) {
-                    // return $vueltos_pendientes_Actuales;
                     $historialVueltosPendientes = new Historial_Vueltos_Pendiente();
                     $historialVueltosPendientes->Tipo = $vtosPtes->Tipo;
                     $historialVueltosPendientes->Estado = $vtosPtes->Estado;
@@ -2367,50 +2376,52 @@ $Caja->TotalCreditosPorCobrarCierreCaja = $creditosPorPagar;
                 }
             }
 
-            DB::statement("SET foreign_key_checks=0");
-            PreExcedente::truncate();
-            DB::statement("SET foreign_key_checks=1");
-
-
-
-
-            $UserName = $request->user();
-
-            //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            PreExcedente::query()->delete();
 
             DB::commit();
 
+        } catch (\Throwable $e) {
+            if (DB::transactionLevel() > 0) {
+                try {
+                    DB::rollBack();
+                } catch (\Throwable $t) {
+                    \Illuminate\Support\Facades\Log::warning('Rollback error al cerrar caja: ' . $t->getMessage());
+                }
+            }
+            \Illuminate\Support\Facades\Log::error('Error al cerrar caja: ' . $e->getMessage(), [
+                'caja_id' => $id,
+                'trace' => $e->getTraceAsString(),
+            ]);
 
-        } catch (\Exception $e) {
-
-            DB::rollback();
-            dd($e);
+            return redirect()
+                ->back()
+                ->with('status_danger', 'Error al procesar el cierre de caja: ' . $e->getMessage());
         }
 
-        //Primiminos el ticket
+        //Imprimimos el ticket
+        $userName = Auth::user() ? Auth::user()->name : 'Usuario';
+        try {
+            $printer = new PrinterController;
+            $printer->ticketResumenCaja($id);
 
-        $printer = new PrinterController;
-
-        $printer->ticketResumenCaja($id);
-
-        if ($printer->print_error === 1) {
-
+            if ($printer->print_error === 1) {
+                $mensaje = 'La caja fue cerrada Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
+                return redirect()
+                    ->route('caja.index')
+                    ->with('status_success', $userName . ' ' . $mensaje);
+            } else {
+                $mensaje = 'La caja fue cerrada Correctamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . ($printer->print_name ?? 'Predeterminada') . ' Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
+                return redirect()
+                    ->route('caja.index')
+                    ->with('status_danger', $userName . ' ' . $mensaje);
+            }
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Error de impresion al cerrar caja: ' . $e->getMessage());
             $mensaje = 'La caja fue cerrada Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
             return redirect()
-            ->route('caja.index')
-            ->with('status_success', $UserName->name . ' ' . $mensaje);
-        } else {
-
-            $mensaje = 'La caja fue cerrada Correctamente. Sin embargo, no se pudo emitir el ticket con la impresora: ' . $printer->print_name . ' Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
-            return redirect()
-            ->route('caja.index')
-            ->with('status_danger', $UserName->name . ' ' . $mensaje);
+                ->route('caja.index')
+                ->with('status_success', $userName . ' ' . $mensaje);
         }
-
-        $mensaje = 'La caja fue cerrada Correctamente Gracias por usar nuestro Sistema. ¡ Te Esperamos Pronto...!';
-        return redirect()
-            ->route('caja.index')
-            ->with('status_success', $UserName->name . ' ' . $mensaje);
     }
 
     /**
